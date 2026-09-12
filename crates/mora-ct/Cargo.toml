@@ -6,13 +6,23 @@ license = "Apache-2.0"
 description = "Provision Token-2022 confidential accounts whose ElGamal key we hold, and fill the auditor slot"
 
 [[bin]]
+name = "read-balance"
+path = "src/read_balance.rs"
+
+[[bin]]
+name = "provision"
+path = "src/provision.rs"
+
+[[bin]]
 name = "set-auditor"
 path = "src/set_auditor.rs"
 
 [dependencies]
 spl-token-2022-interface = "3"
 solana-zk-sdk = "7"
+solana-zk-elgamal-proof-interface = "0.1.3"
 solana-zk-sdk-pod = "0.1"
+spl-token-confidential-transfer-proof-extraction = "0.6"
 solana-address = { version = "2", features = ["curve25519", "std"] }
 solana-keypair = "3"
 solana-signer = "3"

@@ -698,9 +698,11 @@ dependencies = [
  "solana-message",
  "solana-signer",
  "solana-transaction",
+ "solana-zk-elgamal-proof-interface",
  "solana-zk-sdk",
  "solana-zk-sdk-pod",
  "spl-token-2022-interface",
+ "spl-token-confidential-transfer-proof-extraction",
 ]
 
 [[package]]

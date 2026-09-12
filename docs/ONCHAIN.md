@@ -153,7 +153,38 @@ transfer, forever**, and cannot be scoped, delegated for a quarter, or pointed a
 That is why the live mints leave it null, and why filling it is only useful if something above it
 decides who sees what and when.
 
-## 7. What these facts say together
+## 7. An account whose key is ours
+
+`spl-token` derives an account's ElGamal key from a wallet signature using a KDF this SDK version
+does not reproduce — eight derivation/seed combinations were tried against a CLI-provisioned
+account and none matched. So an account the CLI configures is one we can *read on the chain* and
+cannot *prove anything about*. `./scripts/provision-account.sh` stands one up from our own
+instructions instead: `Reallocate`, `ConfigureAccount` carrying a `PubkeyValidityProof` we generate,
+`Deposit`, `ApplyPendingBalance`.
+
+```
+account                    6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V
+public balance             0                  <- what the chain shows anyone
+elgamalPubkey              AtQhEEsvGkjX5YFslY15+bV+2jD5OdAR7cmZunK0zBw=   <- ours
+availableBalance           64 bytes of ElGamal ciphertext
+decryptableAvailableBalance  opens to 17,300,000,000,000 base units = 173,000
+```
+
+`./scripts/read-balance.sh` opens it. The public balance is zero to everyone, including us; the
+confidential balance is 173,000 to us and to nobody else.
+
+Two things that cost an attempt each, recorded so the next person skips them. `ConfigureAccount`
+fails with `InvalidAccountData` on an account created by `create-account`, because the extension
+needs space the account does not have — a `Reallocate` has to come first. And `UpdateMint` fails
+with `OwnerMismatch` unless the signer is the mint's confidential-transfer authority, which is
+whatever keypair the CLI was configured with at creation time, not necessarily the one you think.
+
+**Still open:** the range proof is not yet over this ciphertext. Getting there means a
+`ciphertext_commitment_equality` proof bridging the account's ElGamal ciphertext to a Pedersen
+commitment whose opening we hold, and then the range proof over that commitment. Both primitives
+are proven in `aperture`'s spike; composing them is the remaining work.
+
+## 8. What these facts say together
 
 The issuer turned confidential transfers **on** for tokenized equities, gated new confidential
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot
