@@ -1,7 +1,6 @@
 ## The privacy is already shipped. Nobody can use it.
 
-Read any tokenized stock on Solana right now — no key, no wallet:
-
+Read any tokenized stock on Solana right now, no key and no wallet, and you get the same thing.
 `NVDAx`, `TSLAx`, `SPYx`, `AAPLx` — Token-2022, confidential transfers **ON**, auditor key
 **empty**. **All 732 of them**: every xStock on Solana, checked rather than sampled
 (`./scripts/slot-scan.sh`). The ZK ElGamal Proof Program came back at epoch 982 in June, so the
@@ -9,11 +8,10 @@ substrate works. Usage is near zero.
 
 That slot is empty because **no setting of it is correct.** Token-2022 offers one disclosure model:
 a single global key that decrypts everyone's everything, forever. Fill it and every holder is
-permanently readable by one party. Leave it null and no holder can demonstrate anything to anyone —
-so anyone who might be asked to prove something transacts in the clear instead.
+permanently readable by one party. Leave it null and no holder can demonstrate anything to anyone.
 
-That is why a fund holding NVDAx broadcasts its position to the whole market. Not a choice about
-publicity — the only option under which it can still answer a question.
+So a fund holding NVDAx broadcasts its position to the whole market — not a choice about publicity,
+but the only option under which it can still answer a question.
 
 ## What Confide gives a holder
 
@@ -24,15 +22,14 @@ publicity — the only option under which it can still answer a question.
 - **Your auditor and your LPs are unaffected.** They read what they are owed, when they are owed it.
 - **Last quarter's number cannot be tidied.** Sealed on the reporting date, opened on the deadline
   by a committee you do not control.
-- **A stock split does not corrupt what you disclosed.** Restatement is a deterministic function of
-  the issuer's published schedule — one source today — and refuses rather than guessing when an
-  action has no whole-number ratio.
+- **A stock split does not corrupt what you disclosed.** Restatement reads the issuer's published
+  schedule — one source today — and refuses rather than guessing when an action has no ratio.
 
 You choose **who**, **how much**, and **when**.
 
 ## Try it — no wallet, no API key, no install
 
-**https://psyto.github.io/confide/**
+**https://psyto.github.io/confide/** — and an 83-second walkthrough in `video/` on the repo.
 
 It reads the mints from mainnet in your browser, pulls real wallets out of recent NVDAx transactions
 with what they hold, shows a Confide account on devnet whose public balance is zero — and on a
@@ -46,8 +43,8 @@ button press has Solana's ZK program verify the collateral proof while you watch
 | **Prove "this account holds at least X"** over the account's *own* ciphertext, revealing one bit | two proofs accepted by the live ZK program: `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU |
 | The auditor slot, filled | one `UpdateMint` on a mirrored mint — NVDAx's config, one field different |
 | A disclosure bound to a date and unrevisable | 147 bytes anchored on devnet; commitment matched on read-back |
-| Opening on schedule without the holder | five separate processes; the holder's exited in September |
-| Surviving a stock split | 11 unit-changing events are queued on the live schedule; restatement refuses rather than rounding |
+| Opening on schedule without the holder | five separate processes; the holder's exited back in September |
+| Surviving a stock split | 11 actions queued on the live schedule: 8 restate exactly, 3 have no whole ratio and are reported, not guessed |
 
 21 tests. `./scripts/healthcheck.sh` checks every claim above against the chain and exits non-zero
 on the first that has died — judging runs three weeks and devnet resets.
@@ -75,8 +72,8 @@ Below the threshold it refuses — without printing the balance.
 ## Built on
 
 Original work, written in-window, except where declared: `aperture-core` and `aperture-receipts`
-(Apache-2.0, my own pre-existing engine — confidential balances, disclosure packages, the on-chain
-receipt) and `spl-token-2022-interface`. The embargo mechanism, the k-of-n sharing, the equity
+(Apache-2.0, my own pre-existing engine: confidential balances, disclosure packages, on-chain
+receipts) and `spl-token-2022-interface`. The embargo mechanism, the k-of-n sharing, the equity
 layer, the collateral proofs and the demo are new.
 
 github.com/psyto/confide · engine: github.com/psyto/aperture · Apache-2.0
