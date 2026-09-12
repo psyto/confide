@@ -1,4 +1,4 @@
 # Mora — lawful delay for tokenized equity positions (Apache-2.0).
 [workspace]
 resolver = "2"
-members = ["crates/mora-embargo", "crates/mora-equity", "crates/mora-committee", "crates/mora-onchain", "crates/mora-demo"]
+members = ["crates/mora-embargo", "crates/mora-equity", "crates/mora-ct", "crates/mora-committee", "crates/mora-onchain", "crates/mora-demo"]

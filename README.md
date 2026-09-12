@@ -74,6 +74,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 |---|---|
 | **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/A1AMyEf1FQYmvdEWSejtHHU6ZKuBh74MRM9LzGfMGWT6?cluster=devnet) |
 | **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
+| **Fill the auditor slot.** Same mint configuration as NVDAx, one field different — and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
 | **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
 | **Prove "at or above X" without revealing the position.** The counterparty learns one bit: not the value, not the composition, not any holding. | `./scripts/devnet-verify.sh` — accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
@@ -88,10 +89,9 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
   not a proof.
 - **Liquidation as a predicate.** *Is this account underwater* is a range claim, answerable without
   the borrower publishing anything.
-- **An issuer filling the slot for real accounts.** `autoApproveNewAccounts: false` says Backed
-  gates who may hold a confidential balance. Gating something unusable only makes sense if you mean
-  to make it usable. Setting an auditor key needs a Token-2022 `UpdateMint` this repo does not
-  build — `spl-token create-token` has no option for it.
+- **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
+  we control — one `UpdateMint` instruction, done, readable on devnet. On `NVDAx` it is Backed's
+  call, not ours.
 - **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
   product surface on top of it here.
 

@@ -132,7 +132,28 @@ derivation and seed were tried against the on-chain pubkey and none matched. The
 checkable; the proof is not yet over the bound ciphertext. That is the next correctness step, and it
 means provisioning the account from our own code rather than from the CLI.
 
-## 6. What these facts say together
+## 6. The slot, filled
+
+Backed's mints are not ours to configure, so this repo provisioned one with the same extension and
+filled the slot `ConfidentialTransferInstruction::UpdateMint` exists for:
+
+```
+mint                    EbfBr1ZcVQFy7JN68fDoFw6NUyonBGYXEXPRKUrv7trH
+auditorElgamalPubkey    ut5cP19Fy+AHW+nVkj0BfUANqd3w+722Mi30dj0eBC8=
+account                 F84hb3Lw2egXzEG4bCKJ6zxYq58N5abUGPaNd2CVvEqE
+public amount           0
+```
+
+`./scripts/set-auditor.sh <mint>` does it and reads the mint back. Same configuration as NVDAx, one
+field different.
+
+And that one field is the whole argument. Filling it is a single instruction — the difficulty was
+never the mechanics. The difficulty is that this key, once set, reads **every holder's every
+transfer, forever**, and cannot be scoped, delegated for a quarter, or pointed at one counterparty.
+That is why the live mints leave it null, and why filling it is only useful if something above it
+decides who sees what and when.
+
+## 7. What these facts say together
 
 The issuer turned confidential transfers **on** for tokenized equities, gated new confidential
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot
