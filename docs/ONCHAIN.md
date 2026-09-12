@@ -65,7 +65,41 @@ a validator identity rather than hardcoding an address devnet will reset away.
 The regulator learns one bit — a filing is owed. It learns no position, no portfolio value, no
 composition.
 
-## 4. What these facts say together
+## 4. The commitment really is on-chain, at t0
+
+`aperture-receipts` — the content-blind Receipt Registry from `psyto/aperture` — is deployed to
+devnet at **`6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv`**. `scripts/anchor-receipt.sh` seals an
+obligation, anchors its commitment, and then reads the account back off the chain to check the
+stored bytes against the sealed artifact:
+
+```
+$ ./scripts/anchor-receipt.sh
+  commitment  b6651e3d4ca8b5f4877bacd964646946c40a198590d6d49e2ed681b32d7e4103
+  receipt PDA 75AjRKc2TV1BCTP79rmCUcz2VunxJgmxBZAUk7zEGduS
+  signature   6tGDZ6P5g3CeVM7uZMdAVN48qAqZAyS3SKNWKkDk6B2mvPYuoBp9kFyGMad56HpzBgSo7qne8pY18TG2uyoqVQA
+  confirming  confirmed
+
+  --- now read it back off the chain, and check it against the sealed artifact ---
+  stored commitment  b6651e3d4ca8b5f4877bacd964646946c40a198590d6d49e2ed681b32d7e4103
+  matches the sealed artifact: YES
+  anchored at slot   497199572
+  opens at           1794614400  (2026-11-14)
+  bytes on chain     147  — a hash and two dates. No position, no portfolio.
+```
+
+147 bytes is the whole footprint of a fund's quarterly disclosure obligation: a hash, the date it
+was made, and the date it comes due. The chain learns that Fund A committed to something and when
+it opens. It does not learn what.
+
+One honest note on the layout: the registry's last field is named `expiry` and Mora writes
+`open_at` into it. The registry is content-blind and never interprets the value, so nothing is
+wrong on-chain — but a registry designed for obligations rather than grants would name that field
+for what it is.
+
+Requires a devnet-funded keypair (`~/.config/solana/id.json` by default); the other two scripts
+need nothing at all.
+
+## 5. What these facts say together
 
 The issuer turned confidential transfers **on** for tokenized equities, gated new confidential
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot

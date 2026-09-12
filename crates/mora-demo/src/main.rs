@@ -18,7 +18,7 @@ const CYN: &str = "\x1b[36m";
 const OFF: &str = "\x1b[0m";
 
 const DAY: i64 = 86_400;
-const QUARTER_END: i64 = 1_790_812_800; // t0 — 30 Sep, the position of record
+const QUARTER_END: i64 = 1_790_726_400; // t0 — 2026-09-30 00:00 UTC, the position of record
 const DUE: i64 = QUARTER_END + 45 * DAY; // T — 45 days later, the 13F deadline
 const ANCHOR_SLOT: u64 = 340_112_045;
 

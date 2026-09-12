@@ -12,7 +12,7 @@ use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGa
 use std::collections::HashSet;
 
 const T0_SLOT: u64 = 340_000_000; // the position is still being built
-const T: i64 = 1_772_323_200; // when the obligation comes due
+const T: i64 = 1_794_614_400; // 2026-11-14 — quarter end + 45 days
 const BEFORE_T: i64 = T - 43 * 86_400; // mid-accumulation, 43 days early
 const NVDAX_SHARES: u64 = 173;
 

@@ -78,6 +78,12 @@ tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the lag is **zer
 cargo test                    # 13 tests
 ```
 
+Those three need no key and no account. One more does — `./scripts/anchor-receipt.sh` anchors a
+sealed obligation's commitment on devnet through `aperture-receipts`
+([`6a1Kd8…AHytv`](https://explorer.solana.com/address/6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv?cluster=devnet))
+and reads it back to check the stored bytes against the artifact. **147 bytes land on-chain: a hash
+and two dates.** It needs a devnet-funded keypair.
+
 The invariants are written as claims you can run, not prose:
 [`crates/mora-embargo/tests/invariants.rs`](crates/mora-embargo/tests/invariants.rs).
 
