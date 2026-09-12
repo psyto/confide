@@ -1,0 +1,157 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Mora</title>
+<style>
+  :root {
+    --bg: #0a0c10; --fg: #ccd3de; --dim: #5b6675; --bold: #f2f5f9;
+    --red: #e5686d; --grn: #6fca7c; --yel: #d9b45c; --cyn: #5fb9c4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font: 15px/1.55 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+  #stage { width: 1180px; }
+  .label {
+    color: var(--dim); font-size: 15px; letter-spacing: .01em;
+    margin-bottom: 18px; opacity: 0; transition: opacity .45s ease;
+  }
+  .label.on { opacity: 1; }
+  pre { white-space: pre; font: inherit; width: max-content; }
+  pre .ln { opacity: 0; transition: opacity .18s ease; }
+  pre .ln.on { opacity: 1; }
+  .d { color: var(--dim); } .b { color: var(--bold); font-weight: 600; }
+  .hi {
+    color: #ffd166; font-weight: 600;
+    background: rgba(255, 209, 102, .10);
+    padding: 1px 5px; border-radius: 3px;
+  }
+  #fit { transform-origin: left top; }
+  .r { color: var(--red); } .g { color: var(--grn); }
+  .y { color: var(--yel); } .c { color: var(--cyn); }
+
+  /* title + close cards */
+  .card { text-align: left; }
+  .card h1 {
+    font-size: 46px; font-weight: 600; letter-spacing: .16em; color: var(--bold);
+    margin-bottom: 6px;
+  }
+  .card .sub { color: var(--dim); font-size: 17px; margin-bottom: 34px; letter-spacing: .02em; }
+  .card p { font-size: 21px; line-height: 1.65; max-width: 940px; color: var(--fg); }
+  .card p + p { margin-top: 16px; }
+  .card .accent { color: var(--bold); }
+  .fade { opacity: 0; transition: opacity .6s ease; }
+  .fade.on { opacity: 1; }
+</style>
+<div id="stage"></div>
+<script>
+  const stage = document.getElementById("stage");
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  let SCENES = [];
+  window.__load = (s) => { SCENES = s; };
+
+  // ANSI -> spans. Only the codes the binaries actually emit.
+  const CLS = { "2": "d", "1": "b", "31": "r", "32": "g", "33": "y", "36": "c" };
+  const MARK_A = "\u0001", MARK_B = "\u0002";
+  function ansi(line, emphasis) {
+    // Mark the phrases worth emphasising BEFORE escaping, so the markers survive both passes.
+    if (emphasis && emphasis.length) {
+      for (const e of emphasis) {
+        line = line.split(e).join(MARK_A + e + MARK_B);
+      }
+    }
+    let out = "", open = 0;
+    const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const re = /\x1b\[([0-9;]*)m/g;
+    let m, last = 0;
+    while ((m = re.exec(line))) {
+      out += esc(line.slice(last, m.index));
+      last = re.lastIndex;
+      for (const code of m[1].split(";")) {
+        if (code === "0" || code === "") { while (open > 0) { out += "</span>"; open--; } }
+        else if (CLS[code]) { out += `<span class="${CLS[code]}">`; open++; }
+      }
+    }
+    out += esc(line.slice(last));
+    while (open > 0) { out += "</span>"; open--; }
+    out = out.split(MARK_A).join('<span class="hi">').split(MARK_B).join("</span>");
+    return out || "&nbsp;";
+  }
+
+  function card(html) {
+    stage.innerHTML = `<div class="card fade">${html}</div>`;
+    return stage.firstElementChild;
+  }
+
+  async function title(hold) {
+    const el = card(`
+      <h1>MORA</h1>
+      <div class="sub">lawful delay for tokenized equity positions</div>
+      <p>A fund on-chain discloses <span class="accent">continuously to the market</span></p>
+      <p>and <span class="accent">unverifiably to its LPs</span>.</p>
+    `);
+    await sleep(60); el.classList.add("on");
+    await sleep(hold * 1000);
+    el.classList.remove("on"); await sleep(500);
+  }
+
+  async function close(hold) {
+    const el = card(`
+      <p>Sealed on the reporting date.</p>
+      <p>Opened on the deadline by a committee the holder does not control.</p>
+      <p>Provably unrevised in between.</p>
+      <div class="sub" style="margin:34px 0 0">github.com/psyto/mora &nbsp;·&nbsp; Apache-2.0</div>
+    `);
+    await sleep(60); el.classList.add("on");
+    await sleep(hold * 1000);
+    el.classList.remove("on"); await sleep(500);
+  }
+
+  async function pane(sc) {
+    const lines = sc.body.split("\n");
+    stage.innerHTML =
+      `<div class="label">${sc.label}</div><div id="fit"><pre>` +
+      lines.map((l) => `<span class="ln">${ansi(l, sc.emphasis)}</span>`).join("\n") +
+      `</pre></div>`;
+    // Short panes should not float in an empty frame: scale the block to fill it.
+    const fit = stage.querySelector("#fit");
+    const pre = fit.querySelector("pre");
+    const box = pre.getBoundingClientRect();
+    const k = Math.min(1140 / Math.max(box.width, 1), 470 / Math.max(box.height, 1), 1.85);
+    if (k > 1.02) {
+      fit.style.transform = `scale(${k.toFixed(3)})`;
+      // Scaling does not change the layout box, so the flex centring would ignore the growth and
+      // the block would run back up through its own label. Give the wrapper the height it draws.
+      fit.style.height = `${(box.height * k).toFixed(0)}px`;
+    }
+    console.log(`MORA_FIT ${box.width.toFixed(0)}x${box.height.toFixed(0)} -> ${k.toFixed(2)}`);
+    const label = stage.querySelector(".label");
+    const els = [...stage.querySelectorAll(".ln")];
+    await sleep(60);
+    label.classList.add("on");
+    await sleep(420);
+    // Reveal fast enough to feel like output, slow enough to read.
+    const step = Math.max(28, Math.min(90, 2600 / Math.max(lines.length, 1)));
+    for (const e of els) { e.classList.add("on"); await sleep(step); }
+    await sleep(sc.hold * 1000);
+    stage.querySelector("pre").style.transition = "opacity .45s ease";
+    stage.querySelector("pre").style.opacity = "0";
+    label.classList.remove("on");
+    await sleep(500);
+  }
+
+  window.__play = async () => {
+    const t0 = performance.now();
+    for (const sc of SCENES) {
+      if (sc.kind === "title") await title(sc.hold);
+      else if (sc.kind === "close") await close(sc.hold);
+      else await pane(sc);
+    }
+    const secs = (performance.now() - t0) / 1000;
+    console.log("MORA_SECONDS " + secs.toFixed(1));
+    return secs;
+  };
+</script>
