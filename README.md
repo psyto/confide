@@ -99,6 +99,13 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 
 Details and the full mint readings: [docs/ONCHAIN.md](docs/ONCHAIN.md).
 
+**On devnet outliving the judging window:** the finding above is on mainnet and does not reset; the
+account, the program and the mirrored mint are on devnet and can. `./scripts/healthcheck.sh` checks
+every live claim, and [docs/DURABILITY.md](docs/DURABILITY.md) has the recovery steps and the
+recorded evidence. The collateral proofs are self-contained and would keep verifying after a reset
+wiped the account they are about — so the page compares the live ciphertext before treating a pass
+as meaningful, rather than showing a green that means nothing.
+
 ## Why this and not MEV protection
 
 Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. They protect the

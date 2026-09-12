@@ -113,7 +113,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 const MAINNET="https://solana-rpc.publicnode.com", DEVNET="https://api.devnet.solana.com";
 const T22="TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const WATCH=["NVDAx","TSLAx","SPYx","AAPLx"];
-let MINTS=[], PROOFS=null;
+let MINTS=[], PROOFS=null, BOUND=null; // BOUND: does the live account still match the proofs?
 
 const rpc=async(url,method,params)=>{
   const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
@@ -207,6 +207,7 @@ async function readConfide(){
     const info=await rpc(DEVNET,"getAccountInfo",[PROOFS.account,{encoding:"jsonParsed",commitment:"confirmed"}]);
     const i=info.value.data.parsed.info;
     const ct=(i.extensions||[]).find(e=>e.extension==="confidentialTransferAccount").state;
+    BOUND = (ct.availableBalance === PROOFS.available_balance);
     out.innerHTML='<div class="grid2">'
       +'<div><div class="lbl">What the chain shows anyone</div><div class="stat dimv">'
       +i.tokenAmount.uiAmountString+'</div><div class="note">the public balance</div></div>'
@@ -215,8 +216,17 @@ async function readConfide(){
       +'<div class="lbl" style="margin-top:22px">availableBalance, on chain</div>'
       +'<pre>'+ct.availableBalance+'</pre>'
       +'<div class="note"><a href="https://explorer.solana.com/address/'+PROOFS.account
-      +'?cluster=devnet" target="_blank">See the account on Solana Explorer →</a></div>';
-  }catch(e){ out.innerHTML='<div class="muted">'+e.message+'</div>'; }
+      +'?cluster=devnet" target="_blank">See the account on Solana Explorer →</a></div>'
+      +(BOUND?'':'<div class="note" style="color:var(--yel)">This account no longer matches the '
+        +'ciphertext the proofs below were generated over. Devnet was probably reset — see '
+        +'<a href="https://github.com/psyto/confide/blob/main/docs/DURABILITY.md">DURABILITY.md</a>.</div>');
+  }catch(e){
+    BOUND=false;
+    out.innerHTML='<div class="muted">'+e.message+'</div>'
+      +'<div class="note" style="color:var(--yel)">The devnet account could not be read. Devnet '
+      +'resets; the mainnet findings above are unaffected. Recovery steps and the recorded evidence '
+      +'are in <a href="https://github.com/psyto/confide/blob/main/docs/DURABILITY.md">DURABILITY.md</a>.</div>';
+  }
 }
 
 // 4 — the lender's check, verified by the chain in your browser
@@ -239,16 +249,27 @@ async function runProofs(){
     }catch(e){ d.innerHTML='<h2>'+name+'</h2><div class="muted">'+e.message+'</div>'; }
   }
   const s=document.createElement("div"); s.className="lede"; s.style.marginTop="18px";
-  s.innerHTML = ok===2
-    ? 'Solana just confirmed the account holds at least <b>100,000 units</b> — without being told what it holds.'
-    : 'Only '+ok+' of 2 were accepted.';
+  if(ok!==2){
+    s.innerHTML='Only '+ok+' of 2 were accepted.';
+  }else if(BOUND===false){
+    // These proofs are self-contained: the ZK program never reads the account, so they pass even
+    // after a reset wiped it. Saying "the account holds at least X" would be a hollow green.
+    s.style.color="var(--yel)";
+    s.innerHTML='Both proofs verify &mdash; but the account they were made about is no longer on '
+      +'devnet, so this says nothing about a live balance right now. The proofs are self-contained; '
+      +'the chain never reads the account to check them. That is exactly why this page compares the '
+      +'ciphertext first instead of trusting the green.';
+  }else{
+    s.innerHTML='Solana just confirmed the account holds at least <b>100,000 units</b> — without '
+      +'being told what it holds.';
+  }
   out.appendChild(s);
   b.disabled=false; b.textContent="Ask the chain again";
 }
 
 (async()=>{
   await loadMints();
-  checkSlots(); scanRecent(); readConfide();
+  checkSlots(); scanRecent(); await readConfide();
   el("go").onclick=()=>readHoldings(el("addr").value.trim());
   el("addr").addEventListener("keydown",e=>{if(e.key==="Enter")el("go").click()});
   el("proofBtn").onclick=runProofs;
