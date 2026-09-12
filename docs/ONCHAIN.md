@@ -179,10 +179,41 @@ needs space the account does not have — a `Reallocate` has to come first. And 
 with `OwnerMismatch` unless the signer is the mint's confidential-transfer authority, which is
 whatever keypair the CLI was configured with at creation time, not necessarily the one you think.
 
-**Still open:** the range proof is not yet over this ciphertext. Getting there means a
-`ciphertext_commitment_equality` proof bridging the account's ElGamal ciphertext to a Pedersen
-commitment whose opening we hold, and then the range proof over that commitment. Both primitives
-are proven in `aperture`'s spike; composing them is the remaining work.
+## 8. A proof about that account, checked by Solana
+
+An account's ElGamal ciphertext has no Pedersen opening we hold, so it cannot be range-proved
+directly. Two proofs do what one cannot:
+
+1. **ciphertext-commitment equality** — the account's ciphertext and a commitment `C` whose opening
+   we *do* hold encrypt the same value.
+2. **batched range u64** — `C − threshold·G` commits a non-negative value.
+
+A verifier recomputes `C − threshold·G` and checks the range proof is over it. Together they say
+*this account holds at least the threshold*; separately, neither is about anything.
+
+```
+$ ./scripts/prove-collateral.sh 6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V 100000
+
+  ciphertext-commitment equality — the commitment and the account hold the same value
+    err   : None
+    units : 6400
+    VerifyCiphertextCommitmentEquality
+    Program ZkE1Gama1Proof11111111111111111111111111111 success
+
+  batched range u64 — the surplus over the threshold is non-negative
+    err   : None
+    units : 111000
+    VerifyBatchedRangeProofU64
+    Program ZkE1Gama1Proof11111111111111111111111111111 success
+```
+
+Below the threshold it refuses rather than proving a false statement, and refuses without printing
+the balance — a tool that reveals your position in its error messages is a habit worth not forming.
+
+**What this is now.** A lender can be shown that the account securing a loan clears its requirement,
+on-chain, without the borrower publishing what the account holds. **What it is still not:** a lender
+cannot *seize* that collateral on default. That gap is the distance between this and lending, and it
+is not a small one.
 
 ## 8. What these facts say together
 

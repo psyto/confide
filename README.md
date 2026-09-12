@@ -76,7 +76,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 | **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
 | **Fill the auditor slot.** Same mint configuration as NVDAx, one field different — and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
 | **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
-| **Prove "at or above X" without revealing the position.** The counterparty learns one bit: not the value, not the composition, not any holding. | `./scripts/devnet-verify.sh` — accepted by Solana's live ZK ElGamal Proof Program |
+| **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
 | **Survive a stock split.** A number sealed in September is quoted in September's units; restatement is a deterministic function of public data, and says so when it cannot be computed. | `cargo test -p mora-equity` |
@@ -84,11 +84,11 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
 
 - **Borrowing against stock without publishing the collateral.** Jupiter Lend already takes SPYx,
-  QQQx, NVDAx as collateral — and today the position securing the loan is public. The "at or above
-  X" proof above is exactly the check a lender needs. What is missing is a lender to integrate with,
-  not a proof.
-- **Liquidation as a predicate.** *Is this account underwater* is a range claim, answerable without
-  the borrower publishing anything.
+  QQQx, NVDAx as collateral, and today the position securing the loan is public. The check a lender
+  needs is built and verifies on-chain (above). What is missing is **seizure**: a lender must be
+  able to take confidential collateral on default, and nothing here does that.
+- **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
+  moved, so it works today — but it is only useful alongside the seizure that does not.
 - **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
   we control — one `UpdateMint` instruction, done, readable on devnet. On `NVDAx` it is Backed's
   call, not ours.
@@ -190,11 +190,10 @@ Stated because a reader should find the limits here rather than discover them:
   those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
   no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
   `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
-- **The proof is not yet over the bound ciphertext.** The subject is now a real account — its own
-  ElGamal key, its own on-chain ciphertext, re-checked against the chain. But the range proof is
-  still generated over a ciphertext of our own. Closing that needs the account's ElGamal *secret*,
-  and `spl-token` derives it with a KDF this SDK version does not reproduce (eight derivation/seed
-  combinations tried, none matched the on-chain key). It means provisioning the account from our own
-  code instead of the CLI — the next correctness step, and a real one.
+- **Seizure.** A lender can now verify collateral without the borrower publishing it, and still has
+  no way to take that collateral on default. That is the gap between this and lending, and it is not
+  a small one.
+- **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's
+  configuration. Doing it on `NVDAx` itself is Backed's call — `autoApproveNewAccounts: false`.
 - **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
   deployment, and no claim to discharge any regulatory filing.

@@ -6,6 +6,10 @@ license = "Apache-2.0"
 description = "Provision Token-2022 confidential accounts whose ElGamal key we hold, and fill the auditor slot"
 
 [[bin]]
+name = "prove-collateral"
+path = "src/prove_collateral.rs"
+
+[[bin]]
 name = "read-balance"
 path = "src/read_balance.rs"
 
