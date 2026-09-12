@@ -76,7 +76,8 @@ tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the lag is **zer
 ./scripts/onchain-check.sh    # read the xStock mints yourself
 ./scripts/devnet-verify.sh    # hand Mora's proof to the live ZK ElGamal Proof Program
 ./scripts/committee.sh        # the release committee as five actual processes
-cargo test                    # 13 tests
+./scripts/refresh-actions.sh  # re-pull the xStocks corporate-action schedule
+cargo test                    # 19 tests
 ```
 
 Those three need no key and no account. One more does — `./scripts/anchor-receipt.sh` anchors a
@@ -96,7 +97,26 @@ The invariants are written as claims you can run, not prose:
 | **I4** | the auditor reads throughout; only *public* disclosure is delayed |
 | **I5** | opening is irreversible — revocation is not clawback |
 
-`mora-equity` holds the other half: a manager owes a 13F only above **$100M**, so *"is one owed?"*
+## The split problem
+
+A 13F reports holdings **as of the reporting date**. Mora seals at quarter end and opens 45 days
+later. If a split lands in between, the number that opens is quoted in units that no longer exist —
+the disclosure is correct and unreadable at the same time.
+
+This is not hypothetical. The live xStocks schedule read on 2026-09-12 has **eight unit-changing
+events** in the pipeline, including `PPLTx` 1→10 and a `HONx` 2→1 reverse sharing its date with a
+spin-off ([`fixtures/corporate-actions.json`](crates/mora-equity/fixtures/corporate-actions.json),
+refreshable with `scripts/refresh-actions.sh`).
+
+The fix is not to re-seal — the commitment must not move, that is the whole point. It is to restate
+at read time, and restatement is a **deterministic function of public data**: the holder gains
+nothing by staying quiet about a split, because anyone can recompute it and everyone gets the same
+answer. `mora-open` prints both numbers, and refuses rather than rounding when a ratio cannot be
+applied exactly.
+
+## And the other half of a 13F
+
+`mora-equity` holds it: a manager owes a 13F only above **$100M**, so *"is one owed?"*
 must be answerable before the position is. It is a predicate, it reveals no position, and
 `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` is the test that will say so if
 the premise above ever stops being true.

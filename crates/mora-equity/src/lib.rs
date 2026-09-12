@@ -11,6 +11,8 @@
 //!    it reveals no position, and its proof verifies against Solana's live ZK ElGamal Proof
 //!    Program.
 
+pub mod actions;
+
 use aperture_core::package::{Claim, ProofEnvelope, SubjectAccount};
 use aperture_core::token2022::issue_range_disclosure;
 use solana_zk_sdk::encryption::elgamal::ElGamalKeypair;
