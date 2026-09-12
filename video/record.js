@@ -62,7 +62,14 @@ const scenes = [
   { kind: "title", hold: 7 },
   {
     kind: "pane",
-    label: "Fund A accumulates NVDAx over one quarter. Same buys, two lanes.",
+    label: "Every tokenized stock on Solana. Read from mainnet, just now.",
+    body: mints,
+    emphasis: ["None"],
+    hold: 13,
+  },
+  {
+    kind: "pane",
+    label: "So the fund transacts in the clear instead. Same buys, two lanes.",
     body: slice(twoLane, /day\s+LANE A/, /The chain simply published it\./),
     hold: 15,
   },
@@ -88,14 +95,7 @@ const scenes = [
   },
   {
     kind: "pane",
-    label: "Why this is a Solana problem: every xStock has the feature on and no way to use it.",
-    body: mints,
-    emphasis: ["None"],
-    hold: 12,
-  },
-  {
-    kind: "pane",
-    label: "And the covenant the LP checked, verified by Solana's live ZK program.",
+    label: "And the one bit the counterparty checked, verified by Solana's live ZK program.",
     body: zk,
     emphasis: ["err   : None", "success"],
     hold: 11,

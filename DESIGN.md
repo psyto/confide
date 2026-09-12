@@ -6,28 +6,37 @@
 
 ## 1. The gap
 
-A fund's limited partners are owed a position report every quarter. That obligation is contractual,
-it is universal — it sits in essentially every LPA — and today an LP has no way to check it. The GP
-reports a quarter-end number weeks after the quarter ended, and nothing binds the GP to what it
-actually held on the date. The LP takes the number on trust, and the lag between the date and the
-report is exactly the window in which a number can be tidied.
+Every tokenized-equity mint on Solana has the `confidentialTransferMint` extension **enabled** and
+`auditorElgamalPubkey` **null** — `NVDAx`, `TSLAx`, `SPYx`, `AAPLx`, all of them, readable in one
+unauthenticated RPC call. The ZK ElGamal Proof Program was re-enabled at epoch 982 in June 2026, so
+the substrate works. Usage is close to zero.
 
-On-chain, the same fund has the opposite problem. Solana's tokenized equities now do ~$5.8B of spot
-DEX volume per quarter (Q2 2026), and a wallet accumulating NVDAx is readable by anyone, in real
-time, **while the position is still being built** — not after it is complete. Everyone sees the
-position except the party entitled to a report, who still only gets a number in an email.
+Shipped, configured, inert. Not because it is immature: because Token-2022 offers exactly one
+disclosure model, a single global auditor key that decrypts everything for everyone forever, and
+**no setting of that key is correct for a regulated equity issuer.** Fill it and every holder's
+position is permanently readable by one party. Leave it null and no holder can demonstrate anything
+to anyone — which means no holder who is ever asked to prove something can use the feature at all.
 
-So a fund on-chain today gets the worst of both: **continuous disclosure to the market, and
-unverifiable disclosure to its LPs.**
+That is why a fund holding NVDAx transacts in the clear. It is not choosing publicity; it is
+choosing the only option under which it can still answer a question.
 
-TradFi solved the first half by legislating a lag. A US manager with discretion over $100M+ of
-Section 13(f) securities files Form 13F **45 days after quarter end** — late enough that the
-position is built, early enough that the market learns it. That lag is the design this borrows;
-§3a says precisely what it does and does not apply to here.
+And the questions are real and constant. An LP is owed a position report every quarter — contractual,
+universal, in essentially every LPA — and today the LP has no way to check it: the GP reports a
+quarter-end number weeks later, with nothing binding it to the date. A lender takes stock as
+collateral and needs to know the collateral covers the loan. An auditor needs an exact figure. Each
+of those is a different recipient, a different granularity, and a different moment — and the one key
+on offer collapses them into "everyone, always" or "no one, ever".
 
-**Mora gives the position a lawful delay and a proof at the same time**: sealed on the reporting
-date, opened on the reporting deadline by a committee the holder does not control, provably
-unrevised in between.
+Meanwhile Solana's tokenized equities do ~$5.8B of spot DEX volume a quarter (Q2 2026), and a wallet
+accumulating NVDAx is readable by anyone in real time, **while the position is still being built**.
+So a fund on-chain today gets the worst of both: continuous disclosure to the market, and
+unverifiable disclosure to the parties actually entitled to it.
+
+**Mora is the layer that makes the empty slot usable** — disclosure scoped by recipient, by
+granularity, and by *schedule*. TradFi legislates the schedule half: a US manager with discretion
+over $100M+ of Section 13(f) securities files Form 13F **45 days after quarter end**, late enough
+that the position is built, early enough that the market learns it. That lag is the design this
+borrows; §3a says exactly what it does and does not apply to here.
 
 ## 2. Why the obvious answers do not close it
 

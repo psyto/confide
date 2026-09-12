@@ -1,11 +1,26 @@
 # Mora
 
-**A fund on-chain discloses continuously to the market and unverifiably to its LPs.**
-Everyone can watch a wallet accumulate NVDAx in real time; the party actually owed a quarterly
-report still gets a number in an email, weeks late, with nothing binding it to the date.
+**Every tokenized stock on Solana has confidential transfers switched on. Not one of them can be
+used.** Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
 
-Mora gives the position a lawful delay and a proof at the same time: sealed on the reporting date,
-opened on the deadline by a committee the holder does not control, provably unrevised in between.
+```
+SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey
+NVDAx   Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh   Token-2022   None
+TSLAx   XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB   Token-2022   None
+SPYx    XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W   Token-2022   None
+AAPLx   XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp   Token-2022   None
+```
+
+The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
+a single global auditor key that decrypts **everything, for everyone, forever** — and for a
+regulated equity issuer no setting of that key is correct. Fill it and every holder is permanently
+readable by one party. Leave it null and no holder can demonstrate anything to anyone. So it sits
+empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
+whole market instead.
+
+**Mora is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
+part nothing else has — **by schedule**. The auditor reads now. The counterparty learns one bit. The
+public reads at `T`, and the holder can move neither date.
 
 ```
 day      LANE A · a public wallet       LANE B · Mora
@@ -32,7 +47,7 @@ is the fund above its floor?  YES   floor $100M — and that is all this reveals
 agents 1, 2, 3 publish their shares  · the fund is not asked, and cannot object
 reconstructed  ✓   commitment matches slot 340112045  ✓
 
-LANE B is now public: 173 NVDAx, held by Fund A as of 30 Sep.
+LANE B is now public: 173,000 NVDAx, held by Fund A as of 30 Sep.
 ```
 
 And that predicate is not only checkable off-chain. The same proof bytes out of the same sealed
@@ -48,19 +63,36 @@ logs  :
     Program ZkE1Gama1Proof11111111111111111111111111111 success
 ```
 
-## The empty slot this is aimed at
+## What a usable auditor slot is worth
 
-Every tokenized-equity mint on mainnet — `NVDAx`, `TSLAx`, `SPYx`, `AAPLx` — is Token-2022 with
-`confidentialTransferMint` **enabled** and `auditorElgamalPubkey` **null**. Confidential transfers
-were re-enabled at epoch 982 (June 2026), so the substrate works. Usage is close to zero.
+Split by whether it runs, not by which repository it came from — a reader of this gets the whole
+stack, and the reuse declaration below is for eligibility, not for discounting what works.
 
-Shipped, configured, unused — because the only disclosure Token-2022 offers is a single global key
-that decrypts everything forever, and for a regulated equity issuer no setting of it is correct.
-Fill it and every holder is permanently readable by one party; leave it null and no holder can
-demonstrate anything to anyone.
+**Demonstrated here. Every line of this runs; the on-chain ones reach Solana.**
 
-Reproduce that reading yourself with [`scripts/onchain-check.sh`](scripts/onchain-check.sh) — no
-key, no account, no API token. Details in [docs/ONCHAIN.md](docs/ONCHAIN.md).
+| | |
+|---|---|
+| **Hold a position only chosen parties can read.** The auditor reads it throughout; the market never does. | `cargo test` — I4 |
+| **Prove "at or above X" without revealing the position.** The counterparty learns one bit: not the value, not the composition, not any holding. | `./scripts/devnet-verify.sh` — accepted by Solana's live ZK ElGamal Proof Program |
+| **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
+| **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
+| **Survive a stock split.** A number sealed in September is quoted in September's units; restatement is a deterministic function of public data, and says so when it cannot be computed. | `cargo test -p mora-equity` |
+
+**The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
+
+- **Borrowing against stock without publishing the collateral.** Jupiter Lend already takes SPYx,
+  QQQx, NVDAx as collateral — and today the position securing the loan is public. The "at or above
+  X" proof above is exactly the check a lender needs. What is missing is a lender to integrate with,
+  not a proof.
+- **Liquidation as a predicate.** *Is this account underwater* is a range claim, answerable without
+  the borrower publishing anything.
+- **An issuer filling the slot for real accounts.** `autoApproveNewAccounts: false` says Backed
+  gates who may hold a confidential balance. Gating something unusable only makes sense if you mean
+  to make it usable.
+- **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
+  product surface on top of it here.
+
+Details and the full mint readings: [docs/ONCHAIN.md](docs/ONCHAIN.md).
 
 ## Why this and not MEV protection
 
