@@ -36,7 +36,36 @@ feature gate re-enabling that program **activated at the start of epoch 982, ear
 Token-2022 was redeployed with the confidential instructions about two weeks later. It is enabled
 on mainnet and devnet today — and **usage is close to zero**.
 
-## 3. What these two facts say together
+## 3. Mora's own proof, accepted by the live program
+
+The 13F obligation has two halves. The position is disclosed at `T`; but *whether a filing is owed
+at all* — discretionary holdings at or above **$100M** — is a question that must be answerable
+**before** the position is disclosable. That half is a predicate, and it verifies on-chain.
+
+```
+$ ./scripts/devnet-verify.sh
+payer : FDQHfbqgSUk94XKFKWu6E8qidL7bwGEXDPzAoTVTXEDm  (a live devnet validator identity)
+err   : None
+units : 111000
+logs  :
+    Program ZkE1Gama1Proof11111111111111111111111111111 invoke [1]
+    VerifyBatchedRangeProofU64
+    Program ZkE1Gama1Proof11111111111111111111111111111 success
+```
+
+`err: None` with a `VerifyBatchedRangeProofU64 → success` log is the reactivated ZK ElGamal Proof
+Program accepting the proof. **Which proof matters**: these bytes are read back out of the
+`ProofEnvelope` inside the disclosure package that `mora-equity::filing_threshold_disclosure`
+produced — the same package the embargo seals. Not a lookalike generated for the occasion.
+
+No signature, no fee, no funded account: `simulateTransaction` with `sigVerify=false` and
+`replaceRecentBlockhash=true`. The fee payer only has to exist, so the script asks the cluster for
+a validator identity rather than hardcoding an address devnet will reset away.
+
+The regulator learns one bit — a filing is owed. It learns no position, no portfolio value, no
+composition.
+
+## 4. What these facts say together
 
 The issuer turned confidential transfers **on** for tokenized equities, gated new confidential
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot

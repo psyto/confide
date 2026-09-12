@@ -1,0 +1,21 @@
+[package]
+name = "mora-onchain"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Submit the sealed obligation's own proof to Solana's live ZK ElGamal Proof Program"
+
+[[bin]]
+name = "devnet-verify"
+path = "src/main.rs"
+
+[dependencies]
+mora-equity = { path = "../mora-equity" }
+solana-zk-sdk = "7"
+solana-zk-elgamal-proof-interface = "0.1.3"
+solana-transaction = { version = "3", features = ["bincode", "serde"] }
+solana-message = { version = "3", features = ["serde"] }
+solana-address = "2"
+bytemuck = "1"
+base64 = "0.22"
+bincode = "1"
