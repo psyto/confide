@@ -9,8 +9,8 @@
 //! receipt back off the chain to check the stored commitment against the sealed artifact.
 
 use base64::Engine;
-use mora_embargo::{seal, Obligation};
-use mora_equity::{Position, NVDAX};
+use confide_embargo::{seal, Obligation};
+use confide_equity::{Position, NVDAX};
 use solana_address::Address;
 use solana_hash::Hash;
 use solana_instruction::{AccountMeta, Instruction};
@@ -36,7 +36,7 @@ fn main() {
     let issuer = read_keypair(&keypair_path);
     let program = Address::from_str(RECEIPTS_PROGRAM).unwrap();
 
-    // The obligation Mora will open at T. Only its commitment goes on-chain.
+    // The obligation Confide will open at T. Only its commitment goes on-chain.
     let (obligation, open_at) = quarter_end_obligation();
     let commitment = obligation.commitment();
 
@@ -48,8 +48,8 @@ fn main() {
     // data = [disc][commitment:32][recipient:32][grant_id:32][expiry i64 LE]
     //
     // The registry stores that last field as `expiry` and never interprets it — it is
-    // content-blind. Mora puts `open_at` there: for an obligation the meaningful date is when it
-    // OPENS, not when it lapses. A registry built for Mora would name the field for what it is.
+    // content-blind. Confide puts `open_at` there: for an obligation the meaningful date is when it
+    // OPENS, not when it lapses. A registry built for Confide would name the field for what it is.
     let mut data = Vec::with_capacity(1 + 32 * 3 + 8);
     data.push(IX_RECORD);
     data.extend_from_slice(&commitment);
@@ -81,7 +81,7 @@ fn main() {
     );
 }
 
-/// The position of record at quarter end, sealed. Mirrors `mora-demo`.
+/// The position of record at quarter end, sealed. Mirrors `confide-demo`.
 fn quarter_end_obligation() -> (Obligation, i64) {
     const QUARTER_END: i64 = 1_790_726_400; // 2026-09-30 00:00 UTC
     const DUE: i64 = QUARTER_END + 45 * 86_400;

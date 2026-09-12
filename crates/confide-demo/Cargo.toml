@@ -1,17 +1,17 @@
 [package]
-name = "mora-demo"
+name = "confide-demo"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
-description = "The two-lane demo: the same stock position, built in public and built under Mora"
+description = "The two-lane demo: the same stock position, built in public and built under Confide"
 
 [[bin]]
 name = "two-lane"
 path = "src/main.rs"
 
 [dependencies]
-mora-embargo = { path = "../mora-embargo" }
-mora-equity = { path = "../mora-equity" }
+confide-embargo = { path = "../confide-embargo" }
+confide-equity = { path = "../confide-equity" }
 # Arm's-length versioned dependency, as aperture's own README prescribes.
 aperture-core = { git = "https://github.com/psyto/aperture", tag = "v0.5.1" }
 solana-zk-sdk = "7"

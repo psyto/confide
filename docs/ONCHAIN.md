@@ -36,7 +36,7 @@ feature gate re-enabling that program **activated at the start of epoch 982, ear
 Token-2022 was redeployed with the confidential instructions about two weeks later. It is enabled
 on mainnet and devnet today — and **usage is close to zero**.
 
-## 3. Mora's own proof, accepted by the live program
+## 3. Confide's own proof, accepted by the live program
 
 A quarterly reporting obligation has two halves. The position is disclosed at `T`; but the
 covenants around it — *"the fund is at or above X"* — must be answerable **before** the position
@@ -55,7 +55,7 @@ logs  :
 
 `err: None` with a `VerifyBatchedRangeProofU64 → success` log is the reactivated ZK ElGamal Proof
 Program accepting the proof. **Which proof matters**: these bytes are read back out of the
-`ProofEnvelope` inside the disclosure package that `mora-equity::nav_floor_disclosure`
+`ProofEnvelope` inside the disclosure package that `confide-equity::nav_floor_disclosure`
 produced — the same package the embargo seals. Not a lookalike generated for the occasion.
 
 No signature, no fee, no funded account: `simulateTransaction` with `sigVerify=false` and
@@ -91,7 +91,7 @@ $ ./scripts/anchor-receipt.sh
 was made, and the date it comes due. The chain learns that Fund A committed to something and when
 it opens. It does not learn what.
 
-One honest note on the layout: the registry's last field is named `expiry` and Mora writes
+One honest note on the layout: the registry's last field is named `expiry` and Confide writes
 `open_at` into it. The registry is content-blind and never interprets the value, so nothing is
 wrong on-chain — but a registry designed for obligations rather than grants would name that field
 for what it is.
@@ -230,6 +230,6 @@ regulated holder can use the feature at all.
 So the feature is shipped, configured, and unused. Not because it is immature; because the only
 disclosure it offers is all-or-nothing.
 
-**Mora is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
+**Confide is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
 part nothing else has — **by schedule**. The auditor reads now. The public reads at `T`. The holder
 cannot move either date.

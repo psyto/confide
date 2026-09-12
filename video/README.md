@@ -1,11 +1,11 @@
 # video
 
-`mora.mp4` — 97s, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
+`confide.mp4` — 97s, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets.
 
 ```bash
 npm install
-npm run record        # -> mora.mp4   (needs ffmpeg; FFMPEG_PATH overrides /opt/homebrew/bin/ffmpeg)
+npm run record        # -> confide.mp4   (needs ffmpeg; FFMPEG_PATH overrides /opt/homebrew/bin/ffmpeg)
 ```
 
 ## The terminal in it is not a transcription
@@ -14,7 +14,7 @@ Every pane is the stdout of a command run moments before the recording starts:
 
 | pane | command | reaches |
 |---|---|---|
-| the two lanes, the seal, the refusal, the opening | `cargo run -p mora-demo --bin two-lane` | local |
+| the two lanes, the seal, the refusal, the opening | `cargo run -p confide-demo --bin two-lane` | local |
 | every xStock mint and its empty auditor slot | `scripts/onchain-check.sh` | **mainnet** |
 | the covenant proof accepted by the ZK program | `scripts/devnet-verify.sh` | **devnet** |
 

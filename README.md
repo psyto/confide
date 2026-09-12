@@ -1,4 +1,4 @@
-# Mora
+# Confide
 
 **Every tokenized stock on Solana has confidential transfers switched on. Not one of them can be
 used.** Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
@@ -18,12 +18,12 @@ readable by one party. Leave it null and no holder can demonstrate anything to a
 empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
 whole market instead.
 
-**Mora is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
+**Confide is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
 part nothing else has — **by schedule**. The auditor reads now. The counterparty learns one bit. The
 public reads at `T`, and the holder can move neither date.
 
 ```
-day      LANE A · a public wallet       LANE B · Mora
+day      LANE A · a public wallet       LANE B · Confide
          what anyone can see            what anyone can see   the auditor
 ────────────────────────────────────────────────────────────────────────────
   3        42,000 NVDAx · +42,000        —                   42,000 NVDAx
@@ -79,7 +79,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
-| **Survive a stock split.** A number sealed in September is quoted in September's units; restatement is a deterministic function of public data, and says so when it cannot be computed. | `cargo test -p mora-equity` |
+| **Survive a stock split.** A number sealed in September is quoted in September's units; restatement is a deterministic function of public data, and says so when it cannot be computed. | `cargo test -p confide-equity` |
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
 
@@ -100,7 +100,7 @@ Details and the full mint readings: [docs/ONCHAIN.md](docs/ONCHAIN.md).
 ## Why this and not MEV protection
 
 Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. They protect the
-transaction **in flight**. Mora is about the **settled balance** — the permanent public record of
+transaction **in flight**. Confide is about the **settled balance** — the permanent public record of
 what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIGN.md).
 
 In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
@@ -112,7 +112,7 @@ lag is **zero**.
 13F obligation — they are issued by Backed Finance AG under Swiss law with their own Swiss ISIN
 (`NVDAx` = `CH1436219195`; NVDA itself = `US67066G1040`), and the SEC's joint statement of 28
 January 2026 separates issuer-sponsored tokenization conveying true ownership from third-party
-products conveying a custodial entitlement. The obligation Mora serves today is **contractual** —
+products conveying a custodial entitlement. The obligation Confide serves today is **contractual** —
 the quarterly report a GP owes its LPs. 13F is the design this borrows and the requirement that
 arrives when Nasdaq's filed tokenized-form rule settles. [DESIGN.md §3a](DESIGN.md) says all of
 this in full rather than leaving it implied.
@@ -122,7 +122,7 @@ this in full rather than leaving it implied.
 ```bash
 ./scripts/demo.sh             # everything: the two lanes, then the proof going to Solana
 ./scripts/onchain-check.sh    # read the xStock mints yourself
-./scripts/devnet-verify.sh    # hand Mora's proof to the live ZK ElGamal Proof Program
+./scripts/devnet-verify.sh    # hand Confide's proof to the live ZK ElGamal Proof Program
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/refresh-actions.sh  # re-pull the xStocks corporate-action schedule
 cargo test                    # 19 tests
@@ -135,7 +135,7 @@ and reads it back to check the stored bytes against the artifact. **147 bytes la
 and two dates.** It needs a devnet-funded keypair.
 
 The invariants are written as claims you can run, not prose:
-[`crates/mora-embargo/tests/invariants.rs`](crates/mora-embargo/tests/invariants.rs).
+[`crates/confide-embargo/tests/invariants.rs`](crates/confide-embargo/tests/invariants.rs).
 
 | | |
 |---|---|
@@ -147,25 +147,25 @@ The invariants are written as claims you can run, not prose:
 
 ## The split problem
 
-A quarterly report states holdings **as of the reporting date**. Mora seals at quarter end and opens 45 days
+A quarterly report states holdings **as of the reporting date**. Confide seals at quarter end and opens 45 days
 later. If a split lands in between, the number that opens is quoted in units that no longer exist —
 the disclosure is correct and unreadable at the same time.
 
 This is not hypothetical. The live xStocks schedule read on 2026-09-12 has **eight unit-changing
 events** in the pipeline, including `PPLTx` 1→10 and a `HONx` 2→1 reverse sharing its date with a
-spin-off ([`fixtures/corporate-actions.json`](crates/mora-equity/fixtures/corporate-actions.json),
+spin-off ([`fixtures/corporate-actions.json`](crates/confide-equity/fixtures/corporate-actions.json),
 refreshable with `scripts/refresh-actions.sh`).
 
 The fix is not to re-seal — the commitment must not move, that is the whole point. It is to restate
 at read time, and restatement is a **deterministic function of public data**: the holder gains
 nothing by staying quiet about a split, because anyone can recompute it and everyone gets the same
-answer. `mora-open` prints both numbers, and refuses rather than rounding when a ratio cannot be
+answer. `confide-open` prints both numbers, and refuses rather than rounding when a ratio cannot be
 applied exactly.
 
 ## And the other half of a quarterly report
 
 An LPA does not only ask *what do you hold*; it carries covenants of the form *"the fund is at or
-above X"*, which must be answerable before the position itself is disclosable. `mora-equity` proves
+above X"*, which must be answerable before the position itself is disclosable. `confide-equity` proves
 that as a predicate: the LP learns one bit and no position, and the proof goes to the live ZK
 program. `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` is the test that will
 say so if the premise above ever stops being true.
@@ -178,9 +178,9 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture`, pre-existing | Apache-2.0 | Token-2022 confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture`, pre-existing | Apache-2.0 | content-blind on-chain receipt, native Solana program |
-| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
+| **Confide** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
 
-The secret sharing is Mora's own — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency.
+The secret sharing is Confide's own — `crates/confide-embargo/src/shamir.rs`, GF(256), no dependency.
 
 ## What it does not do
 

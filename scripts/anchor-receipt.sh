@@ -24,7 +24,7 @@ echo "  program     $PROGRAM  (aperture-receipts on devnet)"
 # transaction and a PDA that belong to different obligations — and the read-back below would look
 # for a receipt that was never written.
 INFO=$(mktemp)
-TX=$(cargo run --quiet -p mora-onchain --bin anchor-receipt -- "$KP" "$BLOCKHASH" 2>"$INFO")
+TX=$(cargo run --quiet -p confide-onchain --bin anchor-receipt -- "$KP" "$BLOCKHASH" 2>"$INFO")
 cat "$INFO"
 PDA=$(awk '/receipt PDA/{print $3}' "$INFO")
 SEALED=$(awk '/commitment/{print $2}' "$INFO")

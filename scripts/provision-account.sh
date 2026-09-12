@@ -43,7 +43,7 @@ confirm() {
 }
 step() {
   local name="$1" tx sig
-  tx=$(cargo run --quiet -p mora-ct --bin provision -- "$name" "$KP" "$MINT" "$ACC" "$AMOUNT" "$(blockhash)" "$KEYS")
+  tx=$(cargo run --quiet -p confide-ct --bin provision -- "$name" "$KP" "$MINT" "$ACC" "$AMOUNT" "$(blockhash)" "$KEYS")
   sig=$(send "$tx"); confirm "$sig"
   printf '  %-10s %s\n' "$name" "$sig"
   # Each step reads the state the previous one wrote, and "confirmed" is not yet visible to every

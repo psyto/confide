@@ -1,12 +1,12 @@
-//! The two-lane demo: one quarter, one position, built in public and built under Mora.
+//! The two-lane demo: one quarter, one position, built in public and built under Confide.
 //!
-//! Run: `cargo run -p mora-demo --bin two-lane`
+//! Run: `cargo run -p confide-demo --bin two-lane`
 
 use aperture_core::package::{ChainAnchor, DisclosurePackage, SubstrateId};
 use aperture_core::token2022::{issue_exact_disclosure, Token2022Substrate};
 use aperture_core::verifier::verify_package;
-use mora_embargo::{open, seal, Obligation, OpenError, ReleaseShare, SealedDisclosure};
-use mora_equity::{nav_floor_disclosure, Position, DEFAULT_NAV_FLOOR_CENTS, NVDAX, SPYX, TSLAX};
+use confide_embargo::{open, seal, Obligation, OpenError, ReleaseShare, SealedDisclosure};
+use confide_equity::{nav_floor_disclosure, Position, DEFAULT_NAV_FLOOR_CENTS, NVDAX, SPYX, TSLAX};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 
 const DIM: &str = "\x1b[2m";
@@ -44,7 +44,7 @@ fn main() {
         "  {BOLD}Fund A accumulates NVDAx over Q3. Same buys, two lanes.{OFF}\n"
     );
     println!(
-        "  {DIM}day      LANE A · a public wallet       LANE B · Mora                      {OFF}"
+        "  {DIM}day      LANE A · a public wallet       LANE B · Confide                      {OFF}"
     );
     println!(
         "  {DIM}         what anyone can see            what anyone can see   the auditor {OFF}"
@@ -225,7 +225,7 @@ fn read(ob: &Obligation) -> u64 {
 }
 
 fn publish_all(
-    agents: &[mora_embargo::ReleaseAgent],
+    agents: &[confide_embargo::ReleaseAgent],
     sealed: &SealedDisclosure,
     now: i64,
 ) -> Vec<ReleaseShare> {
@@ -261,7 +261,7 @@ fn rule(title: &str) {
 
 fn banner() {
     println!();
-    println!("  {BOLD}MORA{OFF} {DIM}· lawful delay for tokenized equity positions{OFF}");
+    println!("  {BOLD}CONFIDE{OFF} {DIM}· lawful delay for tokenized equity positions{OFF}");
     println!(
         "  {DIM}A fund owes its LPs a quarterly position report. On-chain it owes the market a{OFF}"
     );

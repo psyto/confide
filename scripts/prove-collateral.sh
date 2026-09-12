@@ -28,7 +28,7 @@ BH=$(rpc '{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"comm
 
 # bash 3.2 on macOS has no mapfile.
 TMP=$(mktemp)
-cargo run --quiet -p mora-ct --bin prove-collateral -- "$KEYS" "$DEC" "$AVAIL" "$THRESHOLD" "$BH" "$PAYER" > "$TMP"
+cargo run --quiet -p confide-ct --bin prove-collateral -- "$KEYS" "$DEC" "$AVAIL" "$THRESHOLD" "$BH" "$PAYER" > "$TMP"
 TX_EQ=$(sed -n '1p' "$TMP"); TX_RANGE=$(sed -n '2p' "$TMP"); rm -f "$TMP"
 
 names=("ciphertext-commitment equality — the commitment and the account hold the same value" \

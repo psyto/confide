@@ -2,8 +2,8 @@
 
 use aperture_core::package::{ChainAnchor, DisclosurePackage, SubstrateId};
 use aperture_core::token2022::issue_exact_disclosure;
-use mora_embargo::Obligation;
-use mora_equity::{Position, NVDAX};
+use confide_embargo::Obligation;
+use confide_equity::{Position, NVDAX};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 
 pub const QUARTER_END: i64 = 1_790_726_400; // 2026-09-30 00:00 UTC

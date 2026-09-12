@@ -15,5 +15,5 @@ i = json.load(sys.stdin)['result']['value']['data']['parsed']['info']
 ct = next(e['state'] for e in i['extensions'] if e['extension'] == 'confidentialTransferAccount')
 print(ct['decryptableAvailableBalance'], ct['availableBalance'])
 ")
-cargo run --quiet -p mora-ct --bin read-balance -- "$KEYS" "$DEC" "$AVAIL"
+cargo run --quiet -p confide-ct --bin read-balance -- "$KEYS" "$DEC" "$AVAIL"
 echo "  explorer           https://explorer.solana.com/address/$ACC?cluster=devnet"

@@ -1,4 +1,4 @@
-// Records mora.mp4.
+// Records confide.mp4.
 //
 // The terminal in this video is not a transcription. Every pane is the stdout of a command run
 // moments before the recording starts, and if a command does not produce the line it is supposed
@@ -12,7 +12,7 @@ import { PuppeteerScreenRecorder } from "puppeteer-screen-recorder";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(dir, "..");
-const outFile = path.join(dir, "mora.mp4");
+const outFile = path.join(dir, "confide.mp4");
 
 function run(cmd, args, label) {
   process.stderr.write(`• ${label} …\n`);
@@ -35,7 +35,7 @@ function slice(text, from, to) {
 }
 
 // ── the real runs ────────────────────────────────────────────────────────────────────────────────
-const twoLane = run("cargo", ["run", "-q", "-p", "mora-demo", "--bin", "two-lane"], "two lanes");
+const twoLane = run("cargo", ["run", "-q", "-p", "confide-demo", "--bin", "two-lane"], "two lanes");
 const mints = run("bash", ["scripts/onchain-check.sh"], "reading the xStock mints on mainnet");
 const zk = run("bash", ["scripts/devnet-verify.sh"], "submitting the proof to devnet");
 
@@ -111,7 +111,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 page.on("console", (m) => {
-  if (m.text().startsWith("MORA_")) process.stderr.write(`• page: ${m.text()}\n`);
+  if (m.text().startsWith("CONFIDE_")) process.stderr.write(`• page: ${m.text()}\n`);
 });
 await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
 await page.evaluate((s) => window.__load(s), scenes);

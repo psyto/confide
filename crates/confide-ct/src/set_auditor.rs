@@ -5,7 +5,7 @@
 //!
 //! The point is not that setting a key is hard. It is that setting it is the *only* lever
 //! Token-2022 gives you, and it is all-or-nothing: whoever holds this key reads every holder's
-//! every transfer, forever. That is why the live mints leave it null. Mora exists so the key can
+//! every transfer, forever. That is why the live mints leave it null. Confide exists so the key can
 //! be held by something that discloses on terms instead of unconditionally.
 
 use base64::Engine;

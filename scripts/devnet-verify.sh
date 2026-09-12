@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Hand Mora's own NAV-floor proof to the live ZK ElGamal Proof Program on Solana devnet.
+# Hand Confide's own NAV-floor proof to the live ZK ElGamal Proof Program on Solana devnet.
 #
 # No signature, no fee, no funded account: simulateTransaction with sigVerify=false and
 # replaceRecentBlockhash=true. The fee payer only has to EXIST, because the simulator loads it.
@@ -21,7 +21,7 @@ if [ -z "$PAYER" ]; then
   echo "payer : $PAYER  (a live devnet validator identity — pays nothing, signs nothing)"
 fi
 
-TX=$(cargo run --quiet -p mora-onchain --bin devnet-verify -- "$PAYER")
+TX=$(cargo run --quiet -p confide-onchain --bin devnet-verify -- "$PAYER")
 curl -s -X POST "$RPC" -H 'Content-Type: application/json' \
   -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"simulateTransaction\",\"params\":[\"$TX\",{\"sigVerify\":false,\"replaceRecentBlockhash\":true,\"encoding\":\"base64\"}]}" \
 | python3 -c "

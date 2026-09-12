@@ -1,6 +1,6 @@
-# Mora — lawful delay for tokenized equity positions
+# Confide — lawful delay for tokenized equity positions
 
-*mora* (Latin): delay. In law, the period during which performance is not yet due.
+*confide* (Latin): delay. In law, the period during which performance is not yet due.
 
 ---
 
@@ -32,7 +32,7 @@ accumulating NVDAx is readable by anyone in real time, **while the position is s
 So a fund on-chain today gets the worst of both: continuous disclosure to the market, and
 unverifiable disclosure to the parties actually entitled to it.
 
-**Mora is the layer that makes the empty slot usable** — disclosure scoped by recipient, by
+**Confide is the layer that makes the empty slot usable** — disclosure scoped by recipient, by
 granularity, and by *schedule*. TradFi legislates the schedule half: a US manager with discretion
 over $100M+ of Section 13(f) securities files Form 13F **45 days after quarter end**, late enough
 that the position is built, early enough that the market learns it. That lag is the design this
@@ -71,7 +71,7 @@ whether ownership is recorded on-chain or off, and **issuer-sponsored tokenizati
 equity ownership is a different thing from third-party products conveying synthetic exposure or a
 custodial entitlement.** xStocks are the second kind.
 
-So the obligation Mora serves **today is contractual, not regulatory**: the quarterly position
+So the obligation Confide serves **today is contractual, not regulatory**: the quarterly position
 report a GP owes its LPs. The mechanism does not change by a line — an obligation is an obligation —
 but the party on the other end is an LP, not the SEC, and this document does not pretend otherwise.
 
@@ -79,7 +79,7 @@ but the party on the other end is an LP, not the SEC, and this document does not
 SEC to trade securities in tokenized form on the exchange, with the same rights, the same order
 books and DTC clearing. Tokens under that model *are* the security. On the day that settles, the
 45-day lag becomes a legal requirement for on-chain positions — and there is no mechanism on a
-public chain that satisfies it. That is the case Mora is built for. The LP case is the one that
+public chain that satisfies it. That is the case Confide is built for. The LP case is the one that
 exists now.
 
 ## 3. What a disclosure obligation actually requires
@@ -94,7 +94,7 @@ properties, and the middle one is the hard one:
 - **I3 — bound to the position of record.** The commitment is anchored at quarter end, so the 45
   days before anyone can read it are 45 days in which the fund cannot revise what it held. Today a
   quarterly report — to an LP, or on a 13F — is prepared weeks after the fact with nothing binding
-  the manager to the position as of the reporting date; Mora anchors it on the date itself.
+  the manager to the position as of the reporting date; Confide anchors it on the date itself.
 
 Two further properties are inherited rather than invented:
 
@@ -124,7 +124,7 @@ Everything happens at **accumulation time**. Nothing is required of the holder a
   └ nothing leaks while the            └ threshold-split the
     position is being built               seal key across N         6. anyone reconstructs,
                                           agents, k-of-n               checks it against the
-  1. the auditor reads it all          └ mora-embargo::shamir          commitment anchored
+  1. the auditor reads it all          └ confide-embargo::shamir          commitment anchored
      along ─────────────────────────►                                   at t0
                                        3. anchor the content-        └ I3: no revision was
                                           blind commitment + T         possible in between
@@ -152,11 +152,11 @@ said here, explicitly.
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture` — pre-existing, 20 tests green | Apache-2.0 | confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture` — pre-existing | Apache-2.0 | content-blind on-chain receipt (native Solana program) |
-| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
+| **Confide** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
 
-Mora is the part that did not exist: a **self-opening embargo** that the holder can neither
+Confide is the part that did not exist: a **self-opening embargo** that the holder can neither
 accelerate nor prevent, bound to a position commitment, over tokenized equities. The k-of-n sharing
-under it is Mora's own too — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency. An earlier
+under it is Confide's own too — `crates/confide-embargo/src/shamir.rs`, GF(256), no dependency. An earlier
 project of mine does threshold encryption for DEX order flow; none of its code is here, and it is
 listed nowhere above because listing it would overstate the reuse.
 
@@ -167,7 +167,7 @@ Two lanes, one accumulation of NVDAx, side by side.
 **Lane A — today.** A public wallet buys. A *watcher* pane, given nothing but the public chain,
 prints the position as it grows: `42 NVDAx … 96 … 173 …`, live, mid-accumulation.
 
-**Lane B — Mora.** Same buys, confidential. The watcher pane prints nothing. An *auditor* pane,
+**Lane B — Confide.** Same buys, confidential. The watcher pane prints nothing. An *auditor* pane,
 holding the auditor key, prints the full position the entire time. The clock advances to T. k of N
 shares are released. The watcher pane now prints the position — and verifies it against the
 commitment anchored at t0.
@@ -175,22 +175,22 @@ commitment anchored at t0.
 The line on screen at the end:
 
 > Public lane: readable 43 days early, by anyone.
-> Mora lane: readable exactly on schedule — and provably the position that was actually held.
+> Confide lane: readable exactly on schedule — and provably the position that was actually held.
 
 ## 7. What ships
 
 Minimum that makes §6 true and §3 testable. In order:
 
-1. ~~`mora-embargo`~~ — done. Threshold-seal, anchor, open from k shares, verify against the
+1. ~~`confide-embargo`~~ — done. Threshold-seal, anchor, open from k shares, verify against the
    commitment. I1–I5 are executable claims in `tests/invariants.rs`.
-2. ~~`mora-equity`~~ — done. The xStocks as mainnet configures them, the corporate-action
+2. ~~`confide-equity`~~ — done. The xStocks as mainnet configures them, the corporate-action
    restatement, and the NAV-floor predicate whose proof the live ZK ElGamal Proof Program accepts
-   (`mora-onchain`).
+   (`confide-onchain`).
 3. ~~On-chain anchoring~~ — done. `aperture-receipts` on devnet at
    `6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv`; 147 bytes per obligation.
 4. ~~The committee as real processes~~ — done. `scripts/committee.sh`. A committee inside one
    process is not a committee.
-5. `mora-demo` — the two-lane runner. Done, but still simulates the accumulation rather than
+5. `confide-demo` — the two-lane runner. Done, but still simulates the accumulation rather than
    holding a confidential balance on a mirrored mint.
 6. **Video.**
 

@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8" />
-<title>Mora</title>
+<title>Confide</title>
 <style>
   :root {
     --bg: #0a0c10; --fg: #ccd3de; --dim: #5b6675; --bold: #f2f5f9;
@@ -88,7 +88,7 @@
 
   async function title(hold) {
     const el = card(`
-      <h1>MORA</h1>
+      <h1>CONFIDE</h1>
       <div class="sub">lawful delay for tokenized equity positions</div>
       <p>Every tokenized stock on Solana has confidential transfers</p>
       <p><span class="accent">switched on</span>. Not one of them <span class="accent">can be used</span>.</p>
@@ -100,10 +100,10 @@
 
   async function close(hold) {
     const el = card(`
-      <p>Mora fills the slot the issuers left empty.</p>
+      <p>Confide fills the slot the issuers left empty.</p>
       <p>Scoped by recipient. Scoped by granularity.</p>
       <p>And — the part nothing else has — <span class="accent">scoped by schedule</span>.</p>
-      <div class="sub" style="margin:34px 0 0">github.com/psyto/mora &nbsp;·&nbsp; Apache-2.0</div>
+      <div class="sub" style="margin:34px 0 0">github.com/psyto/confide &nbsp;·&nbsp; Apache-2.0</div>
     `);
     await sleep(60); el.classList.add("on");
     await sleep(hold * 1000);
@@ -127,7 +127,7 @@
       // the block would run back up through its own label. Give the wrapper the height it draws.
       fit.style.height = `${(box.height * k).toFixed(0)}px`;
     }
-    console.log(`MORA_FIT ${box.width.toFixed(0)}x${box.height.toFixed(0)} -> ${k.toFixed(2)}`);
+    console.log(`CONFIDE_FIT ${box.width.toFixed(0)}x${box.height.toFixed(0)} -> ${k.toFixed(2)}`);
     const label = stage.querySelector(".label");
     const els = [...stage.querySelectorAll(".ln")];
     await sleep(60);
@@ -151,7 +151,7 @@
       else await pane(sc);
     }
     const secs = (performance.now() - t0) / 1000;
-    console.log("MORA_SECONDS " + secs.toFixed(1));
+    console.log("CONFIDE_SECONDS " + secs.toFixed(1));
     return secs;
   };
 </script>

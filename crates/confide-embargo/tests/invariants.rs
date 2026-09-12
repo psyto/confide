@@ -1,4 +1,4 @@
-//! The three claims Mora makes, written so they can be run rather than believed.
+//! The three claims Confide makes, written so they can be run rather than believed.
 //!
 //! A fund accumulates NVDAx. The obligation is: *this position becomes public at T, and until
 //! then only the auditor sees it.* Each test below is one sentence from DESIGN.md §3, executable.
@@ -7,7 +7,7 @@ use aperture_core::package::{ChainAnchor, DisclosurePackage, SubstrateId};
 use aperture_core::policy::{AuthzDecision, Granularity, Grant, Recipient, Trigger, Validity};
 use aperture_core::token2022::{issue_exact_disclosure, Token2022Substrate};
 use aperture_core::verifier::verify_package;
-use mora_embargo::{open, seal, Obligation, OpenError, ReleaseTrustModel};
+use confide_embargo::{open, seal, Obligation, OpenError, ReleaseTrustModel};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 use std::collections::HashSet;
 
@@ -134,7 +134,7 @@ fn i3_a_position_swapped_in_after_the_fact_is_caught() {
     let (sealed_lie, lie_agents) = seal(&flattering, T, T0_SLOT, 3, 5);
 
     // Keep the anchored commitment; swap in the other package's sealed bytes.
-    let spliced = mora_embargo::SealedDisclosure {
+    let spliced = confide_embargo::SealedDisclosure {
         commitment: sealed_truth.commitment,
         ciphertext: sealed_lie.ciphertext,
         nonce: sealed_lie.nonce,

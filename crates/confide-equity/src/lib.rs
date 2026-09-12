@@ -130,7 +130,7 @@ pub struct ThresholdAttestation {
 ///
 /// The LP learns whether the covenant holds. It does not learn the portfolio's value, its
 /// composition, or any position. The proof this returns is a real `BatchedRangeProofU64Data`;
-/// `mora-onchain` submits these same bytes to Solana's live ZK ElGamal Proof Program, so the
+/// `confide-onchain` submits these same bytes to Solana's live ZK ElGamal Proof Program, so the
 /// predicate is not merely checkable off-chain.
 ///
 /// Returns `None` when the portfolio is below the floor — there is nothing to prove, and

@@ -1,6 +1,6 @@
 //! Corporate actions — why a sealed position can be correct and unreadable at the same time.
 //!
-//! A quarterly report states holdings **as of the reporting date**. Mora seals at quarter end and
+//! A quarterly report states holdings **as of the reporting date**. Confide seals at quarter end and
 //! opens 45 days later. If a split lands in between, the number that opens is stated in units that no longer
 //! exist, and a reader at `T` cannot tell whether "173,000" means today's units or September's.
 //!

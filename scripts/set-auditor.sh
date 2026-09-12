@@ -15,7 +15,7 @@ BH=$(curl -s "$RPC" -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"commitment":"finalized"}]}' \
   | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value']['blockhash'])")
 
-TX=$(cargo run --quiet -p mora-ct --bin set-auditor -- "$KP" "$MINT" "$BH" "$OUT")
+TX=$(cargo run --quiet -p confide-ct --bin set-auditor -- "$KP" "$MINT" "$BH" "$OUT")
 SIG=$(curl -s "$RPC" -H 'Content-Type: application/json' \
   -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sendTransaction\",\"params\":[\"$TX\",{\"encoding\":\"base64\"}]}" \
 | python3 -c "

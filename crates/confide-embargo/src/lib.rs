@@ -1,4 +1,4 @@
-//! # Mora — a self-opening embargo
+//! # Confide — a self-opening embargo
 //!
 //! A disclosure obligation is not a grant. `aperture::policy::Grant` is *permissive*: a standing
 //! authorization for the holder to produce future disclosures, expiring at `not_after` — a window
@@ -49,7 +49,7 @@ pub type UnixTime = i64;
 /// - **Only I3 is unconditional.** It is a hash comparison and depends on no one's behaviour.
 ///
 /// Choosing `k` therefore trades the two risks against each other and cannot minimise both:
-/// `k = 3, n = 5` tolerates 2 early colluders and 2 withholders. Mora ships `ThresholdCommittee`
+/// `k = 3, n = 5` tolerates 2 early colluders and 2 withholders. Confide ships `ThresholdCommittee`
 /// and says so on the artifact, because an embargo whose assumption is unstated is
 /// indistinguishable from one that has none.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -100,7 +100,7 @@ pub struct ReleaseShare {
 ///
 /// `aperture`'s Exact claim *binds* a value with a ciphertext-ciphertext equality proof but does
 /// not transport it — its own doc says the verifier "decrypts the returned value out-of-band".
-/// Mora's seal **is** that out-of-band channel. Sealing the package alone would open at `T` into a
+/// Confide's seal **is** that out-of-band channel. Sealing the package alone would open at `T` into a
 /// position that verifies and cannot be read, which is not a disclosure.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Obligation {
@@ -125,7 +125,7 @@ impl Obligation {
 /// unlocking flatters its holder or ruins them. Its only decision is *when*.
 ///
 /// Serializable because a committee whose members all live in one process is not a committee.
-/// `mora-committee` writes one of these per agent and runs each as its own process, so the refusal
+/// `confide-committee` writes one of these per agent and runs each as its own process, so the refusal
 /// in [`ReleaseAgent::publish`] is a separate party's refusal rather than a branch in the holder's
 /// own program.
 #[derive(Clone, Debug, Serialize, Deserialize)]

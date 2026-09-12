@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Re-pull the xStocks corporate-action schedule into the fixture mora-equity compiles in.
+# Re-pull the xStocks corporate-action schedule into the fixture confide-equity compiles in.
 #
 # Everything except cash dividends is kept. Cash dividends do not touch units; every other action
-# type can change what a holder holds, and an action this does not carry is one mora-equity cannot
+# type can change what a holder holds, and an action this does not carry is one confide-equity cannot
 # even report as unresolved. No auth, no key.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 API="https://api.xstocks.fi/api/v2/public/corporate-actions/upcoming"
-OUT=crates/mora-equity/fixtures/corporate-actions.json
+OUT=crates/confide-equity/fixtures/corporate-actions.json
 
 tmp=$(mktemp)
 for pg in 1 2 3 4 5 6; do
@@ -47,4 +47,4 @@ for r in rows:
 PY
 rm -f "$tmp"
 echo
-echo "the fixture is compiled in, so rebuild to pick it up:  cargo test -p mora-equity"
+echo "the fixture is compiled in, so rebuild to pick it up:  cargo test -p confide-equity"

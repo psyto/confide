@@ -1,10 +1,10 @@
-//! `mora-open <sealed.json> <share.published>...` — anyone, at T.
+//! `confide-open <sealed.json> <share.published>...` — anyone, at T.
 //!
 //! Not the holder, not an agent: whoever picks up the published shares. Takes no clock and no
 //! identity. If enough shares are out, the position is public.
 
-use mora_embargo::{open, ReleaseShare, SealedDisclosure};
-use mora_equity::actions::{restate, scheduled};
+use confide_embargo::{open, ReleaseShare, SealedDisclosure};
+use confide_equity::actions::{restate, scheduled};
 use std::fs;
 
 const DIM: &str = "\x1b[2m";
@@ -13,7 +13,7 @@ const OFF: &str = "\x1b[0m";
 
 fn main() {
     let mut a = std::env::args().skip(1);
-    let sealed_file = a.next().expect("usage: mora-open <sealed.json> <share.published>...");
+    let sealed_file = a.next().expect("usage: confide-open <sealed.json> <share.published>...");
     let sealed: SealedDisclosure = serde_json::from_slice(&fs::read(&sealed_file).unwrap()).unwrap();
 
     let shares: Vec<ReleaseShare> = a
@@ -24,12 +24,12 @@ fn main() {
     match open(&sealed, &shares) {
         Ok(ob) => {
             println!("  commitment  matches the anchor at slot {}", sealed.anchored_slot);
-            let units = mora_committee::read_position(&ob);
+            let units = confide_committee::read_position(&ob);
             let as_of = ob.package.issued_at;
             println!(
                 "\n  {} held {} NVDAx as of the reporting date.",
                 ob.package.issuer,
-                mora_committee::commas(units)
+                confide_committee::commas(units)
             );
 
             // A number sealed in September is quoted in September's units. If a split landed in
@@ -55,7 +55,7 @@ fn main() {
                     if r.fully_resolved() {
                         println!(
                             "  = {} NVDAx today. The sealed number did not move; the units it is quoted in did.\n",
-                            mora_committee::commas(r.current_units)
+                            confide_committee::commas(r.current_units)
                         );
                     } else {
                         // Saying nothing here would let a reader treat the number as current.

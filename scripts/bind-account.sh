@@ -27,7 +27,7 @@ if [ "$ELGAMAL" = "MISSING" ] || [ "$ELGAMAL" = "NOCONF" ]; then
 fi
 
 echo "  read from devnet, just now:"
-cargo run --quiet -p mora-onchain --bin bind-account -- "$ACC" "$ELGAMAL" "$BALANCE" "$AMOUNT"
+cargo run --quiet -p confide-onchain --bin bind-account -- "$ACC" "$ELGAMAL" "$BALANCE" "$AMOUNT"
 
 echo "  explorer           https://explorer.solana.com/address/$ACC?cluster=devnet"
 echo

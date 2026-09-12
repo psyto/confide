@@ -1,5 +1,5 @@
 [package]
-name = "mora-equity"
+name = "confide-equity"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
@@ -7,7 +7,7 @@ description = "The equity layer: xStock positions, and the 13F filing threshold 
 
 [dependencies]
 aperture-core = { git = "https://github.com/psyto/aperture", tag = "v0.5.1" }
-mora-embargo = { path = "../mora-embargo" }
+confide-embargo = { path = "../confide-embargo" }
 solana-zk-sdk = "7"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
