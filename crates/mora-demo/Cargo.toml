@@ -11,6 +11,7 @@ path = "src/main.rs"
 
 [dependencies]
 mora-embargo = { path = "../mora-embargo" }
+mora-equity = { path = "../mora-equity" }
 # Arm's-length versioned dependency, as aperture's own README prescribes.
 aperture-core = { git = "https://github.com/psyto/aperture", tag = "v0.5.1" }
 solana-zk-sdk = "7"

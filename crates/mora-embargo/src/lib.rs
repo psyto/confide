@@ -119,7 +119,15 @@ pub struct Embargoed {
 
 impl std::fmt::Display for Embargoed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "embargoed for another {}s (opens at {})", self.opens_at - self.now, self.opens_at)
+        let left = self.opens_at - self.now;
+        let (d, h, m) = (left / 86_400, (left % 86_400) / 3_600, (left % 3_600) / 60);
+        if d > 0 {
+            write!(f, "embargoed — {d}d {h}h still to run")
+        } else if h > 0 {
+            write!(f, "embargoed — {h}h {m}m still to run")
+        } else {
+            write!(f, "embargoed — {m}m still to run")
+        }
     }
 }
 

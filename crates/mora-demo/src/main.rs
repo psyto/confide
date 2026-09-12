@@ -6,6 +6,7 @@ use aperture_core::package::{ChainAnchor, DisclosurePackage, SubstrateId};
 use aperture_core::token2022::{issue_exact_disclosure, Token2022Substrate};
 use aperture_core::verifier::verify_package;
 use mora_embargo::{open, seal, Obligation, OpenError, ReleaseShare, SealedDisclosure};
+use mora_equity::{filing_threshold_disclosure, Position, FILING_THRESHOLD_CENTS, NVDAX, SPYX, TSLAX};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 
 const DIM: &str = "\x1b[2m";
@@ -21,8 +22,17 @@ const QUARTER_END: i64 = 1_790_812_800; // t0 — 30 Sep, the position of record
 const DUE: i64 = QUARTER_END + 45 * DAY; // T — 45 days later, the 13F deadline
 const ANCHOR_SLOT: u64 = 340_112_045;
 
-/// (day of quarter, shares bought)
-const BUYS: [(u32, u64); 7] = [(3, 42), (11, 54), (19, 31), (27, 18), (34, 12), (41, 9), (58, 7)];
+/// (day of quarter, shares bought). A manager who owes a 13F holds $100M+, so these are the
+/// sizes that make the obligation real — and the sizes that make the leak in Lane A expensive.
+const BUYS: [(u32, u64); 7] = [
+    (3, 42_000),
+    (11, 54_000),
+    (19, 31_000),
+    (27, 18_000),
+    (34, 12_000),
+    (41, 9_000),
+    (58, 7_000),
+];
 
 fn main() {
     banner();
@@ -44,10 +54,11 @@ fn main() {
     let mut position = 0u64;
     for (day, qty) in BUYS {
         position += qty;
+        let (held, bought) = (commas(position), commas(qty));
         println!(
-            "  {DIM}{day:>3}{OFF}      {RED}{position:>4} NVDAx{OFF} {DIM}·{OFF} {RED}+{qty}{OFF}\
-             {pad}{DIM}—{OFF}                     {GRN}{position:>4} NVDAx{OFF}",
-            pad = " ".repeat(19 - format!("+{qty}").len()),
+            "  {DIM}{day:>3}{OFF}      {RED}{held:>9} NVDAx{OFF} {DIM}·{OFF} {RED}+{bought}{OFF}\
+             {pad}{DIM}—{OFF}                {GRN}{held:>9} NVDAx{OFF}",
+            pad = " ".repeat(14usize.saturating_sub(bought.len() + 1)),
         );
     }
     println!(
@@ -82,9 +93,36 @@ fn main() {
         report.notes.iter().find(|n| n.starts_with("trust_model")).cloned().unwrap_or_default()
     );
     println!(
-        "  auditor reads the position    {GRN}{} NVDAx{OFF}   {DIM}44 days before the public can{OFF}\n",
-        read(&to_auditor)
+        "  auditor reads the position    {GRN}{} NVDAx{OFF}   {DIM}44 days before the public can{OFF}",
+        commas(read(&to_auditor))
     );
+
+    // The other half of a 13F: is one owed at all? A predicate, answerable before the position is.
+    let portfolio = vec![
+        Position::from_shares(NVDAX, position, 18_450), // $184.50
+        Position::from_shares(TSLAX, 90_000, 42_100),   // $421.00
+        Position::from_shares(SPYX, 55_000, 66_800),    // $668.00
+    ];
+    let portfolio_musd = portfolio.iter().map(Position::value_cents).sum::<u64>() / 100_000_000;
+    let owed = filing_threshold_disclosure(&fund, &portfolio, FILING_THRESHOLD_CENTS);
+    println!(
+        "  does Fund A owe a 13F?        {}   {DIM}threshold ${}M — and that is all this reveals{OFF}",
+        if owed.is_some() { format!("{GRN}YES{OFF}") } else { format!("{YEL}NO{OFF}") },
+        FILING_THRESHOLD_CENTS / 100_000_000
+    );
+    println!(
+        "  {DIM}(the portfolio is ${portfolio_musd}M across NVDAx/TSLAx/SPYx — the regulator is not told that){OFF}"
+    );
+    if let Some(att) = &owed {
+        println!(
+            "  {DIM}the predicate's proof is {} bytes of BatchedRangeProofU64, and the live{OFF}",
+            att.proof.bytes.len()
+        );
+        println!(
+            "  {DIM}ZK ElGamal Proof Program accepts it on devnet:{OFF} {CYN}./scripts/devnet-verify.sh{OFF}"
+        );
+    }
+    println!();
 
     // ── The fund tries to revise. ──────────────────────────────────────────────────────────────
     rule("2 Nov · the fund has second thoughts");
@@ -132,7 +170,7 @@ fn main() {
     );
     println!(
         "\n  {BOLD}LANE B is now public: {GRN}{} NVDAx{OFF}{BOLD}, held by {} as of 30 Sep.{OFF}\n",
-        read(&opened),
+        commas(read(&opened)),
         opened.package.issuer
     );
 
@@ -191,6 +229,19 @@ fn publish_all(
     now: i64,
 ) -> Vec<ReleaseShare> {
     agents.iter().filter_map(|a| a.publish(sealed, now).ok()).collect()
+}
+
+/// 173000 -> "173,000". Position sizes are the point; they should be readable at a glance.
+fn commas(n: u64) -> String {
+    let s = n.to_string();
+    let mut out = String::new();
+    for (i, c) in s.chars().enumerate() {
+        if i > 0 && (s.len() - i) % 3 == 0 {
+            out.push(',');
+        }
+        out.push(c);
+    }
+    out
 }
 
 fn hex12(b: &[u8; 32]) -> String {
