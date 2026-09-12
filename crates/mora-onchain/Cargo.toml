@@ -13,6 +13,10 @@ path = "src/main.rs"
 name = "anchor-receipt"
 path = "src/anchor.rs"
 
+[[bin]]
+name = "bind-account"
+path = "src/bind.rs"
+
 [dependencies]
 mora-equity = { path = "../mora-equity" }
 solana-zk-sdk = "7"

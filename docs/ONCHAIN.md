@@ -99,7 +99,40 @@ for what it is.
 Requires a devnet-funded keypair (`~/.config/solana/id.json` by default); the other two scripts
 need nothing at all.
 
-## 5. What these facts say together
+## 5. A position that is held, on-chain, and invisible
+
+The mints above cannot be used for this — `autoApproveNewAccounts: false` means Backed decides who
+may open a confidential account on NVDAx, and it has not decided in our favour. So this repo
+provisioned a Token-2022 mint on devnet with the same extension and ran the real flow through
+`spl-token`: `create-token --enable-confidential-transfers`, `configure-confidential-transfer-account`,
+`mint`, `deposit-confidential-tokens`, `apply-pending-balance`.
+
+The result is an account anyone can read:
+
+```
+account            A1AMyEf1FQYmvdEWSejtHHU6ZKuBh74MRM9LzGfMGWT6
+mint               4MfE9MTHMHVFFosc6y1XXoQ8iBiAW5jmFtgspMd5W5UG
+public balance     0                    <- the chain says the wallet holds nothing
+elgamal pubkey     32 bytes             <- the account's own key
+available balance  64 bytes ciphertext  <- 173,000 units, and nobody can read it
+```
+
+`spl-token balance` returns `0`. The holder has 173,000. Both are true, and both are public.
+**Lane B in the demo is this account, not a simulation.**
+
+`./scripts/bind-account.sh` builds a disclosure subject out of those real fields and then re-reads
+the account to confirm the binding still matches. Before this, `SubjectAccount` carried an address
+string nobody checked and an **empty** ElGamal pubkey — `aperture`'s skeleton — so nothing tied a
+sealed position to a wallet a counterparty could go and look at.
+
+**What is still open, precisely.** The range proof is generated over a ciphertext of our own, not
+over the account's `availableBalance`. Closing that needs the account's ElGamal *secret*, and
+`spl-token` derives it with a KDF this SDK version does not reproduce — eight combinations of
+derivation and seed were tried against the on-chain pubkey and none matched. The binding is real and
+checkable; the proof is not yet over the bound ciphertext. That is the next correctness step, and it
+means provisioning the account from our own code rather than from the CLI.
+
+## 6. What these facts say together
 
 The issuer turned confidential transfers **on** for tokenized equities, gated new confidential
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot

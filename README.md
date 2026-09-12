@@ -72,7 +72,9 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 
 | | |
 |---|---|
-| **Hold a position only chosen parties can read.** The auditor reads it throughout; the market never does. | `cargo test` — I4 |
+| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/A1AMyEf1FQYmvdEWSejtHHU6ZKuBh74MRM9LzGfMGWT6?cluster=devnet) |
+| **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
+| **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
 | **Prove "at or above X" without revealing the position.** The counterparty learns one bit: not the value, not the composition, not any holding. | `./scripts/devnet-verify.sh` — accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
@@ -88,7 +90,8 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
   the borrower publishing anything.
 - **An issuer filling the slot for real accounts.** `autoApproveNewAccounts: false` says Backed
   gates who may hold a confidential balance. Gating something unusable only makes sense if you mean
-  to make it usable.
+  to make it usable. Setting an auditor key needs a Token-2022 `UpdateMint` this repo does not
+  build — `spl-token create-token` has no option for it.
 - **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
   product surface on top of it here.
 
@@ -187,9 +190,11 @@ Stated because a reader should find the limits here rather than discover them:
   those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
   no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
   `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
-- **The commitment is not bound to a live account.** The disclosure package carries a subject
-  address as a string and an empty ElGamal pubkey — `aperture`'s own skeleton gap — so nothing here
-  proves the sealed position is about the fund's actual wallet rather than some other one. Tying it
-  to a real Token-2022 confidential account is the next correctness step, not a detail.
+- **The proof is not yet over the bound ciphertext.** The subject is now a real account — its own
+  ElGamal key, its own on-chain ciphertext, re-checked against the chain. But the range proof is
+  still generated over a ciphertext of our own. Closing that needs the account's ElGamal *secret*,
+  and `spl-token` derives it with a KDF this SDK version does not reproduce (eight derivation/seed
+  combinations tried, none matched the on-chain key). It means provisioning the account from our own
+  code instead of the CLI — the next correctness step, and a real one.
 - **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
   deployment, and no claim to discharge any regulatory filing.
