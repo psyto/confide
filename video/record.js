@@ -1,9 +1,9 @@
 // Records confide.mp4.
 //
-// The terminal in this video is not a transcription. Every pane is the stdout of a command run
-// moments before the recording starts, and if a command does not produce the line it is supposed
-// to, this refuses to record rather than shipping a video that claims something the code did not
-// do. The devnet panes really do hit devnet.
+// The graphical panes are authored; every terminal pane is the stdout of a command run moments
+// before the recording starts, and two of those reach mainnet and devnet. If a command does not
+// produce the line that carries its claim, this throws instead of recording — a video that still
+// renders after the thing it demonstrates broke is the failure worth engineering against.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -13,18 +13,16 @@ import { PuppeteerScreenRecorder } from "puppeteer-screen-recorder";
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(dir, "..");
 const outFile = path.join(dir, "confide.mp4");
+const KEYS = process.env.CONFIDE_KEYS || path.join(repo, "account-keys.json");
+const ACCOUNT = process.env.CONFIDE_ACCOUNT || "6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V";
 
 function run(cmd, args, label) {
   process.stderr.write(`• ${label} …\n`);
   return execFileSync(cmd, args, {
-    cwd: repo,
-    encoding: "utf8",
-    maxBuffer: 8 * 1024 * 1024,
+    cwd: repo, encoding: "utf8", maxBuffer: 8 * 1024 * 1024,
     env: { ...process.env, FORCE_COLOR: "1" },
   }).replace(/\s+$/, "");
 }
-
-/** Lines from the first line matching `from` through the first later line matching `to`. */
 function slice(text, from, to) {
   const lines = text.split("\n");
   const a = lines.findIndex((l) => from.test(l));
@@ -35,72 +33,67 @@ function slice(text, from, to) {
 }
 
 // ── the real runs ────────────────────────────────────────────────────────────────────────────────
-const twoLane = run("cargo", ["run", "-q", "-p", "confide-demo", "--bin", "two-lane"], "two lanes");
 const mints = run("bash", ["scripts/onchain-check.sh"], "reading the xStock mints on mainnet");
-const zk = run("bash", ["scripts/devnet-verify.sh"], "submitting the proof to devnet");
+const balance = run("bash", ["scripts/read-balance.sh", ACCOUNT, KEYS], "opening our own confidential balance");
+const collateral = run("bash", ["scripts/prove-collateral.sh", ACCOUNT, "100000", KEYS], "proving the account clears a threshold, on devnet");
 
-// ── guards: refuse to record a misleading video ──────────────────────────────────────────────────
-const must = [
-  [twoLane, /LANE A/, "two-lane is missing the comparison table"],
-  [twoLane, /REFUSED/, "two-lane did not catch the post-hoc swap"],
-  [twoLane, /LANE B is now public/, "two-lane never opened the obligation"],
-  [twoLane, /173,000 NVDAx/, "two-lane did not print the position"],
+// ── guards ───────────────────────────────────────────────────────────────────────────────────────
+for (const [text, re, why] of [
   [mints, /NVDAx.*Token-2022.*None/, "NVDAx no longer reads as Token-2022 with an empty auditor slot"],
   [mints, /AAPLx.*None/, "the mint sweep is incomplete"],
-  [zk, /err\s*:\s*None/, "the devnet proof submission did not come back clean"],
-  [zk, /VerifyBatchedRangeProofU64/, "the ZK program did not run the range proof"],
-  [zk, /success/, "the ZK program did not report success"],
-];
-for (const [text, re, why] of must) {
+  [balance, /public balance\s+0/, "the account's public balance is no longer zero"],
+  [balance, /173000 units/, "the confidential balance did not open to the expected position"],
+  [collateral, /VerifyCiphertextCommitmentEquality/, "the equality proof never ran"],
+  [collateral, /VerifyBatchedRangeProofU64/, "the range proof never ran"],
+  [collateral, /both accepted/, "the chain did not accept both proofs"],
+]) {
   if (!re.test(text)) throw new Error(`refusing to record — ${why}`);
 }
-const auditorSlots = (mints.match(/None\s*$/gm) || []).length;
-if (auditorSlots < 4) throw new Error(`refusing to record — expected 4 empty auditor slots, saw ${auditorSlots}`);
+if ((mints.match(/None\s*$/gm) || []).length < 4) throw new Error("refusing to record — expected 4 empty auditor slots");
+if ((collateral.match(/err\s*:\s*None/g) || []).length < 2) throw new Error("refusing to record — a proof came back with an error");
 
 // ── the cut ──────────────────────────────────────────────────────────────────────────────────────
 const scenes = [
-  { kind: "title", hold: 7 },
   {
-    kind: "pane",
-    label: "Every tokenized stock on Solana. Read from mainnet, just now.",
-    body: mints,
-    emphasis: ["None"],
-    hold: 13,
+    kind: "hero",
+    lede: "You hold tokenized stocks on Solana.<br><b>So does everyone watching.</b>",
+    hold: 6,
   },
+  { kind: "leak", hold: 5 },
+  { kind: "slot", hold: 9 },
+  { kind: "views", hold: 9 },
   {
-    kind: "pane",
-    label: "So the fund transacts in the clear instead. Same buys, two lanes.",
-    body: slice(twoLane, /day\s+LANE A/, /The chain simply published it\./),
-    hold: 15,
-  },
-  {
-    kind: "pane",
-    label: "Quarter end. The position of record is sealed and anchored.",
-    body: slice(twoLane, /30 Sep · quarter end/, /cannot revise what is inside it\./),
+    kind: "benefits",
+    label: "What you get.",
+    items: [
+      ["hide", "Your position stops being public.",
+       "It sits on-chain and reads as zero to anyone who looks."],
+      ["prove", "You can still borrow against it.",
+       "Prove the collateral covers the loan without showing the lender what you hold."],
+      ["share", "Your auditor and your LPs are unaffected.",
+       "They read exactly what they are owed, on the schedule they are owed it."],
+      ["lock", "Last quarter's number cannot be tidied.",
+       "Sealed on the reporting date, opened on the deadline by people you do not control."],
+      ["split", "A stock split does not corrupt what you disclosed.",
+       "Restatement is a function of public data, and says so when it cannot be computed."],
+    ],
     hold: 11,
   },
   {
-    kind: "pane",
-    label: "Six weeks later, the fund would like to have held less.",
-    body: slice(twoLane, /2 Nov · the fund has second thoughts/, /REFUSED/),
-    emphasis: ["REFUSED"],
-    hold: 10,
+    kind: "evidence",
+    label: "A live account on devnet.",
+    body: slice(balance, /account\s+/, /elgamal ciphertext/),
+    emphasis: ["0", "173000 units"],
+    hold: 9,
   },
   {
-    kind: "pane",
-    label: "The deadline. The fund is not asked.",
-    body: slice(twoLane, /14 Nov · the obligation comes due/, /LANE B is now public/),
-    emphasis: ["173,000 NVDAx"],
-    hold: 12,
-  },
-  {
-    kind: "pane",
-    label: "And the one bit the counterparty checked, verified by Solana's live ZK program.",
-    body: zk,
-    emphasis: ["err   : None", "success"],
+    kind: "evidence",
+    label: "And the lender's check, run by Solana's ZK program.",
+    body: slice(collateral, /ciphertext-commitment equality/, /both accepted/),
+    emphasis: ["err   : None", "success", "both accepted"],
     hold: 11,
   },
-  { kind: "close", hold: 8 },
+  { kind: "close", hold: 7 },
 ];
 
 // ── record ───────────────────────────────────────────────────────────────────────────────────────
