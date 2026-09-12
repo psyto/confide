@@ -82,7 +82,7 @@ Everything happens at **accumulation time**. Nothing is required of the holder a
   └ nothing leaks while the            └ threshold-split the
     position is being built               seal key across N         6. anyone reconstructs,
                                           agents, k-of-n               checks it against the
-  1. the auditor reads it all          └ shamir / veil                 commitment anchored
+  1. the auditor reads it all          └ mora-embargo::shamir          commitment anchored
      along ─────────────────────────►                                   at t0
                                        3. anchor the content-        └ I3: no revision was
                                           blind commitment + T         possible in between
@@ -110,11 +110,13 @@ said here, explicitly.
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture` — pre-existing, 20 tests green | Apache-2.0 | confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture` — pre-existing | Apache-2.0 | content-blind on-chain receipt (native Solana program) |
-| `@fabrknt/veil-core`, `@fabrknt/veil-orders` | npm, published | MIT | Shamir / threshold encryption |
-| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the equity layer, the demo** |
+| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
 
 Mora is the part that did not exist: a **self-opening embargo** that the holder can neither
-accelerate nor prevent, bound to a position commitment, over tokenized equities.
+accelerate nor prevent, bound to a position commitment, over tokenized equities. The k-of-n sharing
+under it is Mora's own too — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency. An earlier
+project of mine does threshold encryption for DEX order flow; none of its code is here, and it is
+listed nowhere above because listing it would overstate the reuse.
 
 ## 6. The demo
 

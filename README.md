@@ -102,8 +102,9 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture`, pre-existing | Apache-2.0 | Token-2022 confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture`, pre-existing | Apache-2.0 | content-blind on-chain receipt, native Solana program |
-| `@fabrknt/veil-core`, `@fabrknt/veil-orders` | npm, published | MIT | threshold / secret-sharing prior art |
-| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the equity layer, the demo** |
+| **Mora** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
+
+The secret sharing is Mora's own — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency.
 
 Not built here, and deliberately: no ATS, no order matching, no MEV protection, no custody, no
 mainnet deployment, no actual Form 13F filing.
