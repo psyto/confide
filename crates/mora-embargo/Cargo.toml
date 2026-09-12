@@ -1,0 +1,21 @@
+[package]
+name = "mora-embargo"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "A self-opening embargo: a disclosure the holder can neither accelerate nor prevent"
+
+[dependencies]
+# NOTE: path dep while `psyto/aperture` is PRIVATE. Aperture's own README prescribes an
+# arm's-length versioned git dep; switch to `{ git = "...", tag = "v0.x" }` once the repo is
+# public. Tracked as the open packaging decision in ../../STATUS.md.
+aperture-core = { path = "../../../aperture/crates/aperture-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+chacha20poly1305 = "0.10"
+rand = "0.8"
+
+[dev-dependencies]
+serde_json = "1"
+solana-zk-sdk = "7"
