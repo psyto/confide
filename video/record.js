@@ -68,8 +68,8 @@ const scenes = [
     items: [
       ["hide", "Your position stops being public.",
        "It sits on-chain and reads as zero to anyone who looks."],
-      ["prove", "You can still borrow against it.",
-       "Prove the collateral covers the loan without showing the lender what you hold."],
+      ["prove", "A lender can check your collateral without seeing it.",
+       "Prove the position covers the loan and reveal one bit \u2014 not the value, not the composition."],
       ["share", "Your auditor and your LPs are unaffected.",
        "They read exactly what they are owed, on the schedule they are owed it."],
       ["lock", "Last quarter's number cannot be tidied.",
