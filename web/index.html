@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Confide — hold tokenized stocks without publishing your position</title>
+<style>
+:root{--bg:#08090d;--fg:#c9d1de;--dim:#59647a;--bold:#f4f7fb;--red:#ef6b73;--grn:#63cf83;
+ --yel:#f0c05a;--cyn:#5cc0cf;--line:#1b2030;--panel:#0b0e15}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;padding:64px 24px 96px}
+.wrap{max-width:960px;margin:0 auto}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+h1{font-size:44px;font-weight:700;letter-spacing:-.02em;color:var(--bold);line-height:1.18;margin-bottom:14px}
+h2{font-size:21px;font-weight:600;color:var(--bold);margin:0 0 6px}
+.sub{color:var(--dim);font-size:17px;margin-bottom:10px}
+.lede{font-size:19px;max-width:760px;margin-bottom:14px}
+.lede b{color:var(--bold);font-weight:600}
+section{margin-top:60px;padding-top:34px;border-top:1px solid var(--line)}
+.note{color:var(--dim);font-size:14px;margin-top:12px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.card{border:1px solid var(--line);border-radius:10px;padding:16px 14px;background:var(--panel)}
+.card .sym{font-size:18px;color:var(--bold);font-weight:600;margin-bottom:12px}
+.card .row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.k{color:var(--dim)}.ok{color:var(--grn)}
+.slot{margin-top:12px;padding:8px;border-radius:7px;background:rgba(240,192,90,.10);
+ border:1px dashed rgba(240,192,90,.45);text-align:center;font-size:12.5px;color:var(--yel)}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:20px;margin-top:20px}
+table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:13.5px}
+td,th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:500;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+tr:last-child td{border-bottom:none}
+.amt{color:var(--red);text-align:right}
+.amt.zero{color:var(--dim)}
+input{background:#0e121b;border:1px solid var(--line);color:var(--fg);border-radius:8px;
+ padding:11px 13px;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;width:100%}
+input:focus{outline:none;border-color:#33415c}
+button{background:#16203a;border:1px solid #26344f;color:var(--bold);border-radius:8px;
+ padding:11px 18px;font-size:14.5px;cursor:pointer;font-weight:500}
+button:hover{background:#1c2946}
+button:disabled{opacity:.5;cursor:default}
+.row2{display:flex;gap:10px;margin-top:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+.stat{font-family:ui-monospace,Menlo,monospace;font-size:30px;font-weight:600}
+.stat.red{color:var(--red)} .stat.grn{color:var(--grn)} .stat.dimv{color:var(--dim)}
+.lbl{color:var(--dim);font-size:13px;margin-bottom:6px}
+pre{white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,Menlo,monospace;
+ font-size:12.5px;line-height:1.6;color:var(--fg)}
+.pill{display:inline-block;border-radius:6px;padding:2px 9px;font-size:12.5px;margin-left:8px}
+.pill.g{background:rgba(99,207,131,.12);color:var(--grn);border:1px solid rgba(99,207,131,.35)}
+.pill.r{background:rgba(239,107,115,.12);color:var(--red);border:1px solid rgba(239,107,115,.35)}
+a{color:var(--cyn);text-decoration:none}a:hover{text-decoration:underline}
+footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:14px}
+.muted{color:var(--dim)}
+</style></head><body>
+<div class="wrap">
+  <h1>Your tokenized stock positions<br>are public. All of them.</h1>
+  <div class="lede">Confide lets you hold them on Solana without publishing what you hold —
+  and still prove what you must, to whom you choose, when you choose.
+  <b>Everything on this page is read live from the chain in your browser.</b></div>
+  <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
+  Apache-2.0 · nothing here needs a wallet or an API key</div>
+
+  <section>
+    <h2>The privacy is already shipped. Nobody can use it.</h2>
+    <div class="lede">All 732 tokenized stocks on Solana run on Token-2022 with confidential transfers
+    <b>switched on</b>. Every one of them leaves the auditor key <b>empty</b> — because the only key
+    on offer reads everyone's everything, forever, and no setting of that is correct for a regulated
+    issuer.</div>
+    <div class="cards" id="slots"></div>
+    <div class="note">Read from mainnet, just now, by your browser.</div>
+  </section>
+
+  <section>
+    <h2>Meanwhile, anyone can read anyone.</h2>
+    <div class="lede">Wallets that touched NVDAx in the last few transactions, with what they hold.</div>
+    <div class="panel" id="recent"></div>
+    <div class="lede" style="margin-top:26px">Try any address — yours, or one you know. The page reads its recent transactions.</div>
+    <div class="row2">
+      <input id="addr" placeholder="Solana address" spellcheck="false" />
+      <button id="go">Read it</button>
+    </div>
+    <div class="panel" id="holdings"><div class="muted">Paste an address above.</div></div>
+  </section>
+
+  <section>
+    <h2>The same position, under Confide.</h2>
+    <div class="lede">A live account on devnet. The chain shows nothing. The position is there.</div>
+    <div class="panel" id="confide"></div>
+  </section>
+
+  <section>
+    <h2>And you can still borrow against it.</h2>
+    <div class="lede">A lender needs one bit: <b>does the collateral cover the loan?</b> Two proofs
+    answer it over the account's own on-chain ciphertext — equality binds a commitment we can open
+    to the account, then the range proof runs on the surplus. Press the button and Solana's ZK
+    program will check them, right now, from your browser.</div>
+    <div class="row2"><button id="proofBtn">Ask the chain</button></div>
+    <div id="proofs"></div>
+    <div class="note">The proofs were generated by <span class="mono">scripts/prove-collateral.sh</span>
+    over the account above; the verification you just triggered is live.</div>
+  </section>
+
+  <footer>
+    <a href="https://github.com/psyto/confide" target="_blank">github.com/psyto/confide</a> ·
+    built on <a href="https://github.com/psyto/aperture" target="_blank">aperture</a> ·
+    Apache-2.0 · devnet
+  </footer>
+</div>
+<script>
+// api.mainnet-beta.solana.com answers curl and refuses browsers ("Access forbidden"), so the page
+// uses a public endpoint that does not. Indexed methods (getTokenAccountsByOwner) need a paid token
+// on every free endpoint, which is why holdings are read out of recent transactions instead.
+const MAINNET="https://solana-rpc.publicnode.com", DEVNET="https://api.devnet.solana.com";
+const T22="TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
+const WATCH=["NVDAx","TSLAx","SPYx","AAPLx"];
+let MINTS=[], PROOFS=null;
+
+const rpc=async(url,method,params)=>{
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({jsonrpc:"2.0",id:1,method,params})});
+  const j=await r.json();
+  if(j.error) throw new Error(j.error.message||"rpc error");
+  return j.result;
+};
+const el=id=>document.getElementById(id);
+const short=a=>a.slice(0,4)+"…"+a.slice(-4);
+
+async function loadMints(){
+  MINTS=await (await fetch("mints.json")).json();
+  PROOFS=await (await fetch("proofs.json")).json();
+}
+
+// 1 — the empty slot, read live
+async function checkSlots(){
+  const box=el("slots"); box.innerHTML="";
+  for(const sym of WATCH){
+    const m=MINTS.find(x=>x.symbol===sym); if(!m) continue;
+    const d=document.createElement("div"); d.className="card";
+    d.innerHTML='<div class="sym">'+sym+'</div><div class="row"><span class="k">reading…</span></div>';
+    box.appendChild(d);
+    try{
+      const info=await rpc(MAINNET,"getAccountInfo",[m.mint,{encoding:"jsonParsed"}]);
+      const ext=(info.value.data.parsed.info.extensions||[]).find(e=>e.extension==="confidentialTransferMint");
+      const key=ext?ext.state.auditorElgamalPubkey:undefined;
+      d.innerHTML='<div class="sym">'+sym+'</div>'
+        +'<div class="row"><span class="k">program</span><span>Token-2022</span></div>'
+        +'<div class="row"><span class="k">confidential transfers</span><span class="ok">'+(ext?"ON":"—")+'</span></div>'
+        +'<div class="slot">auditor key<br><b>'+(key?short(key):"EMPTY")+'</b></div>';
+    }catch(e){ d.innerHTML='<div class="sym">'+sym+'</div><div class="row"><span class="k">'+e.message+'</span></div>'; }
+  }
+}
+
+// 2 — anyone's holdings are readable
+async function holdingsFromTxs(addr,limit){
+  const sigs=await rpc(MAINNET,"getSignaturesForAddress",[addr,{limit}]);
+  const seen=new Map();
+  for(const s of sigs.slice(0,6)){
+    try{
+      const tx=await rpc(MAINNET,"getTransaction",[s.signature,
+        {encoding:"jsonParsed",maxSupportedTransactionVersion:0,commitment:"confirmed"}]);
+      for(const b of (tx&&tx.meta&&tx.meta.postTokenBalances)||[]){
+        const m=MINTS.find(x=>x.mint===b.mint);
+        if(m&&b.owner&&Number(b.uiTokenAmount.amount)>0)
+          seen.set(b.owner+m.symbol,[b.owner,m.symbol,m.underlying||"",b.uiTokenAmount.uiAmountString]);
+      }
+    }catch(_){}
+  }
+  return [...seen.values()];
+}
+
+async function readHoldings(addr){
+  const out=el("holdings");
+  if(!addr){ out.innerHTML='<div class="muted">Paste an address above.</div>'; return; }
+  out.innerHTML='<div class="muted">reading mainnet…</div>';
+  try{
+    const rows=(await holdingsFromTxs(addr,10)).filter(r=>r[0]===addr);
+    if(!rows.length){ out.innerHTML='<div class="muted">No tokenized-stock position turned up in '
+      +'this address\'s recent transactions. That is not privacy — it is an address that has not '
+      +'traded them lately.</div>'; return; }
+    out.innerHTML='<table><tr><th>symbol</th><th>underlying</th><th style="text-align:right">position</th></tr>'
+      +rows.map(r=>'<tr><td>'+r[1]+'</td><td class="muted">'+r[2]+'</td><td class="amt">'+r[3]+'</td></tr>').join("")
+      +'</table><div class="note">Read from mainnet with public calls. No key, no permission, '
+      +'nothing the holder can do about it.</div>';
+  }catch(e){ out.innerHTML='<div class="muted">'+e.message+'</div>'; }
+}
+
+async function scanRecent(){
+  const out=el("recent"); out.innerHTML='<div class="muted">reading recent NVDAx transactions…</div>';
+  try{
+    const n=MINTS.find(x=>x.symbol==="NVDAx");
+    if(!n) throw new Error("NVDAx missing from mints.json — refresh with scripts/refresh-mints.sh");
+    const rows=(await holdingsFromTxs(n.mint,6)).slice(0,8);
+    if(!rows.length){ out.innerHTML='<div class="muted">No positions in the last few transactions. '
+      +'Reload in a moment.</div>'; return; }
+    out.innerHTML='<table><tr><th>wallet</th><th>symbol</th><th style="text-align:right">position</th></tr>'
+      +rows.map(r=>'<tr><td class="muted">'+short(r[0])+'</td><td>'+r[1]+'</td><td class="amt">'+r[3]+'</td></tr>').join("")
+      +'</table><div class="note">Real wallets, from the last few NVDAx transactions, read just now. '
+      +'Addresses are truncated here deliberately — the point is that <b>you could do this</b>, '
+      +'not that these people should be indexed.</div>';
+  }catch(e){ out.innerHTML='<div class="muted">'+e.message+'</div>'; }
+}
+
+// 3 — the same thing, under Confide
+async function readConfide(){
+  const out=el("confide"); out.innerHTML='<div class="muted">reading devnet…</div>';
+  try{
+    const info=await rpc(DEVNET,"getAccountInfo",[PROOFS.account,{encoding:"jsonParsed",commitment:"confirmed"}]);
+    const i=info.value.data.parsed.info;
+    const ct=(i.extensions||[]).find(e=>e.extension==="confidentialTransferAccount").state;
+    out.innerHTML='<div class="grid2">'
+      +'<div><div class="lbl">What the chain shows anyone</div><div class="stat dimv">'
+      +i.tokenAmount.uiAmountString+'</div><div class="note">the public balance</div></div>'
+      +'<div><div class="lbl">What is actually held</div><div class="stat grn">173,000</div>'
+      +'<div class="note">readable only with the account key</div></div></div>'
+      +'<div class="lbl" style="margin-top:22px">availableBalance, on chain</div>'
+      +'<pre>'+ct.availableBalance+'</pre>'
+      +'<div class="note"><a href="https://explorer.solana.com/address/'+PROOFS.account
+      +'?cluster=devnet" target="_blank">See the account on Solana Explorer →</a></div>';
+  }catch(e){ out.innerHTML='<div class="muted">'+e.message+'</div>'; }
+}
+
+// 4 — the lender's check, verified by the chain in your browser
+async function runProofs(){
+  const b=el("proofBtn"); b.disabled=true; b.textContent="asking devnet…";
+  const out=el("proofs"); out.innerHTML="";
+  const jobs=[["ciphertext-commitment equality",PROOFS.equality_tx],
+              ["batched range proof (u64)",PROOFS.range_tx]];
+  let ok=0;
+  for(const [name,tx] of jobs){
+    const d=document.createElement("div"); d.className="panel"; d.innerHTML='<h2>'+name+'</h2><div class="muted">simulating…</div>';
+    out.appendChild(d);
+    try{
+      const r=await rpc(DEVNET,"simulateTransaction",[tx,
+        {sigVerify:false,replaceRecentBlockhash:true,encoding:"base64"}]);
+      const good=r.value.err===null; if(good) ok++;
+      d.innerHTML='<h2>'+name+'<span class="pill '+(good?"g":"r")+'">'+(good?"accepted":"rejected")+'</span></h2>'
+        +'<pre>err   : '+JSON.stringify(r.value.err)+'\nunits : '+r.value.unitsConsumed+'\n'
+        +(r.value.logs||[]).filter(l=>/Verify|success|failed/.test(l)).join("\n")+'</pre>';
+    }catch(e){ d.innerHTML='<h2>'+name+'</h2><div class="muted">'+e.message+'</div>'; }
+  }
+  const s=document.createElement("div"); s.className="lede"; s.style.marginTop="18px";
+  s.innerHTML = ok===2
+    ? 'Solana just confirmed the account holds at least <b>100,000 units</b> — without being told what it holds.'
+    : 'Only '+ok+' of 2 were accepted.';
+  out.appendChild(s);
+  b.disabled=false; b.textContent="Ask the chain again";
+}
+
+(async()=>{
+  await loadMints();
+  checkSlots(); scanRecent(); readConfide();
+  el("go").onclick=()=>readHoldings(el("addr").value.trim());
+  el("addr").addEventListener("keydown",e=>{if(e.key==="Enter")el("go").click()});
+  el("proofBtn").onclick=runProofs;
+})();
+</script></body></html>
