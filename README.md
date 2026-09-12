@@ -2,8 +2,8 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [83s video](video/confide.mp4) · no wallet, no API key, no install
 
-**Every tokenized stock on Solana has confidential transfers switched on. Not one of them can be
-used.** Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
+**All 732 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
+be used.** Checked, not sampled — `./scripts/slot-scan.sh`. Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
 
 ```
 SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey

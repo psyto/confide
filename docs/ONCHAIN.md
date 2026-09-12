@@ -5,6 +5,10 @@
 
 ## 1. xStocks are Token-2022, and confidential transfers are already switched on
 
+**Every one of the 732 xStock mints on Solana carries the extension with `auditorElgamalPubkey`
+null.** `./scripts/slot-scan.sh` checks all of them and exits non-zero if that ever stops being
+true. Four of them in detail:
+
 ```
 SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey
 NVDAx   Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh   Token-2022   None
