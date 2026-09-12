@@ -6,10 +6,8 @@ license = "Apache-2.0"
 description = "A self-opening embargo: a disclosure the holder can neither accelerate nor prevent"
 
 [dependencies]
-# NOTE: path dep while `psyto/aperture` is PRIVATE. Aperture's own README prescribes an
-# arm's-length versioned git dep; switch to `{ git = "...", tag = "v0.x" }` once the repo is
-# public. Tracked as the open packaging decision in ../../STATUS.md.
-aperture-core = { path = "../../../aperture/crates/aperture-core" }
+# Arm's-length versioned dependency, as aperture's own README prescribes.
+aperture-core = { git = "https://github.com/psyto/aperture", tag = "v0.5.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"

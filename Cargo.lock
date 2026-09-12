@@ -40,7 +40,8 @@ dependencies = [
 
 [[package]]
 name = "aperture-core"
-version = "0.5.0"
+version = "0.5.1"
+source = "git+https://github.com/psyto/aperture?tag=v0.5.1#3dd7f59c19b31fc427952d71c342a0c66fa46247"
 dependencies = [
  "bytemuck",
  "serde",

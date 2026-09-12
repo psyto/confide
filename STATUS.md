@@ -16,6 +16,14 @@
 
 Mora は Solana 単独。Reckn とコードも物語も共有しない。
 
+## 決着済み
+
+1. ~~`psyto/aperture` が PRIVATE で単独ビルド不能~~ → **2026-09-12 に解決。** 全履歴を監査して
+   day-job / 顧客 / 秘密情報のヒット 0 件を確認した上で **`psyto/aperture` を PUBLIC 化**（Apache-2.0、
+   `v0.5.1`）。Mora は path 依存をやめ、aperture 自身の README が指定する arm's-length の
+   `{ git = "...", tag = "v0.5.1" }` で消費している。**Mora は単独でビルドできる。**
+
 ## 未決（founder の手が要る）
 
-1. **`psyto/aperture` は PRIVATE。** 判事が `cargo build` を通すには公開が要る。選択肢＝(a) aperture を公開する (b) 必要部分を Mora に vendor する (c) 非公開のまま動画とバイナリで出す。**(a) は `project_gtm_public_strategy` の「商用engine非公開」に触る**ので founder 判断。**着手は不要 — 提出パッケージング時まで律速にならない。**
+1. **Mora 自体をいつ公開するか。** 提出には GitHub / live demo / video のいずれか1つ以上のリンクが
+   要る。まだ local only。
