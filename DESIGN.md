@@ -50,8 +50,10 @@ properties, and the middle one is the hard one:
 
 - **I1 — unopenable before T.** Otherwise the embargo means nothing.
 - **I2 — unstoppable at T, including by the holder.** Otherwise it is a promise, not a disclosure.
-- **I3 — bound to the position actually held.** The commitment is made when the position is built,
-  so what opens at T is provably not a flattering retrofit.
+- **I3 — bound to the position of record.** The commitment is anchored at quarter end, so the 45
+  days before anyone can read it are 45 days in which the fund cannot revise what it held. Today a
+  13F is prepared and filed weeks after the fact with nothing binding the manager to the position
+  as of the reporting date; Mora anchors it on the date itself.
 
 Two further properties are inherited rather than invented:
 
@@ -70,24 +72,31 @@ Everything happens at **accumulation time**. Nothing is required of the holder a
 ```
   ACCUMULATION (t0)                                    OPENING (T)
   ─────────────────                                    ───────────
-  1. buy xStock in Token-2022                          6. any k of N release agents
-     confidential balances                                publish their shares
-     └ aperture token2022 adapter                          └ holder is not an input
-       (grouped ElGamal, [source,dest,auditor])
-                                                       7. anyone reconstructs the
-  2. build aperture disclosure package                    package, verifies it against
-     for the position — Exact, addressed                   the commitment anchored at t0
-     to "the public" — and DO NOT deliver it                └ I3 holds: this is the
-                                                              position that was held
-  3. threshold-encrypt that package to N
-     release agents, k-of-n                            8. position is public, on schedule
-     └ veil-core Shamir / veil-orders
+  THE QUARTER                          t0 = QUARTER END              T = t0 + 45d
+  ───────────                          ───────────────              ────────────
+  buy xStock in Token-2022             2. seal the position of      5. any k of N agents
+  confidential balances                   record: an aperture          publish their shares
+  └ aperture token2022 adapter            Exact package + the         └ the holder is not
+    (grouped ElGamal,                     material needed to             an input, and is
+     [source,dest,auditor])                read it                       not asked
+  └ nothing leaks while the            └ threshold-split the
+    position is being built               seal key across N         6. anyone reconstructs,
+                                          agents, k-of-n               checks it against the
+  1. the auditor reads it all          └ shamir / veil                 commitment anchored
+     along ─────────────────────────►                                   at t0
+                                       3. anchor the content-        └ I3: no revision was
+                                          blind commitment + T         possible in between
+                                          on-chain
+                                       └ aperture-receipts          7. the position is public,
+                                         (native Solana program)       on schedule
 
-  4. anchor the content-blind receipt
-     commitment + T on-chain
-     └ aperture-receipts (native Solana program)
+                                       4. publish the ciphertext
+                                          itself — in the open,
+                                          useless without k shares
+                                       └ this is what makes it
+                                         unstoppable (I2)
 
-  5. auditor key reads the position the whole time  ────────────────────────►  (I4)
+  the auditor reads the position throughout ───────────────────────────────►  (I4)
 ```
 
 The holder's only act is at t0. That is precisely what makes the disclosure at T a disclosure.

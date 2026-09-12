@@ -363,6 +363,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mora-demo"
+version = "0.1.0"
+dependencies = [
+ "aperture-core",
+ "mora-embargo",
+ "solana-zk-sdk",
+]
+
+[[package]]
 name = "mora-embargo"
 version = "0.1.0"
 dependencies = [

@@ -1,0 +1,15 @@
+[package]
+name = "mora-demo"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "The two-lane demo: the same stock position, built in public and built under Mora"
+
+[[bin]]
+name = "two-lane"
+path = "src/main.rs"
+
+[dependencies]
+mora-embargo = { path = "../mora-embargo" }
+aperture-core = { path = "../../../aperture/crates/aperture-core" }
+solana-zk-sdk = "7"
