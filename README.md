@@ -1,5 +1,7 @@
 # Confide
 
+### → [**Try it live**](https://psyto.github.io/confide/) · [83s video](video/confide.mp4) · no wallet, no API key, no install
+
 **Every tokenized stock on Solana has confidential transfers switched on. Not one of them can be
 used.** Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
 
@@ -118,6 +120,11 @@ arrives when Nasdaq's filed tokenized-form rule settles. [DESIGN.md §3a](DESIGN
 this in full rather than leaving it implied.
 
 ## Run it
+
+The live page reads the mints from mainnet in your browser, pulls real wallets out of recent NVDAx
+transactions with what they hold, shows the Confide account on devnet reading zero, and — on a
+button press — has Solana's ZK program verify the lender's proof while you watch. Source in
+[`web/`](web/).
 
 ```bash
 ./scripts/demo.sh             # everything: the two lanes, then the proof going to Solana
