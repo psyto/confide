@@ -1,7 +1,7 @@
 {
   "source": "https://api.xstocks.fi/api/v2/public/corporate-actions/upcoming",
   "fetchedUtc": "2026-09-12",
-  "note": "Unit-changing actions only (ForwardSplit / ReverseSplit, status Scheduled). Cash dividends do not move units and are out of scope here. Refresh with scripts/refresh-actions.sh.",
+  "note": "Every scheduled action except CashDividend. Actions without a whole-number unit ratio (spin-offs, fractional stock dividends) are carried so restate() can report them as unresolved rather than silently reporting no change. Refresh with scripts/refresh-actions.sh.",
   "nodes": [
     {
       "symbol": "VUGx",
@@ -49,6 +49,15 @@
       "eventId": "ccb423a2-6045-4d1c-9a94-1f37f0ab8d63"
     },
     {
+      "symbol": "HONx",
+      "isin": "CH1436219583",
+      "caType": "SpinOff",
+      "effectiveTimeUtc": "2026-06-29T23:55:00.000Z",
+      "fromUnits": null,
+      "toUnits": null,
+      "eventId": "ca3da1bc-04d2-4c6a-a23e-51f7c58ee06d"
+    },
+    {
       "symbol": "CRWDx",
       "isin": "CH1436219674",
       "caType": "ForwardSplit",
@@ -58,6 +67,15 @@
       "eventId": "a8886369-edc6-4ab7-a0a4-170763fb2e63"
     },
     {
+      "symbol": "SCCOx",
+      "isin": "CH1580496045",
+      "caType": "StockDividend",
+      "effectiveTimeUtc": "2026-08-11T00:00:00.000Z",
+      "fromUnits": "1",
+      "toUnits": "1.012",
+      "eventId": "ed857d4c-490b-4482-8bdb-1b76a8fd6f14"
+    },
+    {
       "symbol": "MNSTx",
       "isin": "CH1473121353",
       "caType": "ForwardSplit",
@@ -65,6 +83,15 @@
       "fromUnits": "1",
       "toUnits": "2",
       "eventId": "5383137f-30b8-44f8-ae1a-ca70f3878cda"
+    },
+    {
+      "symbol": "SCCOx",
+      "isin": "CH1580496045",
+      "caType": "StockDividend",
+      "effectiveTimeUtc": "2026-08-12T00:30:00.000Z",
+      "fromUnits": null,
+      "toUnits": null,
+      "eventId": "ed857d4c-490b-4482-8bdb-1b76a8fd6f14"
     },
     {
       "symbol": "APHx",

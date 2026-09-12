@@ -8,6 +8,7 @@ use mora_equity::actions::{restate, scheduled};
 use std::fs;
 
 const DIM: &str = "\x1b[2m";
+const YEL: &str = "\x1b[33m";
 const OFF: &str = "\x1b[0m";
 
 fn main() {
@@ -35,24 +36,37 @@ fn main() {
             // between, saying only that number is correct and unreadable at the same time.
             match restate(units, "NVDAx", &scheduled(), as_of, sealed.open_at) {
                 Some(r) if r.unchanged() => println!(
-                    "  {DIM}No unit-changing corporate action between the reporting date\n  and today, so that number reads as-is.{OFF}\n"
+                    "  {DIM}No corporate action between the reporting date and today, so that\n  number reads as-is.{OFF}\n"
                 ),
                 Some(r) => {
-                    println!("  {DIM}Restated into today's units:{OFF}");
-                    for a in &r.applied {
+                    if !r.applied.is_empty() {
+                        println!("  {DIM}Restated into today's units:{OFF}");
+                        for a in &r.applied {
+                            println!(
+                                "    {} {} on {}  ({} -> {})",
+                                a.symbol,
+                                a.ca_type,
+                                &a.effective_utc[..10],
+                                a.from_units.as_deref().unwrap_or("?"),
+                                a.to_units.as_deref().unwrap_or("?")
+                            );
+                        }
+                    }
+                    if r.fully_resolved() {
                         println!(
-                            "    {} {} on {}  ({} -> {})",
-                            a.symbol,
-                            a.ca_type,
-                            &a.effective_utc[..10],
-                            a.from_units,
-                            a.to_units
+                            "  = {} NVDAx today. The sealed number did not move; the units it is quoted in did.\n",
+                            mora_committee::commas(r.current_units)
+                        );
+                    } else {
+                        // Saying nothing here would let a reader treat the number as current.
+                        println!("  {YEL}Not fully restatable.{OFF} {DIM}Also in this window:{OFF}");
+                        for a in &r.unresolved {
+                            println!("    {} {} on {}", a.symbol, a.ca_type, &a.effective_utc[..10]);
+                        }
+                        println!(
+                            "  {DIM}These change the holding without a unit ratio, so no single number\n                               is today's position. The sealed one still stands for the reporting date.{OFF}\n"
                         );
                     }
-                    println!(
-                        "  = {} NVDAx today. The sealed number did not move; the units it is quoted in did.\n",
-                        mora_committee::commas(r.current_units)
-                    );
                 }
                 None => println!(
                     "  {DIM}A corporate action in this window cannot be restated exactly;\n  refusing to quote a number that quietly lost shares.{OFF}\n"

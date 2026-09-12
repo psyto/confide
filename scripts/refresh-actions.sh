@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Re-pull the xStocks corporate-action schedule into the fixture mora-equity compiles in.
 #
-# Only unit-changing actions are kept (ForwardSplit / ReverseSplit). Cash dividends do not move
-# units and are out of scope. No auth, no key.
+# Everything except cash dividends is kept. Cash dividends do not touch units; every other action
+# type can change what a holder holds, and an action this does not carry is one mora-equity cannot
+# even report as unresolved. No auth, no key.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 API="https://api.xstocks.fi/api/v2/public/corporate-actions/upcoming"
@@ -23,8 +24,7 @@ for line in open(src):
     if not line:
         continue
     for n in json.loads(line)['nodes']:
-        if n['caType'] in ('ForwardSplit', 'ReverseSplit') and n.get('status') == 'Scheduled' \
-           and n.get('fromUnits') and n.get('toUnits'):
+        if n['caType'] != 'CashDividend' and n.get('status') == 'Scheduled':
             rows.append({
                 'symbol': n['xstockSymbol'], 'isin': n.get('xstockIsin'),
                 'caType': n['caType'], 'effectiveTimeUtc': n['effectiveTimeUtc'],
@@ -34,15 +34,16 @@ rows.sort(key=lambda r: r['effectiveTimeUtc'])
 json.dump({
     'source': 'https://api.xstocks.fi/api/v2/public/corporate-actions/upcoming',
     'fetchedUtc': datetime.datetime.utcnow().strftime('%Y-%m-%d'),
-    'note': 'Unit-changing actions only (ForwardSplit / ReverseSplit, status Scheduled). '
-            'Cash dividends do not move units and are out of scope here. '
+    'note': 'Every scheduled action except CashDividend. Actions without a whole-number unit '
+            'ratio (spin-offs, fractional stock dividends) are carried so restate() can report '
+            'them as unresolved rather than silently reporting no change. '
             'Refresh with scripts/refresh-actions.sh.',
     'nodes': rows,
 }, open(out, 'w'), indent=2)
 open(out, 'a').write('\n')
 print('%d unit-changing events -> %s' % (len(rows), out))
 for r in rows:
-    print('  %-8s %-14s %s  %s -> %s' % (r['symbol'], r['caType'], r['effectiveTimeUtc'][:10], r['fromUnits'], r['toUnits']))
+    print('  %-8s %-14s %s  %s -> %s' % (r['symbol'], r['caType'], (r['effectiveTimeUtc'] or '')[:10], r['fromUnits'], r['toUnits']))
 PY
 rm -f "$tmp"
 echo

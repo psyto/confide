@@ -5,7 +5,9 @@
 //! that **closes**. An obligation is *mandatory*, and its window **opens**:
 //!
 //! - **I1** — unopenable before `T`.
-//! - **I2** — unstoppable at `T`, *including by the holder*.
+//! - **I2** — unstoppable at `T` by the holder *as a party to the protocol*. See
+//!   [`ReleaseTrustModel`] for what it still costs: a holder who captures `n - k + 1` agents stops
+//!   it anyway, and no signature here prevents that.
 //! - **I3** — bound to the position actually held, committed before the position was complete.
 //!
 //! I2 is why this is a mechanism and not a policy field. No schema expresses "the holder cannot
@@ -34,17 +36,34 @@ use serde::{Deserialize, Serialize};
 
 pub type UnixTime = i64;
 
-/// What an observer must assume for **I1** (unopenable before `T`) to hold.
+/// What an observer must assume about the committee. **Both I1 and I2 rest on this** — a correction
+/// to an earlier version of this comment, which claimed I2 was unconditional. It is not.
 ///
-/// Mora ships `ThresholdCommittee`. It is stated, not implied, because an embargo whose assumption
-/// is unstated is indistinguishable from one that has none.
+/// With `k` of `n`:
+/// - **I1 fails if `k` agents collude to open early.** Shares carry no clock; nothing in the
+///   mathematics stops them.
+/// - **I2 fails if `n - k + 1` agents withhold at `T`.** The holder is not a *parameter* of the
+///   opening path, which is what the signatures guarantee; that is not the same as the holder being
+///   unable to *capture* agents. A holder who controls enough of the committee — by owning it, by
+///   paying it, or by injuncting it — stops the disclosure, and no code here prevents that.
+/// - **Only I3 is unconditional.** It is a hash comparison and depends on no one's behaviour.
+///
+/// Choosing `k` therefore trades the two risks against each other and cannot minimise both:
+/// `k = 3, n = 5` tolerates 2 early colluders and 2 withholders. Mora ships `ThresholdCommittee`
+/// and says so on the artifact, because an embargo whose assumption is unstated is
+/// indistinguishable from one that has none.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ReleaseTrustModel {
-    /// `k` of `n` release agents do not collude to open early. No cryptographic time barrier.
-    /// I2 and I3 are unconditional; **only I1 rests on this assumption.**
+    /// `k` of `n` release agents: fewer than `k` collude early, and at least `k` remain willing
+    /// at `T`. No cryptographic time barrier, and no economic stake — an agent that withholds
+    /// loses nothing today.
     ThresholdCommittee { k: u8, n: u8 },
-    /// A cryptographic time barrier (time-lock puzzle / VDF): I1 holds with no committee.
-    /// Not implemented — named so the upgrade path is legible and not mistaken for shipped.
+    /// A cryptographic time barrier (a time-lock puzzle, a VDF, or a public randomness beacon
+    /// with timelock encryption): **I1 holds with no committee at all**, and I2 needs only the
+    /// ciphertext to be public — which it already is from `t0`.
+    ///
+    /// Not implemented, and named here so the upgrade path is legible rather than mistaken for
+    /// shipped. This is the one change that would make both I1 and I2 unconditional.
     TimeLockPuzzle,
 }
 

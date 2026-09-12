@@ -104,9 +104,9 @@ The invariants are written as claims you can run, not prose:
 
 | | |
 |---|---|
-| **I1** | unopenable before `T` — and the assumption this rests on is stamped on the artifact (`ReleaseTrustModel`), not implied |
-| **I2** | unstoppable at `T`, *including by the holder* — who is not a parameter of any function on the opening path, and in `scripts/committee.sh` is a process that exited in September |
-| **I3** | bound to the position of record — a post-hoc revision is refused |
+| **I1** | unopenable before `T` — **if fewer than `k` agents collude.** Shares carry no clock; the assumption is stamped on the artifact (`ReleaseTrustModel`), not implied |
+| **I2** | unstoppable at `T` by the holder *as a party to the protocol* — it is not a parameter of any function on the opening path, and in `scripts/committee.sh` it is a process that exited in September. **A holder that captures `n − k + 1` agents stops it anyway**, and nothing here prevents that |
+| **I3** | bound to the position of record — a post-hoc revision is refused. **The only one that depends on no one's behaviour**: it is a hash comparison |
 | **I4** | the auditor reads throughout; only *public* disclosure is delayed |
 | **I5** | opening is irreversible — revocation is not clawback |
 
@@ -147,5 +147,17 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 
 The secret sharing is Mora's own — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency.
 
-Not built here, and deliberately: no ATS, no order matching, no MEV protection, no custody, no
-mainnet deployment, and no claim to discharge any regulatory filing.
+## What it does not do
+
+Stated because a reader should find the limits here rather than discover them:
+
+- **The committee is the trust.** `k = 3, n = 5` tolerates 2 early colluders and 2 withholders, and
+  those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
+  no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
+  `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
+- **The commitment is not bound to a live account.** The disclosure package carries a subject
+  address as a string and an empty ElGamal pubkey — `aperture`'s own skeleton gap — so nothing here
+  proves the sealed position is about the fund's actual wallet rather than some other one. Tying it
+  to a real Token-2022 confidential account is the next correctness step, not a detail.
+- **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
+  deployment, and no claim to discharge any regulatory filing.

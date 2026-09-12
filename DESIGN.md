@@ -188,3 +188,14 @@ Minimum that makes §6 true and §3 testable. In order:
 Non-goals, stated so they are not mistaken for omissions: no ATS, no order matching, no MEV
 protection (§2), no custody, no mainnet deployment, and no claim to discharge any regulatory
 filing (§3a).
+
+Two limits that are **not** non-goals — they are gaps, and the next work:
+
+- **The committee is the trust.** No stake, no slashing, no cryptographic clock. Both I1 and I2 rest
+  on it, in opposite directions, on the same agents. `ReleaseTrustModel::TimeLockPuzzle` names the
+  fix. Note that slashing is only half available even if built: failure to publish at `T` is
+  observable on-chain and therefore punishable, while an early leak is not attributable at all.
+- **The commitment is not bound to a live account.** `SubjectAccount` carries an address string and
+  an empty ElGamal pubkey (`aperture`'s skeleton gap), so nothing proves the sealed position
+  concerns the fund's actual wallet. Everything downstream is sound; the anchor to reality is not
+  yet driven in.

@@ -25,11 +25,12 @@ pub struct CorporateAction {
     pub ca_type: String,
     #[serde(rename = "effectiveTimeUtc")]
     pub effective_utc: String,
-    /// Units before. String in the API, because some actions are fractional.
+    /// Units before. String in the API, because some actions are fractional — and absent
+    /// entirely for actions that change *what* is held rather than how much (a spin-off).
     #[serde(rename = "fromUnits")]
-    pub from_units: String,
+    pub from_units: Option<String>,
     #[serde(rename = "toUnits")]
-    pub to_units: String,
+    pub to_units: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -58,9 +59,12 @@ impl CorporateAction {
     }
 
     /// The unit ratio as an exact fraction, e.g. a 1→6 forward split is `(6, 1)`.
+    ///
+    /// `None` when the action has no whole-number unit ratio — a spin-off (no ratio at all), or a
+    /// stock dividend like `1 → 1.012`. Those are *unresolved*, not *absent*: see [`Restated`].
     pub fn ratio(&self) -> Option<(u64, u64)> {
-        let to = self.to_units.parse::<f64>().ok()?;
-        let from = self.from_units.parse::<f64>().ok()?;
+        let to = self.to_units.as_ref()?.parse::<f64>().ok()?;
+        let from = self.from_units.as_ref()?.parse::<f64>().ok()?;
         if from <= 0.0 || to <= 0.0 {
             return None;
         }
@@ -85,22 +89,41 @@ impl CorporateAction {
 pub struct Restated {
     /// What the sealed obligation says. Never changes — it is what the commitment binds.
     pub as_of_units: u64,
-    /// The same holding, expressed in units current at the read time.
+    /// The same holding, expressed in units current at the read time. Only meaningful when
+    /// [`Restated::unresolved`] is empty.
     pub current_units: u64,
     /// The actions that account for the difference, in order.
     pub applied: Vec<CorporateAction>,
+    /// Actions in the window that this **cannot** express as a unit ratio — a spin-off, a
+    /// fractional stock dividend.
+    ///
+    /// These exist so that "nothing happened" and "something happened that I cannot compute" are
+    /// different answers. Collapsing them is the dangerous direction: a reader told the number is
+    /// current, when an unmodelled action moved it, is worse off than one told it cannot be
+    /// restated.
+    pub unresolved: Vec<CorporateAction>,
 }
 
 impl Restated {
+    /// True only when the window is genuinely empty — no applied action **and** nothing
+    /// unresolved. A reader may quote `as_of_units` as current exactly when this holds.
     pub fn unchanged(&self) -> bool {
-        self.applied.is_empty()
+        self.applied.is_empty() && self.unresolved.is_empty()
+    }
+
+    /// True when every action in the window was expressible as a ratio, so `current_units` means
+    /// something.
+    pub fn fully_resolved(&self) -> bool {
+        self.unresolved.is_empty()
     }
 }
 
 /// Restate `shares` of `symbol`, recorded at `as_of`, into the units in force at `at`.
 ///
-/// Returns `None` if an action in the window has a ratio this refuses to apply — better to say
-/// "this cannot be restated" than to publish a number that quietly lost shares.
+/// Never returns `None` for an action it merely cannot model: those land in
+/// [`Restated::unresolved`], because silently reporting "unchanged" when a spin-off moved the
+/// holding is the failure worth engineering against. `None` is reserved for arithmetic that cannot
+/// be completed at all.
 pub fn restate(
     shares: u64,
     symbol: &str,
@@ -115,15 +138,22 @@ pub fn restate(
         .collect();
     relevant.sort_by_key(|a| a.effective_ts().unwrap_or(i64::MAX));
 
+    let (mut applied, mut unresolved) = (Vec::new(), Vec::new());
     let mut units = shares as u128;
-    for a in &relevant {
-        let (num, den) = a.ratio()?;
-        units = units.checked_mul(num as u128)? / den as u128;
+    for a in relevant {
+        match a.ratio() {
+            Some((num, den)) => {
+                units = units.checked_mul(num as u128)? / den as u128;
+                applied.push(a);
+            }
+            None => unresolved.push(a),
+        }
     }
     Some(Restated {
         as_of_units: shares,
         current_units: u64::try_from(units).ok()?,
-        applied: relevant,
+        applied,
+        unresolved,
     })
 }
 
@@ -148,20 +178,60 @@ mod tests {
             isin: None,
             ca_type: String::new(),
             effective_utc: iso.into(),
-            from_units: "1".into(),
-            to_units: "1".into(),
+            from_units: Some("1".into()),
+            to_units: Some("1".into()),
         }
         .effective_ts()
         .unwrap()
     }
 
     #[test]
-    fn the_bundled_schedule_is_real_and_parses() {
+    fn the_bundled_schedule_is_real_and_carries_what_it_cannot_model() {
         let a = scheduled();
-        assert_eq!(a.len(), 8, "the fixture is the live schedule read 2026-09-12");
-        assert!(a.iter().all(|x| x.effective_ts().is_some()), "every date parses");
-        assert!(a.iter().any(|x| x.symbol == "HONx" && x.ca_type == "ReverseSplit"));
+        assert_eq!(a.len(), 11, "the fixture is the live schedule, every type but cash dividends");
         assert!(a.iter().any(|x| x.symbol == "PPLTx" && x.ratio() == Some((10, 1))));
+        // The two kinds this cannot express as a ratio are present rather than filtered out —
+        // being absent from the fixture is the one state restate() could not warn about.
+        assert!(a.iter().any(|x| x.ca_type == "SpinOff" && x.ratio().is_none()));
+        assert!(a.iter().any(|x| x.ca_type == "StockDividend" && x.ratio().is_none()));
+    }
+
+    /// **The case that used to be silently wrong.** HONx has a reverse split and a spin-off on the
+    /// same date. Applying the split and reporting nothing else would hand a reader a number that
+    /// looks current and is not.
+    #[test]
+    fn an_action_that_cannot_be_modelled_is_reported_not_ignored() {
+        let r = restate(
+            1_000,
+            "HONx",
+            &scheduled(),
+            ts("2026-06-01T00:00:00.000Z"),
+            ts("2026-07-01T00:00:00.000Z"),
+        )
+        .unwrap();
+        assert_eq!(r.applied.len(), 1, "the 2->1 reverse split is applied");
+        assert_eq!(r.current_units, 500);
+        assert_eq!(r.unresolved.len(), 1, "the spin-off is carried, not dropped");
+        assert_eq!(r.unresolved[0].ca_type, "SpinOff");
+        assert!(!r.fully_resolved(), "500 must not be quoted as if it were the whole story");
+        assert!(!r.unchanged(), "'unchanged' would be a lie here");
+    }
+
+    /// A stock dividend of 1 -> 1.012 is not a whole-number ratio. It is reported, not rounded.
+    #[test]
+    fn a_fractional_action_is_unresolved_rather_than_rounded() {
+        let r = restate(
+            1_000,
+            "SCCOx",
+            &scheduled(),
+            ts("2026-08-01T00:00:00.000Z"),
+            ts("2026-08-31T00:00:00.000Z"),
+        )
+        .unwrap();
+        assert!(r.applied.is_empty());
+        assert!(!r.unresolved.is_empty(), "the stock dividends are carried");
+        assert!(!r.fully_resolved());
+        assert_eq!(r.current_units, 1_000, "nothing was applied, so nothing moved");
     }
 
     #[test]
@@ -189,18 +259,14 @@ mod tests {
         assert_eq!(r.applied[0].ca_type, "ForwardSplit");
     }
 
-    /// HONx went 2→1. Half the units, same holding.
+    /// A window containing only the reverse split: half the units, and nothing unresolved.
     #[test]
     fn a_reverse_split_halves_the_units() {
-        let r = restate(
-            1_000,
-            "HONx",
-            &scheduled(),
-            ts("2026-06-01T00:00:00.000Z"),
-            ts("2026-07-01T00:00:00.000Z"),
-        )
-        .unwrap();
+        let all = scheduled();
+        let splits: Vec<_> = all.into_iter().filter(|a| a.ca_type == "ReverseSplit").collect();
+        let r = restate(1_000, "HONx", &splits, ts("2026-06-01T00:00:00.000Z"), ts("2026-07-01T00:00:00.000Z")).unwrap();
         assert_eq!(r.current_units, 500);
+        assert!(r.fully_resolved());
     }
 
     /// An action before the reporting date is already in the sealed number; an action after the
