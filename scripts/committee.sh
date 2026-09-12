@@ -6,7 +6,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 DIR="${1:-$(mktemp -d)/committee}"
-DUE=1794614400          # 2026-11-14, the 13F deadline
+DUE=1794614400          # 2026-11-14, the reporting deadline
 EARLY=$((DUE - 86400))  # one day short
 
 B() { cargo run --quiet -p mora-committee --bin "$@"; }

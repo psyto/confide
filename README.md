@@ -1,8 +1,11 @@
 # Mora
 
-**Tokenized stocks on Solana publish your position while you are still building it.**
-Mora gives that position a lawful delay: sealed at quarter end, opened on the deadline by a
-committee the holder does not control, provably unrevised in between.
+**A fund on-chain discloses continuously to the market and unverifiably to its LPs.**
+Everyone can watch a wallet accumulate NVDAx in real time; the party actually owed a quarterly
+report still gets a number in an email, weeks late, with nothing binding it to the date.
+
+Mora gives the position a lawful delay and a proof at the same time: sealed on the reporting date,
+opened on the deadline by a committee the holder does not control, provably unrevised in between.
 
 ```
 day      LANE A · a public wallet       LANE B · Mora
@@ -18,11 +21,11 @@ Nobody attacked anything. The chain simply published it.
 ```
 
 ```
- 1 Oct · the regulator asks
+ 1 Oct · the LP asks
 
 auditor reads the position    173,000 NVDAx   44 days before the public can
-does Fund A owe a 13F?        YES   threshold $100M — and that is all this reveals
-(the portfolio is $106M across NVDAx/TSLAx/SPYx — the regulator is not told that)
+is the fund above its floor?  YES   floor $100M — and that is all this reveals
+(the portfolio is $106M across NVDAx/TSLAx/SPYx — the LP is not told that)
 
 14 Nov · the obligation comes due
 
@@ -65,9 +68,19 @@ Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. The
 transaction **in flight**. Mora is about the **settled balance** — the permanent public record of
 what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIGN.md).
 
-In TradFi a manager with discretion over $100M+ files Form 13F **45 days after quarter end**. That
-lag is legislated, for exactly the harm that real-time position disclosure causes. On Solana,
-tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the lag is **zero**.
+In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
+days after quarter end**. That lag is legislated, for exactly the harm that real-time position
+disclosure causes. On Solana, tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the
+lag is **zero**.
+
+**What this is not.** xStocks are *not* Section 13(f) securities and holding them creates no Form
+13F obligation — they are issued by Backed Finance AG under Swiss law with their own Swiss ISIN
+(`NVDAx` = `CH1436219195`; NVDA itself = `US67066G1040`), and the SEC's joint statement of 28
+January 2026 separates issuer-sponsored tokenization conveying true ownership from third-party
+products conveying a custodial entitlement. The obligation Mora serves today is **contractual** —
+the quarterly report a GP owes its LPs. 13F is the design this borrows and the requirement that
+arrives when Nasdaq's filed tokenized-form rule settles. [DESIGN.md §3a](DESIGN.md) says all of
+this in full rather than leaving it implied.
 
 ## Run it
 
@@ -99,7 +112,7 @@ The invariants are written as claims you can run, not prose:
 
 ## The split problem
 
-A 13F reports holdings **as of the reporting date**. Mora seals at quarter end and opens 45 days
+A quarterly report states holdings **as of the reporting date**. Mora seals at quarter end and opens 45 days
 later. If a split lands in between, the number that opens is quoted in units that no longer exist —
 the disclosure is correct and unreadable at the same time.
 
@@ -114,12 +127,13 @@ nothing by staying quiet about a split, because anyone can recompute it and ever
 answer. `mora-open` prints both numbers, and refuses rather than rounding when a ratio cannot be
 applied exactly.
 
-## And the other half of a 13F
+## And the other half of a quarterly report
 
-`mora-equity` holds it: a manager owes a 13F only above **$100M**, so *"is one owed?"*
-must be answerable before the position is. It is a predicate, it reveals no position, and
-`every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` is the test that will say so if
-the premise above ever stops being true.
+An LPA does not only ask *what do you hold*; it carries covenants of the form *"the fund is at or
+above X"*, which must be answerable before the position itself is disclosable. `mora-equity` proves
+that as a predicate: the LP learns one bit and no position, and the proof goes to the live ZK
+program. `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` is the test that will
+say so if the premise above ever stops being true.
 
 ## Built on
 
@@ -134,4 +148,4 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 The secret sharing is Mora's own — `crates/mora-embargo/src/shamir.rs`, GF(256), no dependency.
 
 Not built here, and deliberately: no ATS, no order matching, no MEV protection, no custody, no
-mainnet deployment, no actual Form 13F filing.
+mainnet deployment, and no claim to discharge any regulatory filing.

@@ -25,7 +25,7 @@ fn position(fund: &ElGamalKeypair, shares: u64, recipient: &str, pkg_id: &str) -
     let (claim, proof, subject) = issue_exact_disclosure(fund, reader.pubkey(), shares, "fund-A-nvdax");
     let mut pkg = DisclosurePackage {
         package_id: pkg_id.into(),
-        grant_id: "obligation-13f-q3".into(),
+        grant_id: "obligation-q3-lp-report".into(),
         substrate: SubstrateId::Token2022,
         issuer: "fund-A".into(),
         recipient: recipient.into(),
@@ -154,7 +154,7 @@ fn i3_a_position_swapped_in_after_the_fact_is_caught() {
 /// **I4 — the auditor reads continuously, before T.**
 ///
 /// Compliance is never delayed; only *public* disclosure is. This is the confidential-treatment
-/// shape — the regulator already holds the position while the market does not.
+/// shape — the auditor already holds the position while the wider world does not.
 #[test]
 fn i4_the_auditor_sees_the_position_while_the_public_seal_is_still_shut() {
     let fund = ElGamalKeypair::new_rand();
@@ -195,9 +195,9 @@ fn i5_revoking_the_grant_does_not_unopen_what_is_already_open() {
     let opened = open(&sealed, &published).expect("opens at T");
 
     let mut revoked = HashSet::new();
-    revoked.insert("obligation-13f-q3".to_string());
+    revoked.insert("obligation-q3-lp-report".to_string());
     let grant = Grant {
-        id: "obligation-13f-q3".into(),
+        id: "obligation-q3-lp-report".into(),
         recipient: Recipient { name: "public".into(), verifier_key: vec![] },
         granularity: Granularity::Exact,
         trigger: Trigger::Periodic,

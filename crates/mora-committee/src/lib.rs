@@ -7,7 +7,7 @@ use mora_equity::{Position, NVDAX};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 
 pub const QUARTER_END: i64 = 1_790_726_400; // 2026-09-30 00:00 UTC
-pub const DUE: i64 = QUARTER_END + 45 * 86_400; // 2026-11-14 — the 13F deadline
+pub const DUE: i64 = QUARTER_END + 45 * 86_400; // 2026-11-14 — the reporting deadline
 pub const ANCHOR_SLOT: u64 = 497_199_572;
 
 /// The position of record at quarter end, sealed as an obligation. Returns it with its due date.
@@ -19,8 +19,8 @@ pub fn quarter_end_obligation() -> (Obligation, i64) {
     let (claim, proof, subject) =
         issue_exact_disclosure(&fund, reader.pubkey(), shares, "fund-A-nvdax");
     let mut package = DisclosurePackage {
-        package_id: "13f-q3-fund-A".into(),
-        grant_id: "obligation-13f-q3".into(),
+        package_id: "q3-report-fund-A".into(),
+        grant_id: "obligation-q3-lp-report".into(),
         substrate: SubstrateId::Token2022,
         issuer: "Fund A".into(),
         recipient: "public".into(),

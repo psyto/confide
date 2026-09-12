@@ -97,8 +97,8 @@ fn quarter_end_obligation() -> (Obligation, i64) {
         "fund-A-nvdax",
     );
     let mut package = aperture_core::package::DisclosurePackage {
-        package_id: "13f-q3-fund-A".into(),
-        grant_id: "obligation-13f-q3".into(),
+        package_id: "q3-report-fund-A".into(),
+        grant_id: "obligation-q3-lp-report".into(),
         substrate: aperture_core::package::SubstrateId::Token2022,
         issuer: "Fund A".into(),
         recipient: "public".into(),

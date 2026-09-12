@@ -1,16 +1,16 @@
-//! Emit an unsigned transaction that hands Mora's **own** filing-threshold proof to Solana's live
+//! Emit an unsigned transaction that hands Mora's **own** NAV-floor proof to Solana's live
 //! ZK ElGamal Proof Program (`ZkE1Gama1Proof11111111111111111111111111111`).
 //!
 //! The point is which proof this is. These are not freshly minted bytes for a demo: they are read
 //! straight back out of the `ProofEnvelope` inside the disclosure package that
-//! `mora-equity::filing_threshold_disclosure` produced, the same package the embargo seals. So
+//! `mora-equity::nav_floor_disclosure` produced, the same package the embargo seals. So
 //! what the chain accepts is the artifact, not a lookalike.
 //!
 //! Run it through `scripts/devnet-verify.sh`, which feeds the output to devnet
 //! `simulateTransaction` — no signature, no fee, no funded account required.
 
 use base64::Engine;
-use mora_equity::{filing_threshold_disclosure, Position, FILING_THRESHOLD_CENTS, NVDAX, SPYX, TSLAX};
+use mora_equity::{nav_floor_disclosure, Position, DEFAULT_NAV_FLOOR_CENTS, NVDAX, SPYX, TSLAX};
 use solana_address::Address;
 use solana_message::Message;
 use solana_transaction::Transaction;
@@ -32,9 +32,9 @@ fn main() {
         Position::from_shares(SPYX, 1_100, 66_800),
     ];
 
-    let attestation = filing_threshold_disclosure(&fund, &portfolio, FILING_THRESHOLD_CENTS)
-        .or_else(|| filing_threshold_disclosure(&fund, &portfolio, 1_000_00))
-        .expect("a portfolio above some threshold");
+    let attestation = nav_floor_disclosure(&fund, &portfolio, DEFAULT_NAV_FLOOR_CENTS)
+        .or_else(|| nav_floor_disclosure(&fund, &portfolio, 1_000_00))
+        .expect("a portfolio above some floor");
 
     // Read the proof back out of the disclosure package — same bytes, not a re-generation.
     let proof: BatchedRangeProofU64Data = bytemuck::pod_read_unaligned(&attestation.proof.bytes);

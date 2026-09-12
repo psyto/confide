@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Hand Mora's own filing-threshold proof to the live ZK ElGamal Proof Program on Solana devnet.
+# Hand Mora's own NAV-floor proof to the live ZK ElGamal Proof Program on Solana devnet.
 #
 # No signature, no fee, no funded account: simulateTransaction with sigVerify=false and
 # replaceRecentBlockhash=true. The fee payer only has to EXIST, because the simulator loads it.

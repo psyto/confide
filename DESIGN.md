@@ -6,21 +6,28 @@
 
 ## 1. The gap
 
-In TradFi, an institutional manager with discretion over $100M+ of US equities files Form 13F
-**within 45 days after the end of the quarter**. The delay is not an accident of paperwork. It is
-legislated. Disclosure informs the market; the lag preserves the manager's ability to build a
-position without being front-run by everyone who can read the filing. Where even 45 days is too
-short, a confidential-treatment request holds the position back from the public while the regulator
-already has it.
+A fund's limited partners are owed a position report every quarter. That obligation is contractual,
+it is universal — it sits in essentially every LPA — and today an LP has no way to check it. The GP
+reports a quarter-end number weeks after the quarter ended, and nothing binds the GP to what it
+actually held on the date. The LP takes the number on trust, and the lag between the date and the
+report is exactly the window in which a number can be tidied.
 
-On Solana, tokenized equities now do ~$5.8B of spot DEX volume per quarter (Q2 2026). And the delay
-is **zero**. A wallet accumulating NVDAx is readable by anyone, in real time, mid-accumulation,
-forever. Not after the position is built — *while* it is being built.
+On-chain, the same fund has the opposite problem. Solana's tokenized equities now do ~$5.8B of spot
+DEX volume per quarter (Q2 2026), and a wallet accumulating NVDAx is readable by anyone, in real
+time, **while the position is still being built** — not after it is complete. Everyone sees the
+position except the party entitled to a report, who still only gets a number in an email.
 
-This is the one axis on which owning stocks on-chain is not merely different from a brokerage
-account but strictly worse, and it is the axis the law cares about most.
+So a fund on-chain today gets the worst of both: **continuous disclosure to the market, and
+unverifiable disclosure to its LPs.**
 
-**Mora restores the delay as a mechanism rather than a promise.**
+TradFi solved the first half by legislating a lag. A US manager with discretion over $100M+ of
+Section 13(f) securities files Form 13F **45 days after quarter end** — late enough that the
+position is built, early enough that the market learns it. That lag is the design this borrows;
+§3a says precisely what it does and does not apply to here.
+
+**Mora gives the position a lawful delay and a proof at the same time**: sealed on the reporting
+date, opened on the reporting deadline by a committee the holder does not control, provably
+unrevised in between.
 
 ## 2. Why the obvious answers do not close it
 
@@ -41,6 +48,31 @@ creates no schedule.
 **"Just publish your position at T."** A promise, not a mechanism. If the holder declines at T,
 nothing happens — and nothing can be proven about what they held.
 
+## 3a. What the law actually says, so this is not mistaken for a compliance claim
+
+**xStocks are not Section 13(f) securities, and holding them does not create a Form 13F
+obligation.** Section 13(f) securities are registered securities trading on US national exchanges,
+identified by CUSIP on an official SEC list. An xStock is issued by Backed Finance AG under Swiss
+law and carries its own Swiss ISIN — `NVDAx` is `CH1436219195`, while NVDA itself is
+`US67066G1040`. Those are two securities, and the issuer's own API says so.
+
+The SEC's **joint statement of 28 January 2026** (Corporation Finance, Investment Management, and
+Trading and Markets) draws the line directly: federal securities laws apply to tokenized securities
+whether ownership is recorded on-chain or off, and **issuer-sponsored tokenization conveying true
+equity ownership is a different thing from third-party products conveying synthetic exposure or a
+custodial entitlement.** xStocks are the second kind.
+
+So the obligation Mora serves **today is contractual, not regulatory**: the quarterly position
+report a GP owes its LPs. The mechanism does not change by a line — an obligation is an obligation —
+but the party on the other end is an LP, not the SEC, and this document does not pretend otherwise.
+
+**The regulatory version is filed, not hypothetical.** Nasdaq has a proposed rule change before the
+SEC to trade securities in tokenized form on the exchange, with the same rights, the same order
+books and DTC clearing. Tokens under that model *are* the security. On the day that settles, the
+45-day lag becomes a legal requirement for on-chain positions — and there is no mechanism on a
+public chain that satisfies it. That is the case Mora is built for. The LP case is the one that
+exists now.
+
 ## 3. What a disclosure obligation actually requires
 
 `aperture::policy::Grant` is **permissive**: a standing authorization for the holder to produce
@@ -52,13 +84,14 @@ properties, and the middle one is the hard one:
 - **I2 — unstoppable at T, including by the holder.** Otherwise it is a promise, not a disclosure.
 - **I3 — bound to the position of record.** The commitment is anchored at quarter end, so the 45
   days before anyone can read it are 45 days in which the fund cannot revise what it held. Today a
-  13F is prepared and filed weeks after the fact with nothing binding the manager to the position
-  as of the reporting date; Mora anchors it on the date itself.
+  quarterly report — to an LP, or on a 13F — is prepared weeks after the fact with nothing binding
+  the manager to the position as of the reporting date; Mora anchors it on the date itself.
 
 Two further properties are inherited rather than invented:
 
-- **I4 — the auditor reads continuously, before T.** Compliance is never delayed; only *public*
-  disclosure is. This is the confidential-treatment shape, not an evasion of it.
+- **I4 — the auditor reads continuously, before T.** The fund administrator and auditor are never
+  delayed; only the *wider* disclosure is. This is the shape of a confidential-treatment request,
+  not an evasion of one.
 - **I5 — opening is irreversible.** From `aperture::policy`: *revocation is not clawback.* Revoking
   a standing grant stops future disclosures; it cannot un-disclose a delivered package.
 
@@ -141,8 +174,9 @@ Minimum that makes §6 true and §3 testable. In order:
 
 1. ~~`mora-embargo`~~ — done. Threshold-seal, anchor, open from k shares, verify against the
    commitment. I1–I5 are executable claims in `tests/invariants.rs`.
-2. ~~`mora-equity`~~ — done. The xStocks as mainnet configures them, and the $100M filing-threshold
-   predicate, whose proof the live ZK ElGamal Proof Program accepts (`mora-onchain`).
+2. ~~`mora-equity`~~ — done. The xStocks as mainnet configures them, the corporate-action
+   restatement, and the NAV-floor predicate whose proof the live ZK ElGamal Proof Program accepts
+   (`mora-onchain`).
 3. ~~On-chain anchoring~~ — done. `aperture-receipts` on devnet at
    `6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv`; 147 bytes per obligation.
 4. ~~The committee as real processes~~ — done. `scripts/committee.sh`. A committee inside one
@@ -152,4 +186,5 @@ Minimum that makes §6 true and §3 testable. In order:
 6. **Video.**
 
 Non-goals, stated so they are not mistaken for omissions: no ATS, no order matching, no MEV
-protection (§2), no custody, no mainnet deployment, no real Form 13F filing.
+protection (§2), no custody, no mainnet deployment, and no claim to discharge any regulatory
+filing (§3a).

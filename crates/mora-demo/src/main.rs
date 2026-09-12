@@ -6,7 +6,7 @@ use aperture_core::package::{ChainAnchor, DisclosurePackage, SubstrateId};
 use aperture_core::token2022::{issue_exact_disclosure, Token2022Substrate};
 use aperture_core::verifier::verify_package;
 use mora_embargo::{open, seal, Obligation, OpenError, ReleaseShare, SealedDisclosure};
-use mora_equity::{filing_threshold_disclosure, Position, FILING_THRESHOLD_CENTS, NVDAX, SPYX, TSLAX};
+use mora_equity::{nav_floor_disclosure, Position, DEFAULT_NAV_FLOOR_CENTS, NVDAX, SPYX, TSLAX};
 use solana_zk_sdk::encryption::elgamal::{ElGamalCiphertext, ElGamalKeypair, ElGamalSecretKey};
 
 const DIM: &str = "\x1b[2m";
@@ -19,11 +19,11 @@ const OFF: &str = "\x1b[0m";
 
 const DAY: i64 = 86_400;
 const QUARTER_END: i64 = 1_790_726_400; // t0 — 2026-09-30 00:00 UTC, the position of record
-const DUE: i64 = QUARTER_END + 45 * DAY; // T — 45 days later, the 13F deadline
+const DUE: i64 = QUARTER_END + 45 * DAY; // T — 45 days later, the reporting deadline
 const ANCHOR_SLOT: u64 = 340_112_045;
 
-/// (day of quarter, shares bought). A manager who owes a 13F holds $100M+, so these are the
-/// sizes that make the obligation real — and the sizes that make the leak in Lane A expensive.
+/// (day of quarter, shares bought). A fund whose LPs are owed a quarterly report holds size, so
+/// these are the numbers that make the obligation real — and the leak in Lane A expensive.
 const BUYS: [(u32, u64); 7] = [
     (3, 42_000),
     (11, 54_000),
@@ -67,7 +67,7 @@ fn main() {
     println!("  {DIM}Nobody attacked anything. The chain simply published it.{OFF}\n");
 
     // ── t0: quarter end. Seal and anchor. ──────────────────────────────────────────────────────
-    let (obligation, _) = position_of_record(&fund, position, "public", "13f-q3-fund-A");
+    let (obligation, _) = position_of_record(&fund, position, "public", "q3-report-fund-A");
     let (sealed, agents) = seal(&obligation, DUE, ANCHOR_SLOT, 3, 5);
 
     rule("30 Sep · quarter end — the position of record is sealed and anchored");
@@ -76,7 +76,7 @@ fn main() {
         hex12(&sealed.commitment)
     );
     println!("  anchored    slot {ANCHOR_SLOT} {DIM}· mainnet-beta{OFF}");
-    println!("  due         {BOLD}14 Nov{OFF} {DIM}· 45 days, the 13F deadline{OFF}");
+    println!("  due         {BOLD}14 Nov{OFF} {DIM}· 45 days, the reporting deadline{OFF}");
     println!("  committee   {DIM}{:?}{OFF}", sealed.trust);
     println!(
         "\n  {DIM}From here the fund can do nothing. It cannot open this early, cannot stop it{OFF}"
@@ -84,9 +84,9 @@ fn main() {
     println!("  {DIM}opening, and cannot revise what is inside it.{OFF}\n");
 
     // ── The auditor is never delayed. ──────────────────────────────────────────────────────────
-    let (to_auditor, _) = position_of_record(&fund, position, "auditor", "13f-q3-aud");
+    let (to_auditor, _) = position_of_record(&fund, position, "auditor", "q3-report-auditor");
     let report = verify_package(&to_auditor.package, &Token2022Substrate, QUARTER_END, "auditor");
-    rule("1 Oct · the regulator asks");
+    rule("1 Oct · the LP asks");
     println!(
         "  auditor verifies the package  {}  {DIM}({}){OFF}",
         pass(report.passed()),
@@ -97,23 +97,24 @@ fn main() {
         commas(read(&to_auditor))
     );
 
-    // The other half of a 13F: is one owed at all? A predicate, answerable before the position is.
+    // The other half of a quarterly report: does the covenant hold? A predicate, answerable
+    // before the position itself is disclosable.
     let portfolio = vec![
         Position::from_shares(NVDAX, position, 18_450), // $184.50
         Position::from_shares(TSLAX, 90_000, 42_100),   // $421.00
         Position::from_shares(SPYX, 55_000, 66_800),    // $668.00
     ];
     let portfolio_musd = portfolio.iter().map(Position::value_cents).sum::<u64>() / 100_000_000;
-    let owed = filing_threshold_disclosure(&fund, &portfolio, FILING_THRESHOLD_CENTS);
+    let ok = nav_floor_disclosure(&fund, &portfolio, DEFAULT_NAV_FLOOR_CENTS);
     println!(
-        "  does Fund A owe a 13F?        {}   {DIM}threshold ${}M — and that is all this reveals{OFF}",
-        if owed.is_some() { format!("{GRN}YES{OFF}") } else { format!("{YEL}NO{OFF}") },
-        FILING_THRESHOLD_CENTS / 100_000_000
+        "  is the fund above its floor?  {}   {DIM}floor ${}M — and that is all this reveals{OFF}",
+        if ok.is_some() { format!("{GRN}YES{OFF}") } else { format!("{YEL}NO{OFF}") },
+        DEFAULT_NAV_FLOOR_CENTS / 100_000_000
     );
     println!(
-        "  {DIM}(the portfolio is ${portfolio_musd}M across NVDAx/TSLAx/SPYx — the regulator is not told that){OFF}"
+        "  {DIM}(the portfolio is ${portfolio_musd}M across NVDAx/TSLAx/SPYx — the LP is not told that){OFF}"
     );
-    if let Some(att) = &owed {
+    if let Some(att) = &ok {
         println!(
             "  {DIM}the predicate's proof is {} bytes of BatchedRangeProofU64, and the live{OFF}",
             att.proof.bytes.len()
@@ -126,7 +127,7 @@ fn main() {
 
     // ── The fund tries to revise. ──────────────────────────────────────────────────────────────
     rule("2 Nov · the fund has second thoughts");
-    let (flattering, _) = position_of_record(&fund, 5, "public", "13f-q3-revised");
+    let (flattering, _) = position_of_record(&fund, 5, "public", "q3-report-revised");
     let (sealed_lie, lie_agents) = seal(&flattering, DUE, ANCHOR_SLOT, 3, 5);
     let spliced = SealedDisclosure {
         ciphertext: sealed_lie.ciphertext,
@@ -195,7 +196,7 @@ fn position_of_record(
     let (claim, proof, subject) = issue_exact_disclosure(fund, reader.pubkey(), shares, "fund-A-nvdax");
     let mut package = DisclosurePackage {
         package_id: pkg_id.into(),
-        grant_id: "obligation-13f-q3".into(),
+        grant_id: "obligation-q3-lp-report".into(),
         substrate: SubstrateId::Token2022,
         issuer: "Fund A".into(),
         recipient: recipient.into(),
@@ -262,7 +263,8 @@ fn banner() {
     println!();
     println!("  {BOLD}MORA{OFF} {DIM}· lawful delay for tokenized equity positions{OFF}");
     println!(
-        "  {DIM}In TradFi a 13F is due 45 days after quarter end. On-chain, the delay is zero.{OFF}"
+        "  {DIM}A fund owes its LPs a quarterly position report. On-chain it owes the market a{OFF}"
     );
+    println!("  {DIM}continuous one it never agreed to.{OFF}");
     println!();
 }

@@ -5,9 +5,9 @@
 //! 1. [`XStock`] — the tokenized equities this is actually about, as they are configured on
 //!    mainnet today. Not illustrative constants: every field was read from the chain and is
 //!    reproducible with `scripts/onchain-check.sh`.
-//! 2. [`filing_threshold_disclosure`] — the other half of a 13F. A manager owes a filing at all
-//!    only once discretionary holdings reach a threshold, so *"do you owe one?"* is a question
-//!    that must be answerable **before** the position itself is disclosable. It is a predicate,
+//! 2. [`nav_floor_disclosure`] — the other half of a quarterly report. An LPA does not only ask
+//!    "what do you hold"; it also carries covenants of the form *"the fund is at or above X"*,
+//!    which must be answerable **before** the position itself is disclosable. It is a predicate,
 //!    it reveals no position, and its proof verifies against Solana's live ZK ElGamal Proof
 //!    Program.
 
@@ -90,7 +90,7 @@ pub struct Position {
     /// Base units, i.e. shares × 10^decimals.
     pub base_units: u64,
     /// Reference price per share, in cents. A pinned input, **not an oracle** — pricing is a
-    /// non-goal here, and a real filing would take marks from the fund's administrator.
+    /// non-goal here, and a real report would take marks from the fund's administrator.
     pub price_cents: u64,
 }
 
@@ -108,30 +108,34 @@ impl Position {
     }
 }
 
-/// Form 13F is owed by a manager exercising discretion over **$100,000,000** or more of Section
-/// 13(f) securities, filed within 45 days of quarter end.
-pub const FILING_THRESHOLD_CENTS: u64 = 100_000_000_00;
+/// An example NAV floor: the covenant level a fund reports against each quarter.
+///
+/// This is a **contract term, not a statute** — LPAs set their own. $100M is used here because it
+/// is the level at which the US Form 13F obligation would bite if these were Section 13(f)
+/// securities, which they are not (see DESIGN.md §3a). Treat it as a default, not a rule.
+pub const DEFAULT_NAV_FLOOR_CENTS: u64 = 100_000_000_00;
 
 #[derive(Debug)]
 pub struct ThresholdAttestation {
     pub claim: Claim,
     pub proof: ProofEnvelope,
     pub subject: SubjectAccount,
-    /// What the predicate asserts, in dollars — the only number this reveals.
+    /// What the predicate asserts, in cents — the only number this reveals.
     pub threshold_cents: u64,
-    pub owes_a_filing: bool,
+    /// The one bit the recipient learns.
+    pub above_floor: bool,
 }
 
-/// Prove *"this portfolio is at or above the filing threshold"* — and nothing else.
+/// Prove *"this portfolio is at or above the floor"* — and nothing else.
 ///
-/// The regulator learns whether a filing is owed. It does not learn the portfolio's value, its
-/// composition, or any position. The proof this returns is a real
-/// `BatchedRangeProofU64Data`; `mora-onchain` submits these same bytes to Solana's live ZK
-/// ElGamal Proof Program, so the predicate is not merely checkable off-chain.
+/// The LP learns whether the covenant holds. It does not learn the portfolio's value, its
+/// composition, or any position. The proof this returns is a real `BatchedRangeProofU64Data`;
+/// `mora-onchain` submits these same bytes to Solana's live ZK ElGamal Proof Program, so the
+/// predicate is not merely checkable off-chain.
 ///
-/// Returns `None` when the portfolio is below the threshold — there is nothing to prove, and
+/// Returns `None` when the portfolio is below the floor — there is nothing to prove, and
 /// manufacturing a proof of a false statement is the one thing this must not do.
-pub fn filing_threshold_disclosure(
+pub fn nav_floor_disclosure(
     fund: &ElGamalKeypair,
     positions: &[Position],
     threshold_cents: u64,
@@ -142,13 +146,7 @@ pub fn filing_threshold_disclosure(
     }
     let (claim, proof, subject) =
         issue_range_disclosure(fund, total, threshold_cents, "fund-A-portfolio");
-    Some(ThresholdAttestation {
-        claim,
-        proof,
-        subject,
-        threshold_cents,
-        owes_a_filing: true,
-    })
+    Some(ThresholdAttestation { claim, proof, subject, threshold_cents, above_floor: true })
 }
 
 #[cfg(test)]
@@ -182,13 +180,13 @@ mod tests {
         assert_eq!(p.value_cents(), 173 * 18_450);
     }
 
-    /// The regulator learns one bit — a filing is owed — and no position.
+    /// The LP learns one bit — the covenant holds — and no position.
     #[test]
-    fn the_threshold_predicate_reveals_only_whether_a_filing_is_owed() {
+    fn the_floor_predicate_reveals_only_whether_the_covenant_holds() {
         let fund = ElGamalKeypair::new_rand();
-        let att = filing_threshold_disclosure(&fund, &portfolio(), 1_000_00)
-            .expect("portfolio is above this threshold");
-        assert!(att.owes_a_filing);
+        let att = nav_floor_disclosure(&fund, &portfolio(), 1_000_00)
+            .expect("portfolio is above this floor");
+        assert!(att.above_floor);
         assert_eq!(att.claim, Claim::Range { min: 1_000_00, max: None });
         // The package carries a commitment, never a plaintext position.
         assert!(!att.subject.ciphertext_commitment.is_empty());
@@ -196,11 +194,11 @@ mod tests {
         assert!(!att.proof.bytes.windows(8).any(|w| w == total.to_le_bytes()));
     }
 
-    /// Below the threshold there is nothing to prove, and no proof is produced.
+    /// Below the floor there is nothing to prove, and no proof is produced.
     #[test]
-    fn a_portfolio_below_the_threshold_gets_no_proof() {
+    fn a_portfolio_below_the_floor_gets_no_proof() {
         let fund = ElGamalKeypair::new_rand();
         let small = vec![Position::from_shares(NVDAX, 1, 18_450)];
-        assert!(filing_threshold_disclosure(&fund, &small, FILING_THRESHOLD_CENTS).is_none());
+        assert!(nav_floor_disclosure(&fund, &small, DEFAULT_NAV_FLOOR_CENTS).is_none());
     }
 }

@@ -38,9 +38,9 @@ on mainnet and devnet today — and **usage is close to zero**.
 
 ## 3. Mora's own proof, accepted by the live program
 
-The 13F obligation has two halves. The position is disclosed at `T`; but *whether a filing is owed
-at all* — discretionary holdings at or above **$100M** — is a question that must be answerable
-**before** the position is disclosable. That half is a predicate, and it verifies on-chain.
+A quarterly reporting obligation has two halves. The position is disclosed at `T`; but the
+covenants around it — *"the fund is at or above X"* — must be answerable **before** the position
+itself is disclosable. That half is a predicate, and it verifies on-chain.
 
 ```
 $ ./scripts/devnet-verify.sh
@@ -55,14 +55,14 @@ logs  :
 
 `err: None` with a `VerifyBatchedRangeProofU64 → success` log is the reactivated ZK ElGamal Proof
 Program accepting the proof. **Which proof matters**: these bytes are read back out of the
-`ProofEnvelope` inside the disclosure package that `mora-equity::filing_threshold_disclosure`
+`ProofEnvelope` inside the disclosure package that `mora-equity::nav_floor_disclosure`
 produced — the same package the embargo seals. Not a lookalike generated for the occasion.
 
 No signature, no fee, no funded account: `simulateTransaction` with `sigVerify=false` and
 `replaceRecentBlockhash=true`. The fee payer only has to exist, so the script asks the cluster for
 a validator identity rather than hardcoding an address devnet will reset away.
 
-The regulator learns one bit — a filing is owed. It learns no position, no portfolio value, no
+The LP learns one bit — the covenant holds. It learns no position, no portfolio value, no
 composition.
 
 ## 4. The commitment really is on-chain, at t0
