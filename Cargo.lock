@@ -617,6 +617,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "mora-committee"
+version = "0.1.0"
+dependencies = [
+ "aperture-core",
+ "mora-embargo",
+ "mora-equity",
+ "serde_json",
+ "solana-zk-sdk",
+]
+
+[[package]]
 name = "mora-demo"
 version = "0.1.0"
 dependencies = [

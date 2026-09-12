@@ -1,0 +1,25 @@
+[package]
+name = "mora-committee"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "The release committee as actual processes — a committee inside one process is not a committee"
+
+[[bin]]
+name = "mora-seal"
+path = "src/seal.rs"
+
+[[bin]]
+name = "mora-agent"
+path = "src/agent.rs"
+
+[[bin]]
+name = "mora-open"
+path = "src/open.rs"
+
+[dependencies]
+mora-embargo = { path = "../mora-embargo" }
+mora-equity = { path = "../mora-equity" }
+aperture-core = { git = "https://github.com/psyto/aperture", tag = "v0.5.1" }
+solana-zk-sdk = "7"
+serde_json = "1"

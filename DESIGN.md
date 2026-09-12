@@ -139,11 +139,17 @@ The line on screen at the end:
 
 Minimum that makes §6 true and §3 testable. In order:
 
-1. `mora-embargo` — the sealed package: threshold-seal a disclosure package, anchor commitment + T,
-   open from k shares, verify against commitment. Tests are I1/I2/I3 stated as executable claims.
-2. `mora-equity` — the xStock layer: position over Token-2022 confidential balances, auditor view.
-3. `mora-demo` — the two-lane runner and the watcher/auditor panes.
-4. Video.
+1. ~~`mora-embargo`~~ — done. Threshold-seal, anchor, open from k shares, verify against the
+   commitment. I1–I5 are executable claims in `tests/invariants.rs`.
+2. ~~`mora-equity`~~ — done. The xStocks as mainnet configures them, and the $100M filing-threshold
+   predicate, whose proof the live ZK ElGamal Proof Program accepts (`mora-onchain`).
+3. ~~On-chain anchoring~~ — done. `aperture-receipts` on devnet at
+   `6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv`; 147 bytes per obligation.
+4. ~~The committee as real processes~~ — done. `scripts/committee.sh`. A committee inside one
+   process is not a committee.
+5. `mora-demo` — the two-lane runner. Done, but still simulates the accumulation rather than
+   holding a confidential balance on a mirrored mint.
+6. **Video.**
 
 Non-goals, stated so they are not mistaken for omissions: no ATS, no order matching, no MEV
 protection (§2), no custody, no mainnet deployment, no real Form 13F filing.

@@ -104,7 +104,12 @@ impl Obligation {
 ///
 /// An agent cannot read the position, cannot alter it, and cannot tell whether the package it is
 /// unlocking flatters its holder or ruins them. Its only decision is *when*.
-#[derive(Clone, Debug)]
+///
+/// Serializable because a committee whose members all live in one process is not a committee.
+/// `mora-committee` writes one of these per agent and runs each as its own process, so the refusal
+/// in [`ReleaseAgent::publish`] is a separate party's refusal rather than a branch in the holder's
+/// own program.
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ReleaseAgent {
     pub index: u8,
     share: Vec<u8>,

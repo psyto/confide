@@ -75,6 +75,7 @@ tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the lag is **zer
 ./scripts/demo.sh             # everything: the two lanes, then the proof going to Solana
 ./scripts/onchain-check.sh    # read the xStock mints yourself
 ./scripts/devnet-verify.sh    # hand Mora's proof to the live ZK ElGamal Proof Program
+./scripts/committee.sh        # the release committee as five actual processes
 cargo test                    # 13 tests
 ```
 
@@ -90,7 +91,7 @@ The invariants are written as claims you can run, not prose:
 | | |
 |---|---|
 | **I1** | unopenable before `T` — and the assumption this rests on is stamped on the artifact (`ReleaseTrustModel`), not implied |
-| **I2** | unstoppable at `T`, *including by the holder* — who is not a parameter of any function on the opening path |
+| **I2** | unstoppable at `T`, *including by the holder* — who is not a parameter of any function on the opening path, and in `scripts/committee.sh` is a process that exited in September |
 | **I3** | bound to the position of record — a post-hoc revision is refused |
 | **I4** | the auditor reads throughout; only *public* disclosure is delayed |
 | **I5** | opening is irreversible — revocation is not clawback |
