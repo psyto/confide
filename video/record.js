@@ -119,4 +119,10 @@ await recorder.start(outFile);
 const seconds = await page.evaluate(() => window.__play());
 await recorder.stop();
 await browser.close();
+
+// ffmpeg writes the moov atom last, which means a browser must fetch the whole file before it can
+// start — the embedded player just spins. Remux in place so the file streams.
+execFileSync(process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg",
+  ["-v", "error", "-i", outFile, "-c", "copy", "-movflags", "+faststart", outFile + ".tmp.mp4", "-y"]);
+execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
 process.stderr.write(`\n✓ ${outFile}  (${seconds.toFixed(1)}s)\n`);
