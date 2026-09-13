@@ -1,4 +1,4 @@
-# Voiceover — confide.mp4 (106.7s)
+# Voiceover — confide.mp4 (1:52)
 
 Timecodes are measured, not estimated: `demo.html` logs each scene's start, and the run is
 reproducible with `npm run record`. Word budgets assume ~150 wpm and deliberately fill about 80% of
@@ -26,16 +26,22 @@ it is the default.*
 *31 words · let the counter climb under "every purchase". Pause before "while it is still being
 built."*
 
-### 0:22 – 0:38 · four mints, auditor key EMPTY
+### 0:22 – 0:44 · four mints, two issuers, auditor key EMPTY
 
 > Solana already shipped the fix.
-> All seven hundred and thirty-two tokenized stocks have confidential transfers switched on — and
-> every one of them leaves the auditor key empty.
-> The only key on offer reads everyone's everything, forever.
+> Every tokenized stock here has confidential transfers switched on — eighteen hundred and sixty-nine
+> of them, from two issuers with nothing to do with each other.
+> And every single one leaves the auditor key empty, because the only key on offer reads everyone's
+> everything, forever.
 
-*38 words · slightly faster, this is the reveal. "Forever" takes the weight.*
+*49 words · this is the reveal, and the longest single stretch. "Two issuers with nothing to do with
+each other" is the line that does the work — one company being cautious is a story, two arriving
+independently at the same dead end is not. Take the pause before it.*
 
-### 0:38 – 0:53 · four columns — the market, a lender, your auditor, you
+**This is the only block that changed after the first recording.** Everything else is unchanged, so
+only `03-empty-slot` needs a new take.
+
+### 0:44 – 1:00 · four columns — the market, a lender, your auditor, you
 
 > Confide fills that slot properly.
 > The market sees nothing. A lender learns one bit: the collateral covers the loan.
@@ -44,7 +50,7 @@ built."*
 
 *36 words · land one clause per column as it appears. The last line is the thesis — slow down.*
 
-### 0:53 – 1:12 · five benefits
+### 1:00 – 1:19 · five benefits
 
 > Your position stops being public, and you can still prove what you need to.
 > Last quarter's number cannot be tidied afterwards — it is sealed on the reporting date and opened
@@ -53,7 +59,7 @@ built."*
 
 *46 words · the longest stretch. Do not rush to cover all five; three of them is enough.*
 
-### 1:12 – 1:23 · a live devnet account
+### 1:19 – 1:29 · a live devnet account
 
 > This is a real account, right now.
 > The chain says it holds nothing.
@@ -61,7 +67,7 @@ built."*
 
 *22 words · leave the gap before the last line. That contrast is the whole product.*
 
-### 1:23 – 1:37 · both proofs accepted
+### 1:29 – 1:43 · both proofs accepted
 
 > And this is the lender's check, running on Solana's zero-knowledge program.
 > Two proofs, both accepted — the chain confirmed the collateral covers the loan without ever being
@@ -69,7 +75,7 @@ built."*
 
 *35 words · "without ever being told" is the point; everything before it is setup.*
 
-### 1:37 – 1:46 · close
+### 1:43 – 1:52 · close
 
 > Your position is yours.
 > And you can still prove what you must.

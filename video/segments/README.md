@@ -1,30 +1,26 @@
 # segments
 
 `confide.mp4` cut at the scene boundaries, one clip per narration block in
-[`../voiceover.md`](../voiceover.md). Frame-accurate re-encodes, not `-c copy`, which snaps to
-keyframes and drifts.
+[`../voiceover.md`](../voiceover.md). Frame-accurate re-encodes, not `-c copy`.
 
-**These are sized to the recorded narration, not to a guess.** The first cut ran 83.10s against
-101.93s of voice, so every scene ended before its line did and the assembly showed white between
-them. The shortfall per scene was measured off those white frames — `signalstats` over
-`Confide_Stocklana_20260913.mp4`, looking for runs where average luma jumped from ~24 to ~235 —
-and the `hold` values in `../record.js` were set from that.
+**Only `03-empty-slot` changed.** Backpack Securities turned out to be a second issuer leaving the
+same slot empty, so that scene now shows two issuers and says 1,869 instead of 732 — and its line
+is longer. Every other clip is the same length it was, so **its recorded audio still fits**.
 
-| clip | at | length | narration | headroom |
-|---|---|---|---|---|
-| `01-title.mp4` | 0:00 | 9.60s | 9.03s | 0.57s |
-| `02-leak.mp4` | 0:09 | 12.50s | 11.93s | 0.57s |
-| `03-empty-slot.mp4` | 0:22 | 16.60s | 16.07s | 0.53s |
-| `04-four-views.mp4` | 0:38 | 15.10s | 14.43s | 0.67s |
-| `05-benefits.mp4` | 0:53 | 19.00s | 18.43s | 0.57s |
-| `06-live-account.mp4` | 1:12 | 10.60s | 10.00s | 0.60s |
-| `07-proofs.mp4` | 1:23 | 14.10s | 13.47s | 0.63s |
-| `08-close.mp4` | 1:37 | 9.20s | 8.57s | 0.63s |
+| clip | at | length | narration | headroom | audio |
+|---|---|---|---|---|---|
+| `01-title.mp4` | 0:00 | 9.60s | 9.03s | 0.57s | **reuse** |
+| `02-leak.mp4` | 0:09 | 12.50s | 11.93s | 0.57s | **reuse** |
+| `03-empty-slot.mp4` | 0:22 | 22.80s | 21.13s | 1.67s | **re-record** |
+| `04-four-views.mp4` | 0:44 | 15.10s | 14.43s | 0.67s | **reuse** |
+| `05-benefits.mp4` | 1:00 | 19.00s | 18.43s | 0.57s | **reuse** |
+| `06-live-account.mp4` | 1:19 | 10.60s | 10.00s | 0.60s | **reuse** |
+| `07-proofs.mp4` | 1:29 | 14.00s | 13.47s | 0.53s | **reuse** |
+| `08-close.mp4` | 1:43 | 9.20s | 8.57s | 0.63s | **reuse** |
 
-Total **106.70s** of picture against **101.93s** of voice. Roughly 0.6s of tail per scene, so the
-image settles after the last syllable instead of cutting on it.
-
-`manifest.json` carries the same table plus each line.
+Total **1:52**. The `narration_seconds` for the seven unchanged clips are measured from the first
+recording. `03` is an estimate at 142 wpm — the rate that recording actually ran at — with 1.7s of
+slack, because an over-long scene is a beat of silence and a short one is white.
 
 ## Putting it together
 
@@ -34,12 +30,12 @@ Narrated versions go in `narrated/` under the **same filenames**, then:
 ./video/join.sh              # -> video/confide-narrated.mp4
 ```
 
-Missing files fall back to the silent original, so you can do one at a time and rejoin after each.
+Missing files fall back to the silent original, so re-recording `03` alone and rejoining is enough.
 Silent parts get an empty audio track first, because `concat` drops audio for the whole file if any
 part lacks one.
 
-## If the narration changes
+## If the narration changes again
 
-Re-time rather than re-guess: the page logs `CONFIDE_SCENE <kind> <seconds>` during a run, and each
-scene's length is `hold` in `../record.js` plus a fixed animation cost (1.0–5.0s depending on the
-scene). Raising one `hold` lengthens that scene alone.
+The page logs `CONFIDE_SCENE <kind> <seconds>` during a run, and each scene's length is `hold` in
+`../record.js` plus a fixed animation cost. Raising one `hold` lengthens that scene alone — which is
+exactly what happened here, and why seven of the eight takes survived.

@@ -3,16 +3,18 @@
 set -euo pipefail
 RPC="${RPC:-https://api.mainnet-beta.solana.com}"
 
-# xStocks mints (the "Xs" prefix is the issuer's vanity). Resolve any of them yourself with:
-#   curl -s "https://lite-api.jup.ag/tokens/v2/search?query=NVDAx"
+# Two issuers with nothing to do with each other, two mints each. Both use a vanity prefix.
+#   Backed / xStocks     — Swiss-issued, own ISIN
+#   Backpack Securities  — US CUSIP, "a bona fide security entitlement" in the issuer's own words
+# Every mint from both is in web/mints.json; ./scripts/slot-scan.sh checks all 1,869.
 declare -a MINTS=(
-  "NVDAx Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh"
-  "TSLAx XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB"
-  "SPYx  XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W"
-  "AAPLx XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp"
+  "NVDAx   Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh"
+  "TSLAx   XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB"
+  "NVDA.US NVDAVuiB7hwd3m5Wa1JuHNovPaPG6BH1QNztbKFxNjv"
+  "AAPL.US AAPLEDt8RpzPgXyhvFzkMBofvFSQw9gpeMCoUdPdLnB8"
 )
 
-printf '%-7s %-46s %-12s %s\n' SYMBOL MINT PROGRAM 'confidentialTransferMint.auditorElgamalPubkey'
+printf '%-9s %-46s %-12s %s\n' SYMBOL MINT PROGRAM 'confidentialTransferMint.auditorElgamalPubkey'
 for row in "${MINTS[@]}"; do
   sym="${row%% *}"; mint="${row##* }"
   curl -s "$RPC" -X POST -H 'Content-Type: application/json' \
@@ -24,6 +26,6 @@ info = v['data']['parsed']['info']
 prog = 'Token-2022' if v['owner'].startswith('Tokenz') else v['owner']
 ct = next((e['state'] for e in info.get('extensions', []) if e['extension'] == 'confidentialTransferMint'), None)
 aud = 'extension absent' if ct is None else repr(ct.get('auditorElgamalPubkey'))
-print('%-7s %-46s %-12s %s' % ('$sym', '$mint', prog, aud))
+print('%-9s %-46s %-12s %s' % ('$sym', '$mint', prog, aud))
 "
 done

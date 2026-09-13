@@ -40,7 +40,8 @@ const collateral = run("bash", ["scripts/prove-collateral.sh", ACCOUNT, "100000"
 // ── guards ───────────────────────────────────────────────────────────────────────────────────────
 for (const [text, re, why] of [
   [mints, /NVDAx.*Token-2022.*None/, "NVDAx no longer reads as Token-2022 with an empty auditor slot"],
-  [mints, /AAPLx.*None/, "the mint sweep is incomplete"],
+  [mints, /NVDA\.US.*Token-2022.*None/, "Backpack's NVDA.US no longer reads the same way"],
+  [mints, /AAPL\.US.*None/, "the mint sweep is incomplete"],
   [balance, /public balance\s+0/, "the account's public balance is no longer zero"],
   [balance, /173000 units/, "the confidential balance did not open to the expected position"],
   [collateral, /VerifyCiphertextCommitmentEquality/, "the equality proof never ran"],
@@ -60,7 +61,7 @@ const scenes = [
     hold: 8.1,
   },
   { kind: "leak", hold: 7.5 },
-  { kind: "slot", hold: 15.0 },
+  { kind: "slot", hold: 21.0 },
   { kind: "views", hold: 13.2 },
   {
     kind: "benefits",
