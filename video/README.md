@@ -13,6 +13,12 @@ npm install
 npm run record        # -> confide.mp4   (needs ffmpeg; FFMPEG_PATH overrides /opt/homebrew/bin/ffmpeg)
 ```
 
+## Narration
+
+[`voiceover.md`](voiceover.md) — timed to the measured scene boundaries, not to a guess. The page
+logs `CONFIDE_SCENE <kind> <seconds>` during a run; re-read those after changing any `hold` rather
+than trusting the timecodes in the script.
+
 ## The terminal in it is not a transcription
 
 Every pane is the stdout of a command run moments before the recording starts:
