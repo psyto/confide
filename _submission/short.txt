@@ -1,1 +1,1 @@
-Every tokenized stock on Solana has confidential transfers switched on and the auditor key left empty — shipped, configured, unusable. Confide makes that slot usable: hold your position without publishing it, and still prove what you must, to whom you choose, when you choose.
+Every tokenized stock on Solana ships with privacy nobody can use — Confide makes it usable: hold your position without publishing it, and still prove what you must.

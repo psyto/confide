@@ -1,0 +1,11 @@
+# Chosen (short.txt) — carries the finding and the benefit in one sentence
+Every tokenized stock on Solana ships with privacy nobody can use — Confide makes it usable: hold your position without publishing it, and still prove what you must.
+
+# A — product first, no finding. Cleanest rhythm, least memorable claim.
+Hold tokenized stocks on Solana without publishing your position — and still prove what you must, to whom you choose, when you choose.
+
+# B — leads on the lender, which is the most legible use but overstates a gap (no seizure).
+Prove your tokenized stock position covers a loan without showing anyone what you hold.
+
+# C — blunt about the finding, weakest as a product line.
+All 732 tokenized stocks on Solana have confidential transfers switched on and the auditor key empty. Confide is what fills it.
