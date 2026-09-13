@@ -9,8 +9,8 @@ That slot is empty because **no setting of it is correct.** Token-2022 offers on
 a single global key that decrypts everyone's everything, forever. Fill it and every holder is
 permanently readable by one party. Leave it null and no holder can prove anything to anyone.
 
-So a fund holding NVDAx broadcasts its position instead — not a choice about publicity, but the only
-option under which it can still answer a question.
+So a fund holding NVDAx broadcasts its position instead — not a choice about publicity, but the
+only option under which it can still answer a question.
 
 ## What Confide gives a holder
 
@@ -42,7 +42,7 @@ button press has Solana's ZK program verify the collateral proof while you watch
 | **Prove "this account holds at least X"** over the account's *own* ciphertext, revealing one bit | two proofs accepted by the live ZK program: `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU |
 | The auditor slot, filled | one `UpdateMint` on a mirrored mint — NVDAx's config, one field apart |
 | A disclosure bound to a date and unrevisable | 147 bytes anchored on devnet; commitment matched on read-back |
-| Opening on schedule without the holder | five separate processes; the holder's exited in September |
+| Opening on schedule without the holder | five separate processes; the holder's exited back in Sept |
 | Surviving a stock split | 11 actions queued on the live schedule: 8 restate exactly, 3 have no whole ratio and are reported, not guessed |
 
 21 tests. `./scripts/healthcheck.sh` checks every claim above against the chain and exits non-zero
