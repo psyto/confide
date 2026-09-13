@@ -57,11 +57,11 @@ const scenes = [
   {
     kind: "hero",
     lede: "You hold tokenized stocks on Solana.<br><b>So does everyone watching.</b>",
-    hold: 6,
+    hold: 8.1,
   },
-  { kind: "leak", hold: 5 },
-  { kind: "slot", hold: 9 },
-  { kind: "views", hold: 9 },
+  { kind: "leak", hold: 7.5 },
+  { kind: "slot", hold: 15.0 },
+  { kind: "views", hold: 13.2 },
   {
     kind: "benefits",
     label: "What you get.",
@@ -77,23 +77,23 @@ const scenes = [
       ["split", "A stock split does not corrupt what you disclosed.",
        "Restatement is a function of public data, and says so when it cannot be computed."],
     ],
-    hold: 11,
+    hold: 16.3,
   },
   {
     kind: "evidence",
     label: "A live account on devnet.",
     body: slice(balance, /account\s+/, /elgamal ciphertext/),
     emphasis: ["0", "173000 units"],
-    hold: 9,
+    hold: 9.6,
   },
   {
     kind: "evidence",
     label: "And the lender's check, run by Solana's ZK program.",
     body: slice(collateral, /ciphertext-commitment equality/, /both accepted/),
     emphasis: ["err   : None", "success", "both accepted"],
-    hold: 11,
+    hold: 13.1,
   },
-  { kind: "close", hold: 7 },
+  { kind: "close", hold: 7.8 },
 ];
 
 // ── record ───────────────────────────────────────────────────────────────────────────────────────
