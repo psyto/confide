@@ -5,9 +5,18 @@
 
 ## 1. xStocks are Token-2022, and confidential transfers are already switched on
 
-**Every one of the 732 xStock mints on Solana carries the extension with `auditorElgamalPubkey`
-null.** `./scripts/slot-scan.sh` checks all of them and exits non-zero if that ever stops being
-true. Four of them in detail:
+**Every tokenized-equity mint on Solana carries the extension with `auditorElgamalPubkey` null —
+all 1,869 of them, across two issuers that have nothing to do with each other:**
+
+```
+Backed     EMPTY   732      xStocks — Swiss-issued, own ISIN, a third-party product
+Backpack   EMPTY   1137     US CUSIP, "a bona fide security entitlement" by the issuer's own words
+```
+
+One issuer leaving the slot empty is a quirk. **Two, independently, is the shape of the problem** —
+and Backpack's are the closer thing to the underlying security, so it is not that the weaker
+instrument cut a corner. `./scripts/slot-scan.sh` checks all of them and exits non-zero the day that
+stops being true. Four in detail:
 
 ```
 SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey

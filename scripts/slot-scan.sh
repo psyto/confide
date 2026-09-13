@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
-# Check the auditor slot on EVERY xStock mint on Solana, not a sample.
+# Check the auditor slot on EVERY tokenized-equity mint on Solana, across both issuers, not a sample.
+#
+#   Backed Finance (xStocks)  — Swiss-issued, own ISIN
+#   Backpack Securities       — US CUSIP, a security entitlement by the issuer's own description
+#
+# Two independent issuers reaching the same configuration is the finding. One would be a quirk.
 #
 #   ./scripts/slot-scan.sh
 #
-# Takes a couple of minutes and needs no key. The claim "all of them" is worth checking rather than
-# inferring from four.
+# Takes a few minutes and needs no key. "All of them" is worth checking rather than inferring from
+# four — this repo has already had to correct that exact shortcut once.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RPC="${RPC:-https://solana-rpc.publicnode.com}"
 
 python3 - "$RPC" <<'PY'
-import json, sys, urllib.request, concurrent.futures as cf
+import json, sys, time, urllib.request, concurrent.futures as cf
 from collections import Counter
 
 rpc = sys.argv[1]
@@ -21,7 +26,9 @@ def check(m):
                        "params": [m['mint'], {"encoding": "jsonParsed"}]}).encode()
     req = urllib.request.Request(rpc, body,
                                  {"Content-Type": "application/json", "User-Agent": "confide"})
-    for _ in range(3):
+    # 1,869 mints is enough volume to get rate-limited; back off rather than reporting a limit as
+    # a finding, which is what an unretried error looks like in the output.
+    for attempt in range(6):
         try:
             v = json.load(urllib.request.urlopen(req, timeout=30)).get('result', {}).get('value')
             if not v:
@@ -33,20 +40,24 @@ def check(m):
             k = ext[0]['state'].get('auditorElgamalPubkey')
             return (m['symbol'], 'EMPTY' if k is None else 'KEY')
         except Exception:
+            time.sleep(0.6 * (attempt + 1))
             continue
     return (m['symbol'], 'ERROR')
 
-with cf.ThreadPoolExecutor(max_workers=8) as ex:
+with cf.ThreadPoolExecutor(max_workers=4) as ex:
     res = list(ex.map(check, mints))
 
-c = Counter(s for _, s in res)
-print('  checked  %d xStock mints on Solana' % len(res))
-for k, v in c.most_common():
-    print('    %-16s %d' % (k, v))
+by_issuer = Counter()
+for m, (_, st) in zip(mints, res):
+    by_issuer[(m.get('issuer', '?'), st)] += 1
+print('  checked  %d tokenized-equity mints on Solana' % len(res))
+for (issuer, st), v in sorted(by_issuer.items()):
+    print('    %-10s %-16s %d' % (issuer, st, v))
 odd = [r for r in res if r[1] != 'EMPTY']
 if odd:
     print('\n  not empty:', odd[:12])
     print('  the finding has changed — update the docs before citing it')
     raise SystemExit(1)
-print('\n  every one of them has confidential transfers on and no auditor key')
+print('\n  every one of them: confidential transfers on, no auditor key.')
+print('  Two issuers, independently, reaching the same dead end.')
 PY

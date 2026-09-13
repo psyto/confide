@@ -2,8 +2,18 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch (1:47)**](https://youtu.be/ZuhLvH5MFgE) · no wallet, no API key, no install
 
-**All 732 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
-be used.** Checked, not sampled — `./scripts/slot-scan.sh`. Read the mints yourself — `./scripts/onchain-check.sh`, no key, no account:
+**All 1,869 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
+be used.** Two independent issuers, every mint checked rather than sampled —
+`./scripts/slot-scan.sh`:
+
+```
+checked  1869 tokenized-equity mints on Solana
+  Backed     EMPTY   732      Swiss-issued, own ISIN (xStocks)
+  Backpack   EMPTY   1137     US CUSIP, a security entitlement by the issuer's own description
+```
+
+One issuer would be a quirk. Two, arriving independently at the same dead end, is the shape of the
+problem. Four of them in detail — `./scripts/onchain-check.sh`, no key, no account:
 
 ```
 SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey
@@ -136,7 +146,7 @@ button press — has Solana's ZK program verify the lender's proof while you wat
 **Nothing required — no key, no account, no funding:**
 
 ```bash
-./scripts/slot-scan.sh        # every xStock mint on Solana — all 732, not a sample
+./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
@@ -169,7 +179,7 @@ and two dates.** Deploying the program costs ~1.5 SOL of devnet rent and the fau
 accounts — see [docs/DURABILITY.md](docs/DURABILITY.md).
 
 Data the repo pins rather than fetching at runtime is refreshable:
-`./scripts/refresh-mints.sh` (the 732 mints) and `./scripts/refresh-actions.sh` (the corporate-action
+`./scripts/refresh-mints.sh` (the 1,869 mints) and `./scripts/refresh-actions.sh` (the corporate-action
 schedule). Both assert on what they must contain rather than writing whatever came back.
 
 The invariants are written as claims you can run, not prose:
