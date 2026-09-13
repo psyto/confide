@@ -120,9 +120,17 @@ const seconds = await page.evaluate(() => window.__play());
 await recorder.stop();
 await browser.close();
 
-// ffmpeg writes the moov atom last, which means a browser must fetch the whole file before it can
-// start — the embedded player just spins. Remux in place so the file streams.
-execFileSync(process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg",
-  ["-v", "error", "-i", outFile, "-c", "copy", "-movflags", "+faststart", outFile + ".tmp.mp4", "-y"]);
+// Two things the recorder leaves in a state browsers will not play. The moov atom goes last, so
+// playback cannot start until the whole file has arrived; and the frames come out yuvj420p, the
+// full-range variant, which Chrome stalls on inside an mp4. Re-encode to limited-range yuv420p
+// with the index at the front. Both were found by embedding the file and watching it spin at 0:00.
+process.stderr.write("• re-encoding for the web …\n");
+execFileSync(process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg", [
+  "-v", "error", "-i", outFile,
+  "-vf", "scale=in_range=full:out_range=tv,format=yuv420p",
+  "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-crf", "20", "-preset", "slow",
+  "-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
+  "-movflags", "+faststart", outFile + ".tmp.mp4", "-y",
+]);
 execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
 process.stderr.write(`\n✓ ${outFile}  (${seconds.toFixed(1)}s)\n`);
