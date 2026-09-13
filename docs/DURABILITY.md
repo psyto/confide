@@ -73,6 +73,6 @@ throughout `docs/ONCHAIN.md`:
 | equality proof | accepted, 6,400 CU, `VerifyCiphertextCommitmentEquality` |
 | range proof | accepted, 111,000 CU, `VerifyBatchedRangeProofU64` |
 
-The 83-second video in [`video/`](../video) records the same runs, and `video/record.js` refuses to
+The walkthrough (https://youtu.be/ZuhLvH5MFgE) records the same runs, and `video/record.js` refuses to
 record when a command stops producing the line that carries its claim — so a video that exists is a
 video whose claims were true when it was made.

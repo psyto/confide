@@ -1,6 +1,8 @@
 # video
 
-`confide.mp4` — 83s, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
+**Published: https://youtu.be/ZuhLvH5MFgE** (1:47, with narration).
+
+`confide.mp4` — 1:47 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
 
 It leads with what a holder gets, not with how the mechanism works. The terminal is demoted to
