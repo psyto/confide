@@ -12,7 +12,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 MAINNET="${MAINNET:-https://api.mainnet-beta.solana.com}"
 DEVNET="${DEVNET:-https://api.devnet.solana.com}"
-PAGE="${PAGE:-https://psyto.github.io/confide/}"
+PAGE="${PAGE:-https://psyto.github.io/confide}"
 
 RECEIPTS=6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv
 ACCOUNT=6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V
@@ -92,7 +92,7 @@ fi
 
 echo
 echo "  LINKS"
-for u in "$PAGE" "$PAGE/mints.json" "$PAGE/proofs.json"; do
+for u in "$PAGE/" "$PAGE/mints.json" "$PAGE/proofs.json"; do
   c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$u")
   [ "$c" = "200" ] && ok "$u" || bad "$u  (http $c)"
 done
