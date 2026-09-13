@@ -60,13 +60,28 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
 
-  <div style="position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin-top:30px">
-    <iframe src="https://www.youtube.com/embed/ZuhLvH5MFgE" title="Confide" frameborder="0" allowfullscreen
-      allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
-      style="position:absolute;inset:0;width:100%;height:100%;border:1px solid var(--line);border-radius:10px"></iframe>
-  </div>
-  <div class="note">1:47. Every terminal pane in it is the stdout of a command run moments before
-  the recording; two of them reach mainnet and devnet.</div>
+  <!-- Nothing visible here references a YouTube domain. Verified on 2026-09-14: a content blocker
+       removed the whole container from the DOM when it carried a youtu.be href - poster, caption and
+       all - which is worse than no video block at all. So the clickable region is a plain figure with
+       our own same-origin poster, and it always draws. Clicking swaps in the player. The URL appears
+       twice below, once as a link and once as plain text, so a reader keeps it even if the link goes. -->
+  <figure id="vid"
+     style="display:block;position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin:30px 0 0;
+            border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;cursor:pointer">
+    <img src="poster.jpg" alt="Walkthrough - click to play"
+         style="width:100%;height:100%;object-fit:cover;display:block" />
+    <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+      <span style="width:74px;height:52px;border-radius:12px;background:rgba(0,0,0,.72);
+                   display:flex;align-items:center;justify-content:center">
+        <span style="border-left:20px solid #fff;border-top:12px solid transparent;
+                     border-bottom:12px solid transparent;margin-left:5px"></span>
+      </span>
+    </span>
+  </figure>
+  <div class="note">Walkthrough &mdash; click the frame, or
+  <a href="https://youtu.be/ZuhLvH5MFgE" target="_blank" rel="noopener">watch on YouTube</a>
+  (youtu.be/ZuhLvH5MFgE). Every terminal pane in it is the stdout of a command run
+  moments before the recording; two of them reach mainnet and devnet.</div>
 
   <section>
     <h2>The privacy is already shipped. Nobody can use it.</h2>
@@ -279,6 +294,18 @@ async function runProofs(){
   out.appendChild(s);
   b.disabled=false; b.textContent="Ask the chain again";
 }
+
+// Click swaps the poster for the player. If the player itself is blocked, the URL is in the
+// caption underneath as plain text, so the walkthrough is still reachable by hand.
+document.getElementById("vid").addEventListener("click", e => {
+  const a = e.currentTarget;
+  const f = document.createElement("iframe");
+  f.src = "https://www.youtube.com/embed/ZuhLvH5MFgE?autoplay=1";
+  f.title = "Confide"; f.allowFullscreen = true;
+  f.allow = "autoplay; encrypted-media; picture-in-picture";
+  f.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0";
+  a.innerHTML = ""; a.appendChild(f);
+});
 
 (async()=>{
   await loadMints();
