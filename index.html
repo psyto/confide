@@ -60,14 +60,15 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
 
-  <!-- Not a YouTube thumbnail and not a bare iframe: blockers reject anything served from a
-       YouTube domain, and both render as an empty rectangle, which is worse than a plain link.
-       The poster is ours, same-origin, so it always draws. Click swaps in the player; if that is
-       blocked too, the anchor opens the video in a tab and the link underneath still works. -->
-  <a id="vid" href="https://youtu.be/ZuhLvH5MFgE" target="_blank" rel="noopener"
-     style="display:block;position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin-top:30px;
-            border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000">
-    <img src="poster.jpg" alt="Watch the walkthrough"
+  <!-- Nothing visible here references a YouTube domain. Verified on 2026-09-14: a content blocker
+       removed the whole container from the DOM when it carried a youtu.be href - poster, caption and
+       all - which is worse than no video block at all. So the clickable region is a plain figure with
+       our own same-origin poster, and it always draws. Clicking swaps in the player. The URL appears
+       twice below, once as a link and once as plain text, so a reader keeps it even if the link goes. -->
+  <figure id="vid"
+     style="display:block;position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin:30px 0 0;
+            border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;cursor:pointer">
+    <img src="poster.jpg" alt="Walkthrough - click to play"
          style="width:100%;height:100%;object-fit:cover;display:block" />
     <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
       <span style="width:74px;height:52px;border-radius:12px;background:rgba(0,0,0,.72);
@@ -76,9 +77,10 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
                      border-bottom:12px solid transparent;margin-left:5px"></span>
       </span>
     </span>
-  </a>
-  <div class="note">Walkthrough &mdash; <a href="https://youtu.be/ZuhLvH5MFgE" target="_blank"
-  rel="noopener">youtu.be/ZuhLvH5MFgE</a>. Every terminal pane in it is the stdout of a command run
+  </figure>
+  <div class="note">Walkthrough &mdash; click the frame, or
+  <a href="https://youtu.be/ZuhLvH5MFgE" target="_blank" rel="noopener">watch on YouTube</a>
+  (youtu.be/ZuhLvH5MFgE). Every terminal pane in it is the stdout of a command run
   moments before the recording; two of them reach mainnet and devnet.</div>
 
   <section>
@@ -293,7 +295,8 @@ async function runProofs(){
   b.disabled=false; b.textContent="Ask the chain again";
 }
 
-// Click plays it here; if YouTube is blocked the anchor still opens it in a tab.
+// Click swaps the poster for the player. If the player itself is blocked, the URL is in the
+// caption underneath as plain text, so the walkthrough is still reachable by hand.
 document.getElementById("vid").addEventListener("click", e => {
   const a = e.currentTarget;
   const f = document.createElement("iframe");
@@ -302,7 +305,6 @@ document.getElementById("vid").addEventListener("click", e => {
   f.allow = "autoplay; encrypted-media; picture-in-picture";
   f.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0";
   a.innerHTML = ""; a.appendChild(f);
-  e.preventDefault();
 });
 
 (async()=>{
