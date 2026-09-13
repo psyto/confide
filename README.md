@@ -92,8 +92,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 - **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
   moved, so it works today — but it is only useful alongside the seizure that does not.
 - **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
-  we control — one `UpdateMint` instruction, done, readable on devnet. On `NVDAx` it is Backed's
-  call, not ours.
+  we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call.
 - **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
   product surface on top of it here.
 
@@ -207,7 +206,16 @@ Stated because a reader should find the limits here rather than discover them:
 - **Seizure.** A lender can now verify collateral without the borrower publishing it, and still has
   no way to take that collateral on default. That is the gap between this and lending, and it is not
   a small one.
-- **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's
-  configuration. Doing it on `NVDAx` itself is Backed's call — `autoApproveNewAccounts: false`.
+- **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
+  configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
+  which reads as a signal rather than a wall. They built the feature, configured it, gated who may
+  hold it, and left the key slot empty: a company that means to enable this and has no disclosure
+  model to enable it *with*. **The issuer is the customer here, not the obstacle** — Kraken
+  included, having acquired Backed in December 2025.
+
+  Wrapping xStocks into a mint of our own would dodge the approval and is the wrong trade twice
+  over. A wrapped token is not the one lenders take as collateral, so the clearest use case dies on
+  contact. And holding the backing would make us the single trusted party this layer exists to
+  remove.
 - **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
   deployment, and no claim to discharge any regulatory filing.
