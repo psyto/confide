@@ -74,14 +74,14 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 
 | | |
 |---|---|
-| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/A1AMyEf1FQYmvdEWSejtHHU6ZKuBh74MRM9LzGfMGWT6?cluster=devnet) |
+| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V?cluster=devnet) |
 | **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
 | **Fill the auditor slot.** Same mint configuration as NVDAx, one field different — and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
 | **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
-| **Survive a stock split.** A number sealed in September is quoted in September's units; restatement is a deterministic function of public data, and says so when it cannot be computed. | `cargo test -p confide-equity` |
+| **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
 
@@ -92,7 +92,8 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 - **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
   moved, so it works today — but it is only useful alongside the seizure that does not.
 - **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
-  we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call.
+  we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call, which is the
+  point: see *What it does not do*.
 - **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
   product surface on top of it here.
 
@@ -132,20 +133,44 @@ transactions with what they hold, shows the Confide account on devnet reading ze
 button press — has Solana's ZK program verify the lender's proof while you watch. Source in
 [`web/`](web/).
 
+**Nothing required — no key, no account, no funding:**
+
 ```bash
-./scripts/demo.sh             # everything: the two lanes, then the proof going to Solana
-./scripts/onchain-check.sh    # read the xStock mints yourself
-./scripts/devnet-verify.sh    # hand Confide's proof to the live ZK ElGamal Proof Program
+./scripts/slot-scan.sh        # every xStock mint on Solana — all 732, not a sample
+./scripts/onchain-check.sh    # four of them in detail
+./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
+./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
 ./scripts/committee.sh        # the release committee as five actual processes
-./scripts/refresh-actions.sh  # re-pull the xStocks corporate-action schedule
-cargo test                    # 19 tests
+./scripts/demo.sh             # the two lanes, then the proof going to Solana
+./scripts/healthcheck.sh      # is every claim in this README still true?
+cargo test                    # 21 tests
 ```
 
-Those three need no key and no account. One more does — `./scripts/anchor-receipt.sh` anchors a
-sealed obligation's commitment on devnet through `aperture-receipts`
-([`6a1Kd8…AHytv`](https://explorer.solana.com/address/6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv?cluster=devnet))
+**Needs the account's keys** — `account-keys.json`, written by `provision-account.sh`. Reading a
+confidential balance and proving over it are things only the holder can do; that is the point.
+
+```bash
+./scripts/read-balance.sh <account> account-keys.json
+./scripts/prove-collateral.sh <account> 100000 account-keys.json
+```
+
+**Needs a devnet-funded keypair:**
+
+```bash
+./scripts/provision-account.sh    # stand up a confidential account we hold the key to
+./scripts/set-auditor.sh <mint>   # fill the auditor slot — one UpdateMint
+./scripts/anchor-receipt.sh       # anchor a commitment through aperture-receipts
+```
+
+`anchor-receipt.sh` writes through
+[`6a1Kd8…AHytv`](https://explorer.solana.com/address/6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv?cluster=devnet)
 and reads it back to check the stored bytes against the artifact. **147 bytes land on-chain: a hash
-and two dates.** It needs a devnet-funded keypair.
+and two dates.** Deploying the program costs ~1.5 SOL of devnet rent and the faucet refuses small
+accounts — see [docs/DURABILITY.md](docs/DURABILITY.md).
+
+Data the repo pins rather than fetching at runtime is refreshable:
+`./scripts/refresh-mints.sh` (the 732 mints) and `./scripts/refresh-actions.sh` (the corporate-action
+schedule). Both assert on what they must contain rather than writing whatever came back.
 
 The invariants are written as claims you can run, not prose:
 [`crates/confide-embargo/tests/invariants.rs`](crates/confide-embargo/tests/invariants.rs).
@@ -164,16 +189,18 @@ A quarterly report states holdings **as of the reporting date**. Confide seals a
 later. If a split lands in between, the number that opens is quoted in units that no longer exist —
 the disclosure is correct and unreadable at the same time.
 
-This is not hypothetical. The live xStocks schedule read on 2026-09-12 has **eight unit-changing
-events** in the pipeline, including `PPLTx` 1→10 and a `HONx` 2→1 reverse sharing its date with a
-spin-off ([`fixtures/corporate-actions.json`](crates/confide-equity/fixtures/corporate-actions.json),
+This is not hypothetical. The live xStocks schedule has **eleven actions queued** that move what a
+holder holds — including `PPLTx` 1→10 and a `HONx` 2→1 reverse sharing its date with a spin-off.
+**Eight of them restate exactly. Three have no whole-number ratio** — the spin-off and two
+fractional stock dividends — **and are reported rather than guessed**
+([`fixtures/corporate-actions.json`](crates/confide-equity/fixtures/corporate-actions.json),
 refreshable with `scripts/refresh-actions.sh`).
 
 The fix is not to re-seal — the commitment must not move, that is the whole point. It is to restate
-at read time, and restatement is a **deterministic function of public data**: the holder gains
-nothing by staying quiet about a split, because anyone can recompute it and everyone gets the same
-answer. `confide-open` prints both numbers, and refuses rather than rounding when a ratio cannot be
-applied exactly.
+at read time. Restatement reads the issuer's published schedule — one source today — and is
+**deterministic**, so the holder gains nothing by staying quiet about a split: anyone can recompute
+it and everyone gets the same answer. `confide-open` prints both numbers, separates *nothing
+happened* from *something happened I cannot compute*, and refuses rather than rounding.
 
 ## And the other half of a quarterly report
 

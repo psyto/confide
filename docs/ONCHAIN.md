@@ -122,7 +122,12 @@ available balance  64 bytes ciphertext  <- 173,000 units, and nobody can read it
 ```
 
 `spl-token balance` returns `0`. The holder has 173,000. Both are true, and both are public.
-**Lane B in the demo is this account, not a simulation.**
+
+**This account is superseded, and worth keeping in the record.** It proved the asymmetry is real,
+and it is the one that showed why a CLI-made account is not enough: `spl-token` derives its ElGamal
+key with a KDF this SDK version does not reproduce, so we can read this account on the chain and
+cannot prove anything about it. The account the demo, the proofs and the live page are about is
+`6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V` — provisioned from our own instructions in §7.
 
 `./scripts/bind-account.sh` builds a disclosure subject out of those real fields and then re-reads
 the account to confirm the binding still matches. Before this, `SubjectAccount` carried an address

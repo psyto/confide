@@ -208,3 +208,10 @@ Two limits that are **not** non-goals — they are gaps, and the next work:
   an empty ElGamal pubkey (`aperture`'s skeleton gap), so nothing proves the sealed position
   concerns the fund's actual wallet. Everything downstream is sound; the anchor to reality is not
   yet driven in.
+
+- **The issuer is the customer, not the obstacle.** `autoApproveNewAccounts: false` on the live
+  mints means Backed decides who may hold a confidential balance. They built the feature,
+  configured it, gated it, and left the key slot empty — a company that means to enable this and
+  has no disclosure model to enable it *with*. Wrapping into a mint of our own would dodge the
+  approval and is the wrong trade: a wrapped token is not what lenders take as collateral, and
+  holding the backing would make us the single trusted party this layer removes.

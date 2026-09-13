@@ -4,11 +4,13 @@
 #
 #   ./scripts/bind-account.sh [token_account_address]
 #
-# The default is the account this repo provisioned: public balance 0, confidential balance real.
+# The default is the account this repo provisioned from its own instructions — the one whose ElGamal
+# key we hold, and therefore the one the collateral proofs are about. An earlier account, made by
+# spl-token, is readable on chain and cannot be proved about; it is not this one.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RPC="${RPC:-https://api.devnet.solana.com}"
-ACC="${1:-A1AMyEf1FQYmvdEWSejtHHU6ZKuBh74MRM9LzGfMGWT6}"
+ACC="${1:-6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V}"
 
 read -r AMOUNT ELGAMAL BALANCE < <(curl -s "$RPC" -H 'Content-Type: application/json' \
   -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$ACC\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \
