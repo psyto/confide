@@ -81,8 +81,24 @@ built."*
 
 ## Pace
 
-**241 words over 83.1 seconds ≈ 174 wpm.** That is brisk for narration. If it feels tight when you
-read it aloud, cut in this order:
+**241 words over 83.1 seconds ≈ 174 wpm overall — but the average hides the problem.** Per segment:
+
+| | wpm | |
+|---|---|---|
+| 0:00 title | 160 | fine |
+| 0:07 leak | 180 | brisk |
+| **0:17 empty slot** | **207** | **too fast to read unhurried** |
+| 0:28 four views | 183 | brisk |
+| **0:39 benefits** | **205** | **too fast to read unhurried** |
+| 0:52 live account | 126 | comfortable |
+| 1:02 proofs | 165 | good |
+| 1:14 close | 142 | good |
+
+Unhurried delivery is 140–165 wpm. Two segments sit above 200, which means reading them without
+pauses. Two ways out: shorten those lines, or give the scenes room — `hold` in `record.js`
+lengthens one scene without moving the others, and +2.8s on the slot and +3.4s on the benefits
+brings both to about 165, taking the cut to roughly 89 seconds. If you would rather cut than
+re-record, do it in this order:
 
 1. the third sentence of 0:17 ("The only key on offer…") — the screen already says it
 2. the second sentence of 0:39 — the longest, and the list is visible anyway

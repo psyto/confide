@@ -19,6 +19,12 @@ npm run record        # -> confide.mp4   (needs ffmpeg; FFMPEG_PATH overrides /o
 logs `CONFIDE_SCENE <kind> <seconds>` during a run; re-read those after changing any `hold` rather
 than trusting the timecodes in the script.
 
+## Recording narration
+
+[`segments/`](segments) has the cut split at the scene boundaries, one clip per narration block, and
+[`join.sh`](join.sh) puts it back together once you have recorded them. Record one at a time and
+rejoin after each — missing segments fall back to the silent original.
+
 ## The terminal in it is not a transcription
 
 Every pane is the stdout of a command run moments before the recording starts:
