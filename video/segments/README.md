@@ -27,15 +27,18 @@ slack, because an over-long scene is a beat of silence and a short one is white.
 
 ## Putting it together
 
-Narrated versions go in `narrated/` under the **same filenames**, then:
+Compositing happens in Google Vids, not here — import the clips in order and lay the narration over
+them. [`LINES.md`](LINES.md) is the recording sheet: one line per clip with its length and slack.
 
-```bash
-./video/join.sh              # -> video/confide-narrated.mp4
-```
+`narrated/` holds seven of the eight clips with the original voice already on them, recovered from
+`../Confide_Stocklana_20260913.mp4` by `../lift-narration.sh` (the takes were never kept separately).
+Import those and only `03` needs recording.
 
-Missing files fall back to the silent original, so re-recording `03` alone and rejoining is enough.
-Silent parts get an empty audio track first, because `concat` drops audio for the whole file if any
-part lacks one.
+`../join.sh` still exists and stitches `narrated/` back together offline, falling back to the silent
+original for anything missing. **Its output is not currently trusted:** the joined file measured
+longer than the sum of its parts and the audio appeared to start late in one scene, and I stopped
+investigating when compositing moved to Google Vids. The individual clips in `narrated/` were each
+verified on their own and are fine; it is the concatenation that is unverified.
 
 ## If the narration changes again
 
