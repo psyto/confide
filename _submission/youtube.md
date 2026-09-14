@@ -23,7 +23,7 @@ CHAPTERS
 0:44 The same position, seen four ways
 1:00 What you actually get
 1:19 A live account that reads as zero
-1:29 The lender's check, verified by Solana
+1:30 The lender's check, verified by Solana
 
 TWO ISSUERS, NOT ONE
 
@@ -73,8 +73,13 @@ Built for Stocklana 2026.
 
 **Chapters are six, not eight, and the timestamps moved.** YouTube requires every chapter to run at
 least ten seconds and **silently renders none at all** if one falls short — the title scene (9.6s)
-and the close (9.2s) are each merged with a neighbour. Shortest chapter is now 10.6s. Timestamps
-come from the measured scene boundaries of the current cut (1:52), not the previous one.
+and the close (9.2s) are each merged with a neighbour. Timestamps come from the measured scene
+boundaries of the current cut (1:52), not the previous one.
+
+The last chapter starts at 1:30 rather than the scene's true 1:29.6. Floored to whole seconds the
+pair 1:19 / 1:29 gives a chapter of exactly 10.0s — inside the rule but with nothing to spare, and
+the penalty for being a hair under is that every chapter disappears without a message. 1:30 starts
+the chapter 0.4s into the scene, which no one will notice, and makes it 11s.
 
 **The first two lines are what shows before "…more".** They carry the finding and the live link.
 
