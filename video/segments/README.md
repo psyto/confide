@@ -5,7 +5,10 @@
 
 **Only `03-empty-slot` changed.** Backpack Securities turned out to be a second issuer leaving the
 same slot empty, so that scene now shows two issuers and says 1,869 instead of 732 — and its line
-is longer. Every other clip is the same length it was, so **its recorded audio still fits**.
+is longer, 16.60s to 22.80s. Every other clip is visually identical to the take the narration was
+recorded against (checked by comparing frames, not by assuming), so **its recorded audio still
+fits**. The one wrinkle: `07-proofs` came out 0.10s shorter than before, 14.10s to 14.00s, which
+its 13.47s line still clears.
 
 | clip | at | length | narration | headroom | audio |
 |---|---|---|---|---|---|

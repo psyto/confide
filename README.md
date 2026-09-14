@@ -1,6 +1,6 @@
 # Confide
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch (1:47)**](https://youtu.be/ZuhLvH5MFgE) · no wallet, no API key, no install
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch (under 2 min)**](https://youtu.be/ZuhLvH5MFgE) · no wallet, no API key, no install
 
 **All 1,869 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
 be used.** Two independent issuers, every mint checked rather than sampled —

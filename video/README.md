@@ -1,8 +1,11 @@
 # video
 
-**Published: https://youtu.be/ZuhLvH5MFgE** (1:47, with narration).
+**Published: https://youtu.be/ZuhLvH5MFgE** — still the *previous* cut (1:47), which says 732 mints
+and one issuer. The current cut says 1,869 across two issuers, so the published video and everything
+else disagree until it is replaced. One narration line stands between them: see
+[`segments/README.md`](segments/README.md).
 
-`confide.mp4` — 1:47 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
+`confide.mp4` — 1:52 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
 
 It leads with what a holder gets, not with how the mechanism works. The terminal is demoted to
