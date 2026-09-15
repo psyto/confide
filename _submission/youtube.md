@@ -9,7 +9,7 @@ Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ## Description — 4943 / 5000 characters
 
 ```
-All 1,869 tokenized stocks Backed and Backpack issue on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
+1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
 
 ▶ Try it live (no wallet, no API key, no install): https://psyto.github.io/confide/
 ▶ Code (Apache-2.0): https://github.com/psyto/confide
