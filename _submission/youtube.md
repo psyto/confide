@@ -6,7 +6,7 @@
 Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ```
 
-## Description — 4943 / 5000 characters
+## Description — 4913 / 5000 characters
 
 ```
 1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
@@ -79,7 +79,7 @@ account into the lender's check, and the close into the seizure. The six that re
 
 **Timestamps are read out of the published file's own subtitle track**, not from `record.js` holds
 and not from the silent master. Those are three different clocks: the master renders at 2:07, the
-published cut is **1:52** because the generated voice paces differently, and a chapter list built
+published cut is **1:54** because the generated voice paces differently, and a chapter list built
 from the wrong one puts every title in the wrong place.
 
 The seizure chapter at 1:33 absorbs the close, which is 7s on its own and would fail the rule. Floored to whole seconds the

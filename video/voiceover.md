@@ -1,4 +1,4 @@
-# Voiceover — confide.mp4 (2:07 master; the published cut runs 1:52)
+# Voiceover — confide.mp4 (2:07 master; the published cut runs 1:54)
 
 *The timecodes below are the silent master's. Generated narration paces faster, so the published
 file's scene boundaries are its own — read them out of its subtitle track, never from here.*

@@ -9,7 +9,7 @@ exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the
 links to either; unlist them rather than leaving three answers to one question.
 
 **Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
-**2:07**; the published cut is **1:52**, because the voice is generated externally and paces
+**2:07**; the published cut is **1:54**, because the voice is generated externally and paces
 differently, and the clips were recomposited to it. The published file is the authority for
 anything a viewer sees — chapters especially, which come from its own subtitle track and not from
 `record.js` holds.
