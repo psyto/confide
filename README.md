@@ -152,8 +152,9 @@ button press — has Solana's ZK program verify the lender's proof while you wat
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
+./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # is every claim in this README still true?
-cargo test                    # 21 tests
+cargo test                    # 26 tests
 ```
 
 **Needs the account's keys** — `account-keys.json`, written by `provision-account.sh`. Reading a
@@ -245,8 +246,10 @@ Stated because a reader should find the limits here rather than discover them:
   a small one. **[docs/SEIZURE.md](docs/SEIZURE.md) is the design that closes it** — the transfer
   proofs built at origination while the borrower still cooperates, pre-verified into context state
   accounts, and fired later by a program that owns the escrow. It needs no committee and reveals no
-  amount. It is a design: the program is not written, and the four assumptions it rests on are
-  listed there rather than assumed quietly.
+  amount. **The three proofs it needs now build and are accepted by the live ZK program** —
+  `./scripts/seizure-proofs.sh`, five invariants under `cargo test -p confide-ct`, and the auditor
+  can still read a seizure. What is not written is the program that fires them, and the assumptions
+  still open are listed there rather than assumed quietly.
 - **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
   configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may

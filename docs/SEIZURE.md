@@ -153,16 +153,45 @@ is what the README already claimed about liquidation, now with the seizure it ne
 | the auditor slot filled on a mint configured like NVDAx | `./scripts/set-auditor.sh` |
 | the floor predicate and the corporate-action restatement it must survive | `cargo test -p confide-equity` |
 
-**Assumed, and each one is a devnet transaction away from being settled.** Listed because a design
-whose assumptions are buried is a pitch:
+**Settled since this document was written**, by `./scripts/seizure-proofs.sh`:
+
+> The three proofs compose, and Solana's live ZK ElGamal Proof Program accepts all three. Measured
+> on devnet, one instruction each, with the compute limit raised so the numbers are costs rather
+> than ceilings:
+>
+> | proof | compute units |
+> |---|---|
+> | ciphertext-commitment equality | 6,400 |
+> | batched grouped ciphertext validity, 3 handles | 16,400 |
+> | batched range proof U128 | 200,000 |
+>
+> **All of it is paid at origination.** The seizure transaction cites the context state accounts and
+> re-verifies nothing, so the ~223k units above never recur — which is the second reason to
+> pre-verify, after the borrower not being there to help.
+
+Five invariants hold it down — `cargo test -p confide-ct`, and they are claims rather than coverage:
+the remaining-balance ciphertext is *computed* homomorphically and opens to the remaining balance
+(S1); the **auditor's** handle opens the seized amount, so a seizure is not a hole in the disclosure
+this project argues for (S2); the batched bit lengths sum to the 128 they claim (S3); an amount too
+large for the 48-bit transfer encoding is refused rather than truncated (S4); and a full drain
+leaves a ciphertext that opens to exactly zero (S5).
+
+**Still assumed, and each one is a devnet transaction away.** Listed because a design whose
+assumptions are buried is a pitch:
 
 1. A **PDA can own a confidential token account** — `ConfigureAccount` needs a pubkey-validity proof
    and the owner's signature, and a PDA signs by CPI. Expected to work; not yet done here.
 2. A **context state account survives** from origination to default and is consumable by a CPI'd
-   `Transfer` weeks later. The instruction documents the mechanism; the lifetime is untested here.
+   `Transfer` weeks later. The instruction documents the mechanism and `build-seizure-proofs` emits
+   the writing transactions; the lifetime is untested here.
 3. `DisableConfidentialCredits` **freezes the ciphertext** against every path that could move it.
 4. The processor accepts a **PDA authority** for `Transfer` via `invoke_signed` with proofs supplied
    as context state accounts.
+
+**What is not yet shown, stated plainly:** the run above is over a throwaway escrow, not over a live
+account's own on-chain ciphertext. That is a fact about the proof system and does not depend on
+which account the ciphertext came from — but the stronger form, the one `prove-collateral.sh`
+already meets, needs the holder's keys and is `./scripts/seizure-proofs.sh <account> all keys.json`.
 
 Any one of these failing changes the design rather than the goal, and the fallback is the committee
 this design was written to avoid: `confide-embargo`'s k-of-n already splits a secret, and could
@@ -186,9 +215,9 @@ keep secret between origination and default, because the proofs reveal nothing: 
 
 ## 8. Build order
 
-1. `confide-seizure` program — loan account, `originate`, `seize`, the four origination checks.
-2. `confide-ct/src/build_seizure_proofs.rs` — the three transfer proofs against a real E, verified
-   into context state accounts. Settles assumptions 2 and 4.
+1. ~~`confide-ct/src/build_seizure_proofs.rs`~~ — **done.** The three transfer proofs, accepted by
+   the live ZK program, with the context-state writing transactions emitted. Section 6.
+2. `confide-seizure` program — loan account, `originate`, `seize`, the four origination checks.
 3. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
 4. `scripts/seize.sh` — default, then seizure, on devnet, end to end, with the balances read before
    and after.
