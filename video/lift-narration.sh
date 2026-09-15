@@ -60,7 +60,7 @@ for e in json.load(open('$SEG/manifest.json')):
 " | while read -r name start; do
   vid="$SEG/$name"
   len=$("$PROBE" -v error -show_entries format=duration -of csv=p=0 "$vid")
-  "$FF" -v error -ss "$start" -t "$len" -i "$SRC" -i "$vid" \
+  "$FF" -nostdin -v error -ss "$start" -t "$len" -i "$SRC" -i "$vid" \
         -map 1:v:0 -map 0:a:0 -c:v copy -c:a aac -b:a 192k -shortest "$OUT/$name" -y
   got=$("$PROBE" -v error -show_entries format=duration -of csv=p=0 "$OUT/$name")
   a=$("$PROBE" -v error -select_streams a -show_entries stream=codec_name -of csv=p=0 "$OUT/$name")

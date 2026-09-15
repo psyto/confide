@@ -8,11 +8,29 @@ the current render, the recorded narration, and the subtitle track carried acros
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
 
 ```bash
-npm run record          # -> confide.mp4, reading the account out of account-keys.json
-../video/split.sh       # -> segments/, cut at the boundaries the page logged
-../video/lift-narration.sh  # -> segments/narrated/, the recorded voice back onto them
-../video/join.sh        # -> confide-narrated.mp4
+npm run record      # -> confide.mp4, reading the account out of account-keys.json
+./narrate.sh        # -> confide-narrated.mp4, the recorded voice muxed straight on
 ```
+
+`narrate.sh` is the whole path for a re-render. The voice is one continuous track on the same
+timeline, so it needs no cutting; the script refuses unless the narration still falls silent at
+every scene boundary, and trims the second of blank the recorder captures past the last scene.
+
+The per-scene tools are for working on one line at a time:
+
+```bash
+./split.sh            # -> segments/
+./lift-narration.sh   # -> segments/narrated/
+./join.sh             # -> confide-narrated.mp4
+```
+
+**Prefer `narrate.sh` for anything you are going to publish.** On 2026-09-15 the concat path
+produced a file that was black from 0:45 to 1:30: `split.sh` let ffmpeg read the stdin its own loop
+was reading from, a filename arrived with its leading character missing, four clips silently stayed
+at the previous resolution, and players stop decoding where the resolution changes while the audio
+plays on. ffmpeg decoded it fine, so every check I had passed. `split.sh` now passes `-nostdin` and
+asserts one resolution across the set, but the path with no concatenation in it cannot fail that way
+at all.
 
 Re-rendering moves the pictures and leaves the narration alone, which is why those last two steps
 exist. The account address is on screen in one scene, so a re-provision makes the published video

@@ -24,15 +24,15 @@ for f in 01-title 02-leak 03-empty-slot 04-four-views 05-benefits 06-live-accoun
               -of csv=p=0 "$src" | wc -l | tr -d ' ')
   tmp="$SEG/.join-$f.mp4"
   if [ "$has_audio" = "0" ]; then
-    "$FF" -v error -i "$src" -f lavfi -i anullsrc=r=48000:cl=stereo -shortest \
+    "$FF" -nostdin -v error -i "$src" -f lavfi -i anullsrc=r=48000:cl=stereo -shortest \
       -c:v copy -c:a aac -b:a 128k "$tmp" -y
   else
-    "$FF" -v error -i "$src" -c:v copy -c:a aac -b:a 128k "$tmp" -y
+    "$FF" -nostdin -v error -i "$src" -c:v copy -c:a aac -b:a 128k "$tmp" -y
   fi
   echo "file '$(cd "$(dirname "$tmp")" && pwd)/$(basename "$tmp")'" >> "$list"
 done
 
-"$FF" -v error -f concat -safe 0 -i "$list" -c copy -movflags +faststart "$OUT" -y
+"$FF" -nostdin -v error -f concat -safe 0 -i "$list" -c copy -movflags +faststart "$OUT" -y
 rm -f "$list" "$SEG"/.join-*.mp4
 
 d=$(/opt/homebrew/bin/ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$OUT")
