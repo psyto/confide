@@ -84,13 +84,13 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 
 | | |
 |---|---|
-| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V?cluster=devnet) |
+| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P?cluster=devnet) |
 | **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
-| **Fill the auditor slot.** Same mint configuration as NVDAx, one field different — and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
+| **Fill the auditor slot.** The mirror gates new accounts exactly as NVDAx does — `autoApproveNewAccounts: false` — so the issuer has to sign for the confidential account before it can hold anything, and the demo does that rather than describing it. One field then separates the two mints, and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
 | **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
-| **Bind a disclosure to a date and make it unrevisable.** 45 days in which the number cannot be tidied. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
-| **Open on schedule without the holder.** Five separate processes; the holder exited in September. | `./scripts/committee.sh` |
+| **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
+| **Open on schedule without the holder.** Five separate processes; the holder exited in September. What they publish is checked against the commitment sealed that day before it is read out. | `./scripts/committee.sh` |
 | **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
@@ -147,6 +147,7 @@ watch. Source in
 **Nothing required — no key, no account, no funding:**
 
 ```bash
+./scripts/refresh-proofs.sh   # regenerate the page's proofs after provisioning a new account
 ./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
@@ -155,7 +156,7 @@ watch. Source in
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # is every claim in this README still true?
-cargo test                    # 26 tests
+cargo test                    # 29 tests
 ```
 
 **Needs the account's keys** — `account-keys.json`, written by `provision-account.sh`. Reading a

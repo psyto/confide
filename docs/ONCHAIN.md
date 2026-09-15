@@ -136,7 +136,7 @@ available balance  64 bytes ciphertext  <- 173,000 units, and nobody can read it
 and it is the one that showed why a CLI-made account is not enough: `spl-token` derives its ElGamal
 key with a KDF this SDK version does not reproduce, so we can read this account on the chain and
 cannot prove anything about it. The account the demo, the proofs and the live page are about is
-`6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V` — provisioned from our own instructions in §7.
+`Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P` — provisioned from our own instructions in §7.
 
 `./scripts/bind-account.sh` builds a disclosure subject out of those real fields and then re-reads
 the account to confirm the binding still matches. Before this, `SubjectAccount` carried an address
@@ -156,7 +156,7 @@ Backed's mints are not ours to configure, so this repo provisioned one with the 
 filled the slot `ConfidentialTransferInstruction::UpdateMint` exists for:
 
 ```
-mint                    EbfBr1ZcVQFy7JN68fDoFw6NUyonBGYXEXPRKUrv7trH
+mint                    5jszdY3yd8fq37DBEqECtBQdvwnyXtA9vexJFefVKWzb
 auditorElgamalPubkey    ut5cP19Fy+AHW+nVkj0BfUANqd3w+722Mi30dj0eBC8=
 account                 F84hb3Lw2egXzEG4bCKJ6zxYq58N5abUGPaNd2CVvEqE
 public amount           0
@@ -181,7 +181,7 @@ instructions instead: `Reallocate`, `ConfigureAccount` carrying a `PubkeyValidit
 `Deposit`, `ApplyPendingBalance`.
 
 ```
-account                    6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V
+account                    Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
 public balance             0                  <- what the chain shows anyone
 elgamalPubkey              AtQhEEsvGkjX5YFslY15+bV+2jD5OdAR7cmZunK0zBw=   <- ours
 availableBalance           64 bytes of ElGamal ciphertext
@@ -210,7 +210,7 @@ A verifier recomputes `C − threshold·G` and checks the range proof is over it
 *this account holds at least the threshold*; separately, neither is about anything.
 
 ```
-$ ./scripts/prove-collateral.sh 6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V 100000
+$ ./scripts/prove-collateral.sh Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P 100000
 
   ciphertext-commitment equality — the commitment and the account hold the same value
     err   : None

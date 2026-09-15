@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RPC="${RPC:-https://api.devnet.solana.com}"
-ACC="${1:-6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V}"
+ACC="${1:-Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P}"
 
 read -r AMOUNT ELGAMAL BALANCE < <(curl -s "$RPC" -H 'Content-Type: application/json' \
   -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$ACC\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \

@@ -50,7 +50,10 @@ fn main() {
         &Address::from_str(&mint).unwrap(),
         &authority.pubkey(),
         &[],
-        true, // auto-approve: this mint is ours, and gating it would only be theatre
+        // Keep the gate closed. `update_mint` rewrites both fields, so passing true here would
+        // silently undo the `manual` the mint was created with and leave the mirror differing from
+        // NVDAx in two fields while the copy claims one. It did exactly that until 09-15.
+        false,
         Some(pod),
     )
     .expect("update_mint");

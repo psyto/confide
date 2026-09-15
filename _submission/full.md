@@ -42,14 +42,14 @@ you watch.
 
 | | evidence |
 |---|---|
-| A position on-chain that reads as zero | devnet `6Wn7zAa…mG16V`: `spl-token balance` says `0`, the confidential balance holds 173,000 |
+| A position on-chain that reads as zero | devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`, the confidential balance holds 173,000 |
 | **Prove "this account holds at least X"** over the account's *own* ciphertext | two proofs accepted by the live ZK program: `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU |
-| The auditor slot, filled | one `UpdateMint` on a mirrored mint — NVDAx's config, one field apart |
-| A disclosure bound to a date, unrevisable | 147 bytes anchored on devnet, commitment matched on read-back — over its own position, not the account above |
-| Opening on schedule without the holder | five separate processes; the holder's exited in Sept |
+| The auditor slot, filled | one `UpdateMint` on a mirror that gates accounts exactly as NVDAx does — one field apart |
+| A disclosure bound to a date, unrevisable | 147 bytes anchored on devnet over **that account's own ciphertext**; a figure restated later does not open it |
+| Opening on schedule without the holder | five separate processes; the holder's exited in Sept — and their figure opens the sealed commitment |
 | Surviving a stock split | 11 actions on the live schedule: 8 restate exactly, 3 have no whole ratio and are reported, not guessed |
 
-26 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
+29 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
 number that died — judging runs three weeks and devnet resets.
 
 ## Why two proofs, not one
@@ -62,13 +62,12 @@ opening, so a verifier reaches it by subtracting `threshold·G`, not our word.
 
 - **Seizure.** A lender can verify the collateral and still cannot take it on default — the
   distance between this and lending, and it is not small.
-- **One chain, not yet.** The devnet account, the proof over its ciphertext and the sealed
-  disclosure are each real but not one artifact: the seal covers its own position, not that
-  account.
 - **On the live mints.** Both issuers set `autoApproveNewAccounts: false`, so opening a confidential
-  account needs their approval — a signal, not a wall. They built the feature, configured it, gated
-  it, and left the key slot empty: companies that mean to enable this and have no disclosure model
-  to enable it *with*. **The issuer is the customer here, not the obstacle.**
+  account needs the issuer to sign for it. The mirror is configured the same way, so that approval
+  is a step in the demo rather than a sentence in the README — on a real mint it is a conversation,
+  not a transaction. They built the feature, configured it, gated it, and left the key slot empty:
+  companies that mean to enable this and have no disclosure model to enable it *with*. **The issuer
+  is the customer here, not the obstacle.**
 - **No claim to discharge any filing.** xStocks are not Section 13(f) securities — Swiss-issued,
   own ISIN. Backpack's carry US CUSIPs and are called security entitlements, a different category
   and **a question for counsel, not for me**. What Confide serves today is contractual: the

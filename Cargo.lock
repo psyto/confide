@@ -227,6 +227,9 @@ name = "confide-committee"
 version = "0.1.0"
 dependencies = [
  "aperture-core",
+ "base64",
+ "bytemuck",
+ "confide-ct",
  "confide-embargo",
  "confide-equity",
  "serde_json",
@@ -296,6 +299,7 @@ dependencies = [
  "base64",
  "bincode",
  "bytemuck",
+ "confide-ct",
  "confide-embargo",
  "confide-equity",
  "serde_json",

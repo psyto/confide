@@ -4,3 +4,10 @@ dist/
 .env
 *.log
 .DS_Store
+
+# Private keys. account-keys.json holds the ElGamal secret that reads the confidential balance and
+# the AES key that decrypts it; auditor-key.json holds the auditor's secret. Both are written by
+# scripts into the repo root, and this repo is public, so one `git add -A` away from published.
+# They were untracked only by luck until 2026-09-15.
+account-keys.json
+auditor-key.json

@@ -52,7 +52,9 @@ step() {
 }
 
 echo "  --- mint and account, via the CLI (no ZK key involved) ---"
-MINT=$(spl-token -C "$CFG" create-token --program-2022 --decimals 8 --enable-confidential-transfers auto 2>&1 \
+# `manual`, not `auto`: Backed and Backpack both ship autoApproveNewAccounts false, and a mirror
+# that auto-approves would differ from NVDAx in two fields while claiming to differ in one.
+MINT=$(spl-token -C "$CFG" create-token --program-2022 --decimals 8 --enable-confidential-transfers manual 2>&1 \
   | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
 echo "  mint       $MINT"
 spl-token -C "$CFG" create-account "$MINT" >/dev/null
@@ -63,8 +65,9 @@ spl-token -C "$CFG" mint "$MINT" "$AMOUNT" >/dev/null
 rm -f "$CFG"
 
 echo
-echo "  --- configure, deposit, apply: our instructions, our key ---"
+echo "  --- configure, approve, deposit, apply: our instructions, our key ---"
 step configure
+step approve
 step deposit
 step apply
 

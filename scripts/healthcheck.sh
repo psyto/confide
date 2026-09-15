@@ -15,8 +15,11 @@ DEVNET="${DEVNET:-https://api.devnet.solana.com}"
 PAGE="${PAGE:-https://psyto.github.io/confide}"
 
 RECEIPTS=6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv
-ACCOUNT=6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V
-AUDITED_MINT=EbfBr1ZcVQFy7JN68fDoFw6NUyonBGYXEXPRKUrv7trH
+ACCOUNT=Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
+# The receipt anchored over that account's own ciphertext, 2026-09-15.
+RECEIPT_PDA=HM2HLUxv5KMyuSoiNeH1mMCVfd7Kpr4TVmzBu7BHbqUb
+RECEIPT_COMMITMENT=f3a58aaa296c622e75eb1fabde041a5d15d1a6d9b63f07c9d95ceeeadbdae2ba
+AUDITED_MINT=5jszdY3yd8fq37DBEqECtBQdvwnyXtA9vexJFefVKWzb
 NVDAX=Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh
 
 fail=0
@@ -73,6 +76,34 @@ raise SystemExit(0 if ct.get('auditorElgamalPubkey') else 1)" 2>/dev/null; then
   ok "the mirrored mint still has its auditor slot filled  ($AUDITED_MINT)"
 else
   bad "the audited mint is gone or its slot emptied — re-run: ./scripts/set-auditor.sh <mint>"
+fi
+
+# The mirror is only "NVDAx's config, one field apart" while it gates accounts the same way. It did
+# not, until 09-15: update_mint rewrites both fields and set-auditor was passing true, silently
+# undoing the `manual` the mint was created with.
+if acct "$DEVNET" "$AUDITED_MINT" | python3 -c "
+import sys,json
+v=json.load(sys.stdin)['result']['value']
+if not v: raise SystemExit(1)
+ct=next(e['state'] for e in v['data']['parsed']['info']['extensions'] if e['extension']=='confidentialTransferMint')
+raise SystemExit(0 if ct.get('autoApproveNewAccounts') is False else 1)" 2>/dev/null; then
+  ok "and still gates new accounts the way NVDAx does (autoApproveNewAccounts false)"
+else
+  bad "the mirror auto-approves accounts — it now differs from NVDAx in two fields, not one"
+fi
+
+# The anchored receipt from the run recorded in docs/ONCHAIN.md. Content-blind by construction, so
+# what is checkable is that it is there, holds that commitment, and opens on the reporting deadline.
+r=$(rpc "$DEVNET" "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$RECEIPT_PDA\",{\"encoding\":\"base64\",\"commitment\":\"confirmed\"}]}")
+if echo "$r" | RECEIPT_COMMITMENT="$RECEIPT_COMMITMENT" python3 -c "
+import sys, json, base64, os
+v = json.load(sys.stdin)['result']['value']
+if not v: raise SystemExit(1)
+d = base64.b64decode(v['data'][0])
+raise SystemExit(0 if d[0] == 1 and d[65:97].hex() == os.environ['RECEIPT_COMMITMENT'] else 1)" 2>/dev/null; then
+  ok "the anchored disclosure is still on chain, commitment unchanged  ($RECEIPT_PDA)"
+else
+  bad "the anchored receipt is gone or altered — re-run: ./scripts/anchor-receipt.sh"
 fi
 
 echo

@@ -24,7 +24,14 @@ fn main() {
     match open(&sealed, &shares) {
         Ok(ob) => {
             println!("  commitment  matches the anchor at slot {}", sealed.anchored_slot);
-            let units = confide_committee::read_position(&ob);
+            let (units, opens) = confide_committee::read_position(&ob);
+            // The number is only worth reading if it opens what was sealed. Printing it first and
+            // checking afterwards would be the wrong order to learn it does not.
+            if !opens {
+                println!("  {DIM}the published figure does NOT open the sealed commitment{OFF}");
+                std::process::exit(1);
+            }
+            println!("  opens       the commitment sealed on the reporting date");
             let as_of = ob.package.issued_at;
             println!(
                 "\n  {} held {} NVDAx as of the reporting date.",

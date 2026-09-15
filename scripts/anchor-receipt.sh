@@ -4,16 +4,35 @@
 # This is t0 — the reporting date. What lands on-chain is 32 content-blind bytes and the date the
 # obligation comes due. No position, no portfolio, nothing about the fund's holdings.
 #
-#   ./scripts/anchor-receipt.sh [keypair.json]
+#   ./scripts/anchor-receipt.sh [keypair.json] [keys.json]
 #
-# Requires a devnet-funded keypair (default ~/.config/solana/id.json).
+# Requires a devnet-funded keypair (default ~/.config/solana/id.json) and the confidential account's
+# own keys (account-keys.json, written by provision-account.sh) — because what gets sealed is read
+# out of that account, not invented for the occasion.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RPC="${RPC:-https://api.devnet.solana.com}"
 KP="${1:-$HOME/.config/solana/id.json}"
+KEYS="${2:-account-keys.json}"
 PROGRAM=6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv
 
 rpc() { curl -s "$RPC" -H 'Content-Type: application/json' -d "$1"; }
+
+[ -f "$KEYS" ] || { echo "  missing $KEYS — run ./scripts/provision-account.sh first"; exit 1; }
+ACC=$(python3 -c "import json,sys;print(json.load(open('$KEYS'))['account'])")
+
+# The two ciphertexts the account carries: the AES one the holder reads, and the ElGamal one the
+# commitment is bound to. Straight off getAccountInfo, no key needed to fetch them.
+read -r DEC AVAIL < <(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$ACC\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \
+| python3 -c "
+import sys, json
+v = json.load(sys.stdin)['result']['value']
+if not v: print('MISSING MISSING'); raise SystemExit(0)
+i = v['data']['parsed']['info']
+ct = next(e['state'] for e in i['extensions'] if e['extension'] == 'confidentialTransferAccount')
+print(ct['decryptableAvailableBalance'], ct['availableBalance'])
+")
+[ "$DEC" = "MISSING" ] && { echo "  account $ACC is not on devnet — see docs/DURABILITY.md"; exit 1; }
 
 BLOCKHASH=$(rpc '{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"commitment":"finalized"}]}' \
   | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value']['blockhash'])")
@@ -24,7 +43,7 @@ echo "  program     $PROGRAM  (aperture-receipts on devnet)"
 # transaction and a PDA that belong to different obligations — and the read-back below would look
 # for a receipt that was never written.
 INFO=$(mktemp)
-TX=$(cargo run --quiet -p confide-onchain --bin anchor-receipt -- "$KP" "$BLOCKHASH" 2>"$INFO")
+TX=$(cargo run --quiet -p confide-onchain --bin anchor-receipt -- "$KP" "$BLOCKHASH" "$KEYS" "$DEC" "$AVAIL" 2>"$INFO")
 cat "$INFO"
 PDA=$(awk '/receipt PDA/{print $3}' "$INFO")
 SEALED=$(awk '/commitment/{print $2}' "$INFO")

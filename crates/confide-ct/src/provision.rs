@@ -7,7 +7,14 @@
 //! anything about. Generating the key here is what lets the range proof be over the account's own
 //! `availableBalance` instead of over a ciphertext invented for the occasion.
 //!
-//! Steps, each one transaction: `configure` (writes the keys file), `deposit`, `apply`.
+//! Steps, each one transaction: `configure` (writes the keys file), `approve`, `deposit`, `apply`.
+//!
+//! `approve` exists because the mirror is configured the way the real mints are. Backed and
+//! Backpack both set `autoApproveNewAccounts: false`, so a holder cannot open a confidential
+//! account without the issuer signing for it. Mirroring that with `auto` would have made the demo
+//! easier and the claim false — the mirror would have differed from NVDAx in two fields, not one.
+//! Here the mint authority is us, so the approval is a transaction we send; for a real holder it is
+//! a conversation with the issuer. That gap is the point, and it is better shown than described.
 
 use base64::Engine;
 use solana_address::Address;
@@ -21,7 +28,7 @@ use solana_zk_sdk::encryption::elgamal::ElGamalKeypair;
 use solana_zk_sdk::zk_elgamal_proof_program::pubkey_validity::build_pubkey_validity_proof_data;
 use solana_zk_sdk_pod::encryption::auth_encryption::PodAeCiphertext;
 use spl_token_2022_interface::extension::confidential_transfer::instruction::{
-    apply_pending_balance, configure_account, deposit,
+    apply_pending_balance, approve_account, configure_account, deposit,
 };
 use spl_token_2022_interface::extension::ExtensionType;
 use spl_token_2022_interface::instruction::reallocate;
@@ -34,7 +41,7 @@ const DECIMALS: u8 = 8;
 
 fn main() {
     let mut a = std::env::args().skip(1);
-    let step = a.next().expect("step: configure | deposit | apply");
+    let step = a.next().expect("step: configure | approve | deposit | apply");
     let owner = read_keypair(&a.next().expect("keypair"));
     let mint = Address::from_str(&a.next().expect("mint")).unwrap();
     let account = Address::from_str(&a.next().expect("account")).unwrap();
@@ -92,6 +99,10 @@ fn main() {
             .expect("configure_account"));
             ixs
         }
+        // The issuer's signature on this account. On a mint with autoApproveNewAccounts false, the
+        // confidential extension stays unapproved and every later instruction fails without it.
+        "approve" => vec![approve_account(&program, &account, &mint, &owner.pubkey(), &[])
+            .expect("approve_account")],
         "deposit" => vec![deposit(&program, &account, &mint, base, DECIMALS, &owner.pubkey(), &[])
             .expect("deposit")],
         "apply" => {

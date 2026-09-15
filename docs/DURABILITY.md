@@ -43,13 +43,21 @@ solana program deploy target/deploy/aperture_receipts.so -u devnet
 #   -> put the new program id in crates/confide-onchain/src/anchor.rs and scripts/healthcheck.sh
 
 # the account, the mint, the auditor slot
-./scripts/provision-account.sh 173000            # writes account-keys.json
+./scripts/provision-account.sh 173000            # writes account-keys.json; the mint gates
+                                                 # accounts like NVDAx, so this approves its own
 ./scripts/set-auditor.sh <the new mint>
 
 # the proofs the page serves
-./scripts/prove-collateral.sh <new account> 100000 account-keys.json
-#   -> regenerate web/proofs.json with the new txs AND the new available_balance,
-#      then push to the gh-pages branch
+./scripts/refresh-proofs.sh <new account> 100000 account-keys.json
+#   -> rewrites web/proofs.json with the new txs AND the new available_balance, and refuses to
+#      write it at all if either proof is rejected. Push web/ to the gh-pages branch after.
+
+# the anchored disclosure, over the new account's own ciphertext
+./scripts/anchor-receipt.sh
+#   -> put the new receipt PDA and commitment in scripts/healthcheck.sh
+
+# then the references: the account and mint appear in scripts/healthcheck.sh,
+# scripts/bind-account.sh, web/proofs.json, README.md, _submission/full.md and this file.
 
 ./scripts/healthcheck.sh                 # back to all clear
 ```
@@ -57,9 +65,14 @@ solana program deploy target/deploy/aperture_receipts.so -u devnet
 Deploying the program costs ~1.5 SOL of devnet rent; the airdrop faucet refuses small accounts, so
 keep the funded keypair (`~/.config/solana/id.json`) rather than expecting to top up on demand.
 
-**That keypair held 130+ SOL when this was written and holds 0.62 SOL as of 2026-09-15** — below the
-cost of one deployment. Recovery above is currently blocked at its first step, and anything new that
-needs a program on devnet is blocked with it.
+**It held 134.38 SOL when checked on 2026-09-15**, which is several redeployments of headroom. An
+earlier version of this file said 0.62 SOL and concluded that recovery was blocked at its first
+step; that was wrong, and wrong in the direction that stops you trying. Check it rather than trust
+either number:
+
+```bash
+solana balance -u devnet   # or: getBalance on AmSYugrtHAEZi3TDj3HP7qbjY1hw6uv1df1oFDMxKeb1
+```
 
 ## The recorded evidence
 
@@ -69,8 +82,8 @@ throughout `docs/ONCHAIN.md`:
 | what | value |
 |---|---|
 | receipts program | `6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv` |
-| confidential account | `6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V` |
-| mint with the auditor slot filled | `EbfBr1ZcVQFy7JN68fDoFw6NUyonBGYXEXPRKUrv7trH` |
+| confidential account | `Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P` |
+| mint with the auditor slot filled | `5jszdY3yd8fq37DBEqECtBQdvwnyXtA9vexJFefVKWzb` |
 | auditor key set on it | `ut5cP19Fy+AHW+nVkj0BfUANqd3w+722Mi30dj0eBC8=` |
 | receipt anchored | slot 497,199,572, 147 bytes, commitment matched on read-back |
 | equality proof | accepted, 6,400 CU, `VerifyCiphertextCommitmentEquality` |

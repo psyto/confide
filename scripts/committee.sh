@@ -6,14 +6,35 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 DIR="${1:-$(mktemp -d)/committee}"
+KEYS="${KEYS:-account-keys.json}"
+RPC="${RPC:-https://api.devnet.solana.com}"
 DUE=1794614400          # 2026-11-14, the reporting deadline
 EARLY=$((DUE - 86400))  # one day short
+
+# Seal the live account's position when its keys are here, a throwaway one when they are not. The
+# committee mechanism is the same either way; what changes is whether the sealed figure is about an
+# account that exists, and the run prints which.
+LIVE=""
+if [ -f "$KEYS" ]; then
+  ACC=$(python3 -c "import json;print(json.load(open('$KEYS'))['account'])")
+  read -r DEC AVAIL < <(curl -s "$RPC" -H 'Content-Type: application/json' \
+    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$ACC\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \
+  | python3 -c "
+import sys, json
+v = json.load(sys.stdin)['result']['value']
+if not v: print('- -'); raise SystemExit(0)
+i = v['data']['parsed']['info']
+ct = next(e['state'] for e in i['extensions'] if e['extension'] == 'confidentialTransferAccount')
+print(ct['decryptableAvailableBalance'], ct['availableBalance'])
+")
+  [ "$DEC" != "-" ] && LIVE="$KEYS $DEC $AVAIL"
+fi
 
 B() { cargo run --quiet -p confide-committee --bin "$@"; }
 rule() { printf '\n  \033[2m────────────────────────────────────────────────────────────────\033[0m\n  \033[1m%s\033[0m\n\n' "$1"; }
 
 rule "30 Sep · the holder seals the position of record, and exits"
-B confide-seal "$DIR"
+B confide-seal "$DIR" $LIVE
 
 rule "13 Nov · someone asks the committee one day early"
 fail=0

@@ -344,3 +344,114 @@ mod invariants {
         assert_eq!(source.secret().decrypt_u32(&s.remaining_ct), Some(0));
     }
 }
+
+// ---------------------------------------------------------------------------------------------
+// A position of record that is about an account, not about a number.
+// ---------------------------------------------------------------------------------------------
+//
+// Sealing a disclosure is only worth anything if the thing sealed is the holder's actual position.
+// Until 2026-09-15 the anchoring path generated a fresh random ElGamal key and a hard-coded share
+// count, sealed that, and anchored its commitment — every byte of which was real, and none of which
+// was about the live account the demo displayed. A reviewer caught it. This is the fix.
+//
+// The construction is the one `prove-collateral` already uses, for the same reason: an account's
+// ElGamal ciphertext carries no Pedersen opening we hold, so nothing can be proved *about* it
+// directly. Bind a commitment we can open to it with a ciphertext-commitment equality proof, and
+// the commitment inherits the account. At T the committee publishes the value and the opening;
+// anyone recomputes the commitment, checks it against the sealed one, and checks the equality proof
+// against the ciphertext that account held on the reporting date.
+
+/// A sealed position, bound to the on-chain ciphertext it was read from.
+pub struct BoundPosition {
+    /// The account's `availableBalance` as it stood on the reporting date.
+    pub account_ciphertext: Vec<u8>,
+    /// A Pedersen commitment to the same value.
+    pub commitment: Vec<u8>,
+    /// Proof that the commitment and that ciphertext hold the same value.
+    pub equality: CiphertextCommitmentEqualityProofData,
+    /// The position itself. Secret until T; the committee holds the shares.
+    pub balance: u64,
+    /// Opens `commitment`. Released with `balance`, and useless without it.
+    pub opening: PedersenOpening,
+}
+
+/// Read the position out of the account and bind a commitment to it.
+///
+/// `decryptable` and `available` are the two ciphertexts Token-2022 keeps on the account:
+/// `decryptableAvailableBalance` (AES, so the holder can read the number) and `availableBalance`
+/// (ElGamal, so it can be proved about). Both come straight off `getAccountInfo`.
+pub fn bind_position(
+    ae: &AeKey,
+    elgamal: &ElGamalKeypair,
+    decryptable: &[u8],
+    available: &[u8],
+) -> BoundPosition {
+    let balance = ae
+        .decrypt(&AeCiphertext::from_bytes(decryptable).expect("ae ciphertext"))
+        .expect("our key opens our balance");
+    let ct = ElGamalCiphertext::from_bytes(available).expect("elgamal ciphertext");
+
+    let opening = PedersenOpening::new_rand();
+    let commitment = Pedersen::with(balance, &opening);
+    let equality =
+        build_ciphertext_commitment_equality_proof_data(elgamal, &ct, &commitment, &opening, balance)
+            .expect("equality proof");
+
+    BoundPosition {
+        account_ciphertext: available.to_vec(),
+        commitment: commitment.to_bytes().to_vec(),
+        equality,
+        balance,
+        opening,
+    }
+}
+
+/// The check a reader runs at T, given what the committee published.
+///
+/// This is deliberately not "does the number look right" — there is nothing to compare it against.
+/// It is: does this number, with this opening, produce the commitment that was sealed on the
+/// reporting date? A holder who reports a different figure later cannot make one that does.
+pub fn opens_sealed_position(commitment: &[u8], balance: u64, opening: &PedersenOpening) -> bool {
+    Pedersen::with(balance, opening).to_bytes().as_slice() == commitment
+}
+
+#[cfg(test)]
+mod bound_position_tests {
+    use super::*;
+
+    /// Stand up an account's two ciphertexts the way the chain holds them.
+    fn account(balance: u64) -> (AeKey, ElGamalKeypair, Vec<u8>, Vec<u8>) {
+        let ae = AeKey::new_rand();
+        let elgamal = ElGamalKeypair::new_rand();
+        let decryptable = ae.encrypt(balance).to_bytes().to_vec();
+        let available = elgamal.pubkey().encrypt(balance).to_bytes().to_vec();
+        (ae, elgamal, decryptable, available)
+    }
+
+    #[test]
+    fn the_sealed_commitment_opens_to_the_position_the_account_held() {
+        let (ae, eg, dec, avail) = account(173_000_00000000);
+        let b = bind_position(&ae, &eg, &dec, &avail);
+        assert_eq!(b.balance, 173_000_00000000);
+        assert!(opens_sealed_position(&b.commitment, b.balance, &b.opening));
+    }
+
+    /// The whole point of I3: the number cannot be tidied after the fact.
+    #[test]
+    fn a_restated_number_does_not_open_the_sealed_commitment() {
+        let (ae, eg, dec, avail) = account(173_000_00000000);
+        let b = bind_position(&ae, &eg, &dec, &avail);
+        assert!(!opens_sealed_position(&b.commitment, 200_000_00000000, &b.opening));
+        assert!(!opens_sealed_position(&b.commitment, b.balance - 1, &b.opening));
+    }
+
+    /// And it is bound to *this* account: the proof carries the ciphertext it was made against.
+    #[test]
+    fn the_binding_names_the_account_ciphertext_it_was_read_from() {
+        let (ae, eg, dec, avail) = account(1_000);
+        let b = bind_position(&ae, &eg, &dec, &avail);
+        assert_eq!(b.account_ciphertext, avail);
+        let (_, _, _, other) = account(1_000);
+        assert_ne!(b.account_ciphertext, other, "two accounts holding the same value differ");
+    }
+}
