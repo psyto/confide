@@ -55,8 +55,11 @@ solana program deploy target/deploy/aperture_receipts.so -u devnet
 ```
 
 Deploying the program costs ~1.5 SOL of devnet rent; the airdrop faucet refuses small accounts, so
-keep the funded keypair (`~/.config/solana/id.json`, 130+ SOL at time of writing) rather than
-expecting to top up on demand.
+keep the funded keypair (`~/.config/solana/id.json`) rather than expecting to top up on demand.
+
+**That keypair held 130+ SOL when this was written and holds 0.62 SOL as of 2026-09-15** — below the
+cost of one deployment. Recovery above is currently blocked at its first step, and anything new that
+needs a program on devnet is blocked with it.
 
 ## The recorded evidence
 

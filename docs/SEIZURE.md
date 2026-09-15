@@ -83,7 +83,49 @@ The borrower's ElGamal secret is used once, at origination, by the borrower, on 
 **It is never shared, never split, never reconstructed, and never held by anyone else.** The amount
 is not learned by the program, the lender, or any third party at any point in the loan's life.
 
-## 3. What the program must check at origination, or the design is worthless
+## 3. What the program must check at origination — less than this document first claimed
+
+**Corrected after writing the program.** The table below originally listed four checks. Three of
+them Token-2022 already performs, and re-implementing them in `confide-seizure` would have been
+theatre that read as rigour:
+
+> The processor recomputes the source's new available balance from the account and the transfer's
+> own ciphertexts, and rejects a `Transfer` whose equality context does not match it. It checks the
+> validity proof's second handle against the **destination account's** ElGamal pubkey, and the
+> third against the **mint's** auditor. A proof set that is stale, points at a different account, or
+> was built for a different destination fails at transfer time without this program's help.
+
+What Token-2022 has no opinion about is **who may close the proofs**, so that is the check the
+program actually makes, and the only one:
+
+| check | against | what it stops |
+|---|---|---|
+| each context state account's authority | the loan PDA | the borrower closing the accounts and withdrawing the proofs the day before default — the one attack the token program cannot see |
+| each context's proof type | the type that slot must hold | a valid proof of the wrong kind in the right position |
+| every account the transfer touches | the addresses recorded in the loan | a caller redirecting a seizure by passing different accounts |
+
+The original table's other rows are not wrong about what must be true. They were wrong about who
+has to establish it.
+
+## 3a. The escrow never needs a PDA to configure it
+
+Also found by building it. `ConfigureAccount` requires the account owner's signature, so an escrow
+owned by a PDA from birth would need the program to configure it — which is why assumption 1 below
+was written. It is avoidable.
+
+The borrower configures and funds the escrow **while they still own it**, which they must anyway:
+building the proofs needs the ElGamal secret, and holding the account is how they have it. Then
+`SetAuthority(AccountOwner)` hands the account to the loan PDA. After that the borrower cannot move
+it and the program can — and **the ElGamal secret stops mattering entirely**, because everything it
+was needed for has already been built. A key that no longer opens anything anyone needs is the
+cleanest possible answer to "who holds it".
+
+Whether Token-2022 permits that ownership change on an account with a non-zero confidential balance
+is **not confirmed** — the instruction's own documentation says nothing either way, and the
+restriction, if any, is in the processor rather than the interface. It replaces assumption 1 with a
+narrower one rather than removing it.
+
+## 3b. What the program must check at origination, or the design is worthless
 
 A pre-verified proof is only as good as its binding. The borrower builds these proofs, and a
 borrower who could point them somewhere else would have built an escape hatch. Each proof's context
@@ -179,8 +221,9 @@ leaves a ciphertext that opens to exactly zero (S5).
 **Still assumed, and each one is a devnet transaction away.** Listed because a design whose
 assumptions are buried is a pitch:
 
-1. A **PDA can own a confidential token account** — `ConfigureAccount` needs a pubkey-validity proof
-   and the owner's signature, and a PDA signs by CPI. Expected to work; not yet done here.
+1. A **PDA can own a confidential token account holding a balance** — reached by `SetAuthority`
+   after the borrower funds it, per section 3a, so the PDA never configures anything. Whether the
+   processor allows that ownership change with a live confidential balance is the open half.
 2. A **context state account survives** from origination to default and is consumable by a CPI'd
    `Transfer` weeks later. The instruction documents the mechanism and `build-seizure-proofs` emits
    the writing transactions; the lifetime is untested here.
@@ -217,7 +260,12 @@ keep secret between origination and default, because the proofs reveal nothing: 
 
 1. ~~`confide-ct/src/build_seizure_proofs.rs`~~ — **done.** The three transfer proofs, accepted by
    the live ZK program, with the context-state writing transactions emitted. Section 6.
-2. `confide-seizure` program — loan account, `originate`, `seize`, the four origination checks.
+2. ~~`confide-seizure` program~~ — **written and building to SBF** (99,592 bytes), with five
+   invariants over the account layout and the default predicate: `cd programs/confide-seizure &&
+   cargo test`. It is a standalone crate, excluded from the workspace the way `aperture` excludes
+   its own programs, so the root `cargo test` does not cover it. **Not yet deployed:** the devnet
+   keypair holds 0.62 SOL against the ~1.5 SOL a deployment costs, and the faucet refuses small
+   accounts. A local validator is the route that does not need funding.
 3. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
 4. `scripts/seize.sh` — default, then seizure, on devnet, end to end, with the balances read before
    and after.
