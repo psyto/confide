@@ -60,6 +60,21 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
    生きている（確認 2026-09-15）。CWF の Official Rules §8(e) は **Open-source 自体が審査基準**なので、
    これは要件であると同時に加点でもある。
 
+## CWF 作業の再開地点（2026-09-15 に中断、Stocklana 提出を優先）
+
+窓内の作業は `git log cwf-2026-baseline..HEAD`。seizure は設計 → 証明 → プログラム → ローカル実行まで
+進み、**end-to-end の手前で止まっている**。止めているのは暗号でも設計でもなく輸送手段ひとつ。
+
+| | |
+|---|---|
+| 動く | 3本の証明がライブ ZK プログラムに受理される（`./scripts/seizure-proofs.sh`）。context state account 3つを作成・検証・読み返し確認済み。プログラムは SBF ビルド + ローカルデプロイ済み |
+| 止まっている | **U128 range proof が 1,237 バイトで、レガシー tx 上限 1,232 を5バイト超える**（authority を loan PDA にした場合）。オリジネーションが3本中2本までしか進めない |
+| 次の一手 | [`docs/SEIZURE.md`](docs/SEIZURE.md) §8-3。**address lookup table を推奨** — record account 方式と違い、新しい信頼点も新しい口座所有権も持ち込まず、必要な32バイトちょうど浮く |
+| 注意 | デプロイは `cargo build-sbf --arch v3`。既定ターゲットはランタイムに蹴られる。`declare_id!` は仮の `SeiZure111…` のままで、実デプロイ ID と違う |
+
+Stocklana 起点の commit もこの窓の内側に入るが、**規約上の問題はない** — CWF が判定するのは
+「窓内に完成した作業」であって動機ではなく、どちらも同じプロダクトの作業。
+
 ## 未決（founder の手でしか動かない）
 
 1. **traction がゼロ。** 7基準のうち market size / viability / traction / founder + market fit の4つが
