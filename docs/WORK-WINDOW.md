@@ -30,7 +30,28 @@ The window times are quoted from the Official Rules, which are the governing doc
 > "5. Timing. The Contest Period starts at 6:00am PT on September 14, 2026 and ends at 11:59pm
 > PT on October 12, 2026."
 >
-> — [Crypto World's Fair Hackathon Rules](https://colosseum.com/legal/Crypto%20World's%20Fair%20Hackathon%20Rules.pdf) §5, read 2026-09-15
+> — Official Rules §5 — [pinned in this repository](Crypto%20World's%20Fair%20Hackathon%20Rules.pdf),
+>   retrieved 2026-09-15 from [colosseum.com/legal/](https://colosseum.com/legal/Crypto%20World's%20Fair%20Hackathon%20Rules.pdf)
+
+### Why the rules are pinned rather than linked
+
+§4(g) reserves the right to move them: *"Entrant agrees that Administrator may change or modify
+these Official Rules at any time in its sole discretion."* A boundary justified by a citation that
+can be edited afterwards is not a record, so the document those quotes were read from is committed
+here, byte-identical to what was served on 2026-09-15. If the published rules move, the diff is
+visible instead of silent.
+
+```
+sha256  1e4afb605ada862fd064859f88db226fb12f6e3bf2f1c91e29194e573d7c667a
+        docs/Crypto World's Fair Hackathon Rules.pdf
+```
+
+**The two quotes come from different places, and only one of them is pinned.** §5 above is from the
+Official Rules. The judging sentence at the top of this file is **not in them** — it is on
+`colosseum.com/hackathon`, which is a webpage with no version history, quoted here verbatim with its
+read date because that is the strongest form available for it. The Official Rules' own criteria
+(§8: Functionality, Potential Impact, Novelty, UX, Open-source, Business Plan) are a different list
+from the seven the website publishes, which is worth knowing before writing to either.
 
 Three different times are in circulation and only the one above governs. `colosseum.com/worldsfair`
 lists a **kickoff event** at 10:00 PT on September 15 — that is a livestream, and it is 28 hours
