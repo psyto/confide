@@ -104,8 +104,14 @@ Stocklana 起点の commit もこの窓の内側に入るが、**規約上の問
    現状ゼロ。** リードタイムが不可逆なので、窓の序盤に founder が投げないと 10-12 に間に合わない。
    最有力は README が既に名指ししている相手 — **発行体（Backed / Kraken）は障害ではなく顧客**、
    および xStocks を担保に取っている **Jupiter Lend**。agent は誰にも接触しない。
-2. **CWF のプロジェクト登録**（`colosseum.com`、10-12 23:59 PT まで）と**フォームの過去作業欄への開示**。
-   記入元は [`docs/WORK-WINDOW.md`](docs/WORK-WINDOW.md) と上の再利用表。
+2. **CWF のフォーム。** 登録は開始済み — https://colosseum.com/arena/projects/confide は
+   **公開ページ**（ログイン不要で誰でも見られる）。カテゴリー **RWA**、説明、team は入力済み。
+   - **未入力: リンクが1つも無い。** 3本とも生きている（2026-09-15 確認、全て HTTP 200）:
+     `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
+     `https://youtu.be/KQsRwP8HTs0`。**動画は `KQsRwP8HTs0` が現行**で、`ZuhLvH5MFgE` は
+     `d0916c2` で差し替えられた旧版（まだ 200 を返すので取り違えやすい）。
+   - **未入力: 過去作業の開示欄。** 規約要件。記入元は [`docs/WORK-WINDOW.md`](docs/WORK-WINDOW.md)
+     と上の再利用表。**repo に書いてあることは開示にならない。**
 3. **9/14 公開のトラック / スポンサー / 審査員 / フォーム項目を読む。** Tempo トラックは条件未公開
    （"Session details coming soon"、9/16 workshop）。Solana トラックだけが $100,000 / 10件 と判明。
 4. **README / DESIGN の "written in-window" を CWF 向けにどうするか。** 両方の表が Confide を
