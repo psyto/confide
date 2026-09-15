@@ -56,7 +56,7 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
    `v0.5.1`）。Confide は path 依存をやめ、arm's-length の `{ git = "...", tag = "v0.5.1" }` で消費して
    いる。**Confide は単独でビルドできる。**
 2. ~~Confide 自体をいつ公開するか~~ → **解決済み。** `github.com/psyto/confide` は **PUBLIC**、
-   `psyto.github.io/confide/` は 200、動画 `youtu.be/ZuhLvH5MFgE` も 200。提出に必要なリンクは3種類とも
+   `psyto.github.io/confide/` は 200、動画 `youtu.be/KQsRwP8HTs0` も 200。提出に必要なリンクは3種類とも
    生きている（確認 2026-09-15）。CWF の Official Rules §8(e) は **Open-source 自体が審査基準**なので、
    これは要件であると同時に加点でもある。
 

@@ -1,0 +1,65 @@
+TITLE
+=====
+Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
+
+
+DESCRIPTION
+===========
+All 1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
+
+▶ Try it live (no wallet, no API key, no install): https://psyto.github.io/confide/
+▶ Code (Apache-2.0): https://github.com/psyto/confide
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CHAPTERS
+
+0:00 Your position is public, and nobody attacked anything
+0:22 1,869 mints, two issuers, every auditor key empty
+0:44 The same position, seen four ways
+1:00 What you actually get
+1:19 A live account that reads as zero
+1:30 The lender's check, verified by Solana
+
+TWO ISSUERS, NOT ONE
+
+Backed Finance issues xStocks — Swiss, with their own ISIN, a third-party product. Backpack Securities issues CUSIP-identified tokens the company calls bona fide security entitlements, which is the closer thing to the underlying share. They have nothing to do with each other.
+
+Both run Token-2022 with confidential transfers on. Both gate who may open a confidential account. Both leave the auditor key null. 732 mints and 1,137 mints, checked rather than sampled.
+
+One issuer leaving the slot empty is caution you could explain away. Two, independently — and the one with the stronger instrument arriving there too — is a missing piece.
+
+WHY THE SLOT IS EMPTY
+
+Token-2022 offers exactly one disclosure model: a single global auditor key that decrypts everyone's everything, forever. Fill it and every holder is permanently readable by one party. Leave it null and no holder can demonstrate anything to anyone.
+
+So no setting of that key is correct — and a fund holding NVDAx broadcasts its position to the whole market instead. Not a choice about publicity. The only option under which it can still answer a question.
+
+WHAT CONFIDE DOES
+
+Disclosure scoped by recipient, by granularity, and — the part nothing else has — by schedule. The market sees nothing. A lender learns one bit: the collateral covers the loan. Your auditor sees the position. You choose who, how much, and when.
+
+WHAT RUNS, ALL OF IT ON CHAIN
+
+• A confidential position on devnet: spl-token balance returns 0, the account holds 173,000
+• "This account holds at least X" proved over the account's OWN ciphertext — two proofs accepted by Solana's live ZK ElGamal Proof Program (VerifyCiphertextCommitmentEquality 6,400 CU, VerifyBatchedRangeProofU64 111,000 CU)
+• The auditor slot filled by one UpdateMint on a mirror that gates new accounts exactly as NVDAx does — autoApproveNewAccounts false, so the issuer has to sign for the account before it can hold anything, and the demo does that rather than describing it
+• A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
+• Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
+• Restatement across a stock split that refuses rather than guessing
+
+Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
+
+WHAT IS NOT BUILT
+
+• Seizure. Its three proofs are accepted by the live ZK program — equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, and a u128 batched range proof. But they are built while the borrower cooperates, and the program that fires them when they do not is unwritten. That is the distance between this and lending.
+• On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
+• No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
+
+BUILT ON
+
+Original work except where declared: aperture-core and aperture-receipts (Apache-2.0, my own pre-existing disclosure engine — https://github.com/psyto/aperture) and spl-token-2022-interface.
+
+Built for Stocklana 2026.
+
+#Solana #TokenizedStocks #RWA #ZeroKnowledge #Token2022 #DeFi #xStocks

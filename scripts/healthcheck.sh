@@ -13,6 +13,7 @@ cd "$(dirname "$0")/.."
 MAINNET="${MAINNET:-https://api.mainnet-beta.solana.com}"
 DEVNET="${DEVNET:-https://api.devnet.solana.com}"
 PAGE="${PAGE:-https://psyto.github.io/confide}"
+VIDEO="${VIDEO:-KQsRwP8HTs0}"
 
 RECEIPTS=6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv
 ACCOUNT=Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
@@ -152,6 +153,16 @@ fi
 
 echo
 echo "  LINKS"
+# The walkthrough is one of the three links the submission gives judges, and it is the one that
+# lives outside this repository. oEmbed answers 404 for a video that is private, deleted or made
+# unembeddable, so it checks more than reachability.
+if curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+   "https://www.youtube.com/oembed?url=https://youtu.be/$VIDEO&format=json" | grep -q 200; then
+  ok "https://youtu.be/$VIDEO  (public and embeddable)"
+else
+  bad "https://youtu.be/$VIDEO  — private, deleted, or no longer embeddable"
+fi
+
 for u in "$PAGE/" "$PAGE/mints.json" "$PAGE/proofs.json"; do
   c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$u")
   [ "$c" = "200" ] && ok "$u" || bad "$u  (http $c)"

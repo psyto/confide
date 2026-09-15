@@ -1,8 +1,11 @@
 # video
 
-**Published: https://youtu.be/ZuhLvH5MFgE** — still the cut that says 732 mints and one issuer, on a
-confidential account that no longer exists. **`Confide_Stocklana_20260915.mp4` is the replacement**:
-the current render, the recorded narration, and the subtitle track carried across. Ready to upload.
+**Published: https://youtu.be/KQsRwP8HTs0** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
+the current render at 1920x1080, the recorded narration, and the subtitle track. It says 1,869 mints
+across two issuers and shows the confidential account the page and the README point at.
+
+The previous upload (`ZuhLvH5MFgE`) says 732 and one issuer, over an account that no longer exists.
+Nothing links to it any more; unlist it rather than leaving two answers to the same question.
 
 `confide.mp4` — 1:52 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.

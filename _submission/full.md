@@ -29,7 +29,7 @@ You choose **who**, **how much**, and **when**.
 
 ## Try it — no wallet, no API key, no install
 
-**https://psyto.github.io/confide/** · walkthrough: https://youtu.be/ZuhLvH5MFgE
+**https://psyto.github.io/confide/** · walkthrough: https://youtu.be/KQsRwP8HTs0
 
 It reads the mints from mainnet in your browser, pulls real wallets out of recent NVDAx transactions
 with the balance each one published as it settled, shows a Confide account on devnet whose public
