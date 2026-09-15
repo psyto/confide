@@ -17,7 +17,7 @@ cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 PROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
 VID=video/confide.mp4
-SRC="${1:-video/Confide_Stocklana_20260914.mp4}"
+SRC="${1:-video/Confide_Stocklana_20260915.mp4}"
 OUT="${2:-video/confide-narrated.mp4}"
 
 [ -f "$VID" ] || { echo "missing $VID — run: cd video && npm run record" >&2; exit 1; }

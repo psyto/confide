@@ -15,7 +15,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 PROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
-SRC="${1:-video/Confide_Stocklana_20260914.mp4}"
+SRC="${1:-video/Confide_Stocklana_20260915.mp4}"
 SEG=video/segments
 OUT="$SEG/narrated"
 
