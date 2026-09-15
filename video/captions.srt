@@ -48,7 +48,7 @@ Every  tokenized  stock  here  has
 
 13
 00:00:23,482 --> 00:00:25,721
-confidential  transfer  switched  on
+confidential  transfers  switched  on
 
 14
 00:00:25,721 --> 00:00:27,242
@@ -160,7 +160,7 @@ And  this  is  the  lender's  check,
 
 41
 00:01:21,206 --> 00:01:23,325
-running  on  Solana's  zero  knowledge
+running  on  Solana's  zero-knowledge
 
 42
 00:01:23,325 --> 00:01:24,486
@@ -183,42 +183,46 @@ covers  the  loan  without  ever  being
 told  what  is  in  the  account.
 
 47
-00:01:33,207 --> 00:01:35,287
-And  when  the  loan  goes  bad,  the
+00:01:33,447 --> 00:01:35,647
+And  on  default,  the  lender  takes
 
 48
-00:01:35,287 --> 00:01:37,367
-lender  takes  it.  The  borrower
+00:01:35,647 --> 00:01:37,407
+it.  A  transfer  the  borrower
 
 49
-00:01:37,367 --> 00:01:39,367
-signs  nothing.  No  key  is
+00:01:37,407 --> 00:01:39,287
+authorized  at  origination  and
 
 50
-00:01:39,367 --> 00:01:42,407
-reconstructed,  nobody  is  asked,  and
+00:01:39,287 --> 00:01:41,806
+cannot  now  refuse.  No  key  is
 
 51
-00:01:42,407 --> 00:01:44,207
-neither  account  ever  shows  what
+00:01:41,806 --> 00:01:44,207
+reconstructed,  nobody  is  asked,  and
 
 52
-00:01:44,207 --> 00:01:44,887
-moved.
+00:01:44,207 --> 00:01:45,926
+neither  account  ever  shows  what
 
 53
-00:01:45,128 --> 00:01:47,448
-Your  position  is  yours,  and  you
+00:01:45,926 --> 00:01:46,687
+moved.
 
 54
-00:01:47,448 --> 00:01:49,528
-can  still  prove  what  you  must.
+00:01:46,928 --> 00:01:49,248
+Your  position  is  yours,  and  you
 
 55
-00:01:49,528 --> 00:01:51,687
-Try  it  yourself.  No  wallet,  no
+00:01:49,248 --> 00:01:51,328
+can  still  prove  what  you  must.
 
 56
-00:01:51,687 --> 00:01:52,488
+00:01:51,328 --> 00:01:53,487
+Try  it  yourself.  No  wallet,  no
+
+57
+00:01:53,487 --> 00:01:54,288
 install.
 

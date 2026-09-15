@@ -15,14 +15,16 @@ SRC="${1:-video/Confide_Stocklana_20260915.mp4}"
 import sys, re
 s = sys.stdin.read()
 # Ordered: longer phrases first so a shorter rule cannot eat part of one.
+# The cue text separates words with two spaces, so match on \\s+ rather than a literal space —
+# a single-space pattern silently misses half of these and reports success.
 fixes = [
-    ('Salana', 'Solana'),
-    ('zero knowledge', 'zero-knowledge'),
-    ('confidential transfer switched', 'confidential transfers switched'),
-    ('Nvidia', 'NVIDIA'),
+    (r'Salana', 'Solana'),
+    (r'zero\\s+knowledge', 'zero-knowledge'),
+    (r'confidential(\\s+)transfer(\\s+)switched', r'confidential\\1transfers\\2switched'),
+    (r'Nvidia', 'NVIDIA'),
 ]
 for bad, good in fixes:
-    s = s.replace(bad, good)
+    s = re.sub(bad, good, s)
 # The project's name, only where the transcript lowercased it at the start of a sentence.
 s = re.sub(r'(?m)^(\s*)confide\b', r'\1Confide', s)
 s = re.sub(r'(?<=[.!?] )confide\b', 'Confide', s)
