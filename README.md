@@ -4,9 +4,7 @@
 
 **All 1,869 tokenized stocks Backed and Backpack list on Solana have confidential transfers
 switched on. Not one of them can be used.** Two independent issuers, every mint they publish checked
-rather than sampled — `./scripts/slot-scan.sh`. The scan reads both issuers' own asset APIs
-(`scripts/refresh-mints.sh`); it is exhaustive over what they list, and it is not an issuer census
-of Solana:
+rather than sampled — `./scripts/slot-scan.sh`:
 
 ```
 checked  1869 tokenized-equity mints on Solana
@@ -14,16 +12,12 @@ checked  1869 tokenized-equity mints on Solana
   Backpack   EMPTY   1137     US CUSIP, a security entitlement by the issuer's own description
 ```
 
-One issuer would be a quirk. Two, arriving independently at the same dead end, is the shape of the
-problem. Four of them in detail — `./scripts/onchain-check.sh`, no key, no account:
+*The list comes from both issuers' own asset APIs (`scripts/refresh-mints.sh`), so the scan is
+exhaustive over what Backed and Backpack publish and is not an issuer census of Solana.*
 
-```
-SYMBOL  MINT                                          PROGRAM      confidentialTransferMint.auditorElgamalPubkey
-NVDAx   Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh   Token-2022   None
-TSLAx   XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB   Token-2022   None
-SPYx    XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W   Token-2022   None
-AAPLx   XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp   Token-2022   None
-```
+One issuer would be a quirk. Two, arriving independently at the same dead end, is the shape of the
+problem. Four of them mint by mint, with no key and no account: `./scripts/onchain-check.sh`, and
+[docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
 
 The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
 a single global auditor key that decrypts **everything, for everyone, forever** — and for a
@@ -77,6 +71,26 @@ logs  :
     Program ZkE1Gama1Proof11111111111111111111111111111 success
 ```
 
+## Who uses this first
+
+**The issuer.** Backed and Backpack each switched confidential transfers on, gated who may open an
+account, and left the auditor key null — companies that mean to enable this and have no disclosure
+model to enable it *with*. Confide is that model, and nothing reaches a live mint without them.
+**The issuer is the customer here, not the obstacle** — Kraken included, having acquired Backed in
+December 2025.
+
+**The fund holding the position.** A GP with NVDAx owes its LPs a quarterly report and broadcasts
+the position continuously instead. Stopping that is what it pays for.
+
+**The lender.** Jupiter Lend already takes SPYx, QQQx and NVDAx as collateral, and the position
+securing the loan is public today. Both halves a lender needs now run on devnet — the check, and
+the seizure.
+
+**Traction is zero, and the sentence has no second half.** No issuer approval, no pilot, no customer
+interview, no design partner, nobody outside this repository has used any of it. What exists is a
+mechanism that runs and a finding you can check in one RPC call. Everything below is the second
+kind of evidence, and none of it is the first.
+
 ## What a usable auditor slot is worth
 
 Split by whether it runs, not by which repository it came from — a reader of this gets the whole
@@ -120,26 +134,6 @@ every live claim, and [docs/DURABILITY.md](docs/DURABILITY.md) has the recovery 
 recorded evidence. The collateral proofs are self-contained and would keep verifying after a reset
 wiped the account they are about — so the page compares the live ciphertext before treating a pass
 as meaningful, rather than showing a green that means nothing.
-
-## Why this and not MEV protection
-
-Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. They protect the
-transaction **in flight**. Confide is about the **settled balance** — the permanent public record of
-what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIGN.md).
-
-In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
-days after quarter end**. That lag is legislated, for exactly the harm that real-time position
-disclosure causes. On Solana, tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 ([Crypto Briefing, Q2 2026](https://cryptobriefing.com/solana-dex-tokenized-stocks-volume/)) and the
-lag is **zero**.
-
-**What this is not.** xStocks are *not* Section 13(f) securities and holding them creates no Form
-13F obligation — they are issued by Backed Finance AG under Swiss law with their own Swiss ISIN
-(`NVDAx` = `CH1436219195`; NVDA itself = `US67066G1040`), and the SEC's joint statement of 28
-January 2026 separates issuer-sponsored tokenization conveying true ownership from third-party
-products conveying a custodial entitlement. The obligation Confide serves today is **contractual** —
-the quarterly report a GP owes its LPs. 13F is the design this borrows and the requirement that
-arrives with instruments like the tokenized-form trading the SEC approved for Nasdaq on 2026-03-18. [DESIGN.md §3a](DESIGN.md) says all of
-this in full rather than leaving it implied.
 
 ## Run it
 
@@ -211,6 +205,54 @@ The invariants are written as claims you can run, not prose:
 | **I4** | the auditor reads throughout; only *public* disclosure is delayed |
 | **I5** | opening is irreversible — revocation is not clawback |
 
+## What it does not do
+
+Stated because a reader should find the limits here rather than discover them:
+
+- **The committee is the trust.** `k = 3, n = 5` tolerates 2 early colluders and 2 withholders, and
+  those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
+  no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
+  `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
+- **Lending.** Seizure runs — that row is above, and
+  [docs/SEIZURE.md](docs/SEIZURE.md) is how. What is still missing is everything around it:
+  origination, interest, a liquidation engine, and an oracle anyone should trust. Confide takes
+  collateral on a default someone else defines. **The escrow is also frozen while the loan lives** —
+  the proofs bind to a ciphertext that must not move, so a borrower cannot top up or partially
+  withdraw without unwinding and re-originating.
+- **One mint, ours.** The accounts here are on a mint this repo provisioned with **NVDAx's
+  confidential-transfer configuration** — the auditor slot and `autoApproveNewAccounts: false`. It is
+  not an NVDAx replica: the live mint also carries a permanent delegate, a transfer hook, a
+  default-account-state, a scaled-UI-amount config, a pausable config and metadata, and none of
+  those are here. Doing it on `NVDAx` needs Backed's approval, which is why they are the first
+  customer rather than an obstacle — see *Who uses this first*.
+
+  Wrapping xStocks into a mint of our own would dodge the approval and is the wrong trade twice
+  over. A wrapped token is not the one lenders take as collateral, so the clearest use case dies on
+  contact. And holding the backing would make us the single trusted party this layer exists to
+  remove.
+- **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
+  deployment, and no claim to discharge any regulatory filing.
+
+## Why this and not MEV protection
+
+Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. They protect the
+transaction **in flight**. Confide is about the **settled balance** — the permanent public record of
+what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIGN.md).
+
+In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
+days after quarter end**. That lag is legislated, for exactly the harm that real-time position
+disclosure causes. On Solana, tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 ([Crypto Briefing, Q2 2026](https://cryptobriefing.com/solana-dex-tokenized-stocks-volume/)) and the
+lag is **zero**.
+
+**What this is not.** xStocks are *not* Section 13(f) securities and holding them creates no Form
+13F obligation — they are issued by Backed Finance AG under Swiss law with their own Swiss ISIN
+(`NVDAx` = `CH1436219195`; NVDA itself = `US67066G1040`), and the SEC's joint statement of 28
+January 2026 separates issuer-sponsored tokenization conveying true ownership from third-party
+products conveying a custodial entitlement. The obligation Confide serves today is **contractual** —
+the quarterly report a GP owes its LPs. 13F is the design this borrows and the requirement that
+arrives with instruments like the tokenized-form trading the SEC approved for Nasdaq on 2026-03-18. [DESIGN.md §3a](DESIGN.md) says all of
+this in full rather than leaving it implied.
+
 ## The split problem
 
 A quarterly report states holdings **as of the reporting date**. Confide seals at quarter end and opens 45 days
@@ -258,33 +300,3 @@ which window is how a true sentence becomes a false declaration.
 
 The secret sharing is Confide's own — `crates/confide-embargo/src/shamir.rs`, GF(256), no dependency.
 
-## What it does not do
-
-Stated because a reader should find the limits here rather than discover them:
-
-- **The committee is the trust.** `k = 3, n = 5` tolerates 2 early colluders and 2 withholders, and
-  those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
-  no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
-  `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
-- **Lending.** Seizure runs — that row is above, and
-  [docs/SEIZURE.md](docs/SEIZURE.md) is how. What is still missing is everything around it:
-  origination, interest, a liquidation engine, and an oracle anyone should trust. Confide takes
-  collateral on a default someone else defines. **The escrow is also frozen while the loan lives** —
-  the proofs bind to a ciphertext that must not move, so a borrower cannot top up or partially
-  withdraw without unwinding and re-originating.
-- **One mint, ours.** The accounts here are on a mint this repo provisioned with **NVDAx's
-  confidential-transfer configuration** — the auditor slot and `autoApproveNewAccounts: false`. It is
-  not an NVDAx replica: the live mint also carries a permanent delegate, a transfer hook, a
-  default-account-state, a scaled-UI-amount config, a pausable config and metadata, and none of
-  those are here. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
-  which reads as a signal rather than a wall. They built the feature, configured it, gated who may
-  hold it, and left the key slot empty: a company that means to enable this and has no disclosure
-  model to enable it *with*. **The issuer is the customer here, not the obstacle** — Kraken
-  included, having acquired Backed in December 2025.
-
-  Wrapping xStocks into a mint of our own would dodge the approval and is the wrong trade twice
-  over. A wrapped token is not the one lenders take as collateral, so the clearest use case dies on
-  contact. And holding the backing would make us the single trusted party this layer exists to
-  remove.
-- **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
-  deployment, and no claim to discharge any regulatory filing.
