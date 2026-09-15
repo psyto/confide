@@ -142,7 +142,7 @@ That last row is the one an attacker reaches for. Context state accounts are clo
 authority**; if that authority is the borrower, seizure can be disarmed at will. The authority must
 be the program.
 
-## 4. Underwriting a quantity nobody can see
+## 4. Underwriting a quantity nobody can see — mode A
 
 A lender needs loan-to-value, and value is quantity × price. Price is public — it is an equity. The
 quantity is exactly what Confide is for. This is where the existing machinery already fits:
@@ -205,6 +205,63 @@ What this does *not* cover: a borrower with two positions can pledge each separa
 they could in the open. The claim is about one escrow not being spent twice, not about a borrower's
 total leverage — which is the lender's own concentration question and is not made harder or easier
 by confidentiality.
+
+## 4c. Two modes, and who holds which key
+
+Section 4 gives a lender a floor and one bit. That is the most a borrower can disclose and still be
+underwritten, and it is not always what a lender will accept — because it leaves the second
+objection unanswered: **how do I monitor the collateral while the loan is open?** A position that
+becomes unobservable between origination and default is one a risk owner cannot size.
+
+There are two arrangements, and the difference between them is a single question: **who holds the
+escrow's ElGamal key.**
+
+| | mode A — the borrower holds it | mode B — the lender holds it |
+|---|---|---|
+| lender learns | a floor, proved: `>= Q_min` | the exact balance, continuously |
+| ongoing cooperation | the borrower must re-prove | none |
+| who builds the seizure proofs | the borrower, at origination | the lender, at origination |
+| suits | a borrower who will not disclose size | a lender who will not underwrite what they cannot watch |
+
+Both are the same mechanism with the key in a different hand, which is what *disclosure scoped by
+recipient and granularity* means when it stops being a phrase. Section 4 is mode A. The rest of this
+section is mode B, because it is the one a lending market is likely to require.
+
+The obvious way to build mode B is the wrong one. Putting the lender's key in the mint's **auditor** slot would
+let them read their borrowers' collateral — and every other transfer of that mint, by everyone,
+forever. That is the exact power this project exists because nobody can correctly hold. Moving it
+from the issuer to the lender changes who holds it and not what it is.
+
+**The escrow's own ElGamal key is the right key.**
+
+| | held by | can |
+|---|---|---|
+| the escrow's **ElGamal secret** | **the lender** | read the balance. **Not move it** |
+| the escrow's **ownership** | the loan PDA | move it. **Not read it** — a program cannot hold a secret |
+
+Token-2022 separates these cleanly: a confidential transfer is authorised by the **account owner's
+signature**, while the ElGamal key only decrypts and builds proofs. So reading and spending land on
+different parties by construction rather than by agreement.
+
+What this buys, in the order a risk owner asks for it:
+
+- **Continuous visibility of exactly their own collateral**, and nothing else. There is no privacy
+  cost: the borrower pledged that position to that lender. The market still sees nothing, which is
+  the confidentiality that was ever being claimed — against the public, never against the
+  counterparty.
+- **No auditor slot, no issuer signature, no mint change.** The whole arrangement is between a
+  borrower, a lender and a program, on a mint configured exactly as it already is. An issuer whose
+  business is issuing and selling is not asked for anything.
+- **The borrower's cooperation is needed once.** Section 2 builds the proofs while the borrower is
+  cooperative because the borrower held the key. With the lender holding it, the lender builds
+  them, and the only borrower action the design depends on is funding the escrow — which they do
+  because they want the loan.
+
+The cost is stated plainly: **the lender learns the exact collateral balance, continuously.** Not a
+floor, not a bit — the number. For collateral pledged to that lender this is the normal state of
+affairs and is less than a public chain discloses today. It is still strictly more than section 4's
+`Q_min` reveals, and a borrower who wants to pledge without the counterparty knowing the size is
+not served by this arrangement and should be told so.
 
 ## 5. What this costs, stated before anyone discovers it
 
