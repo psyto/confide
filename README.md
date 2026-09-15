@@ -257,10 +257,11 @@ Stated because a reader should find the limits here rather than discover them:
   a small one. **[docs/SEIZURE.md](docs/SEIZURE.md) is the design that closes it** — the transfer
   proofs built at origination while the borrower still cooperates, pre-verified into context state
   accounts, and fired later by a program that owns the escrow. It needs no committee and reveals no
-  amount. **The three proofs it needs now build and are accepted by the live ZK program** —
-  `./scripts/seizure-proofs.sh`, five invariants under `cargo test -p confide-ct`, and the auditor
-  can still read a seizure. What is not written is the program that fires them, and the assumptions
-  still open are listed there rather than assumed quietly.
+  amount. **It now runs end to end** — `./scripts/seizure-e2e.sh`: the borrower's 173,000 goes to
+  the lender on a default they cannot contest, both sides confidential throughout, the borrower
+  signing nothing after the handover. **On a local validator, not a public cluster** — deploying
+  the program costs ~1.5 SOL of devnet rent and the funded keypair holds 0.62. So this is the one
+  claim here you cannot check by clicking.
 - **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
   configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may

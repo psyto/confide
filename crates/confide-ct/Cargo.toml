@@ -33,6 +33,10 @@ path = "src/build_seizure_proofs.rs"
 name = "seizure-ctx"
 path = "src/seizure_ctx.rs"
 
+[[bin]]
+name = "seizure-client"
+path = "src/seizure_client.rs"
+
 [dependencies]
 spl-token-2022-interface = "3"
 solana-zk-sdk = "7"

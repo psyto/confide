@@ -89,8 +89,9 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
 | | |
 |---|---|
 | 動く | 3本の証明がライブ ZK プログラムに受理される（`./scripts/seizure-proofs.sh`）。context state account 3つを作成・検証・読み返し確認済み。プログラムは SBF ビルド + ローカルデプロイ済み |
-| 解決済み | range proof の 1,237 バイト問題は **address lookup table で解決**（1,211 バイト、余裕21）。`./scripts/seizure-origination.sh` が通しで走る |
-| 次の一手 | [`docs/SEIZURE.md`](docs/SEIZURE.md) §8-4 以降 — PDA 所有の escrow を立て、`Transfer` を CPI で撃つ。残る前提は「秘匿残高を持つ口座を `SetAuthority` で PDA に渡せるか」 |
+| **完了** | **seizure は end-to-end で通った** — `./scripts/seizure-e2e.sh`。借り手の 173,000 が、争えないデフォルトで貸し手に移る。両側とも秘匿のまま、借り手は handover 後に一度も署名しない。前提4つは全部潰れた |
+| 唯一の制約 | **ローカル validator のみ。** devnet へのデプロイに ~1.5 SOL 要り、鍵は 0.62 SOL。審査員がクリックできない唯一の主張がこれ |
+| 次の一手 | 提出動画2本、または devnet デプロイ分の資金 |
 | 注意 | デプロイは `cargo build-sbf --arch v3`。既定ターゲットはランタイムに蹴られる。`declare_id!` は仮の `SeiZure111…` のままで、実デプロイ ID と違う |
 
 Stocklana 起点の commit もこの窓の内側に入るが、**規約上の問題はない** — CWF が判定するのは

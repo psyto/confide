@@ -280,28 +280,48 @@ account, which is a surface this does not otherwise have.
 **Deployment needs `--arch v3`.** The default `cargo build-sbf` target is rejected by the runtime as
 an sbpf version that is not enabled.
 
-**Still assumed, and each one is a devnet transaction away.** Listed because a design whose
-assumptions are buried is a pitch:
+**Nothing is assumed any more.** `./scripts/seizure-e2e.sh` runs the whole of it against a real
+runtime: a borrower holds 173,000 tokens that read as zero in public, builds the three proofs while
+they still hold the key, parks them on chain under an authority they do not control, hands the
+escrow to the program, and the price falls. Anyone fires the seizure. The lender ends up holding
+the position, still confidential.
 
-1. A **PDA can own a confidential token account holding a balance** — reached by `SetAuthority`
-   after the borrower funds it, per section 3a, so the PDA never configures anything. Whether the
-   processor allows that ownership change with a live confidential balance is the open half.
-2. A **context state account survives** from origination to default and is consumable by a CPI'd
-   `Transfer` weeks later. The instruction documents the mechanism and `build-seizure-proofs` emits
-   the writing transactions; the lifetime is untested here.
-3. `DisableConfidentialCredits` **freezes the ciphertext** against every path that could move it.
-4. The processor accepts a **PDA authority** for `Transfer` via `invoke_signed` with proofs supplied
-   as context state accounts.
+```
+a price that does not trigger it
+  at 100c the program refuses — correct
+and one that does
+  seize at 99c           ok
+where the position ended up
+  escrow    confidential       0 base units  = 0 units
+  lender    confidential       17300000000000 base units  = 173000 units
+```
 
-**What is not yet shown, stated plainly:** the run above is over a throwaway escrow, not over a live
-account's own on-chain ciphertext. That is a fact about the proof system and does not depend on
-which account the ciphertext came from — but the stronger form, the one `prove-collateral.sh`
-already meets, needs the holder's keys and is `./scripts/seizure-proofs.sh <account> all keys.json`.
+The borrower signs nothing after the handover, no key is reconstructed, no committee is asked, and
+the position is confidential on both sides of the transfer the whole way.
 
-Any one of these failing changes the design rather than the goal, and the fallback is the committee
-this design was written to avoid: `confide-embargo`'s k-of-n already splits a secret, and could
-split E's ElGamal key instead. That version works for certain and is strictly worse — k colluding
-agents could read the collateral and steal it, where here nobody can.
+**Four things had to be learned by running it, and three of them are not in any documentation.**
+
+1. **The escrow cannot be an associated token account.** An ATA on Token-2022 carries the
+   `ImmutableOwner` extension, and `SetAuthority(AccountOwner)` on one fails with error 34 —
+   permanently, by design. The escrow has to be an auxiliary account created against its own
+   keypair. Section 3a's handover works, and it works only there.
+2. **`solana-test-validator` bundles an older Token-2022** — 506,941 bytes against devnet's
+   711,053 — and it rejects current confidential-transfer instructions. `Deposit` returns
+   `InvalidInstructionData`, which reads as a client bug and is not one. The validator has to be
+   started with `--clone-upgradeable-program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`.
+3. **The issuer has to approve each account, because the mirror mint is configured like NVDAx.**
+   `set-auditor` deliberately leaves `autoApproveNewAccounts` false, so a freshly configured
+   account is inert until approved and `Deposit` returns `ConfidentialTransferAccountNotApproved`.
+   That is not an obstacle to route around — it is the issuer being the gatekeeper this project
+   says they are, appearing in the flow exactly where the README says they would.
+4. **The lender's decryptable balance is theirs to set.** A confidential transfer credits the
+   destination's *pending* balance and carries no AE ciphertext for the receiver, so the lender
+   applies the pending credit themselves. A seizure delivers value, not bookkeeping.
+
+**Where this does not run: a public cluster.** The devnet keypair holds 0.62 SOL against the
+~1.5 SOL a program deployment costs, so none of the above is clickable by anyone who has not
+checked out the repository. That is a funding problem rather than a design one, and it is the
+only thing between this and a link.
 
 ## 7. Why this needs no committee, when the embargo does
 

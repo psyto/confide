@@ -51,7 +51,7 @@ pub const LOAN_TAG: u8 = 1;
 ///   [129..161] context state: ciphertext validity
 ///   [161..193] context state: range
 ///   [193..225] oracle — the only party that may assert a price
-///   [225..233] q_min, base units: the floor the borrower PROVED, not what they hold
+///   [225..233] q_min, WHOLE units: the floor the borrower PROVED, not what they hold
 ///   [233..241] principal, cents
 ///   [241..249] required ratio, basis points
 ///   [249..285] new_source_decryptable_available_balance (36)
@@ -304,10 +304,15 @@ fn seize(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramR
 
 /// The predicate, entirely in public terms.
 ///
-/// `q_min` is the floor the borrower **proved** at origination, not what they hold — so the value
-/// computed here is a lower bound on the collateral and the lender is over-collateralised by
-/// construction. What the borrower actually holds is not an input, and evaluating this does not
-/// learn it. Widened to `u128` because base units times cents overflows `u64` at realistic sizes.
+/// Units, because two of them are easy to get wrong and the cost is seizing a solvent borrower:
+/// `q_min` is in **whole tokens**, `price` in **cents per whole token**, `principal` in **cents**,
+/// `ratio_bps` in basis points. A floor proved in base units converts by flooring, which moves the
+/// number the safe way — the lender is underwritten on less than was proved, not more.
+///
+/// `q_min` is the floor the borrower **proved** at origination, not what they hold, so the value
+/// here is a lower bound on the collateral and the lender is over-collateralised by construction.
+/// What the borrower actually holds is not an input, and evaluating this does not learn it.
+/// Widened to `u128` because tokens times cents leaves `u64` at prices tokenized equities reach.
 pub fn in_default(q_min: u64, price: u64, principal: u64, ratio_bps: u64) -> bool {
     let value = (q_min as u128) * (price as u128);
     let required = (principal as u128) * (ratio_bps as u128) / 10_000;
@@ -439,26 +444,29 @@ mod invariants {
         assert!(!in_default(100_000, 101, 5_000_000, 20_000));
     }
 
-    /// **L4 — the predicate does not wrap.** The README's position — 173,000 NVDAx at eight
-    /// decimals, $184.50 — multiplies out to 3.19e17, which still fits `u64`. It is the headroom
-    /// above it that does not: a share price over roughly $10,600 overflows the same product, and
-    /// tokenized equities include names that trade far above it. An overflow here reads as a
-    /// default that did not happen, and takes collateral on it.
+    /// **L4 — the predicate crosses where it should, in the units it says.** 100,000 whole tokens
+    /// proved, a $50,000 loan at 200 %: the requirement is $100,000, so default begins the moment
+    /// the price falls under $1.00. The e2e run used these numbers.
+    #[test]
+    fn default_begins_exactly_where_the_units_say() {
+        let (q_min, principal, ratio) = (100_000u64, 5_000_000u64, 20_000u64); // 100k tokens, $50k, 200%
+        assert!(!in_default(q_min, 101, principal, ratio), "$1.01 still covers it");
+        assert!(!in_default(q_min, 100, principal, ratio), "$1.00 exactly covers it");
+        assert!(in_default(q_min, 99, principal, ratio), "$0.99 does not");
+    }
+
+    /// **L5 — the predicate does not wrap where `u64` would.** 173,000 tokens at $184.50 is only
+    /// 3.19e9 in these units and fits easily; the headroom above does not, and an overflow reads as
+    /// a default that did not happen and takes collateral on it.
     #[test]
     fn the_predicate_does_not_wrap_where_u64_would() {
-        let q_min = 17_300_000_000_000u64; // 173,000 units, 8 decimals
-        assert!(!in_default(q_min, 18_450, 1_000_000_000, 20_000));
-
-        // The crossing where a u64 product would wrap, and where this one must not.
+        let q_min = 17_300_000_000_000u64; // a base-unit figure passed in by mistake
         let breaking_price = (u64::MAX / q_min) + 1;
-        assert!(breaking_price < 1_100_000, "under $11,000 a share — not a hypothetical");
         assert!(q_min.checked_mul(breaking_price).is_none(), "u64 would wrap here");
         assert!(
             !in_default(q_min, breaking_price, u64::MAX, 10_000),
             "a position worth more than the loan is not in default, however large the product"
         );
-
-        // And a genuine default is still detected at the same scale.
         assert!(in_default(q_min, 1, u64::MAX / 10_000, 20_000));
     }
 }
