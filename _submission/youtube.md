@@ -6,7 +6,7 @@
 Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ```
 
-## Description — 4459 / 5000 characters
+## Description — 4852 / 5000 characters
 
 ```
 All 1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
@@ -24,6 +24,7 @@ CHAPTERS
 1:00 What you actually get
 1:19 A live account that reads as zero
 1:30 The lender's check, verified by Solana
+1:43 On default, the lender takes it
 
 TWO ISSUERS, NOT ONE
 
@@ -51,12 +52,13 @@ WHAT RUNS, ALL OF IT ON CHAIN
 • A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
 • Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
 • Restatement across a stock split that refuses rather than guessing
+• Taking that collateral on default — three proofs built while the borrower cooperates (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof), parked on chain under an authority they cannot close, then fired by a program that owns the escrow. No key reconstructed, nobody asked, and neither account ever shows what moved. Program on devnet: Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
 
 Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
 
 WHAT IS NOT BUILT
 
-• Seizure anywhere you can click. It now runs end to end — three proofs built while the borrower cooperates (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof), parked on chain under an authority the borrower cannot close, and fired later by a program that owns the escrow. The program is live on devnet at Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN, and the loan account it wrote still reads seized.
+• Lending. Seizure runs; origination, interest, a liquidation engine and an oracle do not. Confide takes collateral on a default someone else defines. The escrow is frozen while the loan lives, because the proofs bind to a ciphertext that must not move.
 • On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
 • No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
 
@@ -71,12 +73,13 @@ Built for Stocklana 2026.
 
 ## Notes
 
-**Chapters are six, not eight, and the timestamps moved.** YouTube requires every chapter to run at
+**Chapters are seven, not nine.** YouTube requires every chapter to run at
 least ten seconds and **silently renders none at all** if one falls short — the title scene (9.6s)
 and the close (9.2s) are each merged with a neighbour. Timestamps come from the measured scene
-boundaries of the current cut (1:52), not the previous one.
+boundaries of the current cut (2:07), not the previous one.
 
-The last chapter starts at 1:30 rather than the scene's true 1:29.6. Floored to whole seconds the
+The seizure chapter at 1:43 absorbs the close, which is 9.2s on its own and would fail the rule.
+The lender's-check chapter starts at 1:30 rather than the scene's true 1:29.6. Floored to whole seconds the
 pair 1:19 / 1:29 gives a chapter of exactly 10.0s — inside the rule but with nothing to spare, and
 the penalty for being a hair under is that every chapter disappears without a message. 1:30 starts
 the chapter 0.4s into the scene, which no one will notice, and makes it 11s.

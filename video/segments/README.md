@@ -3,36 +3,27 @@
 `confide.mp4` cut at the scene boundaries, one clip per narration block in
 [`../voiceover.md`](../voiceover.md). Frame-accurate re-encodes, not `-c copy`.
 
-**Only `03-empty-slot` changed.** Backpack Securities turned out to be a second issuer leaving the
-same slot empty, so that scene now shows two issuers and says 1,869 instead of 732 — and its line
-is longer, 16.60s to 22.80s. Every other clip is visually identical to the take the narration was
-recorded against (checked by comparing frames, not by assuming), so **its recorded audio still
-fits**. The one wrinkle: `07-proofs` came out 0.10s shorter than before, 14.10s to 14.00s, which
-its 13.47s line still clears.
+**The clip table lives in [`LINES.md`](LINES.md), and only there.** It used to be repeated here,
+and when the cut gained a ninth scene this file went on describing the eight-scene one — the same
+way `manifest.json` went on describing it until `record.js` started writing it. One place per fact.
 
-| clip | at | length | narration | headroom | audio |
-|---|---|---|---|---|---|
-| `01-title.mp4` | 0:00 | 9.60s | 9.03s | 0.57s | **reuse** |
-| `02-leak.mp4` | 0:09 | 12.50s | 11.93s | 0.57s | **reuse** |
-| `03-empty-slot.mp4` | 0:22 | 22.80s | 21.13s | 1.67s | **re-record** |
-| `04-four-views.mp4` | 0:44 | 15.10s | 14.43s | 0.67s | **reuse** |
-| `05-benefits.mp4` | 1:00 | 19.00s | 18.43s | 0.57s | **reuse** |
-| `06-live-account.mp4` | 1:19 | 10.60s | 10.00s | 0.60s | **reuse** |
-| `07-proofs.mp4` | 1:29 | 14.00s | 13.47s | 0.53s | **reuse** |
-| `08-close.mp4` | 1:43 | 9.20s | 8.57s | 0.63s | **reuse** |
+**Nine clips, 2:07.** The ninth is `08-seizure`, between the lender's check and the close: a lender
+can now take the collateral, so the cut says so. Adding it renamed the close from `08-` to `09-`.
 
-Total **1:52**. The `narration_seconds` for the seven unchanged clips are measured from the first
-recording. `03` is an estimate at 142 wpm — the rate that recording actually ran at — with 1.7s of
-slack, because an over-long scene is a beat of silence and a short one is white.
+**Every clip needs new audio.** The previous recording was made against the eight-scene cut, and
+while seven of those clips are visually unchanged, this cut is being voiced elsewhere rather than
+re-using takes. `LINES.md` carries the line, the length and the pace for each.
 
 ## Putting it together
 
 Compositing happens in Google Vids, not here — import the clips in order and lay the narration over
 them. [`LINES.md`](LINES.md) is the recording sheet: one line per clip with its length and slack.
 
-`narrated/` holds seven of the eight clips with the original voice already on them, recovered from
-`../Confide_Stocklana_20260913.mp4` by `../lift-narration.sh` (the takes were never kept separately).
-Import those and only `03` needs recording.
+`narrated/` holds clips from the **eight-scene cut** with the original voice on them, recovered from
+a published render by `../lift-narration.sh` (the takes were never kept separately). They do not
+match this cut — the filenames alone disagree, since `08` is the seizure here and the close there.
+Kept because they are the only copy of that voice outside the published video; ignore them unless
+you are going back to that cut.
 
 `../join.sh` stitches `narrated/` back together offline, falling back to the silent original for
 anything missing. It was marked untrusted here on 09-15 after the joined audio looked misaligned;

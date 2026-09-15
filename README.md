@@ -1,6 +1,6 @@
 # Confide
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch (under 2 min)**](https://youtu.be/KQsRwP8HTs0) · no wallet, no API key, no install
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/KQsRwP8HTs0) · no wallet, no API key, no install
 
 **All 1,869 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
 be used.** Two independent issuers, every mint checked rather than sampled —
@@ -91,16 +91,19 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. What they publish is checked against the commitment sealed that day before it is read out. | `./scripts/committee.sh` |
+| **Take that collateral on default.** The proofs are built while the borrower cooperates, parked on chain under an authority they cannot close, and fired later by a program that owns the escrow. No key is reconstructed, no committee is asked, and neither account ever shows what moved. | `./scripts/seizure-e2e.sh` — on devnet; `./scripts/seizure-status.sh` reads it back |
 | **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
 
 - **Borrowing against stock without publishing the collateral.** Jupiter Lend already takes SPYx,
-  QQQx, NVDAx as collateral, and today the position securing the loan is public. The check a lender
-  needs is built and verifies on-chain (above). What is missing is **seizure**: a lender must be
-  able to take confidential collateral on default, and nothing here does that.
+  QQQx, NVDAx as collateral, and today the position securing the loan is public. Both halves a
+  lender needs now run on devnet — the check, and the seizure (above). What is missing is the
+  lending itself: origination, interest, and a liquidation engine. Confide takes collateral on a
+  default someone else defines, and is not a lending protocol.
 - **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
-  moved, so it works today — but it is only useful alongside the seizure that does not.
+  moved, and the program already evaluates it from a proven floor and a public price. What decides
+  whether a loan exists at all is the part nobody here has written.
 - **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
   we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call, which is the
   point: see *What it does not do*.
@@ -153,6 +156,7 @@ watch. Source in
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
+./scripts/seizure-status.sh   # read the seizure back off devnet — no keys, no wallet
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # eight live checks; exits with the number that died
 cargo test                    # 29 tests
@@ -252,16 +256,12 @@ Stated because a reader should find the limits here rather than discover them:
   those are the *same* agents — choosing `k` trades I1 against I2 and cannot minimise both. There is
   no stake to slash and no cryptographic clock. A public-randomness timelock (`TimeLockPuzzle` in
   `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
-- **Seizure.** A lender can now verify collateral without the borrower publishing it, and still has
-  no way to take that collateral on default. That is the gap between this and lending, and it is not
-  a small one. **[docs/SEIZURE.md](docs/SEIZURE.md) is the design that closes it** — the transfer
-  proofs built at origination while the borrower still cooperates, pre-verified into context state
-  accounts, and fired later by a program that owns the escrow. It needs no committee and reveals no
-  amount. **It now runs end to end** — `./scripts/seizure-e2e.sh`: the borrower's 173,000 goes to
-  the lender on a default they cannot contest, both sides confidential throughout, the borrower
-  signing nothing after the handover. The program is on devnet at
-  [`Gn3rzw8…QduN`](https://explorer.solana.com/address/Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN?cluster=devnet), and the loan it
-  wrote still reads `seized`.
+- **Lending.** Seizure runs — that row is above, and
+  [docs/SEIZURE.md](docs/SEIZURE.md) is how. What is still missing is everything around it:
+  origination, interest, a liquidation engine, and an oracle anyone should trust. Confide takes
+  collateral on a default someone else defines. **The escrow is also frozen while the loan lives** —
+  the proofs bind to a ciphertext that must not move, so a borrower cannot top up or partially
+  withdraw without unwinding and re-originating.
 - **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
   configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may

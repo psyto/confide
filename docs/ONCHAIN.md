@@ -243,9 +243,10 @@ Below the threshold it refuses rather than proving a false statement, and refuse
 the balance — a tool that reveals your position in its error messages is a habit worth not forming.
 
 **What this is now.** A lender can be shown that the account securing a loan clears its requirement,
-on-chain, without the borrower publishing what the account holds. **What it is still not:** a lender
-cannot *seize* that collateral on default. That gap is the distance between this and lending, and it
-is not a small one.
+on-chain, without the borrower publishing what the account holds — and can **take** it on default,
+which `./scripts/seizure-e2e.sh` does on devnet and `docs/SEIZURE.md` explains. **What it is still
+not:** a loan. Origination, interest, a liquidation engine and an oracle are all somebody else's,
+and Confide seizes on a default it does not itself define.
 
 ## 8. What these facts say together
 

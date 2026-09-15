@@ -4,7 +4,8 @@
 > no way to take that collateral on default. That is the gap between this and lending, and it is not
 > a small one.
 >
-> — [README.md](../README.md#what-it-does-not-do), before this document
+> — README.md, as it read before any of this was built. The sentence is gone from it now;
+> section 6 is what replaced it.
 
 `prove-collateral.sh` ends one sentence short of a loan. The lender learns *this account holds at
 least X* and cannot act on it, so the position is provable and not pledgeable. This is the design

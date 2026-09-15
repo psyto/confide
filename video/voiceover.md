@@ -1,4 +1,4 @@
-# Voiceover — confide.mp4 (1:52)
+# Voiceover — confide.mp4 (2:07)
 
 Timecodes are measured, not estimated: `demo.html` logs each scene's start, and the run is
 reproducible with `npm run record`. Word budgets assume ~150 wpm and deliberately fill about 80% of

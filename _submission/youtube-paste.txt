@@ -20,6 +20,7 @@ CHAPTERS
 1:00 What you actually get
 1:19 A live account that reads as zero
 1:30 The lender's check, verified by Solana
+1:43 On default, the lender takes it
 
 TWO ISSUERS, NOT ONE
 
@@ -47,12 +48,13 @@ WHAT RUNS, ALL OF IT ON CHAIN
 • A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
 • Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
 • Restatement across a stock split that refuses rather than guessing
+• Taking that collateral on default — three proofs built while the borrower cooperates (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof), parked on chain under an authority they cannot close, then fired by a program that owns the escrow. No key reconstructed, nobody asked, and neither account ever shows what moved. Program on devnet: Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
 
 Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
 
 WHAT IS NOT BUILT
 
-• Seizure. Its three proofs are accepted by the live ZK program — equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, and a u128 batched range proof. But they are built while the borrower cooperates, and the program that fires them when they do not is unwritten. That is the distance between this and lending.
+• Lending. Seizure runs; origination, interest, a liquidation engine and an oracle do not. Confide takes collateral on a default someone else defines. The escrow is frozen while the loan lives, because the proofs bind to a ciphertext that must not move.
 • On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
 • No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
 
