@@ -45,15 +45,17 @@ they settle, and has Solana's ZK program check the collateral proof on a button 
 
 ## What runs
 
-- **A position that reads as zero** — devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`, the confidential balance holds 173,000
-- **"This account holds at least X"**, over the account's *own* ciphertext — two proofs the live ZK program accepted: `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU
-- **The auditor slot, filled** — one `UpdateMint` on a mirror carrying NVDAx's confidential-transfer configuration, not a replica of the whole mint
-- **A disclosure bound to a date** — 147 bytes on devnet over **that account's own ciphertext**; a figure restated later will not open it
-- **Opening on schedule without the holder** — five processes; the holder's exited in September, and what they publish opens the seal
-- **Surviving a stock split** — 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed
-- **Taking that collateral on default** — `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized`
+| | evidence |
+|---|---|
+| A position that reads as zero | devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`, the confidential balance holds 173,000 |
+| **"This account holds at least X"**, over the account's *own* ciphertext | two proofs accepted by the live ZK program — `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU |
+| The auditor slot, filled | one `UpdateMint` on a mirror carrying NVDAx's confidential-transfer configuration — not a replica of the whole mint |
+| A disclosure bound to a date | 147 bytes on devnet over **that account's own ciphertext**; a figure restated later will not open it |
+| Opening on schedule without the holder | five processes; the holder's exited in September, and what they publish opens the seal |
+| Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed |
+| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
 
-69 tests, 19 over the seizure program. `./scripts/healthcheck.sh` re-checks every line above against
+69 tests, 19 over the seizure program. `./scripts/healthcheck.sh` re-checks every row above against
 the chain and exits with the number that died — judging runs three weeks and devnet resets.
 
 ## What is not built
