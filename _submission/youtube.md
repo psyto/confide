@@ -6,7 +6,7 @@
 Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ```
 
-## Description — 4982 / 5000 characters
+## Description — 4943 / 5000 characters
 
 ```
 All 1,869 tokenized stocks Backed and Backpack issue on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
@@ -19,12 +19,11 @@ All 1,869 tokenized stocks Backed and Backpack issue on Solana run on Token-2022
 CHAPTERS
 
 0:00 Your position is public, and nobody attacked anything
-0:22 1,869 mints, two issuers, every auditor key empty
-0:44 The same position, seen four ways
-1:00 What you actually get
-1:19 A live account that reads as zero
-1:30 The lender's check, verified by Solana
-1:43 On default, the lender takes it
+0:18 1,869 mints, two issuers, every auditor key empty
+0:38 The same position, seen four ways
+0:52 What you actually get
+1:10 A live account, and the lender's check
+1:33 On default, the lender takes it
 
 TWO ISSUERS, NOT ONE
 
@@ -73,13 +72,17 @@ Built for Stocklana 2026.
 
 ## Notes
 
-**Chapters are seven, not nine.** YouTube requires every chapter to run at
-least ten seconds and **silently renders none at all** if one falls short — the title scene (9.6s)
-and the close (9.2s) are each merged with a neighbour. Timestamps come from the measured scene
-boundaries of the current cut (2:07), not the previous one.
+**Chapters are six, not nine.** YouTube requires every chapter to run at least ten seconds and
+**silently renders none at all** if one falls short, so the title merges into the leak, the live
+account into the lender's check, and the close into the seizure. The six that remain run 18, 20,
+14, 18, 23 and 19 seconds.
 
-The seizure chapter at 1:43 absorbs the close, which is 9.2s on its own and would fail the rule.
-The lender's-check chapter starts at 1:30 rather than the scene's true 1:29.6. Floored to whole seconds the
+**Timestamps are read out of the published file's own subtitle track**, not from `record.js` holds
+and not from the silent master. Those are three different clocks: the master renders at 2:07, the
+published cut is **1:52** because the generated voice paces differently, and a chapter list built
+from the wrong one puts every title in the wrong place.
+
+The seizure chapter at 1:33 absorbs the close, which is 7s on its own and would fail the rule. Floored to whole seconds the
 pair 1:19 / 1:29 gives a chapter of exactly 10.0s — inside the rule but with nothing to spare, and
 the penalty for being a hair under is that every chapter disappears without a message. 1:30 starts
 the chapter 0.4s into the scene, which no one will notice, and makes it 11s.

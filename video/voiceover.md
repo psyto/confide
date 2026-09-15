@@ -1,4 +1,7 @@
-# Voiceover — confide.mp4 (2:07)
+# Voiceover — confide.mp4 (2:07 master; the published cut runs 1:52)
+
+*The timecodes below are the silent master's. Generated narration paces faster, so the published
+file's scene boundaries are its own — read them out of its subtitle track, never from here.*
 
 Timecodes are measured, not estimated: `demo.html` logs each scene's start, and the run is
 reproducible with `npm run record`. Word budgets assume ~150 wpm and deliberately fill about 80% of

@@ -15,12 +15,11 @@ All 1,869 tokenized stocks Backed and Backpack issue on Solana run on Token-2022
 CHAPTERS
 
 0:00 Your position is public, and nobody attacked anything
-0:22 1,869 mints, two issuers, every auditor key empty
-0:44 The same position, seen four ways
-1:00 What you actually get
-1:19 A live account that reads as zero
-1:30 The lender's check, verified by Solana
-1:43 On default, the lender takes it
+0:18 1,869 mints, two issuers, every auditor key empty
+0:38 The same position, seen four ways
+0:52 What you actually get
+1:10 A live account, and the lender's check
+1:33 On default, the lender takes it
 
 TWO ISSUERS, NOT ONE
 

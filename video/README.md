@@ -7,6 +7,12 @@ across two issuers and shows the confidential account the page and the README po
 The previous upload (`ZuhLvH5MFgE`) says 732 and one issuer, over an account that no longer exists.
 Nothing links to it any more; unlist it rather than leaving two answers to the same question.
 
+**Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
+**2:07**; the published cut is **1:52**, because the voice is generated externally and paces
+differently, and the clips were recomposited to it. The published file is the authority for
+anything a viewer sees — chapters especially, which come from its own subtitle track and not from
+`record.js` holds.
+
 `confide.mp4` — 2:07 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
 
