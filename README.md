@@ -139,8 +139,9 @@ this in full rather than leaving it implied.
 ## Run it
 
 The live page reads the mints from mainnet in your browser, pulls real wallets out of recent NVDAx
-transactions with what they hold, shows the Confide account on devnet reading zero, and — on a
-button press — has Solana's ZK program verify the lender's proof while you watch. Source in
+transactions with the balance each published as it settled, shows the Confide account on devnet
+reading zero, and — on a button press — has Solana's ZK program verify the lender's proof while you
+watch. Source in
 [`web/`](web/).
 
 **Nothing required — no key, no account, no funding:**

@@ -161,8 +161,10 @@ mod tests {
         ]
     }
 
-    /// Every xStock on mainnet has confidential transfers on and no auditor key. This is the
-    /// premise; if it ever stops being true, this test should be the thing that says so.
+    /// The four mints pinned in this crate have confidential transfers on and no auditor key.
+    /// This guards the constants, not the premise: the premise is about all 1,869 mints and only
+    /// `scripts/slot-scan.sh` covers those. If Backed fills a key on a mint that is not one of
+    /// these four, this test stays green and the scan is what catches it.
     #[test]
     fn every_xstock_has_confidential_transfers_and_an_empty_auditor_slot() {
         for s in XSTOCKS {
