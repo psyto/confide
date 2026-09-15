@@ -1,7 +1,7 @@
 [
  {
   "file": "01-title.mp4",
-  "start": 0.0,
+  "start": 0,
   "end": 9.6,
   "seconds": 9.6,
   "narration_seconds": 9.03,
@@ -19,7 +19,7 @@
   "headroom": 0.57,
   "audio": "reuse",
   "words": 30,
-  "line": "Here is a fund buying NVIDIA through one quarter. Every purchase readable the moment it settles — not after the position is built, but while it is still being built."
+  "line": "Here is a fund buying NVIDIA through one quarter. Every purchase readable the moment it settles \u2014 not after the position is built, but while it is still being built."
  },
  {
   "file": "03-empty-slot.mp4",
@@ -30,7 +30,7 @@
   "headroom": 1.67,
   "audio": "re-record",
   "words": 50,
-  "line": "Solana already shipped the fix. Every tokenized stock here has confidential transfers switched on — eighteen hundred and sixty-nine of them, from two issuers with nothing to do with each other. And every single one leaves the auditor key empty, because the only key on offer reads everyone's everything, forever."
+  "line": "Solana already shipped the fix. Every tokenized stock here has confidential transfers switched on \u2014 eighteen hundred and sixty-nine of them, from two issuers with nothing to do with each other. And every single one leaves the auditor key empty, because the only key on offer reads everyone's everything, forever."
  },
  {
   "file": "04-four-views.mp4",
@@ -52,7 +52,7 @@
   "headroom": 0.57,
   "audio": "reuse",
   "words": 47,
-  "line": "Your position stops being public, and you can still prove what you need to. Last quarter's number cannot be tidied afterwards — it is sealed on the reporting date and opened by people you do not control. A stock split does not corrupt what you already disclosed."
+  "line": "Your position stops being public, and you can still prove what you need to. Last quarter's number cannot be tidied afterwards \u2014 it is sealed on the reporting date and opened by people you do not control. A stock split does not corrupt what you already disclosed."
  },
  {
   "file": "06-live-account.mp4",
@@ -68,23 +68,23 @@
  {
   "file": "07-proofs.mp4",
   "start": 89.6,
-  "end": 103.6,
-  "seconds": 14.0,
+  "end": 103.7,
+  "seconds": 14.1,
   "narration_seconds": 13.47,
-  "headroom": 0.53,
+  "headroom": 0.63,
   "audio": "reuse",
   "words": 33,
-  "line": "And this is the lender's check, running on Solana's zero-knowledge program. Two proofs, both accepted — the chain confirmed the collateral covers the loan without ever being told what is in the account."
+  "line": "And this is the lender's check, running on Solana's zero-knowledge program. Two proofs, both accepted \u2014 the chain confirmed the collateral covers the loan without ever being told what is in the account."
  },
  {
   "file": "08-close.mp4",
-  "start": 103.6,
+  "start": 103.7,
   "end": 112.8,
-  "seconds": 9.2,
+  "seconds": 9.1,
   "narration_seconds": 8.57,
-  "headroom": 0.63,
+  "headroom": 0.53,
   "audio": "reuse",
   "words": 20,
-  "line": "Your position is yours. And you can still prove what you must. Try it yourself — no wallet, no install."
+  "line": "Your position is yours. And you can still prove what you must. Try it yourself \u2014 no wallet, no install."
  }
 ]

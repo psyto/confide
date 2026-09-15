@@ -6,7 +6,7 @@
 Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ```
 
-## Description — 3776 / 5000 characters
+## Description — 4459 / 5000 characters
 
 ```
 All 1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
@@ -47,17 +47,17 @@ WHAT RUNS, ALL OF IT ON CHAIN
 
 • A confidential position on devnet: spl-token balance returns 0, the account holds 173,000
 • "This account holds at least X" proved over the account's OWN ciphertext — two proofs accepted by Solana's live ZK ElGamal Proof Program (VerifyCiphertextCommitmentEquality 6,400 CU, VerifyBatchedRangeProofU64 111,000 CU)
-• The auditor slot filled by one UpdateMint on a mirrored mint
-• A disclosure bound to a date: 147 bytes anchored, commitment matched on read-back
-• Opening on schedule without the holder — five separate processes
+• The auditor slot filled by one UpdateMint on a mirror that gates new accounts exactly as NVDAx does — autoApproveNewAccounts false, so the issuer has to sign for the account before it can hold anything, and the demo does that rather than describing it
+• A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
+• Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
 • Restatement across a stock split that refuses rather than guessing
 
 Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
 
 WHAT IS NOT BUILT
 
-• Seizure. A lender can verify the collateral and still cannot take it on default. That is the distance between this and lending, and it is not small.
-• On the live mints: both issuers set autoApproveNewAccounts to false, so opening a confidential account needs their approval. The accounts here are on a mint with the same configuration.
+• Seizure. Its three proofs are accepted by the live ZK program — equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, and a u128 batched range proof. But they are built while the borrower cooperates, and the program that fires them when they do not is unwritten. That is the distance between this and lending.
+• On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
 • No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
 
 BUILT ON

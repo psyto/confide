@@ -5,6 +5,7 @@
 // produce the line that carries its claim, this throws instead of recording — a video that still
 // renders after the thing it demonstrates broke is the failure worth engineering against.
 import path from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import puppeteer from "puppeteer";
@@ -14,7 +15,11 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(dir, "..");
 const outFile = path.join(dir, "confide.mp4");
 const KEYS = process.env.CONFIDE_KEYS || path.join(repo, "account-keys.json");
-const ACCOUNT = process.env.CONFIDE_ACCOUNT || "6Wn7zAaV56yGaAduNvTxsjEiVS1UDxi9whUMje9mG16V";
+// Read from account-keys.json rather than pinned here. The account was pinned as a literal until
+// 2026-09-15, and when it was re-provisioned the video kept showing the dead one on screen while
+// the page and the README showed the live one. A default that goes stale silently is worse than
+// none: every scene still rendered, and nothing failed.
+const ACCOUNT = process.env.CONFIDE_ACCOUNT || JSON.parse(readFileSync(KEYS, "utf8")).account;
 
 function run(cmd, args, label) {
   process.stderr.write(`• ${label} …\n`);

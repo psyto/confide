@@ -34,10 +34,13 @@ them. [`LINES.md`](LINES.md) is the recording sheet: one line per clip with its 
 `../Confide_Stocklana_20260913.mp4` by `../lift-narration.sh` (the takes were never kept separately).
 Import those and only `03` needs recording.
 
-`../join.sh` still exists and stitches `narrated/` back together offline, falling back to the silent
-original for anything missing. **Its output is not currently trusted:** the joined file measured
-longer than the sum of its parts and the audio appeared to start late in one scene, and I stopped
-investigating when compositing moved to Google Vids. The individual clips in `narrated/` were each
+`../join.sh` stitches `narrated/` back together offline, falling back to the silent original for
+anything missing. It was marked untrusted here on 09-15 after the joined audio looked misaligned;
+that was a measurement error on my side - `-ss` before `-i` snaps to a keyframe, and a raw PCM dump
+with DTS warnings is not a clock. Measured properly, the rejoined file has the same 32 silence
+regions as the source composite, drifting monotonically from 0 to 0.114s across 113 seconds. That is
+the AAC encoder priming delay, about 14ms per segment, against at least 0.33s of lead-in silence in
+every scene. The individual clips in `narrated/` were each
 verified on their own and are fine; it is the concatenation that is unverified.
 
 ## If the narration changes again

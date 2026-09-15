@@ -1,12 +1,22 @@
 # video
 
-**Published: https://youtu.be/ZuhLvH5MFgE** — still the *previous* cut (1:47), which says 732 mints
-and one issuer. The current cut says 1,869 across two issuers, so the published video and everything
-else disagree until it is replaced. One narration line stands between them: see
-[`segments/README.md`](segments/README.md).
+**Published: https://youtu.be/ZuhLvH5MFgE** — still the cut that says 732 mints and one issuer, on a
+confidential account that no longer exists. **`Confide_Stocklana_20260915.mp4` is the replacement**:
+the current render, the recorded narration, and the subtitle track carried across. Ready to upload.
 
 `confide.mp4` — 1:52 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
 narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
+
+```bash
+npm run record          # -> confide.mp4, reading the account out of account-keys.json
+../video/split.sh       # -> segments/, cut at the boundaries the page logged
+../video/lift-narration.sh  # -> segments/narrated/, the recorded voice back onto them
+../video/join.sh        # -> confide-narrated.mp4
+```
+
+Re-rendering moves the pictures and leaves the narration alone, which is why those last two steps
+exist. The account address is on screen in one scene, so a re-provision makes the published video
+wrong in a way no test catches.
 
 It leads with what a holder gets, not with how the mechanism works. The terminal is demoted to
 evidence at the end, stamped *real output, just now*, because a video made of terminal panes reads
