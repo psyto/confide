@@ -56,7 +56,7 @@ Every terminal pane in this video is the stdout of a command run moments before 
 
 WHAT IS NOT BUILT
 
-• Seizure. Its three proofs are accepted by the live ZK program — equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, and a u128 batched range proof. But they are built while the borrower cooperates, and the program that fires them when they do not is unwritten. That is the distance between this and lending.
+• Seizure anywhere you can click. It now runs end to end — three proofs built while the borrower cooperates (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof), parked on chain under an authority the borrower cannot close, and fired later by a program that owns the escrow. Deploying that program costs ~1.5 SOL of devnet rent against a keypair holding 0.62, so this one you run rather than visit.
 • On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
 • No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
 

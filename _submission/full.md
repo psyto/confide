@@ -47,6 +47,7 @@ you watch.
 | A disclosure bound to a date, unrevisable | 147 bytes anchored on devnet over **that account's own ciphertext**; a figure restated later does not open it |
 | Opening on schedule without the holder | five processes; the holder's exited in Sept — and their figure opens the sealed commitment |
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed |
+| **Taking that collateral on default** | `./scripts/seizure-e2e.sh`: 173,000 moves to the lender at a price one cent under the floor, confidential on both sides, the borrower signing nothing after the handover — **on a local validator, not a public cluster** |
 
 29 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
 number that died — judging runs three weeks and devnet resets.
@@ -59,9 +60,11 @@ opening, so a verifier reaches it by subtracting `threshold·G`, not our word.
 
 ## What is not built
 
-- **Seizure.** Its three proofs are accepted by the live ZK program
-  (`./scripts/seizure-proofs.sh`) — but built while the borrower cooperates. The program that fires
-  them when they do not is unwritten. That is the distance between this and lending.
+- **Seizure anywhere you can click.** It now runs end to end — the proofs are built while the
+  borrower cooperates, parked on chain under an authority they cannot close, and fired later by a
+  program that owns the escrow. But deploying that program costs ~1.5 SOL of devnet rent against a
+  keypair holding 0.62, so this is the one row above you have to run rather than visit. **The
+  distance between this and lending is now a funding problem, not a design one.**
 - **On the live mints.** Both issuers set `autoApproveNewAccounts: false`, so opening a confidential
   account needs the issuer to sign. The mirror is configured the same way, so that approval is a
   step you can watch rather than a sentence — on a real mint it is a conversation. They built the
