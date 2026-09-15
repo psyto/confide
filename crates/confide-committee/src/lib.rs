@@ -46,9 +46,13 @@ pub fn quarter_end_obligation(live: Option<LiveAccount>) -> (Obligation, i64, St
         None => {
             let ae = AeKey::new_rand();
             let fund = ElGamalKeypair::new_rand();
-            let shares = Position::from_shares(NVDAX, 173_000, 18_450).shares();
-            let dec = ae.encrypt(shares).to_bytes().to_vec();
-            let avail = fund.pubkey().encrypt(shares).to_bytes().to_vec();
+            // Base units, not shares. Token-2022 counts base units and `read_position` divides by
+            // the mint's decimals to present shares; encrypting shares here made the keyless demo
+            // seal 173,000 base units and read back 0 NVDAx — a commitment that opened correctly
+            // onto the wrong number, which is the failure mode this whole project is against.
+            let base_units = Position::from_shares(NVDAX, 173_000, 18_450).base_units;
+            let dec = ae.encrypt(base_units).to_bytes().to_vec();
+            let avail = fund.pubkey().encrypt(base_units).to_bytes().to_vec();
             (ae, fund, dec, avail, "(a throwaway account, no keys given)".to_string())
         }
     };
@@ -122,4 +126,67 @@ pub fn commas(n: u64) -> String {
         out.push(c);
     }
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// **C1 — what the committee publishes opens what it sealed.** The round trip nothing tested:
+    /// `quarter_end_obligation` builds the commitment and `read_position` is the public reading it
+    /// back. If these two ever stopped agreeing, `scripts/committee.sh` would print a position and
+    /// a green tick over a commitment it does not open.
+    #[test]
+    fn the_published_number_opens_the_sealed_commitment() {
+        let (ob, _due, _account) = quarter_end_obligation(None);
+        let (shares, opens) = read_position(&ob);
+        assert!(opens, "the payload the committee releases does not open its own commitment");
+        assert_eq!(shares, 173_000, "the position read back is not the position sealed");
+    }
+
+    /// **C2 — the case the doc comment calls the interesting one, and the one I3 is about.** A
+    /// number substituted after the seal must not open it. Without this, `read_position`'s second
+    /// return value is decoration: it would be `true` for anything.
+    #[test]
+    fn a_number_swapped_in_after_the_seal_does_not_open_it() {
+        let (mut ob, _due, _account) = quarter_end_obligation(None);
+        let sealed = u64::from_le_bytes(ob.reader_payload[..8].try_into().unwrap());
+
+        // One share more than was sealed, and everything else — the opening, the commitment, the
+        // package — left exactly as it was. This is what tidying a quarterly number looks like.
+        let tidied = (sealed + 10u64.pow(NVDAX.decimals as u32)).to_le_bytes();
+        ob.reader_payload[..8].copy_from_slice(&tidied);
+
+        let (_shares, opens) = read_position(&ob);
+        assert!(!opens, "a position restated after the seal opened the commitment anyway");
+    }
+
+    /// **C3 — the opening is load-bearing too.** Keeping the sealed number but substituting a
+    /// different opening must also fail: the check has to be over the pair, not over either half.
+    #[test]
+    fn the_right_number_with_the_wrong_opening_does_not_open_it() {
+        let (mut ob, _due, _account) = quarter_end_obligation(None);
+        let other = PedersenOpening::new_rand();
+        ob.reader_payload[8..].copy_from_slice(other.as_bytes());
+        let (_shares, opens) = read_position(&ob);
+        assert!(!opens, "the sealed number opened the commitment under an opening it was not sealed with");
+    }
+
+    /// **C4 — the seal is dated, and the opening is 45 days after it.** The lag is the product; an
+    /// off-by-one in the constant would ship a disclosure schedule that is quietly wrong.
+    #[test]
+    fn the_obligation_comes_due_forty_five_days_after_the_reporting_date() {
+        let (_ob, due, _account) = quarter_end_obligation(None);
+        assert_eq!(due - QUARTER_END, 45 * 24 * 60 * 60, "the embargo is not 45 days long");
+    }
+
+    /// **C5 — grouping, at the boundaries where it goes wrong.** It is printed next to every
+    /// figure the demo shows.
+    #[test]
+    fn thousands_are_grouped_where_they_should_be() {
+        for (n, want) in [(0u64, "0"), (1, "1"), (999, "999"), (1_000, "1,000"),
+                          (10_000, "10,000"), (173_000, "173,000"), (1_000_000, "1,000,000")] {
+            assert_eq!(commas(n), want, "commas({n})");
+        }
+    }
 }
