@@ -187,8 +187,8 @@ account rather than invented for the occasion.
 `anchor-receipt.sh` writes through
 [`6a1Kd8…AHytv`](https://explorer.solana.com/address/6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv?cluster=devnet)
 and reads it back to check the stored bytes against the artifact. **147 bytes land on-chain: a hash
-and two dates.** Deploying the program costs ~1.5 SOL of devnet rent and the faucet refuses small
-accounts — see [docs/DURABILITY.md](docs/DURABILITY.md).
+and two dates.** Deploying a program costs devnet rent proportional to its size, and the faucet
+refuses — see [docs/DURABILITY.md](docs/DURABILITY.md) for the figures and for which keypair pays.
 
 Data the repo pins rather than fetching at runtime is refreshable:
 `./scripts/refresh-mints.sh` (the 1,869 mints) and `./scripts/refresh-actions.sh` (the corporate-action
@@ -259,9 +259,9 @@ Stated because a reader should find the limits here rather than discover them:
   accounts, and fired later by a program that owns the escrow. It needs no committee and reveals no
   amount. **It now runs end to end** — `./scripts/seizure-e2e.sh`: the borrower's 173,000 goes to
   the lender on a default they cannot contest, both sides confidential throughout, the borrower
-  signing nothing after the handover. **On a local validator, not a public cluster** — deploying
-  the program costs ~1.5 SOL of devnet rent and the funded keypair holds 0.62. So this is the one
-  claim here you cannot check by clicking.
+  signing nothing after the handover. The program is on devnet at
+  [`Gn3rzw8…QduN`](https://explorer.solana.com/address/Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN?cluster=devnet), and the loan it
+  wrote still reads `seized`.
 - **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
   configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may

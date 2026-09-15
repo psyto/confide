@@ -80,8 +80,14 @@ step; that was wrong, and wrong in the direction that stops you trying. Check it
 either number:
 
 ```bash
-solana balance -u devnet   # or: getBalance on AmSYugrtHAEZi3TDj3HP7qbjY1hw6uv1df1oFDMxKeb1
+solana balance -u devnet -k ~/.config/solana/id.json    # AmSYugrtHAEZi3TDj3HP7qbjY1hw6uv1df1oFDMxKeb1
 ```
+
+**Name the keypair.** `solana balance -u devnet` reads whatever `solana config` points at, and on
+this machine that is `src/liquet/programs/liquet-gate/.keys/payer.json` — a different project's key,
+holding well under a SOL. Reading it as Confide's is how the 0.62 figure above got written in the
+first place, and a deploy run without `-k` spends that project's money rather than this one's.
+`solana config get keypair` says which one you are about to use.
 
 ## The recorded evidence
 

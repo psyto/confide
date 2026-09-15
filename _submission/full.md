@@ -47,18 +47,13 @@ you watch.
 | A disclosure bound to a date, unrevisable | 147 bytes anchored on devnet over **that account's own ciphertext**; a figure restated later does not open it |
 | Opening on schedule without the holder | five processes; the holder's exited in Sept — and their figure opens the sealed commitment |
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed |
-| **Taking that collateral on default** | `./scripts/seizure-e2e.sh`: 173,000 moves to the lender at a price one cent under the floor, confidential on both sides, the borrower signing nothing after the handover — **on a local validator, not a public cluster** |
+| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: 173,000 moves to the lender at a price one cent under the floor, confidential both sides, the borrower signing nothing after the handover. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
 
 29 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
 number that died — judging runs three weeks and devnet resets.
 
 ## What is not built
 
-- **Seizure anywhere you can click.** It runs end to end — proofs built while the borrower
-  cooperates, parked on chain under an authority they cannot close, fired later by the program that
-  owns the escrow. Deploying that program costs ~1.5 SOL against a keypair holding 0.62, so this is
-  the one row above you run rather than visit. **The distance between this and lending is now
-  funding, not design.**
 - **On the live mints.** Both issuers set `autoApproveNewAccounts: false`, so opening a confidential
   account needs the issuer to sign — on the mirror a step you can watch, on a real mint a
   conversation. They built the feature, configured it, gated it, and left the key slot empty:

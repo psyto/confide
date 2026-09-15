@@ -221,7 +221,7 @@ leaves a ciphertext that opens to exactly zero (S5).
 ### What a local validator settled, and what it broke
 
 `solana-test-validator` has both the ZK ElGamal Proof Program and Token-2022 as builtins, so the
-mechanism can be run without the ~1.5 SOL a devnet deployment needs. Three results, two of them
+mechanism can be run without spending devnet rent on every iteration. Three results, two of them
 corrections:
 
 **The context state accounts work — all three.** Created and verified into, in six transactions,
@@ -318,10 +318,21 @@ the position is confidential on both sides of the transfer the whole way.
    destination's *pending* balance and carries no AE ciphertext for the receiver, so the lender
    applies the pending credit themselves. A seizure delivers value, not bookkeeping.
 
-**Where this does not run: a public cluster.** The devnet keypair holds 0.62 SOL against the
-~1.5 SOL a program deployment costs, so none of the above is clickable by anyone who has not
-checked out the repository. That is a funding problem rather than a design one, and it is the
-only thing between this and a link.
+**And it runs on devnet.** The same script, `RPC=` pointed at a devnet endpoint:
+
+| | |
+|---|---|
+| the program | [`Gn3rzw8…QduN`](https://explorer.solana.com/address/Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN?cluster=devnet) — 92,032 bytes, 0.4684 SOL |
+| the escrow, now the loan's | [`8dbUaPA…aaaG`](https://explorer.solana.com/address/8dbUaPA1kQy8DLWq3jJhJ8rZqxG4STY1QZ7gxNYuaaaG?cluster=devnet) — public balance 0, confidential balance 0 |
+| the lender's account | [`Gxtqwzn…hLhr`](https://explorer.solana.com/address/GxtqwznSGEMCpM62Tg6d63WvUfKpKQomnmW94M1vhLhr?cluster=devnet) — public balance 0, holding 173,000 |
+| the loan | [`Bu6HviM…UdfX`](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) — 415 bytes, `seized = 1` |
+
+**This document said, for one day, that the deployment was blocked by funding.** It was not. The
+balance being read belonged to another project's keypair, because `solana balance` reads whatever
+`solana config` points at and on that machine it pointed elsewhere; the funded keypair had 134 SOL
+the whole time. The cost was overstated too — 0.936 SOL at the default, 0.489 with `--max-len`,
+against a figure of ~1.5 carried over from a different program. What actually delayed this was a
+public RPC rate-limiting a 92 KB upload, which a dedicated endpoint fixes.
 
 ## 7. Why this needs no committee, when the embargo does
 
@@ -346,8 +357,8 @@ keep secret between origination and default, because the proofs reveal nothing: 
    invariants over the account layout and the default predicate: `cd programs/confide-seizure &&
    cargo test`. It is a standalone crate, excluded from the workspace the way `aperture` excludes
    its own programs, so the root `cargo test` does not cover it. **Not yet deployed:** the devnet
-   keypair holds 0.62 SOL against the ~1.5 SOL a deployment costs, and the faucet refuses small
-   accounts. A local validator is the route that does not need funding.
+   deployment needs a dedicated RPC endpoint: the public one rate-limits a 92 KB upload and the
+   deploy dies partway with a funded buffer left behind.
 3. ~~The range proof's transport~~ — **done**, by lookup table.
    `./scripts/seizure-origination.sh`.
 4. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.

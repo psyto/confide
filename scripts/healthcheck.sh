@@ -21,6 +21,10 @@ ACCOUNT=Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
 RECEIPT_PDA=HM2HLUxv5KMyuSoiNeH1mMCVfd7Kpr4TVmzBu7BHbqUb
 RECEIPT_COMMITMENT=f3a58aaa296c622e75eb1fabde041a5d15d1a6d9b63f07c9d95ceeeadbdae2ba
 AUDITED_MINT=5jszdY3yd8fq37DBEqECtBQdvwnyXtA9vexJFefVKWzb
+# The seizure: the program, and the loan it settled. docs/SEIZURE.md.
+SEIZURE_PROGRAM=Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
+SEIZED_LOAN=Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX
+SEIZED_ESCROW=8dbUaPA1kQy8DLWq3jJhJ8rZqxG4STY1QZ7gxNYuaaaG
 NVDAX=Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh
 
 fail=0
@@ -53,6 +57,25 @@ if acct "$DEVNET" "$RECEIPTS" | grep -q '"executable":true'; then
   ok "aperture-receipts program is deployed  ($RECEIPTS)"
 else
   bad "receipts program is gone — redeploy: cd ../aperture/programs/aperture-receipts && cargo build-sbf && solana program deploy ..."
+fi
+
+if acct "$DEVNET" "$SEIZURE_PROGRAM" | grep -q '"executable":true'; then
+  ok "confide-seizure program is deployed  ($SEIZURE_PROGRAM)"
+else
+  bad "seizure program is gone — redeploy: cd programs/confide-seizure && cargo build-sbf --arch v3 && solana program deploy target/deploy/confide_seizure.so --program-id target/deploy/confide_seizure-keypair.json -k ~/.config/solana/id.json -u devnet"
+fi
+
+# A loan whose byte 414 is 1 is one the program settled. Checking the flag rather than the balance
+# is deliberate: the balance is a ciphertext, and a seizure that moved nothing would still leave
+# two accounts reading zero in public.
+if acct "$DEVNET" "$SEIZED_LOAN" | python3 -c "
+import sys, json, base64
+v = json.load(sys.stdin).get('result', {}).get('value')
+raise SystemExit(0 if v and base64.b64decode(v['data'][0])[414] == 1 else 1)
+" 2>/dev/null; then
+  ok "the seized loan still says so  ($SEIZED_LOAN)"
+else
+  bad "the seized loan is gone or unset — rerun: RPC=<devnet> ./scripts/seizure-e2e.sh"
 fi
 
 r=$(acct "$DEVNET" "$ACCOUNT")

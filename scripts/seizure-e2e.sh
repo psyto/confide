@@ -54,9 +54,17 @@ SZ=$(rpc '{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["DoU57AYuP
 [ "$SZ" -ge 700000 ] || { echo "  Token-2022 on $R is $SZ bytes — the bundled build, not the real one."; echo "  Start the validator with --clone-upgradeable-program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"; exit 1; }
 
 echo "  --- parties ---"
+# The faucet only answers on a local validator. Anywhere else, FUNDER pays the two parties in —
+# naming the keypair rather than trusting `solana config`, which on this machine points at another
+# project's key entirely. See docs/DURABILITY.md.
+FUNDER="${FUNDER:-$HOME/.config/solana/id.json}"
 for k in borrower lender; do
   solana-keygen new --no-bip39-passphrase --silent --force -o "$W/$k.json" >/dev/null
-  solana -u "$R" airdrop 50 "$(solana-keygen pubkey "$W/$k.json")" >/dev/null
+  case "$R" in
+    *127.0.0.1*|*localhost*) solana -u "$R" airdrop 50 "$(solana-keygen pubkey "$W/$k.json")" >/dev/null;;
+    *) solana -u "$R" -k "$FUNDER" transfer --allow-unfunded-recipient \
+         "$(solana-keygen pubkey "$W/$k.json")" 0.5 >/dev/null;;
+  esac
   printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confirmed\n' "$R" "$W/$k.json" > "$W/$k.yml"
 done
 echo "    borrower  $(solana-keygen pubkey "$W/borrower.json")"
