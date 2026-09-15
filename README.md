@@ -1,6 +1,6 @@
 # Confide
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/KQsRwP8HTs0) · no wallet, no API key, no install
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/p1aQuEnzhQk) · no wallet, no API key, no install
 
 **All 1,869 tokenized stocks Backed and Backpack list on Solana have confidential transfers
 switched on. Not one of them can be used.** Two independent issuers, every mint they publish checked

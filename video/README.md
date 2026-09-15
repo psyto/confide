@@ -1,11 +1,12 @@
 # video
 
-**Published: https://youtu.be/KQsRwP8HTs0** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
+**Published: https://youtu.be/p1aQuEnzhQk** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
 the current render at 1920x1080, the recorded narration, and the subtitle track. It says 1,869 mints
 across two issuers and shows the confidential account the page and the README point at.
 
-The previous upload (`ZuhLvH5MFgE`) says 732 and one issuer, over an account that no longer exists.
-Nothing links to it any more; unlist it rather than leaving two answers to the same question.
+Superseded uploads, in order: `ZuhLvH5MFgE` (732 mints, one issuer, an account that no longer
+exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the seizure). Nothing
+links to either; unlist them rather than leaving three answers to one question.
 
 **Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
 **2:07**; the published cut is **1:52**, because the voice is generated externally and paces

@@ -37,7 +37,7 @@ user. What exists is a mechanism that runs and a finding checkable in one RPC ca
 
 ## Try it — no wallet, no install
 
-**https://psyto.github.io/confide/** · walkthrough: https://youtu.be/KQsRwP8HTs0
+**https://psyto.github.io/confide/** · walkthrough: https://youtu.be/p1aQuEnzhQk
 
 It reads the mints from mainnet in your browser, shows real wallets publishing their positions as
 they settle, and has Solana's ZK program check the collateral proof on a button press.
