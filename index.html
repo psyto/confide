@@ -56,7 +56,9 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   <h1>Your tokenized stock positions<br>are public. All of them.</h1>
   <div class="lede">Confide lets you hold them on Solana without publishing what you hold —
   and still prove what you must, to whom you choose, when you choose.
-  <b>Everything on this page is read live from the chain in your browser.</b></div>
+  <b>The chain readings on this page are live, made in your browser.</b> The mint list and the
+  proof transactions are files served with the page; everything they are used to ask is asked of
+  mainnet and devnet now.</div>
   <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
 
@@ -98,7 +100,9 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 
   <section>
     <h2>Meanwhile, anyone can read anyone.</h2>
-    <div class="lede">Wallets that touched NVDAx in the last few transactions, with what they hold.</div>
+    <div class="lede">Wallets that touched NVDAx in the last few transactions, and what they held
+    when it settled. These are the balances the transaction itself published, not a lookup of what
+    they hold now — which is the point: the number was public the moment it landed.</div>
     <div class="panel" id="recent"></div>
     <div class="lede" style="margin-top:26px">Try any address — yours, or one you know. The page reads its recent transactions.</div>
     <div class="row2">
