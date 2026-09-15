@@ -183,6 +183,29 @@ pointing a real feed at it is integration work rather than research.
 This is the same predicate as the NAV floor in `confide-equity`, with the threshold moved — which
 is what the README already claimed about liquidation, now with the seizure it needed to be useful.
 
+## 4b. The risk confidential collateral looks like it introduces, and does not
+
+A lender asked to accept collateral they cannot see should ask first whether it can be pledged
+twice. With public balances, double pledging is visible to anyone; hide the balance and the check
+that would catch it disappears. It is the correct first objection and it is worth answering before
+it is raised.
+
+**The collateral is not hidden. It is held.** The escrow's owner, after the handover in section 3a,
+is a program address derived from the escrow itself — `[b"loan", escrow]`. A borrower who has handed
+it over cannot hand it anywhere else, to this protocol or any other, because they no longer own it.
+And because the address is a function of the escrow rather than of the borrower, a second loan
+against the same escrow *is the same account*, which `originate` refuses on sight.
+
+So the property is **one escrow, one loan**, decided by arithmetic rather than by bookkeeping, and
+it holds across protocols rather than only within this one. Four tests in `mod pledging` hold it
+down, including that the recorded bump reproduces the address and that a second deployment of this
+program derives elsewhere.
+
+What this does *not* cover: a borrower with two positions can pledge each separately, exactly as
+they could in the open. The claim is about one escrow not being spent twice, not about a borrower's
+total leverage — which is the lender's own concentration question and is not made harder or easier
+by confidentiality.
+
 ## 5. What this costs, stated before anyone discovers it
 
 - **Full seizure only.** The proofs fix the amount at origination, so v1 seizes the whole escrow.

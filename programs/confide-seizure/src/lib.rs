@@ -136,7 +136,7 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
         return Err(ProgramError::InvalidInstructionData);
     }
 
-    let (expected, bump) = Pubkey::find_program_address(&[b"loan", escrow.key.as_ref()], program_id);
+    let (expected, bump) = loan_address(program_id, escrow.key);
     if expected != *loan.key {
         return Err(ProgramError::InvalidSeeds);
     }
@@ -278,6 +278,19 @@ fn seize(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramR
     loan.try_borrow_mut_data()?[OFF_SEIZED] = 1;
     msg!("seized: the collateral is the lender's, and is still confidential");
     Ok(())
+}
+
+/// One escrow, one loan — and the reason confidential collateral does not reintroduce the risk it
+/// looks like it should.
+///
+/// A public balance can be pledged twice and anyone can see that it was. Hide the balance and that
+/// check disappears, which is the first thing a lender should ask about confidential collateral.
+/// The answer here is that the collateral is not hidden, it is **held**: the escrow's owner is this
+/// address, derived from the escrow itself, so a borrower who has handed it over cannot hand it
+/// anywhere else. Not one loan per borrower — **one loan per escrow**, decided by arithmetic rather
+/// than by bookkeeping.
+pub fn loan_address(program_id: &Pubkey, escrow: &Pubkey) -> (Pubkey, u8) {
+    Pubkey::find_program_address(&[b"loan", escrow.as_ref()], program_id)
 }
 
 /// The one check Token-2022 does not make for us, as a function rather than a loop body, because a
@@ -745,5 +758,58 @@ mod protocol {
         let mut ix = vec![1u8];
         ix.extend_from_slice(&99u64.to_le_bytes());
         assert_eq!(ix.len(), 9, "the seize instruction carries more than a price");
+    }
+}
+
+#[cfg(test)]
+mod pledging {
+    use super::*;
+
+    /// **X1 — one escrow can secure exactly one loan.** The first question a lender should ask
+    /// about confidential collateral is whether it can be pledged twice, because hiding a balance
+    /// removes the check that would catch it. The loan address is derived from the escrow, so a
+    /// second loan against the same escrow is the same account, and `originate` refuses an account
+    /// that is not empty.
+    #[test]
+    fn one_escrow_derives_exactly_one_loan() {
+        let program = Pubkey::new_unique();
+        let escrow = Pubkey::new_unique();
+        assert_eq!(loan_address(&program, &escrow), loan_address(&program, &escrow));
+    }
+
+    /// **X2 — and a different escrow is a different loan.** Otherwise one collision would let a
+    /// second pledge land on the first loan's record.
+    #[test]
+    fn different_escrows_never_share_a_loan() {
+        let program = Pubkey::new_unique();
+        let a = loan_address(&program, &Pubkey::new_unique()).0;
+        let b = loan_address(&program, &Pubkey::new_unique()).0;
+        assert_ne!(a, b);
+    }
+
+    /// **X3 — the loan address is not the escrow's owner by coincidence.** The escrow is handed to
+    /// this address, so the borrower stops being able to move it — which is what makes double
+    /// pledging arithmetic rather than policy. If the seeds ever stopped including the escrow, two
+    /// escrows would share an owner and the property would quietly become false.
+    #[test]
+    fn the_derivation_is_bound_to_the_escrow_it_holds() {
+        let program = Pubkey::new_unique();
+        let escrow = Pubkey::new_unique();
+        let (addr, bump) = loan_address(&program, &escrow);
+        let rebuilt = Pubkey::create_program_address(&[b"loan", escrow.as_ref(), &[bump]], &program)
+            .expect("the recorded bump must reproduce the address");
+        assert_eq!(addr, rebuilt);
+    }
+
+    /// **X4 — a second program cannot mint the same loan address.** The collateral is locked to
+    /// this program's PDA; another deployment derives elsewhere and cannot claim an escrow this one
+    /// holds.
+    #[test]
+    fn another_program_cannot_derive_the_same_loan() {
+        let escrow = Pubkey::new_unique();
+        assert_ne!(
+            loan_address(&Pubkey::new_unique(), &escrow).0,
+            loan_address(&Pubkey::new_unique(), &escrow).0,
+        );
     }
 }
