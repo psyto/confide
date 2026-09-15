@@ -163,11 +163,18 @@ underwritten on 100,000 is not required to say so.
 **Two of those three terms are taken on trust, and the program says so rather than the prose
 hiding it.**
 
-- **`q_min` is recorded, not proved.** `originate` copies it out of the instruction data. It
-  receives no proof account and checks nothing. The floor is established **off chain**: the lender
-  runs `prove-collateral.sh` against the escrow before agreeing, sees the one bit, and then agrees
-  to a number. A program that verified the floor itself would need the equality and range proofs
-  re-pointed at a threshold rather than at a transfer, and that is not built.
+- ~~**`q_min` is recorded, not proved.**~~ **It is proved now**, and it had to be. Recording it was
+  sound for a bilateral loan, where the lender sets the number after checking it themselves. For a
+  **pooled market it was a hole**: borrowers arrive permissionlessly, so one could originate against
+  an invented floor and suppliers would fund it. A curator cannot allocate to a market whose
+  collateral amount is self-reported.
+
+  `originate` now takes two further context accounts — the pair `prove-collateral` already produced
+  — and does the arithmetic that joins them. Equality binds a commitment `C` to the escrow's own
+  on-chain ciphertext; the range proof must be over `C − q_min·G`, which commits to
+  `balance − q_min` under the same opening. Non-negative means the balance clears the floor. Two
+  curve syscalls, no trust, and four tests including the one that matters: **the same proof pair
+  proves no other floor**, not 99,999 and not 100,001.
 - **`price` is asserted, not observed.** `seize` takes the price as an argument and requires the
   signature of the one oracle account the loan names. There is no price feed, no oracle state read,
   and nothing binding that number to a market. In `scripts/seizure-e2e.sh` the lender *is* the

@@ -91,6 +91,7 @@ const CTX_PROOF_TYPE: usize = 32;
 /// drift, and the test below would catch that too.
 const PROOF_TYPE_EQUALITY: u8 = ProofType::CiphertextCommitmentEquality as u8;
 const PROOF_TYPE_BATCHED_RANGE_U128: u8 = ProofType::BatchedRangeProofU128 as u8;
+const PROOF_TYPE_BATCHED_RANGE_U64: u8 = ProofType::BatchedRangeProofU64 as u8;
 const PROOF_TYPE_BATCHED_VALIDITY_3: u8 = ProofType::BatchedGroupedCiphertext3HandlesValidity as u8;
 
 // The address this is deployed at on devnet. It was a placeholder until 2026-09-16, which left a
@@ -112,7 +113,7 @@ fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progra
 /// hands.
 ///
 /// Accounts: payer(s,w), loan(w), escrow, destination, mint, ctx_equality, ctx_validity, ctx_range,
-/// oracle, system_program
+/// ctx_floor_equality, ctx_floor_range, oracle, system_program
 ///
 /// Data: q_min u64 | principal u64 | ratio_bps u64 | new_decryptable[36] | auditor_lo[64] |
 /// auditor_hi[64]
@@ -126,6 +127,8 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     let ctx_equality = next_account_info(i)?;
     let ctx_validity = next_account_info(i)?;
     let ctx_range = next_account_info(i)?;
+    let ctx_floor_equality = next_account_info(i)?;
+    let ctx_floor_range = next_account_info(i)?;
     let oracle = next_account_info(i)?;
     let system_program = next_account_info(i)?;
 
@@ -153,12 +156,23 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
         (ctx_equality, PROOF_TYPE_EQUALITY, "equality"),
         (ctx_validity, PROOF_TYPE_BATCHED_VALIDITY_3, "ciphertext validity"),
         (ctx_range, PROOF_TYPE_BATCHED_RANGE_U128, "range"),
+        (ctx_floor_equality, PROOF_TYPE_EQUALITY, "floor equality"),
+        (ctx_floor_range, PROOF_TYPE_BATCHED_RANGE_U64, "floor range"),
     ] {
         if let Err(e) = context_is_armed(&account.try_borrow_data()?, proof_type, loan.key) {
             msg!("{} context: {}", what, disarm_reason(&e));
             return Err(e);
         }
     }
+
+    // The floor is proved on chain, not recorded on trust. Two more context accounts, the pair
+    // `prove-collateral` produces, and the arithmetic that joins them.
+    let q_min = u64::from_le_bytes(data[..8].try_into().unwrap());
+    floor_is_proved(
+        &ctx_floor_equality.try_borrow_data()?,
+        &ctx_floor_range.try_borrow_data()?,
+        q_min,
+    )?;
 
     let rent = Rent::get()?.minimum_balance(LOAN_LEN);
     invoke_signed(
@@ -277,6 +291,72 @@ fn seize(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramR
 
     loan.try_borrow_mut_data()?[OFF_SEIZED] = 1;
     msg!("seized: the collateral is the lender's, and is still confidential");
+    Ok(())
+}
+
+/// The ristretto basepoint, which is Pedersen's `G`: a commitment is `value·G + opening·H`.
+/// Compressed, as the curve syscalls take it.
+const PEDERSEN_G: [u8; 32] = [
+    0xe2, 0xf2, 0xae, 0x0a, 0x6a, 0xbc, 0x4e, 0x71, 0xa8, 0x84, 0xa9, 0x61, 0xc5, 0x00, 0x51, 0x5f,
+    0x58, 0xe3, 0x0b, 0x6a, 0xa5, 0x82, 0xdd, 0x8d, 0xb6, 0xa6, 0x59, 0x45, 0xe0, 0x8d, 0x2d, 0x76,
+];
+
+/// Inside a proof context, past the 33-byte `[authority | proof_type]` header.
+const EQ_COMMITMENT: usize = CTX_PROOF_TYPE + 1 + 32 + 64;
+const EQ_PUBKEY: usize = CTX_PROOF_TYPE + 1;
+const EQ_CIPHERTEXT: usize = CTX_PROOF_TYPE + 1 + 32;
+const RANGE_FIRST_COMMITMENT: usize = CTX_PROOF_TYPE + 1;
+
+/// Check on chain that the escrow really holds at least `q_min`.
+///
+/// Until this existed, `originate` copied `q_min` out of its instruction data and believed it. For
+/// a bilateral loan that is fine: the lender sets the number after checking it themselves. For a
+/// **pooled market it is a hole** — borrowers arrive permissionlessly, so a borrower could originate
+/// against a floor they invented and suppliers would fund it. A curator cannot allocate to a market
+/// whose collateral amount is self-reported, which makes this the difference between a market they
+/// can price and one they must refuse.
+///
+/// Two proofs establish it, and neither means anything alone:
+///
+/// - **equality** binds a Pedersen commitment `C` to the escrow's own on-chain ciphertext, so `C`
+///   commits to what the account actually holds;
+/// - **range** proves that some commitment opens to a non-negative 64-bit value.
+///
+/// The join is arithmetic the program must do itself: the range proof has to be over
+/// `C − q_min·G`, which commits to `balance − q_min` under the same opening. If that is
+/// non-negative, the balance is at least the floor. Checking it needs two curve syscalls and no
+/// trust.
+pub fn floor_is_proved(
+    equality_ctx: &[u8],
+    range_ctx: &[u8],
+    q_min: u64,
+) -> Result<(), ProgramError> {
+    use solana_curve25519::ristretto::{multiply_ristretto, subtract_ristretto, PodRistrettoPoint};
+    use solana_curve25519::scalar::PodScalar;
+
+    if equality_ctx.len() < EQ_COMMITMENT + 32 || range_ctx.len() < RANGE_FIRST_COMMITMENT + 32 {
+        return Err(ProgramError::InvalidAccountData);
+    }
+
+    let c = PodRistrettoPoint(
+        equality_ctx[EQ_COMMITMENT..EQ_COMMITMENT + 32].try_into().unwrap(),
+    );
+    let surplus = PodRistrettoPoint(
+        range_ctx[RANGE_FIRST_COMMITMENT..RANGE_FIRST_COMMITMENT + 32].try_into().unwrap(),
+    );
+
+    // q_min as a little-endian scalar.
+    let mut k = [0u8; 32];
+    k[..8].copy_from_slice(&q_min.to_le_bytes());
+
+    let floor = multiply_ristretto(&PodScalar(k), &PodRistrettoPoint(PEDERSEN_G))
+        .ok_or(ProgramError::InvalidArgument)?;
+    let expected = subtract_ristretto(&c, &floor).ok_or(ProgramError::InvalidArgument)?;
+
+    if expected.0 != surplus.0 {
+        msg!("the range proof is not over the surplus above this floor");
+        return Err(ProgramError::InvalidArgument);
+    }
     Ok(())
 }
 
@@ -811,5 +891,86 @@ mod pledging {
             loan_address(&Pubkey::new_unique(), &escrow).0,
             loan_address(&Pubkey::new_unique(), &escrow).0,
         );
+    }
+}
+
+#[cfg(test)]
+mod floor {
+    use super::*;
+    use solana_zk_elgamal_proof_interface::proof_data::ZkProofData;
+    use solana_zk_sdk::encryption::elgamal::ElGamalKeypair;
+    use solana_zk_sdk::encryption::pedersen::{Pedersen, PedersenOpening};
+    use solana_zk_sdk::zk_elgamal_proof_program::{
+        batched_range_proof::build_batched_range_proof_u64_data,
+        ciphertext_commitment_equality::build_ciphertext_commitment_equality_proof_data,
+    };
+
+    /// Build the two context accounts exactly as `prove-collateral` does, then wrap them the way the
+    /// ZK program stores them: `[authority | proof_type | context]`.
+    fn contexts(balance: u64, threshold: u64) -> (Vec<u8>, Vec<u8>) {
+        let k = ElGamalKeypair::new_rand();
+        let ct = k.pubkey().encrypt(balance);
+        let opening = PedersenOpening::new_rand();
+        let commitment = Pedersen::with(balance, &opening);
+        let equality =
+            build_ciphertext_commitment_equality_proof_data(&k, &ct, &commitment, &opening, balance)
+                .unwrap();
+        // The surplus, committed under the SAME opening — which is what lets the verifier reach it
+        // by subtracting threshold·G rather than taking anyone's word.
+        let delta = balance - threshold;
+        let delta_commitment = Pedersen::with(delta, &opening);
+        let range =
+            build_batched_range_proof_u64_data(vec![&delta_commitment], vec![delta], vec![64], vec![&opening])
+                .unwrap();
+
+        let wrap = |ctx: &[u8]| {
+            let mut v = vec![0u8; CTX_PROOF_TYPE + 1];
+            v.extend_from_slice(ctx);
+            v
+        };
+        (
+            wrap(bytemuck::bytes_of(equality.context_data())),
+            wrap(bytemuck::bytes_of(range.context_data())),
+        )
+    }
+
+    /// **F1 — a real proof pair passes at the floor it was built for.** Built with the same code
+    /// path `prove-collateral` uses, so this is the arithmetic the chain would see.
+    #[test]
+    fn a_genuine_pair_proves_its_own_floor() {
+        let (eq, rp) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq, &rp, 100_000).is_ok());
+    }
+
+    /// **F2 — and fails at any other floor.** This is the check's whole purpose: the borrower hands
+    /// in `q_min` and the program must refuse a number the proofs do not support. One off is
+    /// enough.
+    #[test]
+    fn the_same_pair_proves_no_other_floor() {
+        let (eq, rp) = contexts(173_000, 100_000);
+        for wrong in [0u64, 99_999, 100_001, 173_000, u64::MAX] {
+            assert!(
+                floor_is_proved(&eq, &rp, wrong).is_err(),
+                "a floor of {wrong} was accepted by proofs built for 100,000",
+            );
+        }
+    }
+
+    /// **F3 — proofs from a different account do not transfer.** Each pair carries its own
+    /// commitment, so a pair built elsewhere cannot be presented for this loan's floor.
+    #[test]
+    fn a_pair_from_another_escrow_does_not_prove_this_floor() {
+        let (eq_a, _) = contexts(173_000, 100_000);
+        let (_, rp_b) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq_a, &rp_b, 100_000).is_err());
+    }
+
+    /// **F4 — truncated contexts are refused rather than indexed past.** An uninitialised account
+    /// must not be read as a commitment.
+    #[test]
+    fn short_contexts_are_refused() {
+        let (eq, rp) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq[..40], &rp, 100_000).is_err());
+        assert!(floor_is_proved(&eq, &rp[..40], 100_000).is_err());
     }
 }
