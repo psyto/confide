@@ -2,9 +2,11 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/KQsRwP8HTs0) · no wallet, no API key, no install
 
-**All 1,869 tokenized stocks on Solana have confidential transfers switched on. Not one of them can
-be used.** Two independent issuers, every mint checked rather than sampled —
-`./scripts/slot-scan.sh`:
+**All 1,869 tokenized stocks Backed and Backpack list on Solana have confidential transfers
+switched on. Not one of them can be used.** Two independent issuers, every mint they publish checked
+rather than sampled — `./scripts/slot-scan.sh`. The scan reads both issuers' own asset APIs
+(`scripts/refresh-mints.sh`); it is exhaustive over what they list, and it is not an issuer census
+of Solana:
 
 ```
 checked  1869 tokenized-equity mints on Solana
@@ -91,7 +93,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
 | **Open on schedule without the holder.** Five separate processes; the holder exited in September. What they publish is checked against the commitment sealed that day before it is read out. | `./scripts/committee.sh` |
-| **Take that collateral on default.** The proofs are built while the borrower cooperates, parked on chain under an authority they cannot close, and fired later by a program that owns the escrow. No key is reconstructed, no committee is asked, and neither account ever shows what moved. | `./scripts/seizure-e2e.sh` — on devnet; `./scripts/seizure-status.sh` reads it back |
+| **Take that collateral on default.** A transfer the borrower authorises at origination and cannot later refuse: the proofs are parked on chain under an authority they cannot close, and fired by a program that owns the escrow. No key is reconstructed, no committee is asked, and neither account ever shows what moved. **The floor and the price are the loan's to establish, not the chain's** — [SEIZURE.md §4](docs/SEIZURE.md). | `./scripts/seizure-e2e.sh` — on devnet; `./scripts/seizure-status.sh` reads it back |
 | **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
@@ -102,8 +104,8 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
   lending itself: origination, interest, and a liquidation engine. Confide takes collateral on a
   default someone else defines, and is not a lending protocol.
 - **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
-  moved, and the program already evaluates it from a proven floor and a public price. What decides
-  whether a loan exists at all is the part nobody here has written.
+  moved, and the program evaluates it — from a floor it records rather than verifies and a price one
+  named oracle asserts. Both are the loan's to get right; the chain only enforces the consequence.
 - **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
   we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call, which is the
   point: see *What it does not do*.
@@ -127,7 +129,7 @@ what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIG
 
 In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
 days after quarter end**. That lag is legislated, for exactly the harm that real-time position
-disclosure causes. On Solana, tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 and the
+disclosure causes. On Solana, tokenized equities did ~$5.8B of spot DEX volume in Q2 2026 ([Crypto Briefing, Q2 2026](https://cryptobriefing.com/solana-dex-tokenized-stocks-volume/)) and the
 lag is **zero**.
 
 **What this is not.** xStocks are *not* Section 13(f) securities and holding them creates no Form
@@ -136,7 +138,7 @@ lag is **zero**.
 January 2026 separates issuer-sponsored tokenization conveying true ownership from third-party
 products conveying a custodial entitlement. The obligation Confide serves today is **contractual** —
 the quarterly report a GP owes its LPs. 13F is the design this borrows and the requirement that
-arrives when Nasdaq's filed tokenized-form rule settles. [DESIGN.md §3a](DESIGN.md) says all of
+arrives with instruments like the tokenized-form trading the SEC approved for Nasdaq on 2026-03-18. [DESIGN.md §3a](DESIGN.md) says all of
 this in full rather than leaving it implied.
 
 ## Run it
@@ -158,7 +160,7 @@ watch. Source in
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
 ./scripts/seizure-status.sh   # read the seizure back off devnet — no keys, no wallet
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
-./scripts/healthcheck.sh      # eight live checks; exits with the number that died
+./scripts/healthcheck.sh      # every live claim above; exits with the number that died
 cargo test                    # 29 tests
 ```
 
@@ -244,7 +246,15 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture`, pre-existing | Apache-2.0 | Token-2022 confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture`, pre-existing | Apache-2.0 | content-blind on-chain receipt, native Solana program |
-| **Confide** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
+| **Confide** | **this repository** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the seizure program, the demo** |
+
+**Which window, because the two events do not share one.** For Stocklana, Confide is new work
+start to finish — the first commit is inside its window. For Crypto World's Fair the window opened
+2026-09-14 06:00 PT, when 48 commits already existed, so what that contest judges is
+`cwf-2026-baseline..HEAD` and nothing before it. The boundary is a tag, recorded with the commands
+that establish it, in [docs/WORK-WINDOW.md](docs/WORK-WINDOW.md). Saying "in-window" without saying
+which window is how a true sentence becomes a false declaration.
+
 
 The secret sharing is Confide's own — `crates/confide-embargo/src/shamir.rs`, GF(256), no dependency.
 
@@ -262,8 +272,11 @@ Stated because a reader should find the limits here rather than discover them:
   collateral on a default someone else defines. **The escrow is also frozen while the loan lives** —
   the proofs bind to a ciphertext that must not move, so a borrower cannot top up or partially
   withdraw without unwinding and re-originating.
-- **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
-  configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
+- **One mint, ours.** The accounts here are on a mint this repo provisioned with **NVDAx's
+  confidential-transfer configuration** — the auditor slot and `autoApproveNewAccounts: false`. It is
+  not an NVDAx replica: the live mint also carries a permanent delegate, a transfer hook, a
+  default-account-state, a scaled-UI-amount config, a pausable config and metadata, and none of
+  those are here. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may
   hold it, and left the key slot empty: a company that means to enable this and has no disclosure
   model to enable it *with*. **The issuer is the customer here, not the obstacle** — Kraken

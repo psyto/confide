@@ -9,7 +9,8 @@
 Every tokenized-equity mint on Solana has the `confidentialTransferMint` extension **enabled** and
 `auditorElgamalPubkey` **null** — `NVDAx`, `TSLAx`, `SPYx`, `AAPLx`, all of them, readable in one
 unauthenticated RPC call. The ZK ElGamal Proof Program was re-enabled at epoch 982 in June 2026, so
-the substrate works. Usage is close to zero.
+the substrate works. What the scan measures is narrower and enough: **not one of the 1,869 mints
+has an auditor key set**, so no holder of any of them can demonstrate a balance to anyone.
 
 Shipped, configured, inert. Not because it is immature: because Token-2022 offers exactly one
 disclosure model, a single global auditor key that decrypts everything for everyone forever, and
@@ -27,7 +28,7 @@ collateral and needs to know the collateral covers the loan. An auditor needs an
 of those is a different recipient, a different granularity, and a different moment — and the one key
 on offer collapses them into "everyone, always" or "no one, ever".
 
-Meanwhile Solana's tokenized equities do ~$5.8B of spot DEX volume a quarter (Q2 2026), and a wallet
+Meanwhile Solana's tokenized equities do ~$5.8B of spot DEX volume a quarter (Q2 2026, [Crypto Briefing, Q2 2026](https://cryptobriefing.com/solana-dex-tokenized-stocks-volume/) — a 114% rise on Q1 and an all-time high for the category), and a wallet
 accumulating NVDAx is readable by anyone in real time, **while the position is still being built**.
 So a fund on-chain today gets the worst of both: continuous disclosure to the market, and
 unverifiable disclosure to the parties actually entitled to it.
@@ -75,12 +76,17 @@ So the obligation Confide serves **today is contractual, not regulatory**: the q
 report a GP owes its LPs. The mechanism does not change by a line — an obligation is an obligation —
 but the party on the other end is an LP, not the SEC, and this document does not pretend otherwise.
 
-**The regulatory version is filed, not hypothetical.** Nasdaq has a proposed rule change before the
-SEC to trade securities in tokenized form on the exchange, with the same rights, the same order
-books and DTC clearing. Tokens under that model *are* the security. On the day that settles, the
-45-day lag becomes a legal requirement for on-chain positions — and there is no mechanism on a
-public chain that satisfies it. That is the case Confide is built for. The LP case is the one that
-exists now.
+**The regulatory version is approved, not filed and not hypothetical.** The SEC approved
+SR-NASDAQ-2025-072 on **2026-03-18** (Release 34-105047), permitting the trading of securities on
+the exchange in tokenized form — same rights, same order books, DTC clearing. Tokens under that
+model *are* the security.
+
+Be precise about what that does and does not mean. **Approval does not by itself create a Form 13F
+obligation**; 13F turns on who manages the account, the $100M threshold, and whether the security is
+on the SEC's Official List. What approval changes is that on-chain positions can now be in
+instruments for which those tests can be met — and there is no mechanism on a public chain that
+satisfies a 45-day lag when they are. That is the case Confide is built for. The LP case is the one
+that exists today.
 
 ## 3. What a disclosure obligation actually requires
 
@@ -152,7 +158,15 @@ said here, explicitly.
 |---|---|---|---|
 | `aperture-core` | `psyto/aperture` — pre-existing, 20 tests green | Apache-2.0 | confidential balances, disclosure package, policy, auditor |
 | `aperture-receipts` | `psyto/aperture` — pre-existing | Apache-2.0 | content-blind on-chain receipt (native Solana program) |
-| **Confide** | **this repository, written in-window** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the demo** |
+| **Confide** | **this repository** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the seizure program, the demo** |
+
+**Which window, because the two events do not share one.** For Stocklana, Confide is new work
+start to finish — the first commit is inside its window. For Crypto World's Fair the window opened
+2026-09-14 06:00 PT, when 48 commits already existed, so what that contest judges is
+`cwf-2026-baseline..HEAD` and nothing before it. The boundary is a tag, recorded with the commands
+that establish it, in [docs/WORK-WINDOW.md](docs/WORK-WINDOW.md). Saying "in-window" without saying
+which window is how a true sentence becomes a false declaration.
+
 
 Confide is the part that did not exist: a **self-opening embargo** that the holder can neither
 accelerate nor prevent, bound to a position commitment, over tokenized equities. The k-of-n sharing

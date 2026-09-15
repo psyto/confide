@@ -6,10 +6,11 @@ chance to notice. This repo has already been bitten once, when a payer address i
 another harness simply stopped existing and the faucet refused to replace it.
 
 **`./scripts/healthcheck.sh` checks every live claim and exits with the number that died.** Run it
-weekly through the judging window, and before pointing anyone at a link. Eight checks: the mainnet
-finding, the receipts program, the confidential account, the mirror's auditor slot, the mirror's
-account gate, the anchored disclosure, the keys quoted in `docs/ONCHAIN.md`, and the four published
-links including the walkthrough.
+weekly through the judging window, and before pointing anyone at a link. It covers the mainnet
+finding, the receipts program, the seizure program and the loan it settled, the confidential
+account, the mirror's auditor slot and account gate, the anchored disclosure, the keys quoted in
+`docs/ONCHAIN.md`, the two live proofs, and the four published links. The count is deliberately not
+written down here — it changed twice while this sentence said eight.
 
 Two of those exist because prose went stale while the chain moved: the mirror's
 `autoApproveNewAccounts` was flipped back to `true` by `set-auditor.sh` without anyone noticing, and

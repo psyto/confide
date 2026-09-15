@@ -8,6 +8,12 @@
 **Every tokenized-equity mint on Solana carries the extension with `auditorElgamalPubkey` null —
 all 1,869 of them, across two issuers that have nothing to do with each other:**
 
+*Scope, because the number invites a bigger reading than it earns:* `scripts/refresh-mints.sh`
+builds the mint list from **Backed's and Backpack's own asset APIs**. The scan is exhaustive over
+what those two issuers publish and checked rather than sampled. It is not a census of every equity
+token on Solana, and a third issuer would not appear in it.
+
+
 ```
 Backed     EMPTY   732      xStocks — Swiss-issued, own ISIN, a third-party product
 Backpack   EMPTY   1137     US CUSIP, "a bona fide security entitlement" by the issuer's own words

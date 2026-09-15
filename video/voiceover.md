@@ -77,12 +77,14 @@ only `03-empty-slot` needs a new take.
 
 ### 1:43 – 1:58 · and on default, the lender takes it
 
-> And when the loan goes bad, the lender takes it.
-> The borrower signs nothing, no key is reconstructed, nobody is asked —
+> And on default, the lender takes it — a transfer the borrower authorised at origination
+> and cannot now refuse. No key is reconstructed, nobody is asked,
 > and neither account ever shows what moved.
 
-*29 words · the scene is public state read off devnet, so the last clause is checkable by the
-viewer afterwards rather than taken on trust. This is the claim the earlier cut could not make.*
+*32 words · the scene is public state read off devnet, so the last clause is checkable afterwards
+rather than taken on trust. "Authorised at origination" is the load-bearing phrase: what the demo
+proves is that a transfer signed months earlier fires without the borrower, not that a market price
+moved. The loan's oracle asserts the price and the program trusts it — see docs/SEIZURE.md §4.*
 
 ### 1:58 – 2:07 · close
 
@@ -121,6 +123,8 @@ What is still off limits, for the same reason the old rule existed:
 
 - **Confide is not a lending protocol.** It takes collateral on a default someone else defines.
   There is no origination, no interest, no liquidation engine, and the script must not imply one.
-- **This is a mirror mint, not `NVDAx`.** Configured identically and one field apart, and saying
-  otherwise would claim Backed's approval that nobody has given.
+- **This is a mirror mint, not `NVDAx`.** It copies the confidential-transfer configuration —
+  the empty auditor slot and the closed gate — and not the permanent delegate, transfer hook,
+  pausable config or metadata the live mint also carries. Calling it a replica claims a fidelity
+  it does not have; calling it NVDAx claims an approval from Backed that nobody has given.
 - **Devnet, not mainnet.** The scene says so on screen; the voice must not round it up.

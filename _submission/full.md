@@ -5,7 +5,7 @@ transfers **ON**, auditor key **empty**. **All 1,869** — 732 from Backed (xSto
 Backpack Securities — every mint checked, not sampled (`./scripts/slot-scan.sh`).
 
 One issuer would be a quirk. **Two, independently at the same dead end, is the problem.** The ZK
-ElGamal Proof Program came back at epoch 982 in June: the substrate works, and nobody uses it.
+ElGamal Proof Program came back at epoch 982 in June: the substrate works, and not one mint has an auditor key set.
 
 The slot is empty because **no setting of it is correct.** Token-2022 offers one disclosure model: a
 single global key that decrypts everyone's everything, forever. Fill it and every holder is readable
@@ -43,11 +43,11 @@ you watch.
 |---|---|
 | A position on-chain that reads as zero | devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`, the confidential balance holds 173,000 |
 | **Prove "this account holds at least X"** over the account's *own* ciphertext | two proofs accepted by the live ZK program: `VerifyCiphertextCommitmentEquality` 6,400 CU and `VerifyBatchedRangeProofU64` 111,000 CU |
-| The auditor slot, filled | one `UpdateMint` on a mirror that gates accounts exactly as NVDAx does — one field apart |
+| The auditor slot, filled | one `UpdateMint` on a mirror carrying NVDAx's confidential-transfer configuration — the same closed gate, not a replica of the whole mint |
 | A disclosure bound to a date, unrevisable | 147 bytes anchored on devnet over **that account's own ciphertext**; a figure restated later does not open it |
 | Opening on schedule without the holder | five processes; the holder's exited in Sept — and their figure opens the sealed commitment |
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed |
-| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: 173,000 moves to the lender at a price one cent under the floor, confidential both sides, the borrower signing nothing after the handover. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
+| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides. The floor and the price are the loan's to establish, not the chain's. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
 
 29 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
 number that died — judging runs three weeks and devnet resets.
@@ -65,7 +65,7 @@ number that died — judging runs three weeks and devnet resets.
 
 ## Built on
 
-Original work, in-window, except where declared: `aperture-core` and `aperture-receipts`
+Original work, except where declared: `aperture-core` and `aperture-receipts`
 (Apache-2.0, my own pre-existing engine) and `spl-token-2022-interface`. The embargo, the k-of-n
 sharing, the equity layer, the proofs and the demo are new.
 

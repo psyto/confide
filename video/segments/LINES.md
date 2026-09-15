@@ -74,6 +74,7 @@ Seizure exists and the script says so. Still off limits:
 
 - **Confide is not a lending protocol.** It takes collateral on a default someone else defines —
   no origination, no interest, no liquidation engine.
-- **This is a mirror mint, not `NVDAx`.** Identically configured and one field apart; saying
-  otherwise claims an approval from Backed that nobody has given.
+- **This is a mirror mint, not `NVDAx`.** It copies the confidential-transfer configuration and
+  nothing else the live mint carries; saying otherwise claims a fidelity it does not have, and an
+  approval from Backed that nobody has given.
 - **Devnet, not mainnet.** The picture says so; the voice must not round it up.

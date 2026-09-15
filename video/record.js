@@ -113,7 +113,7 @@ const scenes = [
   },
   {
     file: "08-seizure.mp4",
-    line: "And when the loan goes bad, the lender takes it. The borrower signs nothing, no key is reconstructed, nobody is asked — and neither account ever shows what moved.",
+    line: "And on default, the lender takes it — a transfer the borrower authorised at origination and cannot now refuse. No key is reconstructed, nobody is asked, and neither account ever shows what moved.",
     kind: "evidence",
     label: "And on default, the lender takes it.",
     body: slice(seizure, /loan\s+/, /still read zero/),

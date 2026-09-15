@@ -14,7 +14,12 @@ SEG=video/segments
 NAR="$SEG/narrated"
 list=$(mktemp); missing=0
 
-for f in 01-title 02-leak 03-empty-slot 04-four-views 05-benefits 06-live-account 07-proofs 08-close; do
+# Read the cut from the manifest rather than naming clips here. This list said 08-close after the
+# ninth scene landed, which silently dropped the seizure and the close from anything it joined.
+for f in $(python3 -c "
+import json
+for e in json.load(open('video/segments/manifest.json')): print(e['file'][:-4])
+"); do
   if [ -f "$NAR/$f.mp4" ]; then src="$NAR/$f.mp4"; mark="narrated"
   else src="$SEG/$f.mp4"; mark="silent"; missing=$((missing+1)); fi
   printf '  %-18s %s\n' "$f" "$mark"

@@ -9,8 +9,8 @@
 
 `prove-collateral.sh` ends one sentence short of a loan. The lender learns *this account holds at
 least X* and cannot act on it, so the position is provable and not pledgeable. This is the design
-that closes it. **It is a design, not a shipped claim** — what is built is marked as built, and
-every assumption that still needs a devnet transaction to confirm is marked as an assumption.
+that closes it, **and it runs on devnet** — section 6. Read section 4 before believing more of that
+than is true: the mechanism is real and two of its inputs are asserted rather than proved.
 
 ## 1. Why Token-2022 has no seizure, precisely
 
@@ -111,8 +111,7 @@ has to establish it.
 ## 3a. The escrow never needs a PDA to configure it
 
 Also found by building it. `ConfigureAccount` requires the account owner's signature, so an escrow
-owned by a PDA from birth would need the program to configure it — which is why assumption 1 below
-was written. It is avoidable.
+owned by a PDA from birth would need the program to configure it. That is avoidable.
 
 The borrower configures and funds the escrow **while they still own it**, which they must anyway:
 building the proofs needs the ElGamal secret, and holding the account is how they have it. Then
@@ -121,12 +120,12 @@ it and the program can — and **the ElGamal secret stops mattering entirely**, 
 was needed for has already been built. A key that no longer opens anything anyone needs is the
 cleanest possible answer to "who holds it".
 
-Whether Token-2022 permits that ownership change on an account with a non-zero confidential balance
-is **not confirmed** — the instruction's own documentation says nothing either way, and the
-restriction, if any, is in the processor rather than the interface. It replaces assumption 1 with a
-narrower one rather than removing it.
+Token-2022 permits that ownership change over a live confidential balance — **confirmed on devnet**:
+173,000 moved hands with the escrow and the balance was intact afterwards. It does **not** permit it
+on an associated token account, which carries `ImmutableOwner` and fails with error 34 forever, so
+the escrow has to be an auxiliary account created against its own keypair. Section 6.
 
-## 3b. What the program must check at origination, or the design is worthless
+## 3b. What the program must check at origination
 
 A pre-verified proof is only as good as its binding. The borrower builds these proofs, and a
 borrower who could point them somewhere else would have built an escape hatch. Each proof's context
@@ -153,15 +152,33 @@ one bit. The loan is written against `Q_min`, not against the true balance:
 
 ```
 default when   Q_min × price(t)   <   principal × required_ratio
-                 │        │              └ public, in the loan account
-                 │        └ public, an oracle
-                 └ public, proven at origination and no more than the truth
+                 │        │              └ in the loan account
+                 │        └ asserted by the oracle the loan names
+                 └ recorded at origination, NOT verified on chain
 ```
 
-Every term is public, so the predicate is computable on chain and by anyone, and the borrower's
-actual position stays confidential. **The lender is over-collateralised by construction** — the
-borrower proved a floor, and holds at least it. A borrower who pledges 173,000 NVDAx and proves
-100,000 is underwritten on 100,000 and is not required to say so.
+The borrower's actual position stays confidential, and a borrower who pledges 173,000 and is
+underwritten on 100,000 is not required to say so.
+
+**Two of those three terms are taken on trust, and the program says so rather than the prose
+hiding it.**
+
+- **`q_min` is recorded, not proved.** `originate` copies it out of the instruction data. It
+  receives no proof account and checks nothing. The floor is established **off chain**: the lender
+  runs `prove-collateral.sh` against the escrow before agreeing, sees the one bit, and then agrees
+  to a number. A program that verified the floor itself would need the equality and range proofs
+  re-pointed at a threshold rather than at a transfer, and that is not built.
+- **`price` is asserted, not observed.** `seize` takes the price as an argument and requires the
+  signature of the one oracle account the loan names. There is no price feed, no oracle state read,
+  and nothing binding that number to a market. In `scripts/seizure-e2e.sh` the lender *is* the
+  oracle and submits `99` themselves, which is why the run proves the mechanism and not the
+  economics.
+
+So the honest sentence for what the e2e demonstrates is: **a transfer the borrower authorised at
+origination, executed later by a program, on a condition the loan's named oracle asserted.** The
+confidential part is real and complete — nobody learns the amount, the borrower cannot stop it, no
+key is reconstructed. The *underwriting* around it is a trusted-oracle loan like any other, and
+pointing a real feed at it is integration work rather than research.
 
 This is the same predicate as the NAV floor in `confide-equity`, with the threshold moved — which
 is what the README already claimed about liquidation, now with the seizure it needed to be useful.
@@ -184,7 +201,7 @@ is what the README already claimed about liquidation, now with the seizure it ne
 - **Q_min leaks a bound.** The lender learns a floor, permanently and publicly. That is strictly
   less than today, where the whole position is public, and it is not nothing.
 
-## 6. What is built, and what is assumed
+## 6. What runs, and what running it taught
 
 **Built, and already running in this repository:**
 
@@ -227,8 +244,8 @@ corrections:
 
 **The context state accounts work — all three.** Created and verified into, in six transactions,
 and read back from chain: 161 / 385 / 297 bytes, owned by the ZK program, each holding the right
-proof context under an authority that is not the borrower. That is the durable half of assumption 2
-— the proofs survive their transaction and are addressable afterwards.
+proof context under an authority that is not the borrower — the proofs survive their transaction and
+are addressable afterwards, which is the whole premise.
 
 ```
 ciphertext-commitment equality            161B  type= 3  authority=as recorded  ok
@@ -350,19 +367,25 @@ can be committed then and left on chain in a form that is already verified. Ther
 keep secret between origination and default, because the proofs reveal nothing: they are proofs.
 **A mechanism whose outcome is known in advance does not need a quorum to remember it.**
 
-## 8. Build order
+## 8. What is built, and what is next
 
-1. ~~`confide-ct/src/build_seizure_proofs.rs`~~ — **done.** The three transfer proofs, accepted by
-   the live ZK program, with the context-state writing transactions emitted. Section 6.
-2. ~~`confide-seizure` program~~ — **written and building to SBF** (99,592 bytes), with five
-   invariants over the account layout and the default predicate: `cd programs/confide-seizure &&
-   cargo test`. It is a standalone crate, excluded from the workspace the way `aperture` excludes
-   its own programs, so the root `cargo test` does not cover it. **Not yet deployed:** the devnet
-   deployment needs a dedicated RPC endpoint: the public one rate-limits a 92 KB upload and the
-   deploy dies partway with a funded buffer left behind.
-3. ~~The range proof's transport~~ — **done**, by lookup table.
-   `./scripts/seizure-origination.sh`.
-4. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
-5. `scripts/seize.sh` — default, then seizure, end to end, with the balances read before and after.
-6. Invariants in `tests/`, in the style of `confide-embargo/tests/invariants.rs`: seizure is
-   impossible before the predicate holds, guaranteed after it, and reveals no amount either way.
+Everything below the line runs today: `./scripts/seizure-e2e.sh` against devnet, the program at
+`Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN`, seven invariants under `cd programs/confide-seizure
+&& cargo test` (a standalone crate, excluded from the workspace the way `aperture` excludes its own
+programs, so the root `cargo test` does not cover it), and `./scripts/seizure-status.sh` to read the
+settled loan back with no keys.
+
+What is not built, in the order it matters:
+
+1. **The floor the program trusts.** `originate` records `q_min` and verifies nothing, per section
+   4. Verifying it on chain means a second proof set pointed at a threshold instead of a transfer.
+   Until then the lender establishes the floor off chain and the program takes their word.
+2. **The price the program trusts.** One named oracle's signature stands in for a feed. Pointing
+   this at a real one is integration, not research, and it is still not done.
+3. **Partial seizure.** The proofs fix the amount at origination, so v1 takes the whole escrow. A
+   ladder of pre-built amounts is more rent and more origination work, not a new mechanism.
+4. **Repayment.** Returning the collateral needs its own pre-verified proof set, built at
+   origination alongside the seizure one. Two destinations, one escrow.
+5. **Invariants in the style of `confide-embargo/tests/invariants.rs`** — seizure impossible before
+   the predicate holds, guaranteed after it, revealing no amount either way. The seven tests today
+   cover the layout and the arithmetic, not the protocol.
