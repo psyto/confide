@@ -268,3 +268,61 @@ fn banner() {
     println!("  {DIM}continuous one it never agreed to.{OFF}");
     println!();
 }
+
+#[cfg(test)]
+mod two_lanes {
+    use super::*;
+
+    /// **D1 — the two lanes are about the same position.** The whole demo is one accumulation shown
+    /// twice; if the buys ever stopped summing to the figure every document quotes, the lanes would
+    /// be comparing different funds and the picture would be a lie told with real machinery.
+    #[test]
+    fn the_buys_add_up_to_the_position_everything_else_quotes() {
+        let total: u64 = BUYS.iter().map(|(_, q)| q).sum();
+        assert_eq!(total, 173_000, "the demo no longer accumulates the 173,000 the README claims");
+    }
+
+    /// **D2 — the leak starts mid-accumulation, not after it.** Lane A's argument is that the
+    /// position is readable *while it is being built*: the first buy is public on day 3 and every
+    /// running total after it is a number the market did not have to attack anything to get.
+    #[test]
+    fn lane_a_is_readable_from_the_first_buy_and_never_stops() {
+        let mut running = 0u64;
+        let mut seen = Vec::new();
+        for (day, qty) in BUYS {
+            running += qty;
+            seen.push((day, running));
+        }
+        assert_eq!(seen.first(), Some(&(3, 42_000)), "the leak no longer begins on day 3");
+        assert_eq!(seen.last(), Some(&(58, 173_000)));
+        assert!(seen.windows(2).all(|w| w[0].0 < w[1].0), "the buys are not in date order");
+        assert!(seen.windows(2).all(|w| w[0].1 < w[1].1), "a running total did not grow");
+    }
+
+    /// **D3 — the seal opens to the position it sealed.** `read` is the reader doing at T what the
+    /// demo says anyone can do; it must return the number that went in, and only that one.
+    #[test]
+    fn what_opens_at_t_is_what_was_sealed() {
+        let fund = ElGamalKeypair::new_rand();
+        let (ob, _reader) = position_of_record(&fund, 173_000, "public", "q3-report-fund-A");
+        assert_eq!(read(&ob), 173_000);
+    }
+
+    /// **D4 — the deadline is the reporting date plus the lag the argument is built on.** 45 days
+    /// is borrowed from Form 13F and quoted in every document; an off-by-one here would put the
+    /// demo's own clock out of step with the case it is making.
+    #[test]
+    fn the_deadline_is_forty_five_days_after_the_reporting_date() {
+        assert_eq!(DUE - QUARTER_END, 45 * DAY);
+        assert_eq!(DAY, 86_400);
+    }
+
+    /// **D5 — grouping, where it goes wrong.** Every figure on screen goes through it.
+    #[test]
+    fn thousands_are_grouped_at_the_boundaries() {
+        for (n, want) in [(0u64, "0"), (999, "999"), (1_000, "1,000"),
+                          (42_000, "42,000"), (173_000, "173,000")] {
+            assert_eq!(commas(n), want, "commas({n})");
+        }
+    }
+}

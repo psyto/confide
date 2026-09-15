@@ -18,6 +18,8 @@
 
 use base64::Engine;
 use solana_address::Address;
+use solana_instruction::Instruction;
+use solana_zk_elgamal_proof_interface::proof_data::pubkey_validity::PubkeyValidityProofData;
 use solana_hash::Hash;
 use solana_keypair::Keypair;
 use solana_message::Message;
@@ -38,6 +40,50 @@ use std::str::FromStr;
 
 const TOKEN_2022: &str = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const DECIMALS: u8 = 8;
+
+/// Grow the account, then configure it — in that order, and with the proof where the instruction
+/// says it is.
+///
+/// A token account from `create-account` has no room for the confidential extension, and
+/// `ConfigureAccount` fails with `InvalidAccountData` rather than growing it for you. The proof is
+/// cited as `InstructionOffset(1)`, meaning *the next instruction*; reordering these silently
+/// points that offset at the wrong one, which the runtime reports as a bad proof rather than as a
+/// bad order.
+pub fn configure_instructions(
+    program: &Address,
+    account: &Address,
+    mint: &Address,
+    owner: &Address,
+    zero: &PodAeCiphertext,
+    proof: &PubkeyValidityProofData,
+) -> Vec<Instruction> {
+    let mut ixs = vec![reallocate(
+        program,
+        account,
+        owner,
+        owner,
+        &[],
+        &[ExtensionType::ConfidentialTransferAccount],
+    )
+    .expect("reallocate")];
+    ixs.extend(
+        configure_account(
+            program,
+            account,
+            mint,
+            zero,
+            MAX_PENDING_BALANCE_CREDITS,
+            owner,
+            &[],
+            ProofLocation::InstructionOffset(NonZeroI8::new(1).unwrap(), proof),
+        )
+        .expect("configure_account"),
+    );
+    ixs
+}
+
+/// How many confidential credits may pile up before the holder must apply them.
+pub const MAX_PENDING_BALANCE_CREDITS: u64 = 65_536;
 
 fn main() {
     let mut a = std::env::args().skip(1);
@@ -75,29 +121,7 @@ fn main() {
             let proof = build_pubkey_validity_proof_data(&elgamal).expect("pubkey validity proof");
             let zero: PodAeCiphertext = ae.encrypt(0).into();
 
-            // A token account created by `create-account` has no room for the extension, and
-            // ConfigureAccount fails with InvalidAccountData rather than growing it for you.
-            let mut ixs = vec![reallocate(
-                &program,
-                &account,
-                &owner.pubkey(),
-                &owner.pubkey(),
-                &[],
-                &[ExtensionType::ConfidentialTransferAccount],
-            )
-            .expect("reallocate")];
-            ixs.extend(configure_account(
-                &program,
-                &account,
-                &mint,
-                &zero,
-                65_536,
-                &owner.pubkey(),
-                &[],
-                ProofLocation::InstructionOffset(NonZeroI8::new(1).unwrap(), &proof),
-            )
-            .expect("configure_account"));
-            ixs
+            configure_instructions(&program, &account, &mint, &owner.pubkey(), &zero, &proof)
         }
         // The issuer's signature on this account. On a mint with autoApproveNewAccounts false, the
         // confidential extension stays unapproved and every later instruction fails without it.
@@ -133,4 +157,77 @@ fn d64(s: &str) -> Vec<u8> {
 fn read_keypair(path: &str) -> Keypair {
     let bytes: Vec<u8> = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
     Keypair::try_from(&bytes[..]).unwrap()
+}
+
+#[cfg(test)]
+mod configuring {
+    use super::*;
+    use solana_zk_sdk::encryption::auth_encryption::AeKey;
+
+    fn parts() -> (Address, Address, Address, Address, PodAeCiphertext, PubkeyValidityProofData) {
+        let a = || Address::from(Keypair::new().pubkey().to_bytes());
+        let elgamal = ElGamalKeypair::new_rand();
+        (
+            Address::from_str(TOKEN_2022).unwrap(), a(), a(), a(),
+            AeKey::new_rand().encrypt(0).into(),
+            build_pubkey_validity_proof_data(&elgamal).expect("pubkey validity proof"),
+        )
+    }
+
+    /// **G1 — room before configuration, in that order.** `ConfigureAccount` does not grow the
+    /// account; it fails with `InvalidAccountData` on one that has no space for the extension.
+    /// Reversing these two is a failure the runtime reports as bad account data, which reads like
+    /// a broken account rather than a broken order.
+    #[test]
+    fn the_account_is_grown_before_it_is_configured() {
+        let (program, account, mint, owner, zero, proof) = parts();
+        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof);
+        assert!(ixs.len() >= 2, "configure produced {} instruction(s)", ixs.len());
+
+        // Compare against the reallocate this should be, not against "addressed to the token
+        // program and touching the account" — ConfigureAccount is both of those too, so a weaker
+        // assertion passes with the two in either order. It did, until a mutation said so.
+        let grow = reallocate(
+            &program, &account, &owner, &owner, &[],
+            &[ExtensionType::ConfidentialTransferAccount],
+        )
+        .expect("reallocate");
+        assert_eq!(ixs[0].data, grow.data, "the first instruction is not the one that grows the account");
+    }
+
+    /// **G2 — the proof is where the offset says it is.** `ConfigureAccount` cites its proof as
+    /// `InstructionOffset(1)`: the very next instruction. If the builder ever stopped appending it
+    /// there, the runtime would read some other instruction as the proof and report a bad proof —
+    /// pointing the reader at the cryptography instead of at the ordering.
+    #[test]
+    fn the_proof_sits_immediately_after_the_instruction_that_cites_it() {
+        let (program, account, mint, owner, zero, proof) = parts();
+        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof);
+        let configure = ixs.len() - 2;
+        assert_eq!(
+            ixs[configure + 1].program_id,
+            solana_zk_elgamal_proof_interface::id(),
+            "the instruction after ConfigureAccount is not the proof it cites at offset 1",
+        );
+    }
+
+    /// **G3 — the pending-credit ceiling is carried, not defaulted.** It bounds how many
+    /// confidential credits may arrive before the holder must apply them; a zero here would make
+    /// the account reject the first transfer into it.
+    #[test]
+    fn the_pending_balance_ceiling_is_not_zero() {
+        assert_eq!(MAX_PENDING_BALANCE_CREDITS, 65_536);
+        assert!(MAX_PENDING_BALANCE_CREDITS > 0, "the account would refuse its first credit");
+    }
+
+    /// **G4 — every instruction is addressed to a program that exists in the flow.** A stray
+    /// program id would fail at submission with nothing to say about which builder produced it.
+    #[test]
+    fn nothing_is_addressed_anywhere_unexpected() {
+        let (program, account, mint, owner, zero, proof) = parts();
+        let zk = solana_zk_elgamal_proof_interface::id();
+        for ix in configure_instructions(&program, &account, &mint, &owner, &zero, &proof) {
+            assert!(ix.program_id == program || ix.program_id == zk, "unexpected program {}", ix.program_id);
+        }
+    }
 }
