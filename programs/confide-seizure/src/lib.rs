@@ -22,6 +22,7 @@
 //!     reach. Creates the loan PDA: seeds = [b"loan", escrow].
 //!   1 Seize — the predicate, then the transfer. Callable by anyone: default is a public fact.
 
+use solana_zk_elgamal_proof_interface::proof_data::ProofType;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
@@ -81,10 +82,16 @@ const OFF_SEIZED: usize = 414;
 const CTX_AUTHORITY: usize = 0;
 const CTX_PROOF_TYPE: usize = 32;
 
-/// `ProofType` discriminants, from the ZK ElGamal Proof Program's own ordering.
-const PROOF_TYPE_EQUALITY: u8 = 2;
-const PROOF_TYPE_BATCHED_RANGE_U128: u8 = 6;
-const PROOF_TYPE_BATCHED_VALIDITY_3: u8 = 9;
+/// `ProofType` discriminants, taken from the enum rather than transcribed.
+///
+/// They were transcribed once, as 2 / 6 / 9, and every one of them was wrong — the chain said
+/// 3 / 7 / 12 when the accounts were read back. A wrong discriminant here does not fail loudly: it
+/// accepts a valid proof of the wrong kind in the right slot, which is the sort of check that
+/// looks like rigour and is not. Deriving them means the enum has to change under us for them to
+/// drift, and the test below would catch that too.
+const PROOF_TYPE_EQUALITY: u8 = ProofType::CiphertextCommitmentEquality as u8;
+const PROOF_TYPE_BATCHED_RANGE_U128: u8 = ProofType::BatchedRangeProofU128 as u8;
+const PROOF_TYPE_BATCHED_VALIDITY_3: u8 = ProofType::BatchedGroupedCiphertext3HandlesValidity as u8;
 
 solana_program::declare_id!("SeiZure111111111111111111111111111111111111");
 
@@ -453,5 +460,21 @@ mod invariants {
 
         // And a genuine default is still detected at the same scale.
         assert!(in_default(q_min, 1, u64::MAX / 10_000, 20_000));
+    }
+}
+
+#[cfg(test)]
+mod discriminants {
+    use super::*;
+
+    /// **L5 — the proof type bytes are the ones the chain writes.** These were hand-transcribed
+    /// first and all three were wrong; the values below are what a local validator actually put in
+    /// the context state accounts, read back from them. They are pinned here so that deriving them
+    /// from the enum cannot quietly start meaning something else.
+    #[test]
+    fn the_discriminants_match_what_the_chain_wrote() {
+        assert_eq!(PROOF_TYPE_EQUALITY, 3);
+        assert_eq!(PROOF_TYPE_BATCHED_RANGE_U128, 7);
+        assert_eq!(PROOF_TYPE_BATCHED_VALIDITY_3, 12);
     }
 }

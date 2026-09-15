@@ -5,6 +5,10 @@ edition = "2021"
 license = "Apache-2.0"
 description = "Provision Token-2022 confidential accounts whose ElGamal key we hold, and fill the auditor slot"
 
+[lib]
+name = "confide_ct"
+path = "src/lib.rs"
+
 [[bin]]
 name = "prove-collateral"
 path = "src/prove_collateral.rs"
@@ -24,6 +28,10 @@ path = "src/set_auditor.rs"
 [[bin]]
 name = "build-seizure-proofs"
 path = "src/build_seizure_proofs.rs"
+
+[[bin]]
+name = "seizure-ctx"
+path = "src/seizure_ctx.rs"
 
 [dependencies]
 spl-token-2022-interface = "3"

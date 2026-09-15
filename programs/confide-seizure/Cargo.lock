@@ -255,6 +255,7 @@ dependencies = [
  "bytemuck",
  "solana-address",
  "solana-program",
+ "solana-zk-elgamal-proof-interface",
  "spl-token-2022-interface",
  "spl-token-confidential-transfer-proof-extraction",
 ]

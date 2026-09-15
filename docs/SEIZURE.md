@@ -218,6 +218,45 @@ this project argues for (S2); the batched bit lengths sum to the 128 they claim 
 large for the 48-bit transfer encoding is refused rather than truncated (S4); and a full drain
 leaves a ciphertext that opens to exactly zero (S5).
 
+### What a local validator settled, and what it broke
+
+`solana-test-validator` has both the ZK ElGamal Proof Program and Token-2022 as builtins, so the
+mechanism can be run without the ~1.5 SOL a devnet deployment needs. Three results, two of them
+corrections:
+
+**The context state accounts work.** All three were created and verified into, in six transactions,
+and read back from chain: 161 / 385 / 297 bytes, owned by the ZK program, each holding the right
+proof context under the authority it was given. That is the durable half of assumption 2 — the
+proofs survive their transaction and are addressable afterwards.
+
+**The proof type discriminants in the program were all three wrong.** They had been transcribed as
+2 / 6 / 9; the chain wrote **3 / 7 / 12**. Reading the accounts back is what caught it. A wrong
+discriminant does not fail loudly — it accepts a valid proof of the *wrong kind* in the right slot,
+which is the shape of check that reads as rigour and is not. The program now derives them from
+`ProofType` rather than transcribing, and pins the three bytes the chain actually wrote.
+
+**A U128 range proof does not fit a legacy transaction once the authority is a separate account.**
+Measured, not estimated:
+
+| | bytes |
+|---|---|
+| verify equality | 557 |
+| verify ciphertext validity | 781 |
+| verify range U128, authority = fee payer | 1,205 |
+| **verify range U128, authority = the loan PDA** | **1,237** |
+| the limit | **1,232** |
+
+Over by five. And the authority *must* be the loan PDA — that is the one check section 3 leaves to
+this program. Creating the account in its own transaction already bought back what it could. The
+two ways out are the ones every Token-2022 client ends up at: stage the 1,000-byte proof in a
+record account and verify from it with `VerifyProofFromAccount`, or use a v0 transaction with an
+address lookup table holding the ZK program id, which saves exactly the 32 bytes needed. **Neither
+is built here**, so origination is demonstrated for two of the three proofs and blocked on the
+third.
+
+**Deployment needs `--arch v3`.** The default `cargo build-sbf` target is rejected by the runtime as
+an sbpf version that is not enabled.
+
 **Still assumed, and each one is a devnet transaction away.** Listed because a design whose
 assumptions are buried is a pitch:
 
@@ -266,8 +305,9 @@ keep secret between origination and default, because the proofs reveal nothing: 
    its own programs, so the root `cargo test` does not cover it. **Not yet deployed:** the devnet
    keypair holds 0.62 SOL against the ~1.5 SOL a deployment costs, and the faucet refuses small
    accounts. A local validator is the route that does not need funding.
-3. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
-4. `scripts/seize.sh` — default, then seizure, on devnet, end to end, with the balances read before
-   and after.
-5. Invariants in `tests/`, in the style of `confide-embargo/tests/invariants.rs`: seizure is
+3. **The range proof's transport** — a record account or an address lookup table, per the table
+   above. Nothing else can be finished until origination can cite all three proofs.
+4. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
+5. `scripts/seize.sh` — default, then seizure, end to end, with the balances read before and after.
+6. Invariants in `tests/`, in the style of `confide-embargo/tests/invariants.rs`: seizure is
    impossible before the predicate holds, guaranteed after it, and reveals no amount either way.
