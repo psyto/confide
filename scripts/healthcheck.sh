@@ -170,7 +170,7 @@ done
 
 echo
 if [ "$fail" -eq 0 ]; then
-  printf '  \033[32mall clear\033[0m — every claim in the submission is live\n\n'
+  printf '  \033[32mall clear\033[0m — every check above is live\n\n'
 else
   printf '  \033[31m%d check(s) failed\033[0m — see docs/DURABILITY.md\n\n' "$fail"
 fi

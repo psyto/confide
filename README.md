@@ -147,7 +147,6 @@ watch. Source in
 **Nothing required — no key, no account, no funding:**
 
 ```bash
-./scripts/refresh-proofs.sh   # regenerate the page's proofs after provisioning a new account
 ./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
@@ -155,9 +154,15 @@ watch. Source in
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
-./scripts/healthcheck.sh      # is every claim in this README still true?
+./scripts/healthcheck.sh      # eight live checks; exits with the number that died
 cargo test                    # 29 tests
 ```
+
+`healthcheck.sh` covers the mainnet finding on NVDAx, the devnet program, account, mirror mint and
+its account gate, the anchored disclosure, the keys quoted in `docs/ONCHAIN.md`, and the four
+published links. **It is not a proof that every sentence here is true** — the 1,869-mint premise is
+`slot-scan.sh`, and prose it does not know about can still rot. It is the set of claims worth
+failing loudly.
 
 **Needs the account's keys** — `account-keys.json`, written by `provision-account.sh`. Reading a
 confidential balance and proving over it are things only the holder can do; that is the point.
@@ -165,6 +170,7 @@ confidential balance and proving over it are things only the holder can do; that
 ```bash
 ./scripts/read-balance.sh <account> account-keys.json
 ./scripts/prove-collateral.sh <account> 100000 account-keys.json
+./scripts/refresh-proofs.sh <account> 100000    # rewrite the page's proofs for a new account
 ```
 
 **Needs a devnet-funded keypair:**
@@ -172,8 +178,11 @@ confidential balance and proving over it are things only the holder can do; that
 ```bash
 ./scripts/provision-account.sh    # stand up a confidential account we hold the key to
 ./scripts/set-auditor.sh <mint>   # fill the auditor slot — one UpdateMint
-./scripts/anchor-receipt.sh       # anchor a commitment through aperture-receipts
+./scripts/anchor-receipt.sh       # seal this account's position and anchor its commitment
 ```
+
+`anchor-receipt.sh` needs `account-keys.json` as well, because what it seals is read out of the
+account rather than invented for the occasion.
 
 `anchor-receipt.sh` writes through
 [`6a1Kd8…AHytv`](https://explorer.solana.com/address/6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv?cluster=devnet)
@@ -192,7 +201,7 @@ The invariants are written as claims you can run, not prose:
 |---|---|
 | **I1** | unopenable before `T` — **if fewer than `k` agents collude.** Shares carry no clock; the assumption is stamped on the artifact (`ReleaseTrustModel`), not implied |
 | **I2** | unstoppable at `T` by the holder *as a party to the protocol* — it is not a parameter of any function on the opening path, and in `scripts/committee.sh` it is a process that exited in September. **A holder that captures `n − k + 1` agents stops it anyway**, and nothing here prevents that |
-| **I3** | bound to the position of record — a post-hoc revision is refused. **The only one that depends on no one's behaviour**: it is a hash comparison |
+| **I3** | bound to the position of record — a post-hoc revision is refused. The commitment is over the account's *own* on-chain ciphertext, so the figure released at `T` has to open it. **The only one that depends on no one's behaviour**: it is a comparison, not a promise |
 | **I4** | the auditor reads throughout; only *public* disclosure is delayed |
 | **I5** | opening is irreversible — revocation is not clawback |
 

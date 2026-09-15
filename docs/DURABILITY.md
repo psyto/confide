@@ -1,11 +1,20 @@
 # Durability
 
-Submissions close 18 September; judging runs to **2 October**. Everything this project puts on
-devnet can be gone before a judge opens it — this repo has already been bitten once, when a payer
-address inherited from another harness simply stopped existing and the faucet refused to replace it.
+**Submitted 15 September. Judging runs to 2 October**, which is the part that matters here:
+everything this project puts on devnet can be gone before a judge opens it, and there is no second
+chance to notice. This repo has already been bitten once, when a payer address inherited from
+another harness simply stopped existing and the faucet refused to replace it.
 
-**`./scripts/healthcheck.sh` checks every live claim and exits non-zero on the first thing that has
-died.** Run it before pointing anyone at a link.
+**`./scripts/healthcheck.sh` checks every live claim and exits with the number that died.** Run it
+weekly through the judging window, and before pointing anyone at a link. Eight checks: the mainnet
+finding, the receipts program, the confidential account, the mirror's auditor slot, the mirror's
+account gate, the anchored disclosure, the keys quoted in `docs/ONCHAIN.md`, and the four published
+links including the walkthrough.
+
+Two of those exist because prose went stale while the chain moved: the mirror's
+`autoApproveNewAccounts` was flipped back to `true` by `set-auditor.sh` without anyone noticing, and
+`ONCHAIN.md` kept quoting ElGamal keys from an account that had been replaced. A sentence cannot
+fail; an exit code can.
 
 ## What survives a reset, and what does not
 

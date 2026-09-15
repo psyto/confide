@@ -204,10 +204,16 @@ Two limits that are **not** non-goals — they are gaps, and the next work:
   on it, in opposite directions, on the same agents. `ReleaseTrustModel::TimeLockPuzzle` names the
   fix. Note that slashing is only half available even if built: failure to publish at `T` is
   observable on-chain and therefore punishable, while an early leak is not attributable at all.
-- **The commitment is not bound to a live account.** `SubjectAccount` carries an address string and
-  an empty ElGamal pubkey (`aperture`'s skeleton gap), so nothing proves the sealed position
-  concerns the fund's actual wallet. Everything downstream is sound; the anchor to reality is not
-  yet driven in.
+- ~~**The commitment is not bound to a live account.**~~ **Closed 2026-09-15.** It was real: the
+  anchoring path built its position from a fresh `ElGamalKeypair::new_rand()` and a hard-coded share
+  count, so the sealed commitment concerned nothing that existed. `confide_ct::bind_position` now
+  reads the account's own `decryptableAvailableBalance` and `availableBalance` and binds a Pedersen
+  commitment to the ElGamal one with a ciphertext-commitment equality proof — the same construction
+  `prove-collateral` uses, and for the same reason: an account's ciphertext carries no opening we
+  hold, so nothing can be proved *about* it directly. `SubjectAccount` carries the real address and
+  the real ElGamal pubkey rather than a string and an empty field. At `T` the committee publishes
+  the figure with the opening, and `confide-open` checks it opens the sealed commitment before
+  printing it. A number restated in between does not.
 
 - **The issuer is the customer, not the obstacle.** `autoApproveNewAccounts: false` on the live
   mints means Backed decides who may hold a confidential balance. They built the feature,

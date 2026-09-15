@@ -5,7 +5,7 @@ Confide は **2つの大会に出る**。窓も、判定の対象も、名乗り
 | | Stocklana | Crypto World's Fair |
 |---|---|---|
 | 主催 | hackathons.solana.com | Colosseum |
-| 締切 | **2026-09-18 16:00 ET = 09-19 05:00 JST** | **2026-10-12 23:59 PT** |
+| 締切 | ~~2026-09-18 16:00 ET~~ **提出済み 2026-09-15** | **2026-10-12 23:59 PT** |
 | 開始 | — | **2026-09-14 06:00 PT**（= 13:00 UTC / 22:00 JST、Official Rules §5） |
 | 賞金 | $100,000（Solana Foundation） | Solana トラック $100,000（10件 × $10,000）／全体 $840,000 + seed $2.5M |
 | 審査 | 10-02 まで。判定は一問 — *could this be a real app that people will actually use?* | 7基準（web）と6基準（Official Rules §8）の**2系統**。勝者発表 12-05 |
@@ -59,6 +59,27 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
    `psyto.github.io/confide/` は 200、動画 `youtu.be/KQsRwP8HTs0` も 200。提出に必要なリンクは3種類とも
    生きている（確認 2026-09-15）。CWF の Official Rules §8(e) は **Open-source 自体が審査基準**なので、
    これは要件であると同時に加点でもある。
+
+## Stocklana は提出済み（2026-09-15）
+
+3リンクとも生存を確認して出した。`healthcheck.sh` は8項目 all clear、`cargo test` 29。
+**判定は 10-02 まで続き、devnet はその間にリセットされうる。** 週次で `./scripts/healthcheck.sh` を
+回すこと。復旧手順は [`docs/DURABILITY.md`](docs/DURABILITY.md)。**mainnet の核心発見はリセットされない。**
+
+**バウンティトラックは3枠とも使わなかった。** 記録しておく:
+
+- **Meteora DBC** — 領域が違うだけでなく**技術的に噛み合わない**。AMM / ボンディングカーブのプールは
+  スワップ出力を計算するため**取引額を平文で読む必要がある**ので、Token-2022 の秘匿残高はカーブに
+  乗せた瞬間に解かれる。これは Confide が MEV 軸を捨てて「約定後の保有」に張り替えたのと同じ線で、
+  **避けた領域であって手が届かない領域ではない**。
+- **Clawpump** — 要件が *"Launch your token with a stock-paired liquidity pool"*。Confide は
+  **自前 mint を作らないことを提出文に明示的な設計判断として書いている**（ラップは借り手が担保に
+  取る物ではなく、裏付けを持てばこの層が消そうとしている信頼点に自分がなる）。賞のために発行すると
+  自分の書いた判断を撤回することになり、判事が両方読めばその矛盾の方が目立つ。
+
+**出した時点で real user and problem は空白。** 誰にも見せず、発行体にも聞いていない。Codex の
+判定は「一次選考を通さない」で、根拠は需要の不在。**判定期間中でも遅くない一手 = Backed / Backpack
+への一問**（「auditor 鍵を null のままにしているのは、埋める設定が無いからか」）。
 
 ## CWF 作業の再開地点（2026-09-15 に中断、Stocklana 提出を優先）
 
