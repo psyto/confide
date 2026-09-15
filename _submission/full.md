@@ -18,7 +18,7 @@ only option under which it can answer a question.
 
 - **Your position stops being public.** It sits on-chain and reads as zero to anyone looking.
 - **A lender can check your collateral without seeing it.** Prove the position covers the loan and
-  reveal one bit — not the value, not the composition. (A check, not lending — see below.)
+  reveal one bit — not the value, not the composition. (And taken on default — see below.)
 - **Your auditor and LPs are unaffected.** They read what they are owed, when they are owed it.
 - **Last quarter's number cannot be tidied.** Sealed on the reporting date over your account's own
   ciphertext, opened on the deadline by a committee you do not control.
@@ -52,29 +52,21 @@ you watch.
 29 tests. `./scripts/healthcheck.sh` re-checks the rows above against the chain and exits with the
 number that died — judging runs three weeks and devnet resets.
 
-## Why two proofs, not one
-
-An account's ciphertext carries no Pedersen opening we hold, so it cannot be range-proved directly.
-Equality binds a commitment we *can* open to it; the range proof runs on the surplus under the same
-opening, so a verifier reaches it by subtracting `threshold·G`, not our word.
-
 ## What is not built
 
-- **Seizure anywhere you can click.** It now runs end to end — the proofs are built while the
-  borrower cooperates, parked on chain under an authority they cannot close, and fired later by a
-  program that owns the escrow. But deploying that program costs ~1.5 SOL of devnet rent against a
-  keypair holding 0.62, so this is the one row above you have to run rather than visit. **The
-  distance between this and lending is now a funding problem, not a design one.**
+- **Seizure anywhere you can click.** It runs end to end — proofs built while the borrower
+  cooperates, parked on chain under an authority they cannot close, fired later by the program that
+  owns the escrow. Deploying that program costs ~1.5 SOL against a keypair holding 0.62, so this is
+  the one row above you run rather than visit. **The distance between this and lending is now
+  funding, not design.**
 - **On the live mints.** Both issuers set `autoApproveNewAccounts: false`, so opening a confidential
-  account needs the issuer to sign. The mirror is configured the same way, so that approval is a
-  step you can watch rather than a sentence — on a real mint it is a conversation. They built the
-  feature, configured it, gated it, and left the key slot empty: companies that mean to enable this
-  and have no disclosure model to enable it *with*. **The issuer is the customer, not the
-  obstacle.**
+  account needs the issuer to sign — on the mirror a step you can watch, on a real mint a
+  conversation. They built the feature, configured it, gated it, and left the key slot empty:
+  companies that mean to enable this and have no disclosure model to enable it *with*. **The issuer
+  is the customer, not the obstacle.**
 - **No claim to discharge any filing.** xStocks are not Section 13(f) securities — Swiss-issued,
-  own ISIN. Backpack's carry US CUSIPs and are called security entitlements, a different category
-  and **a question for counsel, not for me**. What Confide serves is contractual: the quarterly
-  report a GP owes its LPs.
+  own ISIN. Backpack's carry US CUSIPs and are called security entitlements, **a question for
+  counsel, not for me**. What Confide serves is contractual: the report a GP owes its LPs.
 
 ## Built on
 
