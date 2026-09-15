@@ -242,7 +242,11 @@ Stated because a reader should find the limits here rather than discover them:
   `ReleaseTrustModel`) is the one change that would make both unconditional; it is named, not built.
 - **Seizure.** A lender can now verify collateral without the borrower publishing it, and still has
   no way to take that collateral on default. That is the gap between this and lending, and it is not
-  a small one.
+  a small one. **[docs/SEIZURE.md](docs/SEIZURE.md) is the design that closes it** — the transfer
+  proofs built at origination while the borrower still cooperates, pre-verified into context state
+  accounts, and fired later by a program that owns the escrow. It needs no committee and reveals no
+  amount. It is a design: the program is not written, and the four assumptions it rests on are
+  listed there rather than assumed quietly.
 - **One mint, ours.** The accounts here are on a mint this repo provisioned with NVDAx's exact
   configuration. Doing it on `NVDAx` needs Backed's approval — `autoApproveNewAccounts: false` —
   which reads as a signal rather than a wall. They built the feature, configured it, gated who may
