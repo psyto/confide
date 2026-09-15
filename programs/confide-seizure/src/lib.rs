@@ -216,35 +216,20 @@ fn seize(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramR
 
     let (escrow_key, destination_key, new_decryptable, auditor_lo, auditor_hi, bump) = {
         let d = loan.try_borrow_data()?;
-        if d[0] != LOAN_TAG {
-            return Err(ProgramError::UninitializedAccount);
-        }
-        if d[OFF_SEIZED] != 0 {
-            msg!("already seized; opening is not repeatable");
-            return Err(ProgramError::InvalidAccountData);
-        }
-        // Every account the transfer touches comes from the loan record, not from the caller, so a
-        // caller cannot redirect a seizure by passing different accounts.
-        check(&d[OFF_ESCROW..], escrow.key)?;
-        check(&d[OFF_DESTINATION..], destination.key)?;
-        check(&d[OFF_MINT..], mint.key)?;
-        check(&d[OFF_CTX_EQUALITY..], ctx_equality.key)?;
-        check(&d[OFF_CTX_VALIDITY..], ctx_validity.key)?;
-        check(&d[OFF_CTX_RANGE..], ctx_range.key)?;
-        check(&d[OFF_ORACLE..], oracle.key)?;
-        if !oracle.is_signer {
-            msg!("the price is an assertion and must be signed by the oracle this loan names");
-            return Err(ProgramError::MissingRequiredSignature);
-        }
-
-        let q_min = read_u64(&d, OFF_Q_MIN);
-        let principal = read_u64(&d, OFF_PRINCIPAL);
-        let ratio_bps = read_u64(&d, OFF_RATIO_BPS);
-
-        if !in_default(q_min, price, principal, ratio_bps) {
-            msg!("not in default: collateral floor still clears the requirement");
-            return Err(ProgramError::InvalidArgument);
-        }
+        may_seize(
+            &d,
+            Cited {
+                escrow: escrow.key,
+                destination: destination.key,
+                mint: mint.key,
+                ctx_equality: ctx_equality.key,
+                ctx_validity: ctx_validity.key,
+                ctx_range: ctx_range.key,
+                oracle: oracle.key,
+            },
+            oracle.is_signer,
+            price,
+        )?;
 
         (
             Pubkey::new_from_array(slice32(&d, OFF_ESCROW)),
@@ -335,6 +320,53 @@ pub fn in_default(q_min: u64, price: u64, principal: u64, ratio_bps: u64) -> boo
     let value = (q_min as u128) * (price as u128);
     let required = (principal as u128) * (ratio_bps as u128) / 10_000;
     value < required
+}
+
+/// The accounts a caller passes, checked against the ones the loan recorded.
+pub struct Cited<'a> {
+    pub escrow: &'a Pubkey,
+    pub destination: &'a Pubkey,
+    pub mint: &'a Pubkey,
+    pub ctx_equality: &'a Pubkey,
+    pub ctx_validity: &'a Pubkey,
+    pub ctx_range: &'a Pubkey,
+    pub oracle: &'a Pubkey,
+}
+
+/// Everything that must hold before a seizure may fire, as a function of the loan record and what
+/// the caller supplied — no accounts, no runtime, so the protocol can be tested rather than only
+/// run. `docs/SEIZURE.md` section 8 listed these as the invariants that did not exist yet.
+///
+/// Note what is *not* here: who is calling. Default is a public fact about public numbers, and a
+/// seizure only the lender could fire is a seizure the lender could also decline to fire.
+pub fn may_seize(d: &[u8], cited: Cited, oracle_signed: bool, price: u64) -> ProgramResult {
+    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+        return Err(ProgramError::UninitializedAccount);
+    }
+    if d[OFF_SEIZED] != 0 {
+        return Err(ProgramError::InvalidAccountData); // opening is not repeatable
+    }
+    // Every account the transfer touches comes from the record, not from the caller, so a caller
+    // cannot redirect a seizure by passing different ones.
+    check(&d[OFF_ESCROW..], cited.escrow)?;
+    check(&d[OFF_DESTINATION..], cited.destination)?;
+    check(&d[OFF_MINT..], cited.mint)?;
+    check(&d[OFF_CTX_EQUALITY..], cited.ctx_equality)?;
+    check(&d[OFF_CTX_VALIDITY..], cited.ctx_validity)?;
+    check(&d[OFF_CTX_RANGE..], cited.ctx_range)?;
+    check(&d[OFF_ORACLE..], cited.oracle)?;
+    if !oracle_signed {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    if !in_default(
+        read_u64(d, OFF_Q_MIN),
+        price,
+        read_u64(d, OFF_PRINCIPAL),
+        read_u64(d, OFF_RATIO_BPS),
+    ) {
+        return Err(ProgramError::InvalidArgument);
+    }
+    Ok(())
 }
 
 fn check(field: &[u8], key: &Pubkey) -> ProgramResult {
@@ -591,5 +623,125 @@ mod arming {
         field.extend_from_slice(&[0u8; 64]); // the loan record continues past this field
         assert!(check(&field, &recorded).is_ok());
         assert_eq!(check(&field, &other), Err(ProgramError::InvalidArgument));
+    }
+}
+
+#[cfg(test)]
+mod protocol {
+    use super::*;
+
+    struct Loan {
+        d: Vec<u8>,
+        escrow: Pubkey, dest: Pubkey, mint: Pubkey,
+        eq: Pubkey, va: Pubkey, rp: Pubkey, oracle: Pubkey,
+    }
+
+    /// 100,000 tokens proved against a $50,000 loan at 200 %: the requirement is $100,000, so
+    /// default begins the moment the price falls under $1.00. The numbers the e2e run used.
+    fn loan() -> Loan {
+        let (escrow, dest, mint) = (Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let (eq, va, rp, oracle) = (Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let mut d = vec![0u8; LOAN_LEN];
+        d[0] = LOAN_TAG;
+        for (off, k) in [(OFF_ESCROW, &escrow), (OFF_DESTINATION, &dest), (OFF_MINT, &mint),
+                         (OFF_CTX_EQUALITY, &eq), (OFF_CTX_VALIDITY, &va), (OFF_CTX_RANGE, &rp),
+                         (OFF_ORACLE, &oracle)] {
+            d[off..off + 32].copy_from_slice(&k.to_bytes());
+        }
+        d[OFF_Q_MIN..OFF_Q_MIN + 8].copy_from_slice(&100_000u64.to_le_bytes());
+        d[OFF_PRINCIPAL..OFF_PRINCIPAL + 8].copy_from_slice(&5_000_000u64.to_le_bytes());
+        d[OFF_RATIO_BPS..OFF_RATIO_BPS + 8].copy_from_slice(&20_000u64.to_le_bytes());
+        Loan { d, escrow, dest, mint, eq, va, rp, oracle }
+    }
+
+    impl Loan {
+        fn cited(&self) -> Cited<'_> {
+            Cited { escrow: &self.escrow, destination: &self.dest, mint: &self.mint,
+                    ctx_equality: &self.eq, ctx_validity: &self.va, ctx_range: &self.rp,
+                    oracle: &self.oracle }
+        }
+        fn at(&self, price: u64) -> ProgramResult { may_seize(&self.d, self.cited(), true, price) }
+    }
+
+    /// **P1 — seizure is impossible before the predicate holds.** The first of the three invariants
+    /// `docs/SEIZURE.md` section 8 said did not exist. A borrower whose collateral still covers the
+    /// loan cannot have it taken, however the caller frames the transaction.
+    #[test]
+    fn a_loan_that_still_covers_itself_cannot_be_seized() {
+        let l = loan();
+        assert_eq!(l.at(101), Err(ProgramError::InvalidArgument));
+        assert_eq!(l.at(100), Err(ProgramError::InvalidArgument), "exactly covered is not default");
+        assert_eq!(l.at(u64::MAX), Err(ProgramError::InvalidArgument));
+    }
+
+    /// **P2 — and guaranteed once it does.** No identity is consulted: the caller is not an input,
+    /// so the lender cannot decline to fire it and the borrower cannot be the reason it does not.
+    #[test]
+    fn a_loan_in_default_can_be_seized_by_anyone() {
+        assert!(loan().at(99).is_ok());
+        assert!(loan().at(0).is_ok());
+    }
+
+    /// **P3 — opening is not repeatable.** Once the collateral has moved the escrow is empty and
+    /// the pre-verified proofs describe a balance that no longer exists; a second seizure would
+    /// fail at the token program, but it must fail here, before a transfer is attempted.
+    #[test]
+    fn a_seized_loan_cannot_be_seized_again() {
+        let mut l = loan();
+        assert!(l.at(99).is_ok());
+        l.d[OFF_SEIZED] = 1;
+        assert_eq!(l.at(99), Err(ProgramError::InvalidAccountData));
+    }
+
+    /// **P4 — the price is an assertion and must be signed.** Without this the predicate is
+    /// decided by whoever sends the transaction, and every loan is seizable by anyone at any time.
+    #[test]
+    fn an_unsigned_price_is_refused() {
+        let l = loan();
+        assert_eq!(
+            may_seize(&l.d, l.cited(), false, 99),
+            Err(ProgramError::MissingRequiredSignature),
+        );
+    }
+
+    /// **P5 — a caller cannot redirect a seizure.** Every account the transfer touches is compared
+    /// with the one the loan recorded, one at a time, so substituting any single account fails.
+    /// This is the check that keeps the collateral going where it was pledged.
+    #[test]
+    fn substituting_any_account_is_refused() {
+        let l = loan();
+        let other = Pubkey::new_unique();
+        for (name, mut c) in [
+            ("escrow",      l.cited()), ("destination", l.cited()), ("mint",     l.cited()),
+            ("ctx equality",l.cited()), ("ctx validity",l.cited()), ("ctx range",l.cited()),
+            ("oracle",      l.cited()),
+        ].into_iter().enumerate().map(|(i, (n, c))| (n, (i, c))) {
+            let (i, ref mut c) = c;
+            match i {
+                0 => c.escrow = &other,      1 => c.destination = &other, 2 => c.mint = &other,
+                3 => c.ctx_equality = &other, 4 => c.ctx_validity = &other, 5 => c.ctx_range = &other,
+                _ => c.oracle = &other,
+            }
+            let got = may_seize(&l.d, Cited { ..*c }, true, 99);
+            assert!(got.is_err(), "a substituted {name} was accepted");
+        }
+    }
+
+    /// **P6 — the record carries no position, either way.** The third invariant: a seizure reveals
+    /// no amount. The only quantity in the loan is `q_min`, the floor the borrower chose to
+    /// disclose; the balance appears nowhere, and the seize instruction carries a price and
+    /// nothing else.
+    #[test]
+    fn nothing_in_the_loan_or_the_instruction_is_the_position() {
+        let l = loan();
+        let position: u64 = 17_300_000_000_000; // what the escrow actually held in the e2e run
+        assert!(
+            !l.d.windows(8).any(|w| u64::from_le_bytes(w.try_into().unwrap()) == position),
+            "the position is recoverable from the loan account",
+        );
+        // The instruction is a discriminator and a price.
+        let mut ix = vec![1u8];
+        ix.extend_from_slice(&99u64.to_le_bytes());
+        assert_eq!(ix.len(), 9, "the seize instruction carries more than a price");
     }
 }

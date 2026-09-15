@@ -55,7 +55,7 @@ they settle, and has Solana's ZK program check the collateral proof on a button 
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused, not guessed |
 | **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides. The [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
 
-51 tests, 13 over the seizure program. `./scripts/healthcheck.sh` re-checks every row above against
+57 tests, 19 over the seizure program. `./scripts/healthcheck.sh` re-checks every row above against
 the chain and exits with the number that died — judging runs three weeks and devnet resets.
 
 ## What is not built

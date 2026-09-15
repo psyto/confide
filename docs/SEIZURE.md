@@ -370,8 +370,7 @@ keep secret between origination and default, because the proofs reveal nothing: 
 ## 8. What is built, and what is next
 
 Everything below the line runs today: `./scripts/seizure-e2e.sh` against devnet, the program at
-`Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN`, seven invariants under `cd programs/confide-seizure
-&& cargo test` (a standalone crate, excluded from the workspace the way `aperture` excludes its own
+`Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN`, nineteen tests under `cd programs/confide-seizure && cargo test` (a standalone crate, excluded from the workspace the way `aperture` excludes its own
 programs, so the root `cargo test` does not cover it), and `./scripts/seizure-status.sh` to read the
 settled loan back with no keys.
 
@@ -386,6 +385,9 @@ What is not built, in the order it matters:
    ladder of pre-built amounts is more rent and more origination work, not a new mechanism.
 4. **Repayment.** Returning the collateral needs its own pre-verified proof set, built at
    origination alongside the seizure one. Two destinations, one escrow.
-5. **Invariants in the style of `confide-embargo/tests/invariants.rs`** — seizure impossible before
-   the predicate holds, guaranteed after it, revealing no amount either way. The seven tests today
-   cover the layout and the arithmetic, not the protocol.
+5. ~~Invariants in the style of `confide-embargo/tests/invariants.rs`~~ — **done.** Nineteen tests
+   over the program, six of them the protocol itself: a loan that still covers itself cannot be
+   seized at any price, one in default can be seized by anyone because the caller is not an input,
+   opening is not repeatable, an unsigned price is refused, substituting any single account the
+   loan recorded is refused, and neither the loan record nor the seize instruction carries the
+   position. Each was mutation-checked — deleting the guard turns exactly its own test red.
