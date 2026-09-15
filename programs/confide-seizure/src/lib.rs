@@ -152,18 +152,9 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
         (ctx_validity, PROOF_TYPE_BATCHED_VALIDITY_3, "ciphertext validity"),
         (ctx_range, PROOF_TYPE_BATCHED_RANGE_U128, "range"),
     ] {
-        let d = account.try_borrow_data()?;
-        if d.len() <= CTX_PROOF_TYPE {
-            msg!("{} context is not a proof context", what);
-            return Err(ProgramError::InvalidAccountData);
-        }
-        if d[CTX_PROOF_TYPE] != proof_type {
-            msg!("{} context holds the wrong kind of proof", what);
-            return Err(ProgramError::InvalidAccountData);
-        }
-        if d[CTX_AUTHORITY..CTX_AUTHORITY + 32] != loan.key.to_bytes() {
-            msg!("{} context can still be closed by someone other than this loan", what);
-            return Err(ProgramError::InvalidAccountOwner);
+        if let Err(e) = context_is_armed(&account.try_borrow_data()?, proof_type, loan.key) {
+            msg!("{} context: {}", what, disarm_reason(&e));
+            return Err(e);
         }
     }
 
@@ -300,6 +291,33 @@ fn seize(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramR
     loan.try_borrow_mut_data()?[OFF_SEIZED] = 1;
     msg!("seized: the collateral is the lender's, and is still confidential");
     Ok(())
+}
+
+/// The one check Token-2022 does not make for us, as a function rather than a loop body, because a
+/// branch that decides whether a seizure can be disarmed should be reachable from a test.
+///
+/// A context state account is `[authority(32) | proof_type(1) | context]` and is closable **by its
+/// authority**. If that authority is the borrower, they withdraw the proofs the day before default
+/// and the seizure evaporates with nothing on chain looking wrong. Everything else about these
+/// proofs the token program re-checks at transfer time; this it has no opinion about.
+pub fn context_is_armed(data: &[u8], proof_type: u8, loan: &Pubkey) -> Result<(), ProgramError> {
+    if data.len() <= CTX_PROOF_TYPE {
+        return Err(ProgramError::InvalidAccountData);
+    }
+    if data[CTX_PROOF_TYPE] != proof_type {
+        return Err(ProgramError::InvalidAccountData);
+    }
+    if data[CTX_AUTHORITY..CTX_AUTHORITY + 32] != loan.to_bytes() {
+        return Err(ProgramError::InvalidAccountOwner);
+    }
+    Ok(())
+}
+
+fn disarm_reason(e: &ProgramError) -> &'static str {
+    match e {
+        ProgramError::InvalidAccountOwner => "can still be closed by someone other than this loan",
+        _ => "is not a verified proof of the kind this slot needs",
+    }
 }
 
 /// The predicate, entirely in public terms.
@@ -484,5 +502,94 @@ mod discriminants {
         assert_eq!(PROOF_TYPE_EQUALITY, 3);
         assert_eq!(PROOF_TYPE_BATCHED_RANGE_U128, 7);
         assert_eq!(PROOF_TYPE_BATCHED_VALIDITY_3, 12);
+    }
+}
+
+#[cfg(test)]
+mod arming {
+    use super::*;
+
+    /// A context state account as the ZK program writes one: authority, then proof type, then the
+    /// context itself. Only the first 33 bytes decide whether a seizure can be disarmed.
+    fn context(authority: &Pubkey, proof_type: u8) -> Vec<u8> {
+        let mut d = vec![0u8; 161];
+        d[CTX_AUTHORITY..CTX_AUTHORITY + 32].copy_from_slice(&authority.to_bytes());
+        d[CTX_PROOF_TYPE] = proof_type;
+        d
+    }
+
+    /// **A1 — the check passes when the loan holds the authority.** The baseline, so that the
+    /// refusals below are refusing something rather than failing for an unrelated reason.
+    #[test]
+    fn a_context_the_loan_can_close_is_armed() {
+        let loan = Pubkey::new_unique();
+        assert!(context_is_armed(&context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan).is_ok());
+    }
+
+    /// **A2 — the attack this program exists to stop.** The borrower keeps the context authority,
+    /// so they can close the accounts the day before default and the proofs vanish. Token-2022
+    /// has no opinion about this; if origination lets it through, the loan is unsecured and
+    /// everything on chain still looks correct.
+    #[test]
+    fn a_context_the_borrower_can_close_is_refused() {
+        let loan = Pubkey::new_unique();
+        let borrower = Pubkey::new_unique();
+        assert_eq!(
+            context_is_armed(&context(&borrower, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan),
+            Err(ProgramError::InvalidAccountOwner),
+        );
+    }
+
+    /// **A3 — a valid proof of the wrong kind in the right slot.** This is the failure the
+    /// hand-transcribed discriminants would have caused: every proof verified, every authority
+    /// correct, and the range slot holding an equality proof. It fails quietly unless checked.
+    #[test]
+    fn a_verified_proof_of_the_wrong_kind_is_refused() {
+        let loan = Pubkey::new_unique();
+        assert_eq!(
+            context_is_armed(&context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_BATCHED_RANGE_U128, &loan),
+            Err(ProgramError::InvalidAccountData),
+        );
+    }
+
+    /// **A4 — an account too short to be a proof context.** An uninitialised or truncated account
+    /// must not index past its own data; the check reads bytes 0..33 and has to say so first.
+    #[test]
+    fn an_account_too_short_to_be_a_context_is_refused() {
+        let loan = Pubkey::new_unique();
+        for len in [0usize, 32, CTX_PROOF_TYPE] {
+            assert_eq!(
+                context_is_armed(&vec![0u8; len], PROOF_TYPE_EQUALITY, &loan),
+                Err(ProgramError::InvalidAccountData),
+                "a {len}-byte account was accepted as a proof context",
+            );
+        }
+    }
+
+    /// **A5 — every slot the loan cites is checked against its own type.** Three proofs, three
+    /// discriminants; a loop that checked one type three times would pass A1–A3 and still let a
+    /// validity proof sit in the range slot.
+    #[test]
+    fn each_of_the_three_slots_rejects_the_other_two() {
+        let loan = Pubkey::new_unique();
+        let types = [PROOF_TYPE_EQUALITY, PROOF_TYPE_BATCHED_VALIDITY_3, PROOF_TYPE_BATCHED_RANGE_U128];
+        for expected in types {
+            for actual in types {
+                let got = context_is_armed(&context(&loan, actual), expected, &loan);
+                assert_eq!(got.is_ok(), expected == actual, "slot {expected} accepted type {actual}");
+            }
+        }
+    }
+
+    /// **A6 — the accounts a seizure touches come from the loan, not the caller.** `check` is what
+    /// stops a caller passing a different destination and redirecting the collateral.
+    #[test]
+    fn an_account_the_loan_did_not_name_is_refused() {
+        let recorded = Pubkey::new_unique();
+        let other = Pubkey::new_unique();
+        let mut field = recorded.to_bytes().to_vec();
+        field.extend_from_slice(&[0u8; 64]); // the loan record continues past this field
+        assert!(check(&field, &recorded).is_ok());
+        assert_eq!(check(&field, &other), Err(ProgramError::InvalidArgument));
     }
 }

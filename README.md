@@ -277,8 +277,13 @@ happened* from *something happened I cannot compute*, and refuses rather than ro
 An LPA does not only ask *what do you hold*; it carries covenants of the form *"the fund is at or
 above X"*, which must be answerable before the position itself is disclosable. `confide-equity` proves
 that as a predicate: the LP learns one bit and no position, and the proof goes to the live ZK
-program. `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` is the test that will
-say so if the premise above ever stops being true.
+program.
+
+The premise itself — every auditor slot still empty — is checked by `./scripts/slot-scan.sh` against
+mainnet and by `./scripts/healthcheck.sh` on the four mints this repo pins. The unit test named
+`every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` guards those four constants and
+would stay green if Backed filled a key on any of the other 1,865. Its own doc comment says so; this
+sentence used to claim the opposite.
 
 ## Built on
 
