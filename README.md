@@ -231,8 +231,12 @@ Stated because a reader should find the limits here rather than discover them:
   over. A wrapped token is not the one lenders take as collateral, so the clearest use case dies on
   contact. And holding the backing would make us the single trusted party this layer exists to
   remove.
-- **Not built, deliberately:** no ATS, no order matching, no MEV protection, no custody, no mainnet
-  deployment, and no claim to discharge any regulatory filing.
+- **Custody, in the one sense that counts.** Confide holds nobody's keys and never sees a balance,
+  but the seizure escrow is a token account a program owns, and while a loan is open the borrower
+  cannot move what is in it. The same custody every lending protocol takes, named here rather than
+  left inside a word used elsewhere to mean something else.
+- **Not built, deliberately:** no ATS, no order matching, no MEV protection, no mainnet deployment,
+  and no claim to discharge any regulatory filing.
 
 ## Why this and not MEV protection
 

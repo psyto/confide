@@ -149,6 +149,44 @@ Everything happens at **accumulation time**. Nothing is required of the holder a
 
 The holder's only act is at t0. That is precisely what makes the disclosure at T a disclosure.
 
+## 4a. The second mechanism: taking the collateral
+
+§4 gets a lender one bit — *this account covers the loan* — and stops. A lender who can check and
+cannot take has no reason to lend, so the disclosure layer sits next to lending without reaching it.
+Closing that is a second mechanism, and it is not the first one pointed somewhere else.
+
+**Why it is hard, precisely.** A confidential transfer does not merely need authorising; it needs
+*proving*. Three proofs: that the declared amount matches the source's own `availableBalance`, that
+it re-encrypts correctly under source, destination **and auditor**, and that neither the amount nor
+the remainder underflows. Building them requires the **source account's ElGamal secret**. A program
+cannot hold one — its state is public, and the proving is off-chain work besides. So the ordinary
+story, *the protocol takes the collateral*, cannot be told: the protocol cannot prove what it is
+taking.
+
+**The way through is a fact about time, not about cryptography.** The borrower holds the key at
+origination, and at origination they are cooperative — they want the loan. Default is precisely the
+moment they stop being. So the proofs are built while cooperation is free and **pre-verified into
+context state accounts**, which `Transfer` will later accept by address alone. The escrow is handed
+to a program by `SetAuthority`, after which the borrower cannot move it, the program can, and the
+ElGamal secret stops mattering entirely because everything it was needed for already exists.
+
+**This needs no committee, and the embargo does.** Worth stating, because the two mechanisms sit in
+one repository and look like they should share a solution. The embargo opens at a time nobody may
+bring forward and the holder may not prevent, over content that must stay sealed *until* then:
+something has to hold the seal across that interval, and absent a cryptographic clock that
+something is people. Seizure has no interval. What the transfer does is fully determined at
+origination, so it can be committed then and left on chain already verified — there is nothing to
+keep secret in between, because proofs reveal nothing. **A mechanism whose outcome is fixed in
+advance does not need a quorum to remember it.**
+
+**Where the trust actually sits, which is not where the cryptography is.** The program records
+`q_min` and verifies nothing about it; the lender establishes that floor off-chain with the check
+above before agreeing to a number. The price is asserted by one oracle the loan names. So what the
+chain enforces is a *consequence*, on a default someone else defines — the confidential half is
+complete and the underwriting half is a trusted-oracle loan like any other. Saying so is the
+difference between a mechanism and a claim about one. [`docs/SEIZURE.md`](docs/SEIZURE.md) carries
+the design, the four things running it corrected, and the devnet addresses.
+
 ## 5. Reuse and original work
 
 Stocklana eligibility: *original work. Open-source components are fine if you say so.* So it is
@@ -204,13 +242,20 @@ Minimum that makes §6 true and §3 testable. In order:
    `6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv`; 147 bytes per obligation.
 4. ~~The committee as real processes~~ — done. `scripts/committee.sh`. A committee inside one
    process is not a committee.
-5. `confide-demo` — the two-lane runner. Done, but still simulates the accumulation rather than
-   holding a confidential balance on a mirrored mint.
-6. **Video.**
+5. ~~`confide-demo`~~ — done. The two-lane runner, though it still simulates the accumulation
+   rather than holding a confidential balance on a mirrored mint.
+6. ~~Video~~ — done.
+7. ~~`confide-seizure`~~ — done, and not in the original list: §4a, on devnet at
+   `Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN`. `./scripts/seizure-e2e.sh` runs it end to end.
 
 Non-goals, stated so they are not mistaken for omissions: no ATS, no order matching, no MEV
-protection (§2), no custody, no mainnet deployment, and no claim to discharge any regulatory
-filing (§3a).
+protection (§2), no mainnet deployment, and no claim to discharge any regulatory filing (§3a).
+
+**Custody used to be on that list and no longer honestly can be.** Confide holds nobody's keys and
+never sees a balance — but §4a's escrow is a token account a program PDA owns, and while a loan is
+open the borrower cannot move what is in it. That is custody by the only definition that matters to
+whoever posted the collateral. It is the same custody every lending protocol takes and it is worth
+naming rather than leaving inside a word the rest of the document uses to mean something else.
 
 Two limits that are **not** non-goals — they are gaps, and the next work:
 
