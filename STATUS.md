@@ -113,8 +113,10 @@ Stocklana 起点の commit もこの窓の内側に入るが、**規約上の問
    抜けではなく、提出時に出てくる欄。出たときに使うもの:
    - リンク3本、いずれも生存確認済み（2026-09-15、全て HTTP 200）:
      `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
-     `https://youtu.be/KQsRwP8HTs0`。**動画は `KQsRwP8HTs0` が現行**で、`ZuhLvH5MFgE` は
-     `d0916c2` で差し替えられた旧版。**旧 URL も 200 を返すので、貼り間違えても壊れて見えない。**
+     `https://youtu.be/p1aQuEnzhQk`。**動画は `p1aQuEnzhQk` が現行**（`94fccfd`）で、
+     `KQsRwP8HTs0` と `ZuhLvH5MFgE` は旧版。**旧 URL も 200 を返すので、貼り間違えても壊れて見えない**
+     ——現行の判定は `scripts/healthcheck.sh` の `VIDEO` を正とすること。ここに ID を書き写すたびに
+     腐る（09-15 に一度腐った）。
    - 過去作業の開示欄（規約要件）。記入元は [`docs/WORK-WINDOW.md`](docs/WORK-WINDOW.md) と
      上の再利用表。**repo に書いてあることは開示にならない。**
 3. **9/14 公開のトラック / スポンサー / 審査員 / フォーム項目を読む。** Tempo トラックは条件未公開
