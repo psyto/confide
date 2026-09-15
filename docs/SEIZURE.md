@@ -263,6 +263,42 @@ affairs and is less than a public chain discloses today. It is still strictly mo
 `Q_min` reveals, and a borrower who wants to pledge without the counterparty knowing the size is
 not served by this arrangement and should be told so.
 
+## 4d. De-shield instead of transfer, and the destination stops mattering
+
+Section 2 pre-builds a transfer to one named lender. That is correct for a bilateral loan and wrong
+for a lending market: **liquidation on a venue like Kamino is permissionless**, and the liquidator
+is not known at origination. Proofs that bind to a recipient's key cannot name someone who does not
+exist yet.
+
+`Withdraw` has no recipient. It moves a confidential balance into **the account's own public
+balance**, and that single fact removes the constraint:
+
+```
+  seizure (section 2)                    de-shield
+  ─────────────────────                  ──────────
+  3 proofs, 223,000 CU                   2 proofs, 118,000 CU
+  binds to one destination key           binds to no destination at all
+  fires a confidential transfer          makes the balance public, in place
+  the recipient must exist at            anything can move it afterwards,
+  origination                            with an ordinary SPL transfer
+```
+
+**Once the collateral is public, moving it needs no proof and no foresight.** A liquidation path
+that did not exist when the loan was written can pick it up. The integration line in a collateral
+packet stops reading *"your liquidator must call our program"* and starts reading **"your
+liquidation path is unchanged"** — which is the difference between a venue evaluating a proposal
+and a venue evaluating a rewrite.
+
+It is also the thesis rather than a departure from it. Confidentiality here was always **against the
+public while solvent**, and a default is exactly the event that ends the holder's claim to it. The
+position becomes readable at the moment the obligation crystallises, on a schedule the holder can
+neither bring forward nor prevent — which is I1 and I2 with the clock replaced by a price.
+
+Both proofs are accepted by the live ZK program: `./scripts/deshield-proofs.sh`. Five invariants in
+`mod deshielding` hold the arithmetic, including the one that makes the substitution legitimate —
+a withdrawn amount is encoded with a **zero opening**, so it is a commitment in the clear that *any*
+key opens. If a stranger could not read it, it would not be public, and the test says so.
+
 ## 5. What this costs, stated before anyone discovers it
 
 - **Full seizure only.** The proofs fix the amount at origination, so v1 seizes the whole escrow.

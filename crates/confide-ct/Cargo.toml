@@ -34,6 +34,10 @@ name = "seizure-ctx"
 path = "src/seizure_ctx.rs"
 
 [[bin]]
+name = "build-deshield-proofs"
+path = "src/build_deshield_proofs.rs"
+
+[[bin]]
 name = "seizure-client"
 path = "src/seizure_client.rs"
 

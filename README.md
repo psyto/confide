@@ -152,10 +152,11 @@ watch. Source in
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
+./scripts/deshield-proofs.sh  # make the collateral public on default, naming no recipient
 ./scripts/seizure-status.sh   # read the seizure back off devnet — no keys, no wallet
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # every live claim above; exits with the number that died
-cargo test                    # 50 tests
+cargo test                    # 55 tests
 cd programs/confide-seizure && cargo test    # 23 more, over the seizure program
 ```
 

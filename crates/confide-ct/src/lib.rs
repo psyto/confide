@@ -13,12 +13,12 @@ use solana_zk_sdk::encryption::grouped_elgamal::GroupedElGamal;
 use solana_zk_sdk::encryption::pedersen::{Pedersen, PedersenOpening};
 use solana_zk_elgamal_proof_interface::proof_data::{
     batched_grouped_ciphertext_validity::BatchedGroupedCiphertext3HandlesValidityProofData,
-    batched_range_proof::BatchedRangeProofU128Data,
+    batched_range_proof::{BatchedRangeProofU128Data, BatchedRangeProofU64Data},
     ciphertext_commitment_equality::CiphertextCommitmentEqualityProofData,
 };
 use solana_zk_sdk::zk_elgamal_proof_program::{
     batched_grouped_ciphertext_validity::build_batched_grouped_ciphertext_3_handles_validity_proof_data,
-    batched_range_proof::build_batched_range_proof_u128_data,
+    batched_range_proof::{build_batched_range_proof_u128_data, build_batched_range_proof_u64_data},
     ciphertext_commitment_equality::build_ciphertext_commitment_equality_proof_data,
 };
 
@@ -161,22 +161,28 @@ impl std::ops::Deref for Built {
 /// `synthetic:<balance>` stands up a throwaway escrow instead of reading one. What that supports is
 /// a claim about the proof system, which does not depend on whose ciphertext it is. Every claim
 /// that IS about a particular account needs the real keys, and says so.
-pub fn build_for(
-    keys_path: &str,
-    decryptable: &str,
-    available: &str,
-    lender_arg: &str,
-    auditor_arg: &str,
-    amount_arg: &str,
-) -> Built {
-    let (source, ae, balance, current_ct, account_label) = match keys_path.strip_prefix("synthetic:")
-    {
+/// An escrow opened for proof-building: a real one read from `keys.json` and the chain, or a
+/// throwaway one stood up for a claim that is about the proof system rather than about an account.
+pub struct BuiltKeys {
+    pub source: ElGamalKeypair,
+    pub ae: AeKey,
+    pub balance: u64,
+    pub current_ct: ElGamalCiphertext,
+    pub label: String,
+}
+
+/// `synthetic:<balance>` stands up a throwaway escrow instead of reading one. What that supports is
+/// a claim about the proof system, which does not depend on whose ciphertext it is. Every claim that
+/// IS about a particular account needs the real keys, and says so.
+pub fn open_escrow(keys_path: &str, decryptable: &str, available: &str) -> BuiltKeys {
+    match keys_path.strip_prefix("synthetic:") {
         Some(bal) => {
             let balance: u64 = bal.parse().expect("synthetic:<balance in base units>");
             let source = ElGamalKeypair::new_rand();
             let ae = AeKey::new_rand();
-            let ct = source.pubkey().encrypt(balance);
-            (source, ae, balance, ct, "a throwaway escrow, generated for this run".to_string())
+            let current_ct = source.pubkey().encrypt(balance);
+            BuiltKeys { source, ae, balance, current_ct,
+                        label: "a throwaway escrow, generated for this run".into() }
         }
         None => {
             let keys: serde_json::Value =
@@ -189,11 +195,24 @@ pub fn build_for(
             let balance = ae
                 .decrypt(&AeCiphertext::from_bytes(&d64(decryptable)).expect("ae ciphertext"))
                 .expect("our key opens our balance");
-            let ct = ElGamalCiphertext::from_bytes(&d64(available)).expect("elgamal ciphertext");
+            let current_ct =
+                ElGamalCiphertext::from_bytes(&d64(available)).expect("elgamal ciphertext");
             let label = keys["account"].as_str().unwrap_or("?").to_string();
-            (source, ae, balance, ct, label)
+            BuiltKeys { source, ae, balance, current_ct, label }
         }
-    };
+    }
+}
+
+pub fn build_for(
+    keys_path: &str,
+    decryptable: &str,
+    available: &str,
+    lender_arg: &str,
+    auditor_arg: &str,
+    amount_arg: &str,
+) -> Built {
+    let BuiltKeys { source, ae, balance, current_ct, label: account_label } =
+        open_escrow(keys_path, decryptable, available);
 
     // `rand` generates one. A real loan registers the lender's key at origination; generating it
     // here keeps the destination handle a genuine key rather than a placeholder.
@@ -229,6 +248,55 @@ pub fn build_for(
         remaining,
         account_label,
     }
+}
+
+
+/// What a de-shield needs: two proofs, and the balance it leaves behind.
+///
+/// `Withdraw` moves a confidential balance into the account's **own public balance** — it has no
+/// destination. That is the property this is built for: once the collateral is public, moving it is
+/// an ordinary SPL transfer, so **the destination does not have to be known at origination**. A
+/// seizure pre-built for one named lender becomes a de-shield that any liquidation path can pick up.
+pub struct Deshield {
+    pub equality: CiphertextCommitmentEqualityProofData,
+    pub range: BatchedRangeProofU64Data,
+    /// The source's balance afterwards. For a full de-shield this is zero.
+    pub remaining: u64,
+    /// `Withdraw` carries this in its instruction data, and at default nobody has the AE key.
+    pub new_decryptable_b64: String,
+}
+
+/// Build them. Cheaper than the transfer set in section 2 of docs/SEIZURE.md: no validity proof,
+/// because there is no destination handle to prove anything about.
+pub fn compose_deshield(
+    source: &ElGamalKeypair,
+    ae: &AeKey,
+    current_ct: &ElGamalCiphertext,
+    balance: u64,
+    amount: u64,
+) -> Deshield {
+    let remaining = balance.checked_sub(amount).expect("cannot de-shield more than is held");
+    let (commitment, opening) = Pedersen::new(remaining);
+
+    // The ciphertext the account is left holding, computed rather than asserted. Withdrawing is
+    // public subtraction: the amount leaves the confidential balance in the clear, so it is encoded
+    // with **no randomness** — an opening of zero, which makes the decrypt handle the identity and
+    // the ciphertext a plain commitment. `ElGamal::encode` does exactly this and is crate-private,
+    // so it is spelled out rather than reached for.
+    let public = source.pubkey().encrypt_with(amount, &PedersenOpening::default());
+    let remaining_ct = current_ct - &public;
+
+    let equality = build_ciphertext_commitment_equality_proof_data(
+        source, &remaining_ct, &commitment, &opening, remaining,
+    )
+    .expect("equality proof");
+
+    let range = build_batched_range_proof_u64_data(
+        vec![&commitment], vec![remaining], vec![REMAINING_BALANCE_BITS], vec![&opening],
+    )
+    .expect("range proof");
+
+    Deshield { equality, range, remaining, new_decryptable_b64: b64(&ae.encrypt(remaining).to_bytes()) }
 }
 
 pub fn b64(b: &[u8]) -> String {
@@ -453,5 +521,73 @@ mod bound_position_tests {
         assert_eq!(b.account_ciphertext, avail);
         let (_, _, _, other) = account(1_000);
         assert_ne!(b.account_ciphertext, other, "two accounts holding the same value differ");
+    }
+}
+
+#[cfg(test)]
+mod deshielding {
+    use super::*;
+
+    fn escrow(balance: u64) -> (ElGamalKeypair, AeKey, ElGamalCiphertext) {
+        let k = ElGamalKeypair::new_rand();
+        let ct = k.pubkey().encrypt(balance);
+        (k, AeKey::new_rand(), ct)
+    }
+
+    /// **W1 — what is left after a full de-shield decrypts to zero.** The whole point: the
+    /// confidential balance becomes the account's public balance, and the confidential side is
+    /// empty. If the arithmetic were wrong the equality proof would be over a ciphertext that is
+    /// not what the account holds, and the token program would reject it at default — the worst
+    /// possible time to find out.
+    #[test]
+    fn a_full_deshield_leaves_a_ciphertext_that_opens_to_zero() {
+        let (k, ae, ct) = escrow(17_300_000_000_000);
+        let d = compose_deshield(&k, &ae, &ct, 17_300_000_000_000, 17_300_000_000_000);
+        assert_eq!(d.remaining, 0);
+        let public = k.pubkey().encrypt_with(17_300_000_000_000u64, &PedersenOpening::default());
+        assert_eq!(k.secret().decrypt_u32(&(&ct - &public)), Some(0));
+    }
+
+    /// **W2 — a partial de-shield leaves the rest readable.** The same arithmetic has to hold when
+    /// something stays behind, or the mechanism only works in the one case it was tested in.
+    #[test]
+    fn a_partial_deshield_leaves_the_remainder() {
+        let (k, ae, ct) = escrow(173_000);
+        let d = compose_deshield(&k, &ae, &ct, 173_000, 100_000);
+        assert_eq!(d.remaining, 73_000);
+        let public = k.pubkey().encrypt_with(100_000u64, &PedersenOpening::default());
+        assert_eq!(k.secret().decrypt_u32(&(&ct - &public)), Some(73_000));
+    }
+
+    /// **W3 — the zero opening really is the public encoding.** `ElGamal::encode` is crate-private,
+    /// so this rebuilds it from a zero opening. The property that makes it the right substitute is
+    /// that *any* key opens it: it is a commitment in the clear, not an encryption.
+    #[test]
+    fn the_public_encoding_is_readable_by_any_key() {
+        let mine = ElGamalKeypair::new_rand();
+        let stranger = ElGamalKeypair::new_rand();
+        let encoded = mine.pubkey().encrypt_with(42u64, &PedersenOpening::default());
+        assert_eq!(stranger.secret().decrypt_u32(&encoded), Some(42),
+                   "a withdrawn amount must be public; if a stranger cannot read it, it is not");
+    }
+
+    /// **W4 — the de-shield carries the AE balance `Withdraw` needs.** At default nobody holds the
+    /// AE key, so the value has to exist from origination, exactly as with the transfer path.
+    #[test]
+    fn the_new_decryptable_balance_is_built_at_origination() {
+        let (k, ae, ct) = escrow(173_000);
+        let d = compose_deshield(&k, &ae, &ct, 173_000, 173_000);
+        let raw = d64(&d.new_decryptable_b64);
+        assert_eq!(raw.len(), 36, "not an AE ciphertext");
+        assert_eq!(ae.decrypt(&AeCiphertext::from_bytes(&raw).unwrap()), Some(0));
+    }
+
+    /// **W5 — de-shielding more than is held is refused, not wrapped.** A wrap would compose a
+    /// proof over a balance the account does not have.
+    #[test]
+    #[should_panic(expected = "cannot de-shield more than is held")]
+    fn overdrawing_is_refused() {
+        let (k, ae, ct) = escrow(100);
+        compose_deshield(&k, &ae, &ct, 100, 101);
     }
 }
