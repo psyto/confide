@@ -106,6 +106,35 @@ else
   bad "the anchored receipt is gone or altered — re-run: ./scripts/anchor-receipt.sh"
 fi
 
+# docs/ONCHAIN.md quotes the keys the chain held when it was written. Twice now a re-provision has
+# moved them and the prose stayed behind, so compare rather than reread: every base64 key in that
+# file must be one the chain still reports.
+if [ -f docs/ONCHAIN.md ]; then
+  acct_key=$(acct "$DEVNET" "$ACCOUNT" | python3 -c "
+import sys,json
+v=json.load(sys.stdin)['result']['value']
+if not v: raise SystemExit(0)
+ct=next(e['state'] for e in v['data']['parsed']['info']['extensions'] if e['extension']=='confidentialTransferAccount')
+print(ct['elgamalPubkey'])" 2>/dev/null)
+  mint_key=$(acct "$DEVNET" "$AUDITED_MINT" | python3 -c "
+import sys,json
+v=json.load(sys.stdin)['result']['value']
+if not v: raise SystemExit(0)
+ct=next(e['state'] for e in v['data']['parsed']['info']['extensions'] if e['extension']=='confidentialTransferMint')
+print(ct.get('auditorElgamalPubkey') or '')" 2>/dev/null)
+  stale=$(ACCT_KEY="$acct_key" MINT_KEY="$mint_key" python3 -c "
+import os, re
+doc = open('docs/ONCHAIN.md').read()
+live = {k for k in (os.environ['ACCT_KEY'], os.environ['MINT_KEY']) if k}
+quoted = set(re.findall(r'[A-Za-z0-9+/]{42,43}=', doc))
+print(','.join(sorted(quoted - live)))")
+  if [ -z "$stale" ]; then
+    ok "docs/ONCHAIN.md quotes only keys the chain still reports"
+  else
+    bad "docs/ONCHAIN.md quotes keys the chain no longer has: $stale"
+  fi
+fi
+
 echo
 echo "  PROOFS — what the live page asks the chain"
 if [ -f web/proofs.json ]; then

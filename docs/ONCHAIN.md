@@ -157,13 +157,19 @@ filled the slot `ConfidentialTransferInstruction::UpdateMint` exists for:
 
 ```
 mint                    5jszdY3yd8fq37DBEqECtBQdvwnyXtA9vexJFefVKWzb
-auditorElgamalPubkey    ut5cP19Fy+AHW+nVkj0BfUANqd3w+722Mi30dj0eBC8=
-account                 F84hb3Lw2egXzEG4bCKJ6zxYq58N5abUGPaNd2CVvEqE
+auditorElgamalPubkey    nF3pvomToJfTyKL5fZkf0UsP5bF3iOOHy1JTKU/AFXE=
+autoApproveNewAccounts  false                    <- as NVDAx has it
+account                 Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
 public amount           0
 ```
 
-`./scripts/set-auditor.sh <mint>` does it and reads the mint back. Same configuration as NVDAx, one
-field different.
+`./scripts/set-auditor.sh <mint>` does it and reads the mint back. Field by field this mint and
+NVDAx differ in the auditor key and the mint authority, and in nothing else.
+
+`update_mint` rewrites `auto_approve_new_accounts` as well as the auditor key, and this script
+passed `true` until 2026-09-15 — quietly undoing the `manual` the mint was created with and leaving
+a mirror that differed from NVDAx in two fields while the copy claimed one. `healthcheck.sh` now
+checks that field rather than trusting this paragraph.
 
 And that one field is the whole argument. Filling it is a single instruction — the difficulty was
 never the mechanics. The difficulty is that this key, once set, reads **every holder's every
@@ -178,12 +184,20 @@ does not reproduce — eight derivation/seed combinations were tried against a C
 account and none matched. So an account the CLI configures is one we can *read on the chain* and
 cannot *prove anything about*. `./scripts/provision-account.sh` stands one up from our own
 instructions instead: `Reallocate`, `ConfigureAccount` carrying a `PubkeyValidityProof` we generate,
-`Deposit`, `ApplyPendingBalance`.
+`ApproveAccount`, `Deposit`, `ApplyPendingBalance`.
+
+`ApproveAccount` is there because the mint gates accounts the way the real ones do. Backed and
+Backpack both ship `autoApproveNewAccounts: false`, so a holder cannot open a confidential account
+without the issuer signing for it. Mirroring that with `auto` would have made provisioning simpler
+and the comparison false. Here the mint authority is us, so the approval is a transaction; on a
+live mint it is a conversation with the issuer, and it is the one step in this repository that
+cannot be done without them.
 
 ```
 account                    Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P
 public balance             0                  <- what the chain shows anyone
-elgamalPubkey              AtQhEEsvGkjX5YFslY15+bV+2jD5OdAR7cmZunK0zBw=   <- ours
+elgamalPubkey              6v2J2Au46e16utqZB4Tt4QttMurm2uemWbbSjrQ0334=   <- ours
+approved                   true               <- the issuer signed for it
 availableBalance           64 bytes of ElGamal ciphertext
 decryptableAvailableBalance  opens to 17,300,000,000,000 base units = 173,000
 ```
