@@ -155,7 +155,8 @@ watch. Source in
 ./scripts/seizure-status.sh   # read the seizure back off devnet — no keys, no wallet
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # every live claim above; exits with the number that died
-cargo test                    # 29 tests
+cargo test                    # 38 tests
+cd programs/confide-seizure && cargo test    # 13 more, over the seizure program
 ```
 
 `healthcheck.sh` covers the mainnet finding on NVDAx, the devnet program, account, mirror mint and

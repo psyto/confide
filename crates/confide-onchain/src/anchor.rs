@@ -40,6 +40,24 @@ const IX_RECORD: u8 = 0;
 const USAGE: &str =
     "usage: anchor-receipt <keypair.json> <blockhash> <keys.json> <decryptable_b64> <available_b64>";
 
+/// The bytes the receipt registry stores: `[disc][commitment:32][recipient:32][grant_id:32][i64]`.
+///
+/// The registry keeps that last field as `expiry` and never interprets it — it is content-blind.
+/// Confide puts `open_at` there, because for an obligation the meaningful date is when it OPENS,
+/// not when it lapses. A registry built for Confide would name the field for what it is.
+///
+/// Hashes rather than values, all the way across: the chain learns that *a* disclosure of *a*
+/// commitment to *a* recipient exists, and nothing about what was disclosed.
+pub fn record_data(commitment: &[u8; 32], grant_id: &[u8], open_at: i64) -> Vec<u8> {
+    let mut data = Vec::with_capacity(1 + 32 * 3 + 8);
+    data.push(IX_RECORD);
+    data.extend_from_slice(commitment);
+    data.extend_from_slice(&hash32(b"public")); // recipient: everyone, at T
+    data.extend_from_slice(&hash32(grant_id));
+    data.extend_from_slice(&open_at.to_le_bytes());
+    data
+}
+
 fn main() {
     let mut args = std::env::args().skip(1);
     let keypair_path = args.next().expect(USAGE);
@@ -61,17 +79,7 @@ fn main() {
         &program,
     );
 
-    // data = [disc][commitment:32][recipient:32][grant_id:32][expiry i64 LE]
-    //
-    // The registry stores that last field as `expiry` and never interprets it — it is
-    // content-blind. Confide puts `open_at` there: for an obligation the meaningful date is when it
-    // OPENS, not when it lapses. A registry built for Confide would name the field for what it is.
-    let mut data = Vec::with_capacity(1 + 32 * 3 + 8);
-    data.push(IX_RECORD);
-    data.extend_from_slice(&commitment);
-    data.extend_from_slice(&hash32(b"public")); // recipient: everyone, at T
-    data.extend_from_slice(&hash32(obligation.package.grant_id.as_bytes()));
-    data.extend_from_slice(&open_at.to_le_bytes());
+    let data = record_data(&commitment, obligation.package.grant_id.as_bytes(), open_at);
 
     let ix = Instruction {
         program_id: program,
@@ -185,4 +193,59 @@ fn d64(s: &str) -> Vec<u8> {
 
 fn hex(b: &[u8]) -> String {
     b.iter().map(|x| format!("{x:02x}")).collect()
+}
+
+#[cfg(test)]
+mod anchoring {
+    use super::*;
+
+    const C: [u8; 32] = [7u8; 32];
+
+    /// **N1 — the layout the registry reads, byte for byte.** The receipt is written by one
+    /// program and read back by `healthcheck.sh` against the sealed artifact; a field that moved
+    /// would compare the wrong 32 bytes and still look like a match against itself.
+    #[test]
+    fn the_record_is_the_layout_the_registry_expects() {
+        let d = record_data(&C, b"obligation-q3-lp-report", 1_794_614_400);
+        assert_eq!(d.len(), 1 + 32 * 3 + 8, "the receipt payload is not 105 bytes");
+        assert_eq!(d[0], IX_RECORD);
+        assert_eq!(&d[1..33], &C, "the commitment is not where the registry looks for it");
+        assert_eq!(&d[33..65], &hash32(b"public"), "the recipient field is not the public hash");
+        assert_eq!(
+            i64::from_le_bytes(d[97..105].try_into().unwrap()),
+            1_794_614_400,
+            "the opening date does not round-trip out of the last field",
+        );
+    }
+
+    /// **N2 — nothing in the payload is a value.** Every field is a hash or a date. If a grant id
+    /// or a recipient ever went on chain in the clear, the anchor would leak the thing it exists
+    /// to avoid leaking, and it would leak it permanently.
+    #[test]
+    fn no_field_carries_anything_readable() {
+        let grant = b"obligation-q3-lp-report";
+        let d = record_data(&C, grant, 0);
+        assert!(!d.windows(grant.len()).any(|w| w == grant), "the grant id went on chain in the clear");
+        assert!(!d[33..65].iter().all(|&b| b == 0), "the recipient field is empty rather than hashed");
+    }
+
+    /// **N3 — a different position anchors differently.** I3 rests on this: the receipt is derived
+    /// from the commitment, so a restated figure cannot be anchored onto the receipt the original
+    /// was anchored to. Equal commitments must agree and unequal ones must not.
+    #[test]
+    fn the_receipt_follows_the_commitment_it_is_about() {
+        let other = [9u8; 32];
+        assert_eq!(record_data(&C, b"g", 1)[1..33], C);
+        assert_ne!(record_data(&C, b"g", 1), record_data(&other, b"g", 1));
+        assert_eq!(record_data(&C, b"g", 1), record_data(&C, b"g", 1), "the payload is not deterministic");
+    }
+
+    /// **N4 — the date is the only field that is not a hash, and it is signed.** Dates before the
+    /// epoch are nonsense here but must not corrupt neighbouring fields if one ever arrives.
+    #[test]
+    fn a_negative_date_stays_inside_its_own_field() {
+        let d = record_data(&C, b"g", -1);
+        assert_eq!(i64::from_le_bytes(d[97..105].try_into().unwrap()), -1);
+        assert_eq!(&d[1..33], &C, "a negative date disturbed the commitment");
+    }
 }
