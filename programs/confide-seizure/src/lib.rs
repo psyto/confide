@@ -93,7 +93,9 @@ const PROOF_TYPE_EQUALITY: u8 = ProofType::CiphertextCommitmentEquality as u8;
 const PROOF_TYPE_BATCHED_RANGE_U128: u8 = ProofType::BatchedRangeProofU128 as u8;
 const PROOF_TYPE_BATCHED_VALIDITY_3: u8 = ProofType::BatchedGroupedCiphertext3HandlesValidity as u8;
 
-solana_program::declare_id!("SeiZure111111111111111111111111111111111111");
+// The address this is deployed at on devnet. It was a placeholder until 2026-09-16, which left a
+// reader with no way to bind the source they cloned to the program the documents point at.
+solana_program::declare_id!("Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN");
 
 entrypoint!(process);
 
