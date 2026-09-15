@@ -5,7 +5,7 @@
 // produce the line that carries its claim, this throws instead of recording — a video that still
 // renders after the thing it demonstrates broke is the failure worth engineering against.
 import path from "node:path";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import puppeteer from "puppeteer";
@@ -41,6 +41,9 @@ function slice(text, from, to) {
 const mints = run("bash", ["scripts/onchain-check.sh"], "reading the xStock mints on mainnet");
 const balance = run("bash", ["scripts/read-balance.sh", ACCOUNT, KEYS], "opening our own confidential balance");
 const collateral = run("bash", ["scripts/prove-collateral.sh", ACCOUNT, "100000", KEYS], "proving the account clears a threshold, on devnet");
+// Reads public state only. The seizure already happened; this is the chain being asked whether it
+// still says so, which is the half a viewer can check for themselves afterwards.
+const seizure = run("bash", ["scripts/seizure-status.sh"], "reading the seizure back off devnet");
 
 // ── guards ───────────────────────────────────────────────────────────────────────────────────────
 for (const [text, re, why] of [
@@ -52,23 +55,30 @@ for (const [text, re, why] of [
   [collateral, /VerifyCiphertextCommitmentEquality/, "the equality proof never ran"],
   [collateral, /VerifyBatchedRangeProofU64/, "the range proof never ran"],
   [collateral, /both accepted/, "the chain did not accept both proofs"],
+  [seizure, /seized: yes/, "the loan on devnet no longer reads as seized"],
+  [seizure, /program.*Gn3rzw8/s, "the seizure program is not the one the loan was settled by"],
+  [seizure, /still read zero/, "the seizure pane stopped saying both accounts read zero"],
 ]) {
   if (!re.test(text)) throw new Error(`refusing to record — ${why}`);
 }
 if ((mints.match(/None\s*$/gm) || []).length < 4) throw new Error("refusing to record — expected 4 empty auditor slots");
 if ((collateral.match(/err\s*:\s*None/g) || []).length < 2) throw new Error("refusing to record — a proof came back with an error");
 
+const manifestPath = path.join(dir, "segments", "manifest.json");
+
 // ── the cut ──────────────────────────────────────────────────────────────────────────────────────
 const scenes = [
   {
+    file: "01-title.mp4",
     kind: "hero",
     lede: "You hold tokenized stocks on Solana.<br><b>So does everyone watching.</b>",
     hold: 8.1,
   },
-  { kind: "leak", hold: 7.5 },
-  { kind: "slot", hold: 21.0 },
-  { kind: "views", hold: 13.2 },
+  { file: "02-leak.mp4", kind: "leak", hold: 7.5 },
+  { file: "03-empty-slot.mp4", kind: "slot", hold: 21.0 },
+  { file: "04-four-views.mp4", kind: "views", hold: 13.2 },
   {
+    file: "05-benefits.mp4",
     kind: "benefits",
     label: "What you get.",
     items: [
@@ -86,6 +96,7 @@ const scenes = [
     hold: 16.3,
   },
   {
+    file: "06-live-account.mp4",
     kind: "evidence",
     label: "A live account on devnet.",
     body: slice(balance, /account\s+/, /elgamal ciphertext/),
@@ -93,13 +104,28 @@ const scenes = [
     hold: 9.6,
   },
   {
+    file: "07-proofs.mp4",
     kind: "evidence",
     label: "And the lender's check, run by Solana's ZK program.",
     body: slice(collateral, /ciphertext-commitment equality/, /both accepted/),
     emphasis: ["err   : None", "success", "both accepted"],
     hold: 13.1,
   },
-  { kind: "close", hold: 7.8 },
+  {
+    file: "08-seizure.mp4",
+    line: "And when the loan goes bad, the lender takes it. The borrower signs nothing, no key is reconstructed, nobody is asked — and neither account ever shows what moved.",
+    kind: "evidence",
+    label: "And on default, the lender takes it.",
+    body: slice(seizure, /loan\s+/, /still read zero/),
+    emphasis: ["seized: yes", "public balance 0"],
+    hold: 13.6,
+  },
+  {
+    file: "09-close.mp4",
+    line: "Your position is yours. And you can still prove what you must. Try it yourself — no wallet, no install.",
+    kind: "close",
+    hold: 7.8,
+  },
 ];
 
 // ── record ───────────────────────────────────────────────────────────────────────────────────────
@@ -112,8 +138,19 @@ const browser = await puppeteer.launch({
   args: ["--no-sandbox", "--hide-scrollbars", "--window-size=1280,720", "--force-device-scale-factor=1.5"],
 });
 const page = await browser.newPage();
+// The page is the only thing that knows where the scenes actually landed. Nothing used to write
+// these down, so segments/manifest.json was maintained by hand and split.sh cut a changed render
+// against the previous cut's boundaries — silently, producing a clip named for one scene and
+// containing another. Recording them here is what makes the manifest a product of the render.
+const marks = [];
 page.on("console", (m) => {
-  if (m.text().startsWith("CONFIDE_")) process.stderr.write(`• page: ${m.text()}\n`);
+  const t = m.text();
+  if (!t.startsWith("CONFIDE_")) return;
+  process.stderr.write(`• page: ${t}\n`);
+  const scene = t.match(/^CONFIDE_SCENE \S+ ([0-9.]+)/);
+  if (scene) marks.push(parseFloat(scene[1]));
+  const total = t.match(/^CONFIDE_SECONDS ([0-9.]+)/);
+  if (total) marks.push(parseFloat(total[1]));
 });
 await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
 await page.evaluate((s) => window.__load(s), scenes);
@@ -142,4 +179,29 @@ execFileSync(process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg", [
   "-movflags", "+faststart", outFile + ".tmp.mp4", "-y",
 ]);
 execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
+// The manifest the cutting and narration scripts read. Written from where the scenes landed, not
+// from where they were asked to.
+if (marks.length !== scenes.length + 1) {
+  throw new Error(`expected ${scenes.length + 1} scene marks, got ${marks.length}`);
+}
+const prior = Object.fromEntries(
+  (() => { try { return JSON.parse(readFileSync(manifestPath, "utf8")); } catch { return []; } })()
+    .map((e) => [e.file, e]),
+);
+const manifest = scenes.map((sc, i) => {
+  const start = marks[i], end = marks[i + 1];
+  const was = prior[sc.file] || {};
+  return {
+    file: sc.file,
+    start: +start.toFixed(2),
+    end: +end.toFixed(2),
+    seconds: +(end - start).toFixed(2),
+    ...(was.narration_seconds ? { narration_seconds: was.narration_seconds } : {}),
+    audio: was.line && was.line === sc.line ? was.audio || "reuse" : "re-record",
+    ...(sc.line ? { line: sc.line } : was.line ? { line: was.line } : {}),
+  };
+});
+writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + "\n");
+process.stderr.write(`• wrote ${manifestPath}\n`);
+
 process.stderr.write(`\n✓ ${outFile}  (${seconds.toFixed(1)}s)\n`);

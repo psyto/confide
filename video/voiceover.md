@@ -75,7 +75,16 @@ only `03-empty-slot` needs a new take.
 
 *35 words · "without ever being told" is the point; everything before it is setup.*
 
-### 1:43 – 1:52 · close
+### 1:43 – 1:58 · and on default, the lender takes it
+
+> And when the loan goes bad, the lender takes it.
+> The borrower signs nothing, no key is reconstructed, nobody is asked —
+> and neither account ever shows what moved.
+
+*29 words · the scene is public state read off devnet, so the last clause is checkable by the
+viewer afterwards rather than taken on trust. This is the claim the earlier cut could not make.*
+
+### 1:58 – 2:07 · close
 
 > Your position is yours.
 > And you can still prove what you must.
@@ -103,6 +112,15 @@ them after any change rather than assuming these still hold.
 
 ## What the narration must not claim
 
-The script says a lender *checks* collateral, never that you can *borrow*. Seizure on default does
-not exist in this build, so borrowing does not either — the earlier cut of this video said "you can
-still borrow against it" and that was wrong.
+**Seizure exists now, and the script may say so** — it runs on devnet and the scene shows the chain
+being asked. The earlier rule was that a lender only *checks* collateral, because the program that
+takes it was unwritten; an even earlier cut said "you can still borrow against it" when neither
+half was true.
+
+What is still off limits, for the same reason the old rule existed:
+
+- **Confide is not a lending protocol.** It takes collateral on a default someone else defines.
+  There is no origination, no interest, no liquidation engine, and the script must not imply one.
+- **This is a mirror mint, not `NVDAx`.** Configured identically and one field apart, and saying
+  otherwise would claim Backed's approval that nobody has given.
+- **Devnet, not mainnet.** The scene says so on screen; the voice must not round it up.
