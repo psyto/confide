@@ -105,8 +105,11 @@ const scenes = [
 // ── record ───────────────────────────────────────────────────────────────────────────────────────
 const browser = await puppeteer.launch({
   headless: "new",
-  defaultViewport: { width: 1280, height: 720, deviceScaleFactor: 1 },
-  args: ["--no-sandbox", "--hide-scrollbars", "--window-size=1280,720", "--force-device-scale-factor=1"],
+  // 1280x720 of layout at 1.5x device pixels, so the output is a true 1920x1080 rather than an
+  // upscale. Nearly every frame is text, and 720p was costing it visibly once YouTube re-encoded.
+  // Changing the viewport instead would have reflowed every scene; the scale factor does not.
+  defaultViewport: { width: 1280, height: 720, deviceScaleFactor: 1.5 },
+  args: ["--no-sandbox", "--hide-scrollbars", "--window-size=1280,720", "--force-device-scale-factor=1.5"],
 });
 const page = await browser.newPage();
 page.on("console", (m) => {
@@ -117,7 +120,7 @@ await page.evaluate((s) => window.__load(s), scenes);
 
 const recorder = new PuppeteerScreenRecorder(page, {
   fps: 30,
-  videoFrame: { width: 1280, height: 720 },
+  videoFrame: { width: 1920, height: 1080 },
   aspectRatio: "16:9",
   ffmpeg_Path: process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg",
 });
