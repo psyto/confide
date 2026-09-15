@@ -18,8 +18,9 @@ use solana_address::Address;
 use solana_hash::Hash;
 use solana_instruction::{AccountMeta, Instruction};
 use solana_keypair::Keypair;
-use solana_message::Message;
+use solana_message::{v0, AddressLookupTableAccount, Message, VersionedMessage};
 use solana_signer::Signer;
+use solana_transaction::versioned::VersionedTransaction;
 use solana_transaction::Transaction;
 use solana_zk_elgamal_proof_interface::instruction::{ContextStateInfo, ProofInstruction};
 use solana_zk_elgamal_proof_interface::proof_data::{
@@ -71,14 +72,26 @@ fn main() {
     let blockhash = Hash::from_str(&a.next().expect("blockhash")).unwrap();
     let out = a.next().expect("out.json");
     let authority = Address::from_str(&a.next().expect("context state authority")).unwrap();
+    let keys_dir = a.next().expect("directory for the context account keypairs");
+    // The range proof's verify transaction does not fit a legacy message once the context
+    // authority is its own account — 1,237 bytes against a 1,232 limit. An address lookup table
+    // holding that account and the authority moves both out of the static keys and buys back 62
+    // bytes for 37. Pass `none` to see the overflow rather than avoid it.
+    let alt = a.next().expect("address lookup table | none");
 
     let payer = confide_ct_keypair(&payer_path);
     let zk = solana_zk_elgamal_proof_interface::id();
 
     let s = confide_ct::build_for(&keys, &dec, &avail, &lender, &auditor, &amount);
 
-    // One account per proof, each sized for the context it will hold.
-    let accounts = [Keypair::new(), Keypair::new(), Keypair::new()];
+    // One account per proof, each sized for the context it will hold. Loaded from disk when they
+    // are already there: the lookup table has to be built around the range account's address, so
+    // that address must be known before the proofs that go into it exist.
+    let accounts = [
+        load_or_create(&keys_dir, "ctx-equality.json"),
+        load_or_create(&keys_dir, "ctx-validity.json"),
+        load_or_create(&keys_dir, "ctx-range.json"),
+    ];
     let sizes = [
         std::mem::size_of::<ProofContextState<CiphertextCommitmentEqualityProofContext>>(),
         std::mem::size_of::<ProofContextState<BatchedGroupedCiphertext3HandlesValidityProofContext>>(),
@@ -121,19 +134,32 @@ fn main() {
             Message::new(&[create], Some(&payer.pubkey())),
             blockhash,
         );
-        let verify_tx = Transaction::new(
-            &[&payer],
-            Message::new(&[ix], Some(&payer.pubkey())),
-            blockhash,
-        );
-        let n = bincode::serialize(&verify_tx).unwrap().len();
+        println!("{}", b64tx(&bincode::serialize(&create_tx).unwrap()));
+
+        // The range proof is the only one that needs the table, and only because the authority is
+        // a separate account. Routing the small two through it as well would work and would hide
+        // which one the limit actually bites.
+        let (bytes, how) = if i == 2 && alt != "none" {
+            let table = AddressLookupTableAccount {
+                key: Address::from_str(&alt).expect("lookup table address"),
+                addresses: vec![accounts[2].pubkey(), authority],
+            };
+            let msg = v0::Message::try_compile(&payer.pubkey(), &[ix], &[table], blockhash)
+                .expect("compile v0 message against the lookup table");
+            let tx = VersionedTransaction::try_new(VersionedMessage::V0(msg), &[&payer])
+                .expect("sign versioned transaction");
+            (bincode::serialize(&tx).unwrap(), "v0 + lookup table")
+        } else {
+            let tx = Transaction::new(&[&payer], Message::new(&[ix], Some(&payer.pubkey())), blockhash);
+            (bincode::serialize(&tx).unwrap(), "legacy")
+        };
+        let n = bytes.len();
         eprintln!(
-            "  verify tx {}        {n} bytes{}",
+            "  verify tx {}        {n} bytes, {how}{}",
             i + 1,
             if n > 1232 { "   <- OVER the 1,232-byte limit" } else { "" }
         );
-        println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&create_tx).unwrap()));
-        println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&verify_tx).unwrap()));
+        println!("{}", b64tx(&bytes));
     }
 
     std::fs::write(
@@ -157,7 +183,26 @@ fn main() {
     eprintln!("  context accounts   {} / {} / {}", accounts[0].pubkey(), accounts[1].pubkey(), accounts[2].pubkey());
     eprintln!("  sizes              {} / {} / {} bytes", sizes[0], sizes[1], sizes[2]);
     eprintln!("  authority          {authority}   <- the loan PDA; the borrower cannot close these");
+    eprintln!("  lookup table       {alt}");
     eprintln!("  artifact           {out}");
+}
+
+fn b64tx(bytes: &[u8]) -> String {
+    base64::engine::general_purpose::STANDARD.encode(bytes)
+}
+
+/// Context account keypairs are throwaway — they exist to hold one proof each — but they must
+/// survive between the run that names them and the run that fills them.
+fn load_or_create(dir: &str, name: &str) -> Keypair {
+    let path = format!("{dir}/{name}");
+    if let Ok(bytes) = std::fs::read(&path) {
+        let v: Vec<u8> = serde_json::from_slice(&bytes).unwrap();
+        return Keypair::try_from(&v[..]).unwrap();
+    }
+    let kp = Keypair::new();
+    std::fs::create_dir_all(dir).unwrap();
+    std::fs::write(&path, serde_json::to_vec(&kp.to_bytes().to_vec()).unwrap()).unwrap();
+    kp
 }
 
 fn confide_ct_keypair(path: &str) -> Keypair {

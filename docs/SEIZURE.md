@@ -224,10 +224,20 @@ leaves a ciphertext that opens to exactly zero (S5).
 mechanism can be run without the ~1.5 SOL a devnet deployment needs. Three results, two of them
 corrections:
 
-**The context state accounts work.** All three were created and verified into, in six transactions,
+**The context state accounts work — all three.** Created and verified into, in six transactions,
 and read back from chain: 161 / 385 / 297 bytes, owned by the ZK program, each holding the right
-proof context under the authority it was given. That is the durable half of assumption 2 — the
-proofs survive their transaction and are addressable afterwards.
+proof context under an authority that is not the borrower. That is the durable half of assumption 2
+— the proofs survive their transaction and are addressable afterwards.
+
+```
+ciphertext-commitment equality            161B  type= 3  authority=as recorded  ok
+grouped ciphertext validity, 3 handles    385B  type=12  authority=as recorded  ok
+batched range proof U128                  297B  type= 7  authority=as recorded  ok
+```
+
+A returned signature is not an executed transaction, and the first version of this read the
+accounts back before the last one had confirmed — reporting six sent and one uninitialised. The
+script confirms each signature now, which is why the table above is evidence rather than optimism.
 
 **The proof type discriminants in the program were all three wrong.** They had been transcribed as
 2 / 6 / 9; the chain wrote **3 / 7 / 12**. Reading the accounts back is what caught it. A wrong
@@ -247,12 +257,25 @@ Measured, not estimated:
 | the limit | **1,232** |
 
 Over by five. And the authority *must* be the loan PDA — that is the one check section 3 leaves to
-this program. Creating the account in its own transaction already bought back what it could. The
-two ways out are the ones every Token-2022 client ends up at: stage the 1,000-byte proof in a
-record account and verify from it with `VerifyProofFromAccount`, or use a v0 transaction with an
-address lookup table holding the ZK program id, which saves exactly the 32 bytes needed. **Neither
-is built here**, so origination is demonstrated for two of the three proofs and blocked on the
-third.
+this program. Creating the account in its own transaction already bought back what it could.
+
+**Fixed, with an address lookup table.** Not the ZK program id, which cannot be moved: a program a
+transaction invokes has to stay in the static account keys. The two that can move are the range
+context account and the authority, and moving both costs 37 bytes of table reference to save 64:
+
+| | bytes |
+|---|---|
+| verify range U128, legacy, authority = the loan PDA | 1,237 — rejected |
+| **verify range U128, v0 + lookup table** | **1,211 — lands** |
+
+21 bytes of headroom. `./scripts/seizure-origination.sh` runs the whole of it, and the ordering is
+the part worth noticing: the table has to name the range context account, so that account's address
+must exist **before** the proof that goes into it does. The script names the accounts in one pass,
+builds the table around them, and only then builds the proofs.
+
+The record-account alternative — stage the 1,000 bytes and verify with `VerifyProofFromAccount` —
+would also work and is not built. It needs a program willing to write arbitrary bytes into an
+account, which is a surface this does not otherwise have.
 
 **Deployment needs `--arch v3`.** The default `cargo build-sbf` target is rejected by the runtime as
 an sbpf version that is not enabled.
@@ -305,8 +328,8 @@ keep secret between origination and default, because the proofs reveal nothing: 
    its own programs, so the root `cargo test` does not cover it. **Not yet deployed:** the devnet
    keypair holds 0.62 SOL against the ~1.5 SOL a deployment costs, and the faucet refuses small
    accounts. A local validator is the route that does not need funding.
-3. **The range proof's transport** — a record account or an address lookup table, per the table
-   above. Nothing else can be finished until origination can cite all three proofs.
+3. ~~The range proof's transport~~ — **done**, by lookup table.
+   `./scripts/seizure-origination.sh`.
 4. `scripts/escrow-account.sh` — stand up a PDA-owned confidential escrow. Settles assumption 1.
 5. `scripts/seize.sh` — default, then seizure, end to end, with the balances read before and after.
 6. Invariants in `tests/`, in the style of `confide-embargo/tests/invariants.rs`: seizure is

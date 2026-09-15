@@ -89,8 +89,8 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
 | | |
 |---|---|
 | 動く | 3本の証明がライブ ZK プログラムに受理される（`./scripts/seizure-proofs.sh`）。context state account 3つを作成・検証・読み返し確認済み。プログラムは SBF ビルド + ローカルデプロイ済み |
-| 止まっている | **U128 range proof が 1,237 バイトで、レガシー tx 上限 1,232 を5バイト超える**（authority を loan PDA にした場合）。オリジネーションが3本中2本までしか進めない |
-| 次の一手 | [`docs/SEIZURE.md`](docs/SEIZURE.md) §8-3。**address lookup table を推奨** — record account 方式と違い、新しい信頼点も新しい口座所有権も持ち込まず、必要な32バイトちょうど浮く |
+| 解決済み | range proof の 1,237 バイト問題は **address lookup table で解決**（1,211 バイト、余裕21）。`./scripts/seizure-origination.sh` が通しで走る |
+| 次の一手 | [`docs/SEIZURE.md`](docs/SEIZURE.md) §8-4 以降 — PDA 所有の escrow を立て、`Transfer` を CPI で撃つ。残る前提は「秘匿残高を持つ口座を `SetAuthority` で PDA に渡せるか」 |
 | 注意 | デプロイは `cargo build-sbf --arch v3`。既定ターゲットはランタイムに蹴られる。`declare_id!` は仮の `SeiZure111…` のままで、実デプロイ ID と違う |
 
 Stocklana 起点の commit もこの窓の内側に入るが、**規約上の問題はない** — CWF が判定するのは
