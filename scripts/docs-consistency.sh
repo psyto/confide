@@ -69,6 +69,13 @@ sys.exit(0 if sorted(man) == disk and all(n in lines for n in man) else 1)
 PY
 
 echo
+echo "  THE WIRE — the client against the program"
+if bash scripts/wire-check.sh >/dev/null 2>&1; then
+  ok "every instruction's account count matches between client and program"
+else
+  bad "the client and the program disagree on an instruction's accounts — ./scripts/wire-check.sh"
+fi
+echo
 echo "  THE COUNTS — measured, not remembered"
 python3 video/pace.py >/dev/null 2>&1 \
   && ok "the presentation's timing table matches its own script" \
