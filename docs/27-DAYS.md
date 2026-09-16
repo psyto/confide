@@ -150,10 +150,16 @@ not because the asset is risky but because the position cannot enter*. Facts, Ka
 Confide's inference are three visually separate lanes. The commands stay underneath, because they
 are what make the page checkable rather than a claim about live data.
 
-**4. The market evidence map** — **done, 2026-09-16**, and it is a sharper number than expected:
+**4. The market evidence map** — **done, 2026-09-16**, and sharper than expected in both
+directions:
 
 > **1,869 of 1,869** tokenized-equity mints could be held by a Kamino reserve today.
 > **0** of them can be held while the position is confidential.
+>
+> And the admission question is not hypothetical: **19 tokenized-equity reserves are live on
+> Kamino**, thirteen of them holding real balances totalling ≈89,195 tokens at LTVs from 30 % to
+> 73 %. **SpaceX has one already** — `SPCX.US`, Active, 40 % LTV, 15,000 cap. Every one of those
+> deposited positions is public.
 
 The first number is admissibility, the second is usability, and until now this repository had one
 number doing both jobs. `./scripts/kamino-admissible.sh` produces them; `web/kamino.json` carries

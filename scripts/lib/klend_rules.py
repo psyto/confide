@@ -72,3 +72,65 @@ def evaluate_mint(info):
                 break
 
     return (not why), why, sorted(exts)
+
+
+# ---------------------------------------------------------------------------
+# Reserve layout.
+#
+# Derived from `programs/klend/src/state/reserve.rs` at the pin above, and then *checked against
+# mainnet* rather than trusted: the first derivation put `mint_decimals` eight bytes late because
+# it assumed `u128` aligns to 16. On BPF it aligns to 8. The offsets below are the ones that make
+# a real reserve decode to values that are already known independently — the liquidity mint at 128
+# matching the account it was fetched for, `mint_decimals` matching the mint's own decimals, and
+# `borrow_factor_pct` landing on 150 rather than on 4,294,967,306,000.
+#
+# `scripts/kamino-reserves.sh` re-checks the mint and the decimals on every run, so a layout change
+# shows up as a failure and not as a plausible wrong number.
+
+RESERVE_DISCRIMINATOR = bytes.fromhex("2bf2ccca1af73b7f")  # sha256("account:Reserve")[:8]
+
+OFF_LENDING_MARKET = 32
+OFF_LIQUIDITY = 128
+OFF_LIQ_MINT = OFF_LIQUIDITY + 0
+OFF_LIQ_AVAILABLE = OFF_LIQUIDITY + 96
+OFF_LIQ_BORROWED_SF = OFF_LIQUIDITY + 104     # u128, scaled by 2**60
+OFF_LIQ_PRICE_SF = OFF_LIQUIDITY + 120        # u128, scaled by 2**60
+OFF_LIQ_DECIMALS = OFF_LIQUIDITY + 144
+
+OFF_CONFIG = 4856                              # liquidity 1232 + pad 1200 + collateral 1096 + pad 1200
+OFF_CFG_STATUS = OFF_CONFIG + 0                # 0 Active, 1 Obsolete, 2 Hidden
+OFF_CFG_LTV_PCT = OFF_CONFIG + 16
+OFF_CFG_LIQ_THRESHOLD_PCT = OFF_CONFIG + 17
+OFF_CFG_MIN_LIQ_BONUS_BPS = OFF_CONFIG + 18
+OFF_CFG_MAX_LIQ_BONUS_BPS = OFF_CONFIG + 20
+OFF_CFG_BORROW_FACTOR_PCT = OFF_CONFIG + 152   # + 24 hdr + 24 fees + 88 curve
+OFF_CFG_DEPOSIT_LIMIT = OFF_CONFIG + 160
+OFF_CFG_BORROW_LIMIT = OFF_CONFIG + 168
+
+SF = 2 ** 60
+RESERVE_STATUS = {0: "Active", 1: "Obsolete", 2: "Hidden"}
+
+
+def decode_reserve(data):
+    """Decode the fields a collateral decision turns on. `data` is the raw account."""
+    import struct
+    u64 = lambda o: struct.unpack_from("<Q", data, o)[0]
+    u16 = lambda o: struct.unpack_from("<H", data, o)[0]
+    u128 = lambda o: int.from_bytes(data[o:o + 16], "little")
+    dec = u64(OFF_LIQ_DECIMALS)
+    unit = 10 ** dec if dec < 30 else 1
+    return {
+        "lending_market_raw": data[OFF_LENDING_MARKET:OFF_LENDING_MARKET + 32],
+        "mint_raw": data[OFF_LIQ_MINT:OFF_LIQ_MINT + 32],
+        "decimals": dec,
+        "status": RESERVE_STATUS.get(data[OFF_CFG_STATUS], "unknown(%d)" % data[OFF_CFG_STATUS]),
+        "ltv_pct": data[OFF_CFG_LTV_PCT],
+        "liquidation_threshold_pct": data[OFF_CFG_LIQ_THRESHOLD_PCT],
+        "liquidation_bonus_bps": [u16(OFF_CFG_MIN_LIQ_BONUS_BPS), u16(OFF_CFG_MAX_LIQ_BONUS_BPS)],
+        "borrow_factor_pct": u64(OFF_CFG_BORROW_FACTOR_PCT),
+        "deposit_limit": u64(OFF_CFG_DEPOSIT_LIMIT) / unit,
+        "borrow_limit": u64(OFF_CFG_BORROW_LIMIT) / unit,
+        "available": u64(OFF_LIQ_AVAILABLE) / unit,
+        "borrowed": u128(OFF_LIQ_BORROWED_SF) / SF / unit,
+        "price": u128(OFF_LIQ_PRICE_SF) / SF,
+    }

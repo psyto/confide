@@ -64,6 +64,44 @@ account-level lines, and only those.
 
 That is a narrower and more useful statement than "tokenized equity is not lendable."
 
+## Kamino is already lending against tokenized stocks
+
+This was the assumption that most needed checking, and it turned out to be understated. Reading
+every reserve the lending program holds — 591 of them across 172 markets — **19 have a tokenized
+stock as their liquidity mint**, and they are not placeholders. `./scripts/kamino-reserves.sh`.
+
+| | |
+|---|---|
+| live reserves for tokenized equity | **19** |
+| of those, holding a real balance rather than a seed | **13**, all Backed's xStocks |
+| deposited across them | **≈89,195 tokens** |
+| LTVs, chosen by whoever owns those markets | **30 % – 73 %** |
+| held confidentially | **0** |
+
+`SPYx` at 73 % LTV against a 20,000 cap with 5,221 deposited. `GOOGLx` at 60 % with 8,010 of
+12,000. `MSTRx` at 30 % with 29,660 of 90,000. These are underwriting decisions someone already
+made, with real money behind them.
+
+**And SpaceX has a reserve already.** Backpack's `SPCX.US`:
+
+| | |
+|---|---|
+| reserve | `GrtBFz6BSky1PiyVBL7jy3w4Z1hKz2wvSjT4vd2iouC3` |
+| market | `4iRHKGsTq3e4uut6e4PfyV9AEbNuXaMu9JaSP378p9qy` |
+| status | Active |
+| LTV / liquidation threshold | **40 % / 60 %** |
+| liquidation bonus | 5 % – 10 % |
+| deposit cap | **15,000 SPCX** |
+| borrow limit | **0** — collateral only: deposit it, borrow something else against it |
+| currently deposited | 0.1 |
+
+So the packet is not asking anyone to consider a new asset class, or to pick an LTV for SpaceX.
+**Both were chosen already.** The question it asks is narrower and much easier to answer: *the
+holder who will not post this collateral publicly — what would it take to let them post it at all?*
+
+**Every one of those 89,195 deposited tokens is a public position.** A holder who does not want
+that has exactly one option today, and it is not to post the collateral.
+
 ## What this establishes, and what it does not
 
 **Established.** The conditions are exact, they are in production code, they are citable, and they
@@ -72,6 +110,11 @@ confidentiality alone.
 
 **Not established, and not to be claimed:**
 
+- **That the empty SPCX reserve is empty because of confidentiality.** It holds 0.1 tokens; so do
+  the other two Backpack reserves, while Backed's thirteen hold real balances. The likeliest
+  explanation is that Backpack's tokenized stocks are newer and thinner, not that privacy is the
+  binding constraint. **Nothing here should be read as "demand is being suppressed"** — that is a
+  hypothesis this repository cannot test.
 - **That Kamino wants to relax it.** Nobody at Kamino has been asked. These conditions are a
   reasonable design: a reserve that cannot read a balance cannot mark a position, and refusing what
   you cannot value is correct underwriting, not an oversight.

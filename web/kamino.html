@@ -58,10 +58,10 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 <div class="wrap">
 
 <h1>Can Kamino take this<br>as collateral?</h1>
-<div class="lede">Kamino Lend is open source, and it does not ignore confidential tokens —
-it <b>names</b> them, and requires them to be switched off. Pick any of the 1,869 tokenized stocks
-on Solana below. <b>The chain reading is made by your browser, now.</b> The rules it is checked
-against are transcribed from Kamino's own program at a pinned release.</div>
+<div class="lede">Kamino already lends against tokenized stocks — <b>19 live reserves</b>, at LTVs
+its market owners chose. Every position in them is public. Kamino Lend is open source, and it does
+not ignore confidential tokens: it <b>names</b> them, and requires them to be switched off. Pick any
+of the 1,869 tokenized stocks below. <b>The chain reading is made by your browser, now.</b></div>
 <div class="sub"><a href="https://github.com/psyto/confide">GitHub</a> ·
 <a href="index.html">what Confide is</a> ·
 <a href="https://github.com/psyto/confide/blob/main/docs/KAMINO.md">the full verdict</a> ·
@@ -92,6 +92,14 @@ no wallet, no key</div>
   <div class="lede">The <a href="index.html">1,869</a> is incidence — how many tokenized stocks have
   confidential transfers switched on. It is not the number a lender cares about, and until this page
   they were the same number here. These are two questions with two answers.</div>
+  <div class="grid2">
+    <div class="panel"><div class="lbl">tokenized stocks Kamino <b>already</b> lends against</div>
+      <div class="stat" style="color:var(--cyn)" id="nRes">—</div>
+      <div class="prov" id="nResSub">live reserves, LTVs chosen by their market owners</div></div>
+    <div class="panel"><div class="lbl">of those deposits, held confidentially</div>
+      <div class="stat bad">0</div>
+      <div class="prov">every position in them is visible to anyone who looks</div></div>
+  </div>
   <div class="grid2">
     <div class="panel"><div class="lbl">mints a Kamino reserve could hold today</div>
       <div class="stat ok" id="nAdm">—</div>
@@ -154,7 +162,7 @@ const RPCS=["https://solana-rpc.publicnode.com","https://api.mainnet-beta.solana
 const ALLOWED=new Set(["confidentialTransferFeeConfig","confidentialTransferMint","mintCloseAuthority",
  "metadataPointer","permanentDelegate","transferFeeConfig","tokenMetadata","transferHook",
  "defaultAccountState","scaledUiAmountConfig","pausableConfig"]);
-let MINTS=[];
+let MINTS=[], RESERVES={};
 
 async function rpc(body){
   let last;
@@ -203,6 +211,7 @@ async function show(m){
     return;
   }
   const v=evaluate(info);
+  const rv=(RESERVES[m.mint]||[]);
   const read=new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";
   const hasCT=!!v.exts.confidentialTransferMint;
 
@@ -237,6 +246,17 @@ async function show(m){
       '<div class="prov">'+esc(m.mint)+' · decimals '+esc(info.decimals)+' · read '+read+
       ' · expires the moment the issuer changes a setting; reload to re-read</div></div>'+
 
+    (rv.length?
+    '<div class="lane fact"><h3>Kamino already has a reserve for this <span>read from the lending program</span></h3>'+
+      '<table><tr><th>reserve</th><th>ltv</th><th>liq. threshold</th><th>cap</th><th>deposited</th><th></th></tr>'+
+      rv.map(r=>'<tr><td class="mono">'+esc(r.reserve.slice(0,8))+'…</td><td class="mono">'+r.ltv_pct+'%</td>'+
+        '<td class="mono">'+r.liquidation_threshold_pct+'%</td><td class="mono">'+(+r.deposit_limit).toLocaleString()+'</td>'+
+        '<td class="mono">'+(+r.available).toLocaleString(undefined,{maximumFractionDigits:2})+'</td>'+
+        '<td class="muted">'+esc(r.status)+(+r.borrow_limit===0?' · collateral only':'')+'</td></tr>').join("")+
+      '</table><div class="prov">The admission question is already answered for this token — someone chose these numbers. '+
+      'What no holder can do is post the same collateral <b>confidentially</b>.</div></div>'
+    :'<div class="lane"><h3 class="muted">No Kamino reserve for this mint <span>read from the lending program</span></h3>'+
+      '<div class="muted" style="font-size:14px">Admission here would be a new reserve rather than a change to an existing one.</div></div>')+
     (whyRows?'<div class="lane"><h3 class="bad">Why Kamino would refuse the mint <span>Kamino\'s rules, applied here</span></h3><table>'+whyRows+'</table></div>':'')+
 
     (hasCT&&v.ok?
@@ -271,6 +291,15 @@ function render(filter){
 
 (async()=>{
   MINTS=await (await fetch("mints.json")).json();
+  try{
+    const rr=await (await fetch("kamino-reserves.json")).json();
+    for(const r of rr.reserves) (RESERVES[r.mint]=RESERVES[r.mint]||[]).push(r);
+    const live=rr.reserves.filter(r=>r.available>1);
+    document.getElementById("nRes").textContent=rr.reserves.length;
+    document.getElementById("nResSub").textContent=
+      live.length+" of them hold a real balance — "+
+      Math.round(live.reduce((a,r)=>a+r.available,0)).toLocaleString()+" tokens, every one public";
+  }catch(e){}
   try{
     const k=await (await fetch("kamino.json")).json();
     document.getElementById("nAdm").textContent=
