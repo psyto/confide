@@ -45,6 +45,19 @@ both sides · `handler_init_reserve.rs:65` reserve creation.
 So the rule is uniform: **a holder whose position is confidential cannot deposit it, cannot borrow
 against it, and cannot be liquidated out of it.** The same four lines decide all three.
 
+**Two handlers do not run the check, and that was worth confirming rather than assuming.**
+`deposit_obligation_collateral` and `withdraw_obligation_collateral` move the *collateral* token —
+the cToken a reserve mints against a deposit — not the tokenized stock. That mint is created by
+klend itself and its accounts are declared `Program<'info, Token>`, the **legacy SPL Token
+program**, which has no extensions to carry. The check is correctly absent, and the cToken is
+unreachable without first passing `deposit_reserve_liquidity`, which is checked.
+
+Two composite handlers were also worth following: `deposit_and_withdraw` and
+`repay_and_withdraw_redeem` do not call the check directly, they call the underlying handlers'
+`process_impl`. The check lives **inside** `process_impl` rather than in the outer `process`, so
+they inherit it. **"Every path is checked" would have been the wrong claim; this is the right
+one.**
+
 ## What the asset says
 
 Both SpaceX mints are Token-2022 with the confidential-transfer extension, read live from mainnet:
