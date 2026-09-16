@@ -7,6 +7,27 @@
 > — README.md, as it read before any of this was built. The sentence is gone from it now;
 > section 6 is what replaced it.
 
+> **Under repair, 2026-09-16.** An independent review of this day's work returned *block*, and it
+> was right. Four claims below are not what the code does:
+>
+> - **The floor check is unsound as written.** The arithmetic is correct and the binding is not:
+>   `originate` never checks that the floor context accounts are owned by the ZK proof program, nor
+>   that the equality context is about *this escrow's* ciphertext. `EQ_PUBKEY` and `EQ_CIPHERTEXT`
+>   are defined and never used. Fabricated accounts with the right header bytes pass. It also
+>   compares `q_min` in base units where the default predicate treats it as whole tokens.
+> - **De-shielding strands the collateral.** `Withdraw` credits the escrow's *own* public balance
+>   and does not change its owner, which is still the loan PDA — and this program has no instruction
+>   that moves a public balance. "Anything can move it afterwards" is false; nothing can.
+> - **One escrow, one loan is not enforced.** `originate` never verifies the escrow is owned by the
+>   loan PDA, so a borrower can originate against an account they still hold.
+> - **Mode B does need an issuer signature.** `autoApproveNewAccounts: false` means the escrow must
+>   be approved by the mint authority before it can be funded. This document says so elsewhere and
+>   claimed the opposite here.
+>
+> The zero-opening substitution in 4d was checked and is correct — byte-identical to what
+> Token-2022 subtracts, not merely equivalent. The full review is in
+> [`reviews/2026-09-16-codex-implementation-block.md`](reviews/2026-09-16-codex-implementation-block.md).
+
 `prove-collateral.sh` ends one sentence short of a loan. The lender learns *this account holds at
 least X* and cannot act on it, so the position is provable and not pledgeable. This is the design
 that closes it, **and it runs on devnet** — section 6. Read section 4 before believing more of that
