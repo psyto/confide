@@ -149,6 +149,21 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
+    // The handover, verified rather than assumed. Until this existed, `originate` recorded whatever
+    // escrow address it was handed: a borrower could originate against an account they still owned
+    // and move the collateral afterwards, and "one escrow, one loan" was a property of the PDA that
+    // nothing checked had been reached.
+    {
+        let e = escrow.try_borrow_data()?;
+        if e.len() < ACCOUNT_OWNER + 32 {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        if e[ACCOUNT_OWNER..ACCOUNT_OWNER + 32] != loan.key.to_bytes() {
+            msg!("the escrow has not been handed over — its owner is not this loan");
+            return Err(ProgramError::IllegalOwner);
+        }
+    }
+
     // The check Token-2022 cannot make for us. A context state account is closable by its
     // authority; if that is the borrower, they can withdraw the proofs the day before default and
     // the seizure evaporates. Everything else about these proofs the processor re-checks at
@@ -167,12 +182,28 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     }
 
     // The floor is proved on chain, not recorded on trust. Two more context accounts, the pair
-    // `prove-collateral` produces, and the arithmetic that joins them.
+    // `prove-collateral` produces, and the arithmetic that joins them — bound to this escrow's own
+    // key and ciphertext, and scaled by the mint's own decimals so that `q_min` means the same
+    // thing here as it does in the default predicate.
     let q_min = u64::from_le_bytes(data[..8].try_into().unwrap());
+    let decimals = {
+        let m = mint.try_borrow_data()?;
+        if m.len() <= MINT_DECIMALS {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        m[MINT_DECIMALS]
+    };
+    let floor_base_units = q_min
+        .checked_mul(10u64.checked_pow(decimals as u32).ok_or(ProgramError::InvalidArgument)?)
+        .ok_or(ProgramError::InvalidArgument)?;
+
+    let (elgamal_pubkey, ciphertext) = escrow_confidential_state(&escrow.try_borrow_data()?)?;
     floor_is_proved(
         &ctx_floor_equality.try_borrow_data()?,
         &ctx_floor_range.try_borrow_data()?,
-        q_min,
+        &elgamal_pubkey,
+        &ciphertext,
+        floor_base_units,
     )?;
 
     let rent = Rent::get()?.minimum_balance(LOAN_LEN);
@@ -302,6 +333,11 @@ const PEDERSEN_G: [u8; 32] = [
     0x58, 0xe3, 0x0b, 0x6a, 0xa5, 0x82, 0xdd, 0x8d, 0xb6, 0xa6, 0x59, 0x45, 0xe0, 0x8d, 0x2d, 0x76,
 ];
 
+/// SPL token account layout: `mint(32) | owner(32) | amount(8) | ...`.
+const ACCOUNT_OWNER: usize = 32;
+/// SPL mint layout: `COption<authority>(36) | supply(8) | decimals(1) | ...`.
+const MINT_DECIMALS: usize = 36 + 8;
+
 /// Inside a proof context, past the 33-byte `[authority | proof_type]` header.
 const EQ_COMMITMENT: usize = CTX_PROOF_TYPE + 1 + 32 + 64;
 const EQ_PUBKEY: usize = CTX_PROOF_TYPE + 1;
@@ -330,13 +366,28 @@ const RANGE_FIRST_COMMITMENT: usize = CTX_PROOF_TYPE + 1;
 pub fn floor_is_proved(
     equality_ctx: &[u8],
     range_ctx: &[u8],
-    q_min: u64,
+    escrow_elgamal_pubkey: &[u8; 32],
+    escrow_ciphertext: &[u8; 64],
+    floor_base_units: u64,
 ) -> Result<(), ProgramError> {
     use solana_curve25519::ristretto::{multiply_ristretto, subtract_ristretto, PodRistrettoPoint};
     use solana_curve25519::scalar::PodScalar;
 
     if equality_ctx.len() < EQ_COMMITMENT + 32 || range_ctx.len() < RANGE_FIRST_COMMITMENT + 32 {
         return Err(ProgramError::InvalidAccountData);
+    }
+
+    // The binding this check had none of. Without it the arithmetic holds over numbers an attacker
+    // chose: a commitment to `floor + 1` and one to `1` satisfy the subtraction while saying nothing
+    // about any account. The equality proof has to be about **this escrow's** key and **this
+    // escrow's** current ciphertext, or it is about somebody else's balance.
+    if equality_ctx[EQ_PUBKEY..EQ_PUBKEY + 32] != escrow_elgamal_pubkey[..] {
+        msg!("the floor proof is under a different ElGamal key than this escrow's");
+        return Err(ProgramError::InvalidArgument);
+    }
+    if equality_ctx[EQ_CIPHERTEXT..EQ_CIPHERTEXT + 64] != escrow_ciphertext[..] {
+        msg!("the floor proof is about a balance this escrow no longer holds");
+        return Err(ProgramError::InvalidArgument);
     }
 
     let c = PodRistrettoPoint(
@@ -348,7 +399,7 @@ pub fn floor_is_proved(
 
     // q_min as a little-endian scalar.
     let mut k = [0u8; 32];
-    k[..8].copy_from_slice(&q_min.to_le_bytes());
+    k[..8].copy_from_slice(&floor_base_units.to_le_bytes());
 
     let floor = multiply_ristretto(&PodScalar(k), &PodRistrettoPoint(PEDERSEN_G))
         .ok_or(ProgramError::InvalidArgument)?;
@@ -359,6 +410,33 @@ pub fn floor_is_proved(
         return Err(ProgramError::InvalidArgument);
     }
     Ok(())
+}
+
+/// Read the escrow's confidential-transfer extension: the ElGamal key it is under, and the
+/// available-balance ciphertext the floor proof must be about.
+///
+/// Parsed through the interface crate rather than by offset, because the extension sits in a TLV
+/// region whose position depends on which other extensions the mint gave the account — and an
+/// offset that is right on the mirror and wrong on `SPCX` would bind the floor proof to whatever
+/// bytes happen to be there.
+fn escrow_confidential_state(data: &[u8]) -> Result<([u8; 32], [u8; 64]), ProgramError> {
+    use spl_token_2022_interface::extension::confidential_transfer::ConfidentialTransferAccount;
+    use spl_token_2022_interface::extension::{BaseStateWithExtensions, StateWithExtensions};
+    use spl_token_2022_interface::state::Account;
+
+    let state = StateWithExtensions::<Account>::unpack(data)
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    let ct = state
+        .get_extension::<ConfidentialTransferAccount>()
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+
+    let pubkey: [u8; 32] = bytemuck::bytes_of(&ct.elgamal_pubkey)
+        .try_into()
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    let ciphertext: [u8; 64] = bytemuck::bytes_of(&ct.available_balance)
+        .try_into()
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    Ok((pubkey, ciphertext))
 }
 
 /// One escrow, one loan — and the reason confidential collateral does not reintroduce the risk it
@@ -488,7 +566,8 @@ pub fn may_settle(
 /// stops; whatever moves it afterwards is an ordinary SPL transfer that needs no proof and no
 /// foresight.
 ///
-/// Accounts: loan(w), escrow(w), mint, ctx_equality, ctx_range, oracle(s), token_program
+/// Accounts: loan(w), escrow(w), mint, destination(w), ctx_equality, ctx_range, oracle(s),
+/// token_program
 ///
 /// Data: price u64 | amount u64 | decimals u8 | new_decryptable[36]
 ///
@@ -500,6 +579,7 @@ fn deshield(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progr
     let loan = next_account_info(i)?;
     let escrow = next_account_info(i)?;
     let mint = next_account_info(i)?;
+    let destination = next_account_info(i)?;
     let ctx_equality = next_account_info(i)?;
     let ctx_range = next_account_info(i)?;
     let oracle = next_account_info(i)?;
@@ -518,6 +598,12 @@ fn deshield(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progr
     let bump = {
         let d = loan.try_borrow_data()?;
         may_settle(&d, escrow.key, mint.key, oracle.key, oracle.is_signer, price)?;
+        check(&d[OFF_DESTINATION..], destination.key)?;
+        // TODO(2026-09-16): the withdraw proof contexts and the amount are not recorded, so a
+        // caller can de-shield a token and mark the loan settled, stranding the rest. The loan
+        // record has no room for them. Deshield is unreachable until that is fixed.
+        return Err(ProgramError::InvalidArgument);
+        #[allow(unreachable_code)]
         d[OFF_BUMP]
     };
 
@@ -545,8 +631,34 @@ fn deshield(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progr
         &[&[b"loan", escrow.key.as_ref(), &[bump]]],
     )?;
 
+    // And out, in the same instruction. `Withdraw` credits the escrow's **own** public balance and
+    // leaves its owner alone — which is this PDA — so de-shielding on its own does not release
+    // anything. It strands it: nothing but this program can sign for that account, and without this
+    // second half there is no instruction that does. The transfer is ordinary SPL, no proofs, and
+    // it goes where the loan says.
+    let out = spl_transfer_instruction(
+        token_program.key,
+        escrow.key,
+        mint.key,
+        destination.key,
+        loan.key,
+        amount,
+        decimals,
+    )?;
+    invoke_signed(
+        &out,
+        &[
+            escrow.clone(),
+            mint.clone(),
+            destination.clone(),
+            loan.clone(),
+            token_program.clone(),
+        ],
+        &[&[b"loan", escrow.key.as_ref(), &[bump]]],
+    )?;
+
     loan.try_borrow_mut_data()?[OFF_SEIZED] = 1;
-    msg!("de-shielded: the collateral is public where it sits, and anything can move it now");
+    msg!("de-shielded and released: the collateral is public, and it is the lender's");
     Ok(())
 }
 
@@ -569,6 +681,32 @@ fn slice32(d: &[u8], at: usize) -> [u8; 32] {
 ///
 /// `ProofLocation::ContextStateAccount` is the variant this design turns on: the proofs were
 /// verified once, at origination, and this names them rather than carrying them.
+/// An ordinary SPL transfer. No proofs: the balance is public by the time this runs.
+fn spl_transfer_instruction(
+    token_program: &Pubkey,
+    escrow: &Pubkey,
+    mint: &Pubkey,
+    destination: &Pubkey,
+    authority: &Pubkey,
+    amount: u64,
+    decimals: u8,
+) -> Result<solana_program::instruction::Instruction, ProgramError> {
+    let a = |k: &Pubkey| solana_address::Address::from(k.to_bytes());
+    let ix = spl_token_2022_interface::instruction::transfer_checked(
+        &a(token_program), &a(escrow), &a(mint), &a(destination), &a(authority), &[], amount, decimals,
+    )
+    .map_err(|_| ProgramError::IncorrectProgramId)?;
+    Ok(solana_program::instruction::Instruction {
+        program_id: Pubkey::new_from_array(ix.program_id.to_bytes()),
+        accounts: ix.accounts.into_iter().map(|m| solana_program::instruction::AccountMeta {
+            pubkey: Pubkey::new_from_array(m.pubkey.to_bytes()),
+            is_signer: m.is_signer,
+            is_writable: m.is_writable,
+        }).collect(),
+        data: ix.data,
+    })
+}
+
 /// `Withdraw`, with both proofs cited by address. Two, not three: no destination means no validity
 /// proof to prove anything about.
 #[allow(clippy::too_many_arguments)]
@@ -1040,7 +1178,9 @@ mod floor {
 
     /// Build the two context accounts exactly as `prove-collateral` does, then wrap them the way the
     /// ZK program stores them: `[authority | proof_type | context]`.
-    fn contexts(balance: u64, threshold: u64) -> (Vec<u8>, Vec<u8>) {
+    /// The escrow as the chain would present it, and the two contexts `prove-collateral` builds
+    /// over it. Returns the binding the program must now check as well as the proofs.
+    fn contexts(balance: u64, threshold: u64) -> (Vec<u8>, Vec<u8>, [u8; 32], [u8; 64]) {
         let k = ElGamalKeypair::new_rand();
         let ct = k.pubkey().encrypt(balance);
         let opening = PedersenOpening::new_rand();
@@ -1064,6 +1204,8 @@ mod floor {
         (
             wrap(bytemuck::bytes_of(equality.context_data())),
             wrap(bytemuck::bytes_of(range.context_data())),
+            k.pubkey().to_bytes(),
+            ct.to_bytes(),
         )
     }
 
@@ -1071,8 +1213,8 @@ mod floor {
     /// path `prove-collateral` uses, so this is the arithmetic the chain would see.
     #[test]
     fn a_genuine_pair_proves_its_own_floor() {
-        let (eq, rp) = contexts(173_000, 100_000);
-        assert!(floor_is_proved(&eq, &rp, 100_000).is_ok());
+        let (eq, rp, pk, ct) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq, &rp, &pk, &ct, 100_000).is_ok());
     }
 
     /// **F2 — and fails at any other floor.** This is the check's whole purpose: the borrower hands
@@ -1080,10 +1222,10 @@ mod floor {
     /// enough.
     #[test]
     fn the_same_pair_proves_no_other_floor() {
-        let (eq, rp) = contexts(173_000, 100_000);
+        let (eq, rp, pk, ct) = contexts(173_000, 100_000);
         for wrong in [0u64, 99_999, 100_001, 173_000, u64::MAX] {
             assert!(
-                floor_is_proved(&eq, &rp, wrong).is_err(),
+                floor_is_proved(&eq, &rp, &pk, &ct, wrong).is_err(),
                 "a floor of {wrong} was accepted by proofs built for 100,000",
             );
         }
@@ -1093,18 +1235,32 @@ mod floor {
     /// commitment, so a pair built elsewhere cannot be presented for this loan's floor.
     #[test]
     fn a_pair_from_another_escrow_does_not_prove_this_floor() {
-        let (eq_a, _) = contexts(173_000, 100_000);
-        let (_, rp_b) = contexts(173_000, 100_000);
-        assert!(floor_is_proved(&eq_a, &rp_b, 100_000).is_err());
+        let (eq_a, _, pk_a, ct_a) = contexts(173_000, 100_000);
+        let (_, rp_b, _, _) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq_a, &rp_b, &pk_a, &ct_a, 100_000).is_err());
+    }
+
+    /// **F5 — proofs about another escrow are refused.** The finding that made this check
+    /// necessary: without binding, a commitment to `floor + 1` and one to `1` satisfy the
+    /// subtraction while being about nobody's balance. Genuine proofs about a *different* account
+    /// are the same attack with extra steps.
+    #[test]
+    fn genuine_proofs_about_another_escrow_are_refused() {
+        let (eq, rp, _, _) = contexts(173_000, 100_000);
+        let (_, _, other_pk, other_ct) = contexts(173_000, 100_000);
+        assert!(
+            floor_is_proved(&eq, &rp, &other_pk, &other_ct, 100_000).is_err(),
+            "a floor proof about one escrow was accepted for another",
+        );
     }
 
     /// **F4 — truncated contexts are refused rather than indexed past.** An uninitialised account
     /// must not be read as a commitment.
     #[test]
     fn short_contexts_are_refused() {
-        let (eq, rp) = contexts(173_000, 100_000);
-        assert!(floor_is_proved(&eq[..40], &rp, 100_000).is_err());
-        assert!(floor_is_proved(&eq, &rp[..40], 100_000).is_err());
+        let (eq, rp, pk, ct) = contexts(173_000, 100_000);
+        assert!(floor_is_proved(&eq[..40], &rp, &pk, &ct, 100_000).is_err());
+        assert!(floor_is_proved(&eq, &rp[..40], &pk, &ct, 100_000).is_err());
     }
 }
 

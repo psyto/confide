@@ -24,6 +24,31 @@
 >   be approved by the mint authority before it can be funded. This document says so elsewhere and
 >   claimed the opposite here.
 >
+> **Repaired so far (2026-09-16):** the floor check binds to the escrow's own ElGamal key and
+> ciphertext — `EQ_PUBKEY` and `EQ_CIPHERTEXT` are read now, and a genuine proof about a *different*
+> escrow is refused; the floor context accounts must be owned by the ZK proof program; `originate`
+> verifies the escrow's SPL owner is the loan PDA, so the handover is checked rather than assumed;
+> the escrow's confidential extension is parsed through the interface crate rather than by offset,
+> because an offset right on the mirror and wrong on `SPCX` would bind the proof to whatever bytes
+> sit there; and `q_min` is scaled by the mint's own `decimals`, so the floor check and the default
+> predicate mean the same thing by it.
+>
+> **`deshield` is disabled, deliberately.** Making it release the collateral needs the withdraw
+> proof contexts and the amount recorded in the loan, and the record has no room for them. Until it
+> does, a caller could de-shield one token and mark the loan settled, stranding the rest — so the
+> instruction returns an error rather than shipping that. Sizing the record is the next change.
+>
+> **The rest of the repair.** 1) `q_min`'s unit: it stays whole tokens, and the floor check scales by
+> the mint's own `decimals` read from the mint account, so the two uses stop disagreeing. 2)
+> `originate` verifies the escrow's SPL owner is the loan PDA, which is what makes the handover real
+> rather than assumed. 3) The floor contexts must be owned by the ZK proof program and the equality
+> context must be about *this escrow's* pubkey and ciphertext — `EQ_PUBKEY` and `EQ_CIPHERTEXT` get
+> used. 4) `deshield` de-shields **and transfers** to the destination the loan records, in one
+> instruction, because Withdraw leaves the account owned by the PDA and nothing else here can move
+> it. That costs section 4d's "the destination stops mattering", which was never true: the honest
+> version is that the collateral lands in the lending protocol's own account and its existing
+> liquidation path takes it from there.
+>
 > The zero-opening substitution in 4d was checked and is correct — byte-identical to what
 > Token-2022 subtracts, not merely equivalent. The full review is in
 > [`reviews/2026-09-16-codex-implementation-block.md`](reviews/2026-09-16-codex-implementation-block.md).
