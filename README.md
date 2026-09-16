@@ -148,6 +148,8 @@ watch. Source in
 ```bash
 ./scripts/kamino-verdict.sh  # can Kamino take confidential collateral — read out of its own source
 ./scripts/kamino-admissible.sh # the same question against all 1,869, not one
+./scripts/kamino-reserves.sh  # which tokenized stocks Kamino already lends against, on what terms
+./scripts/packet.sh SPCX.US   # the collateral admission packet, generated from live data
 ./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm

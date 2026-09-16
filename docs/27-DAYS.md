@@ -124,17 +124,20 @@ the gap is confidentiality and nothing else — four line numbers wide. **That i
 had to pass before proposing an LLTV for anything**, and it is now a citation rather than an
 argument.
 
-**1. The collateral admission packet** — for one named mint and one named market, answering what a
-risk owner must answer anyway:
+**1. The collateral admission packet** — **first version generated, 2026-09-16**:
+[`packets/SPCX.US.md`](packets/SPCX.US.md), and [`packets/NVDAx.md`](packets/NVDAx.md) to show it
+generalises. `./scripts/packet.sh <symbol>`.
 
-- every authority on the token: pause, blacklist, seize, upgrade, mint/burn, and who holds each
-- reserve evidence: source, signer, freshness, coverage, what is independently verifiable
-- the oracle path, its fallback, and its staleness and deviation rules
-- the liquidation path, including what happens when a liquidator is not eligible to hold the asset
-- a proposed LLTV, cap and liquidation incentive, **each with the loss assumption behind it** —
-  and **every unknown produces a cap of $0**, never an invented number
-- cost to integrate: contracts touched, audit surface, operations runbook, owner-hours
-- what Confide changes, expressed as a change in those parameters
+**Generated rather than authored**, which is the part that matters: the day it disagrees with the
+chain is the day someone changed something, not the day the document went stale. It answers what is
+on-chain — every authority and who holds it, the oracle path with its staleness and its price band,
+the parameters already chosen — and **marks what is not as unknown, where an unknown produces a cap
+of `$0` on its own line** instead of an invented number.
+
+It also surfaces things nobody wrote down. Backpack concentrates five powers in one key — freeze,
+permanent delegate, pause, transfer hook, confidential-transfer authority — where Backed splits the
+same powers across four. **A permanent delegate can move collateral a lender cannot see**, and the
+packet says so in the section about why this should be refused rather than in a footnote.
 
 **2. The registry, as a decision surface rather than an activation queue.** Per asset, per protocol:
 `usable / conditional / blocked / unknown`, with provenance and expiry on every fact, and the
