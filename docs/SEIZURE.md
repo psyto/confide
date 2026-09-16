@@ -7,56 +7,35 @@
 > — README.md, as it read before any of this was built. The sentence is gone from it now;
 > section 6 is what replaced it.
 
-> **Under repair, 2026-09-16.** An independent review of this day's work returned *block*, and it
-> was right. Four claims below are not what the code does:
->
-> - **The floor check is unsound as written.** The arithmetic is correct and the binding is not:
->   `originate` never checks that the floor context accounts are owned by the ZK proof program, nor
->   that the equality context is about *this escrow's* ciphertext. `EQ_PUBKEY` and `EQ_CIPHERTEXT`
->   are defined and never used. Fabricated accounts with the right header bytes pass. It also
->   compares `q_min` in base units where the default predicate treats it as whole tokens.
-> - **De-shielding strands the collateral.** `Withdraw` credits the escrow's *own* public balance
->   and does not change its owner, which is still the loan PDA — and this program has no instruction
->   that moves a public balance. "Anything can move it afterwards" is false; nothing can.
-> - **One escrow, one loan is not enforced.** `originate` never verifies the escrow is owned by the
->   loan PDA, so a borrower can originate against an account they still hold.
-> - **Mode B does need an issuer signature.** `autoApproveNewAccounts: false` means the escrow must
->   be approved by the mint authority before it can be funded. This document says so elsewhere and
->   claimed the opposite here.
->
-> **Repaired so far (2026-09-16):** the floor check binds to the escrow's own ElGamal key and
-> ciphertext — `EQ_PUBKEY` and `EQ_CIPHERTEXT` are read now, and a genuine proof about a *different*
-> escrow is refused; the floor context accounts must be owned by the ZK proof program; `originate`
-> verifies the escrow's SPL owner is the loan PDA, so the handover is checked rather than assumed;
-> the escrow's confidential extension is parsed through the interface crate rather than by offset,
-> because an offset right on the mirror and wrong on `SPCX` would bind the proof to whatever bytes
-> sit there; and `q_min` is scaled by the mint's own `decimals`, so the floor check and the default
-> predicate mean the same thing by it.
->
-> **`deshield` is disabled, deliberately.** Making it release the collateral needs the withdraw
-> proof contexts and the amount recorded in the loan, and the record has no room for them. Until it
-> does, a caller could de-shield one token and mark the loan settled, stranding the rest — so the
-> instruction returns an error rather than shipping that. Sizing the record is the next change.
->
-> **The rest of the repair.** 1) `q_min`'s unit: it stays whole tokens, and the floor check scales by
-> the mint's own `decimals` read from the mint account, so the two uses stop disagreeing. 2)
-> `originate` verifies the escrow's SPL owner is the loan PDA, which is what makes the handover real
-> rather than assumed. 3) The floor contexts must be owned by the ZK proof program and the equality
-> context must be about *this escrow's* pubkey and ciphertext — `EQ_PUBKEY` and `EQ_CIPHERTEXT` get
-> used. 4) `deshield` de-shields **and transfers** to the destination the loan records, in one
-> instruction, because Withdraw leaves the account owned by the PDA and nothing else here can move
-> it. That costs section 4d's "the destination stops mattering", which was never true: the honest
-> version is that the collateral lands in the lending protocol's own account and its existing
-> liquidation path takes it from there.
->
-> The zero-opening substitution in 4d was checked and is correct — byte-identical to what
-> Token-2022 subtracts, not merely equivalent. The full review is in
+> **Reviewed and repaired, 2026-09-16.** An independent review of this day's work returned *block*
+> on four claims, and it was right. Three are repaired in the code (`334fe5b`); the fourth is a
+> decision rather than a fix. The review is in
 > [`reviews/2026-09-16-codex-implementation-block.md`](reviews/2026-09-16-codex-implementation-block.md).
+>
+> | what was claimed | what was true | now |
+> |---|---|---|
+> | the floor check is sound | the arithmetic was right and the **binding was absent** — nothing checked the context accounts were owned by the ZK program or that the equality context concerned *this escrow*; `EQ_PUBKEY` and `EQ_CIPHERTEXT` were defined and never read, so fabricated accounts with the right header bytes passed | **repaired** — both are read, the ZK-program owner is required, and a genuine proof about a *different* escrow is refused, with a test |
+> | one escrow, one loan | `originate` never verified the escrow was owned by the loan PDA, so a borrower could originate against an account they still held | **repaired** — the SPL owner is checked before anything is recorded |
+> | `q_min` means one thing | the record and the default predicate called it whole tokens; the floor check compared it to base units | **repaired** — scaled by the mint's own `decimals` |
+> | mode B needs no issuer signature | `autoApproveNewAccounts: false` means the escrow must be approved by the mint authority before it can be funded, and §6 already recorded that from the other end | **corrected in §4c** — the issuer signs once per escrow |
+>
+> The confidential extension is also parsed through the interface crate now rather than by offset:
+> the extension sits in a TLV region whose position depends on which other extensions a mint gave
+> the account, and an offset right on the mirror and wrong on `SPCX` would have bound the floor
+> proof to whatever bytes happened to sit there.
+>
+> **`deshield` is disabled and stays disabled this month.** Releasing the collateral needs the
+> withdraw proof contexts and the amount in the loan record, which has no room for them; without
+> that a caller could de-shield one token, mark the loan settled and strand the rest. The repair is
+> about a day's work and it is **deliberately not being done** — see
+> [`27-DAYS.md`](27-DAYS.md): a working generic de-shield establishes nothing the current plan
+> needs, because the repaired version has to transfer to a recorded destination and connecting that
+> destination to a real venue's liquidation lifecycle is weeks and a counterparty, not a day. §4d
+> below carries its own correction.
+>
+> The zero-opening substitution in §4d was checked and is correct — byte-identical to what
+> Token-2022 subtracts, not merely equivalent.
 
-`prove-collateral.sh` ends one sentence short of a loan. The lender learns *this account holds at
-least X* and cannot act on it, so the position is provable and not pledgeable. This is the design
-that closes it, **and it runs on devnet** — section 6. Read section 4 before believing more of that
-than is true: the mechanism is real and two of its inputs are asserted rather than proved.
 
 ## 1. Why Token-2022 has no seizure, precisely
 
@@ -302,9 +281,19 @@ What this buys, in the order a risk owner asks for it:
   cost: the borrower pledged that position to that lender. The market still sees nothing, which is
   the confidentiality that was ever being claimed — against the public, never against the
   counterparty.
-- **No auditor slot, no issuer signature, no mint change.** The whole arrangement is between a
-  borrower, a lender and a program, on a mint configured exactly as it already is. An issuer whose
-  business is issuing and selling is not asked for anything.
+- **No auditor slot and no mint change.** The whole arrangement is between a borrower, a lender and
+  a program, on a mint configured exactly as it already is.
+
+  > **Corrected 2026-09-16.** This line also said *no issuer signature*, and that was wrong.
+  > `SPCXx`, `SPCX.US` and every other mint here set `autoApproveNewAccounts: false`, so **the
+  > escrow has to be approved by the confidential-transfer mint authority before it can hold
+  > anything** — the issuer signs once, per escrow. Section 6 records the same fact from the other
+  > end, where the demo hits `ConfidentialTransferAccountNotApproved` and has to add an approve
+  > step; this section claimed the opposite and the two never met.
+  >
+  > What survives is narrower and still worth having: the issuer is asked for **an approval, not a
+  > disclosure model, an auditor key or a mint change**. That is the gatekeeping they already do.
+  > It is not "nothing", and describing it as nothing is how a packet loses a reader who checks.
 - **The borrower's cooperation is needed once.** Section 2 builds the proofs while the borrower is
   cooperative because the borrower held the key. With the lender holding it, the lender builds
   them, and the only borrower action the design depends on is funding the escrow — which they do

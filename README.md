@@ -82,9 +82,28 @@ December 2025.
 **The fund holding the position.** A GP with NVDAx owes its LPs a quarterly report and broadcasts
 the position continuously instead. Stopping that is what it pays for.
 
-**The lender.** Jupiter Lend already takes SPYx, QQQx and NVDAx as collateral, and the position
-securing the loan is public today. Both halves a lender needs now run on devnet — the check, and
-the seizure.
+**The lender.** The position securing a loan against tokenized stock is public today. Both halves a
+lender needs now run on devnet — the check, and the seizure.
+
+> **Reversed 2026-09-16, and the paragraph above is kept rather than edited.** The order in this
+> section was wrong. The issuer is a **gate on eligibility**, not the first buyer: a business whose
+> revenue is issuing and selling has no reason to act on a disclosure model, and none of them has
+> been asked. **The lender is first**, and the evidence is no longer an argument.
+>
+> Kamino's lending program names the confidential-transfer extensions on its allow-lists and
+> requires them to be **inert** — `constraints.rs:187`, `:194`, `:201`, `:131` — on the *holder's*
+> account, on deposit, borrowing and both sides of liquidation. So the gap is four lines wide, and
+> it is confidentiality alone: **1,869 of 1,869** tokenized-equity mints clear every other condition.
+>
+> And Kamino already lends against these. **19 live reserves**, thirteen holding real balances
+> totalling ≈89,195 tokens at LTVs from 30 % to 73 %. SpaceX has one — `SPCX.US`, Active, 40 % LTV,
+> 15,000 cap. **Every one of those positions is public.**
+>
+> `./scripts/kamino-verdict.sh` · `./scripts/kamino-reserves.sh` · `./scripts/packet.sh SPCX.US` ·
+> [`docs/KAMINO.md`](docs/KAMINO.md) · the reasoning is in [`docs/27-DAYS.md`](docs/27-DAYS.md).
+>
+> *Jupiter Lend was named here as the lender example. It was never checked from chain in this
+> repository, and the Kamino numbers above were — so it is not repeated as a claim.*
 
 **Traction is zero, and the sentence has no second half.** No issuer approval, no pilot, no customer
 interview, no design partner, nobody outside this repository has used any of it. What exists is a
@@ -112,11 +131,12 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 
 **The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
 
-- **Borrowing against stock without publishing the collateral.** Jupiter Lend already takes SPYx,
-  QQQx, NVDAx as collateral, and today the position securing the loan is public. Both halves a
-  lender needs now run on devnet — the check, and the seizure (above). What is missing is the
-  lending itself: origination, interest, and a liquidation engine. Confide takes collateral on a
-  default someone else defines, and is not a lending protocol.
+- **Borrowing against stock without publishing the collateral.** Kamino takes SPYx, QQQx, NVDAx and
+  sixteen more as collateral today — verified from its own reserves, `./scripts/kamino-reserves.sh` —
+  and every position securing those loans is public. Both halves a lender needs now run on devnet:
+  the check, and the seizure (above). What is missing is the lending itself: origination, interest,
+  and a liquidation engine. Confide takes collateral on a default someone else defines, and is not a
+  lending protocol.
 - **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
   moved, and the program evaluates it — from a floor it records rather than verifies and a price one
   named oracle asserts. Both are the loan's to get right; the chain only enforces the consequence.

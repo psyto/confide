@@ -172,10 +172,28 @@ the per-mint result.
 
 | | date | beat |
 |---|---|---|
-| **Week 1** | → 09-22 | The Kamino gate answered `PASS` / `BLOCKED` / `REQUIRES INTEGRATION`, reproducibly. Packet schema frozen against one named mint and one named Kamino market. The registry reads live authority and reserve facts. **A rough 150-second presentation recorded by 09-18 and its structure locked by 09-22** — the story gets tested now, not in week 4. **Check-in 1 (09-18): the decision to stop expanding mechanism, and why the issuer is a gate rather than a buyer.** |
+| **Week 1** | → 09-22 | ✅ The Kamino gate answered, reproducibly. ✅ The packet generated against `SPCX.US` and its live reserve. ✅ The registry reads live authority and reserve facts. ⬜ The rough presentation cut, structure locked by 09-22. ⬜ **Check-in 1**, which reports on all of the above and so is written last. |
 | **Week 2** | → 09-29 | The one command works end to end for a stranger, and **prints the number**. The three-minute narrative is drafted and tested against the artifact now, not in week 4. First approaches go out with the packet attached — upside, off the critical path. **Check-in 2 (09-25): the number the command prints, and the first thing an outside reader got wrong about it.** |
 | **Week 3** | → 10-06 | Coverage: the command runs over **every** live tokenized-equity mint, not one, so any row is checkable by a stranger. Any reply that did arrive is worked in; anything a reader called unanswerable is answered or recorded as unanswerable. **Check-in 3 (10-02): what the coverage run found that the single case hid.** |
 | **Week 4** | → 10-12 | Submission videos cut against the week-2 narrative, evidence frozen, links and disclosures checked. **Check-in 4 (10-09): the finished artifact, and traction stated as zero if it is zero.** |
+
+### Two videos, not one
+
+They get confused because both are short and both are due soon, so they are separated here.
+
+| | the weekly check-in | the submission presentation |
+|---|---|---|
+| length | **1 minute** | 2–3 minutes (plus a ≤3 minute demo) |
+| who asks for it | **Colosseum**, weekly — the first opens 09-18 | the submission form, 10-12 |
+| content | 01 what changed · 02 what you learned, *one* test, conversation or decision · 03 what is next | the whole argument |
+| this month | four of them: 09-18, 09-25, 10-02, 10-09 | one rough cut early, the real one in week 4 |
+
+**The rough cut is nobody's requirement.** It exists because the first artifact a judge sees is the
+presentation, and discovering in week 4 that the story does not hold leaves no time to change what
+was built. It is a throwaway whose only job is to test the structure.
+
+**Each check-in is written after the week's work, not before it** — it reports what happened, and a
+check-in drafted first becomes a plan the week then has to live up to.
 
 **Point of no return: 09-29.** After the packet is out with a named asset and named market, the
 framing is public and reverting to "a disclosure primitive looking for a home" costs more than
