@@ -33,6 +33,43 @@ const PADDING_BITS: usize = 16;
 
 /// What a seizure needs, composed. Returned rather than printed so the invariants below can look
 /// at it: an assertion about bytes that only `main` ever sees is not an assertion.
+/// The two proofs that establish **this escrow holds at least `floor`**, over the escrow's own
+/// on-chain ciphertext. `prove-collateral` has built these since the beginning and printed them;
+/// nothing parked them in context accounts, so `originate` came to require two accounts no tool in
+/// this repository produced. That is what this exists to fix.
+pub struct Floor {
+    pub equality: CiphertextCommitmentEqualityProofData,
+    pub range: BatchedRangeProofU64Data,
+}
+
+/// `balance >= floor`, proved against `keys`' own account ciphertext and nothing else.
+///
+/// The surplus is committed under the **same** opening as the equality commitment, so a verifier
+/// reaches it by subtracting `floor·G` from that commitment rather than taking the prover's word
+/// for which commitment the range proof is about. `programs/confide-seizure`'s `floor_is_proved`
+/// is the other half of that subtraction.
+pub fn build_floor(keys: &BuiltKeys, floor: u64) -> Floor {
+    assert!(
+        keys.balance >= floor,
+        "refusing to prove a false statement: the escrow does not clear the floor"
+    );
+    let opening = PedersenOpening::new_rand();
+    let commitment = Pedersen::with(keys.balance, &opening);
+    let equality = build_ciphertext_commitment_equality_proof_data(
+        &keys.source, &keys.current_ct, &commitment, &opening, keys.balance,
+    )
+    .expect("equality proof over the escrow's own ciphertext");
+
+    let delta = keys.balance - floor;
+    let delta_commitment = Pedersen::with(delta, &opening);
+    let range = build_batched_range_proof_u64_data(
+        vec![&delta_commitment], vec![delta], vec![64], vec![&opening],
+    )
+    .expect("range proof over the surplus");
+
+    Floor { equality, range }
+}
+
 pub struct Seizure {
     pub equality: CiphertextCommitmentEqualityProofData,
     pub validity: BatchedGroupedCiphertext3HandlesValidityProofData,

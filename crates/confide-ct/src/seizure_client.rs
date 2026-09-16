@@ -90,6 +90,8 @@ fn main() {
                     AccountMeta::new_readonly(addr(ctx["equality"].as_str().unwrap()), false),
                     AccountMeta::new_readonly(addr(ctx["validity"].as_str().unwrap()), false),
                     AccountMeta::new_readonly(addr(ctx["range"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["floor_equality"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["floor_range"].as_str().unwrap()), false),
                     AccountMeta::new_readonly(oracle, false),
                     AccountMeta::new_readonly(addr(SYSTEM), false),
                 ],

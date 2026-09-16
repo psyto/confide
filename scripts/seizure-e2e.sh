@@ -20,6 +20,8 @@ R="${RPC:-http://127.0.0.1:8899}"
 W="${WORK:-$(mktemp -d)}"
 UNITS="${UNITS:-173000}"
 Q_MIN="${Q_MIN:-100000}"        # whole tokens the borrower PROVED, not what they hold
+DECIMALS="${DECIMALS:-8}"       # the mirror mint's, below; the program reads the real one off chain
+FLOOR_BASE=$(python3 -c "print($Q_MIN * 10**$DECIMALS)")   # what the floor proof is actually over
 PRINCIPAL="${PRINCIPAL:-5000000}"  # cents — a $50,000 loan
 RATIO_BPS="${RATIO_BPS:-20000}"    # 200 % collateralisation
 PRICE_OK="${PRICE_OK:-100}"        # cents per token: exactly covers it
@@ -71,7 +73,7 @@ echo "    borrower  $(solana-keygen pubkey "$W/borrower.json")"
 echo "    lender    $(solana-keygen pubkey "$W/lender.json")"
 
 echo "  --- the mint, configured the way NVDAx is ---"
-MINT=$(spl-token -C "$W/borrower.yml" create-token --program-2022 --decimals 8 --enable-confidential-transfers auto 2>&1 \
+MINT=$(spl-token -C "$W/borrower.yml" create-token --program-2022 --decimals "$DECIMALS" --enable-confidential-transfers auto 2>&1 \
   | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
 go "auditor slot filled" "$(cargo run --quiet -p confide-ct --bin set-auditor -- "$W/borrower.json" "$MINT" "$(bh)" "$W/auditor.json" 2>/dev/null)"
 echo "    mint      $MINT   (auditor set, autoApproveNewAccounts false — as on NVDAx)"
@@ -115,7 +117,8 @@ echo "  --- the proofs, built while the borrower still wants the loan ---"
 LENDER_PK=$(python3 -c "import json;print(json.load(open('$W/lender-keys.json'))['elgamal_pubkey_b64'])")
 AUDITOR_PK=$(python3 -c "import json;print(json.load(open('$W/auditor.json'))['elgamal_pubkey_b64'])")
 ctx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$W/borrower.json" "$W/escrow-keys.json" \
-  "$DEC" "$AVAIL" "$LENDER_PK" "$AUDITOR_PK" all "$(bh)" "$W/ctx.json" "$LOAN" "$W/keys" "$1"; }
+  "$DEC" "$AVAIL" "$LENDER_PK" "$AUDITOR_PK" all "$(bh)" "$W/ctx.json" "$LOAN" "$W/keys" "$1" \
+  "$FLOOR_BASE"; }
 ctx none >/dev/null 2>"$W/pass1.err"
 RANGE=$(python3 -c "import json;print(json.load(open('$W/ctx.json'))['range'])")
 ALT=$(solana -u "$R" -k "$W/borrower.json" address-lookup-table create --authority "$(solana-keygen pubkey "$W/borrower.json")" \

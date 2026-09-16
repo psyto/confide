@@ -1,8 +1,10 @@
 //! `seizure-ctx <payer.json> <keys.json|synthetic:N> <dec_b64|-> <avail_b64|-> <lender_pk|rand>
-//!  <auditor_pk|none|rand> <amount|all> <blockhash> <out.json>`
+//!  <auditor_pk|none|rand> <amount|all> <blockhash> <out.json> <authority> <keys_dir> <alt|none>
+//!  <floor_base_units>`
 //!
-//! Put the three seizure proofs **on chain, already verified**, in context state accounts the
-//! borrower cannot close.
+//! Put the **five** proofs a seizure needs on chain, already verified, in context state accounts
+//! the borrower cannot close: three for the transfer, and two more establishing that the escrow
+//! held at least the floor at the moment the loan was written.
 //!
 //! This is the step the whole design turns on. `build-seizure-proofs` shows the proofs are accepted;
 //! this makes them durable — `Transfer` will later cite them by address alone, from a CPI the
@@ -28,7 +30,7 @@ use solana_zk_elgamal_proof_interface::proof_data::{
         BatchedGroupedCiphertext3HandlesValidityProofContext,
         BatchedGroupedCiphertext3HandlesValidityProofData,
     },
-    batched_range_proof::{BatchedRangeProofContext, BatchedRangeProofU128Data},
+    batched_range_proof::{BatchedRangeProofContext, BatchedRangeProofU128Data, BatchedRangeProofU64Data},
     ciphertext_commitment_equality::{
         CiphertextCommitmentEqualityProofContext, CiphertextCommitmentEqualityProofData,
     },
@@ -78,6 +80,9 @@ fn main() {
     // holding that account and the authority moves both out of the static keys and buys back 62
     // bytes for 37. Pass `none` to see the overflow rather than avoid it.
     let alt = a.next().expect("address lookup table | none");
+    // The floor the loan is written against, in base units. `originate` refuses without proofs of
+    // it; before this argument existed the program required two accounts nothing produced.
+    let floor: u64 = a.next().expect("floor in base units").parse().expect("floor must be a number");
 
     let payer = confide_ct_keypair(&payer_path);
     let zk = solana_zk_elgamal_proof_interface::id();
@@ -91,12 +96,20 @@ fn main() {
         load_or_create(&keys_dir, "ctx-equality.json"),
         load_or_create(&keys_dir, "ctx-validity.json"),
         load_or_create(&keys_dir, "ctx-range.json"),
+        load_or_create(&keys_dir, "ctx-floor-equality.json"),
+        load_or_create(&keys_dir, "ctx-floor-range.json"),
     ];
     let sizes = [
         std::mem::size_of::<ProofContextState<CiphertextCommitmentEqualityProofContext>>(),
         std::mem::size_of::<ProofContextState<BatchedGroupedCiphertext3HandlesValidityProofContext>>(),
         std::mem::size_of::<ProofContextState<BatchedRangeProofContext>>(),
+        std::mem::size_of::<ProofContextState<CiphertextCommitmentEqualityProofContext>>(),
+        std::mem::size_of::<ProofContextState<BatchedRangeProofContext>>(),
     ];
+
+    // The floor is proved over the escrow's own ciphertext, the same one the transfer proofs are
+    // about, so it is built from the same opened keys rather than from a second read.
+    let f = confide_ct::build_floor(&confide_ct::open_escrow(&keys, &dec, &avail), floor);
 
     let verify = [
         ProofInstruction::VerifyCiphertextCommitmentEquality
@@ -113,6 +126,16 @@ fn main() {
             .encode_verify_proof::<BatchedRangeProofU128Data, BatchedRangeProofContext>(
                 Some(ContextStateInfo { context_state_account: &accounts[2].pubkey(), context_state_authority: &authority }),
                 &s.range,
+            ),
+        ProofInstruction::VerifyCiphertextCommitmentEquality
+            .encode_verify_proof::<CiphertextCommitmentEqualityProofData, CiphertextCommitmentEqualityProofContext>(
+                Some(ContextStateInfo { context_state_account: &accounts[3].pubkey(), context_state_authority: &authority }),
+                &f.equality,
+            ),
+        ProofInstruction::VerifyBatchedRangeProofU64
+            .encode_verify_proof::<BatchedRangeProofU64Data, BatchedRangeProofContext>(
+                Some(ContextStateInfo { context_state_account: &accounts[4].pubkey(), context_state_authority: &authority }),
+                &f.range,
             ),
     ];
 
@@ -168,6 +191,9 @@ fn main() {
             "equality":  accounts[0].pubkey().to_string(),
             "validity":  accounts[1].pubkey().to_string(),
             "range":     accounts[2].pubkey().to_string(),
+            "floor_equality": accounts[3].pubkey().to_string(),
+            "floor_range":    accounts[4].pubkey().to_string(),
+            "floor":          floor,
             "authority": authority.to_string(),
             "amount":    s.amount,
             "remaining": s.remaining,
@@ -180,8 +206,10 @@ fn main() {
     )
     .unwrap();
 
-    eprintln!("  context accounts   {} / {} / {}", accounts[0].pubkey(), accounts[1].pubkey(), accounts[2].pubkey());
-    eprintln!("  sizes              {} / {} / {} bytes", sizes[0], sizes[1], sizes[2]);
+    eprintln!("  transfer contexts  {} / {} / {}", accounts[0].pubkey(), accounts[1].pubkey(), accounts[2].pubkey());
+    eprintln!("  floor contexts     {} / {}", accounts[3].pubkey(), accounts[4].pubkey());
+    eprintln!("  floor              {floor} base units, proved over the escrow's own ciphertext");
+    eprintln!("  sizes              {} / {} / {} / {} / {} bytes", sizes[0], sizes[1], sizes[2], sizes[3], sizes[4]);
     eprintln!("  authority          {authority}   <- the loan PDA; the borrower cannot close these");
     eprintln!("  lookup table       {alt}");
     eprintln!("  artifact           {out}");
