@@ -59,8 +59,8 @@ SHOWS_BY_DOC = {
  8: "`./scripts/packet.sh SPCX.US`, then the page URL",
  },
  "video/CHECKIN-1.md": {
- 1: "the commit log for the week",
- 2: "the Kamino reserve table, live",
+ 1: "the page being used — a mint typed in, the verdict appearing",
+ 2: "the reserve table live, then $21.1m / $81.6m / $0",
  3: "the three missing pieces, as text",
  },
 }
