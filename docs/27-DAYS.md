@@ -10,15 +10,41 @@ Confide is strong where it is judged last and weak where it is judged first. Ins
 execution are genuinely good; **potential market size, viability and traction are the four-sevenths
 of the score that get read before any of it**, and traction is zero.
 
-Twenty-seven days of more mechanism does not move that. So the bet is:
+Twenty-seven days of more mechanism does not move that.
 
-> **Make one named risk owner able to say, in writing, "if this establishes X, we would take that
-> collateral at N% LLTV up to a cap of C."**
+The first version of this plan bet on a reply: get one named risk owner to write down "if this
+establishes X we would take that collateral at N% LLTV up to a cap of C." **That bet was retired on
+2026-09-16, by the founder, for the right reason** — a reply inside a fixed window cannot be
+planned. It depends on a stranger's calendar, and no amount of work on this side makes it
+arrive. Four of the seven criteria were hostage to it, and they are the four read first.
 
-Not a partnership. Not a public endorsement — a risk owner underwrites a specific market and a
-public statement is governance liability, which is why asking for one prices at 85–95% against.
-A written conditional decision with a number in it is achievable, and it is the first evidence this
-project has ever had that someone with capital would act.
+So the bet is the one thing that is entirely within reach:
+
+> **Make the number computable by anyone, from live chain data, without asking anyone's
+> permission.** One command, for a named asset and a named market, prints the collateral capacity
+> that exists today and why it is what it is, the specific removable fact that caps it, and the
+> capacity once that fact is removed — with every input traceable, and the removal itself running.
+
+This answers *potential market size* with a computation instead of a claim, and *viability* with a
+cost and a parameter that each carry the loss assumption behind them. **Neither answer needs a
+counterparty.** A judge can run it. So can a curator, later, on their own schedule — which is the
+better way to reach one anyway.
+
+The loop closes on itself: the registry states a blocking condition in economic terms, and
+**Confide is the removal of one of those conditions**, demonstrated end to end on devnet rather
+than argued. That is what makes this Confide's packet and not a generic due-diligence tool.
+
+**Outreach still happens, and it is upside, not the plan.** Approaches go out with the packet
+attached because the packet is worth reading; whatever comes back is recorded exactly as received,
+including refusals with their reasons — a reason is information about the market, silence is not.
+**Traction stays zero unless someone external actually uses this, and it will be reported as zero.**
+
+### What this costs
+
+Two of the refusals below were written as *"not unless a specific risk owner names it"* — the price
+feed, and repayment. **With no reply in the plan, nobody will name them.** So each is now our own
+decision with the assumption written next to it, or it stays out. Deferring to a buyer who was
+never going to answer is how a plan quietly does nothing.
 
 ## The constraint that shapes everything
 
@@ -49,10 +75,18 @@ edit, and it is the substance of one of the weekly check-ins.
 
 ## The buyer
 
-Not "a lending protocol". A **vault curator or market creator with capital to allocate** — on
-Morpho, markets are permissionless but the decision that matters is whether anyone supplies. Oracle
-and LLTV are immutable per market and bad debt lands on lenders, which is exactly why the decision
-is careful and exactly why a number from one of them means something.
+Not "a lending protocol". A **vault curator or market creator with capital to allocate** —
+markets may be permissionless, but the decision that matters is whether anyone supplies. Oracle and
+LLTV are fixed per market and bad debt lands on lenders, which is exactly why the decision is
+careful and exactly why a number from one of them means something.
+
+**The named case is `SPCX` on Kamino** (decided 2026-09-16). Kamino rather than Morpho is a
+deliberate choice, and the reason it is written here is that the aspiration is larger than venue
+preference: **that Confide creates the reason to do this on Kamino specifically.** That reason is
+not established yet. Either Kamino's market structure can express a collateral admission whose
+condition is a disclosure fact — in which case it is the strongest thing in this plan and week 1
+is where it gets written down — or it cannot, and then the venue is a preference and should be
+called one. **Checking which is week-1 work, and the answer is allowed to be the unwelcome one.**
 
 Ranked by how directly the pain is already a number they track:
 
@@ -88,14 +122,28 @@ this repository.
 
 | | date | beat |
 |---|---|---|
-| **Week 1** | → 09-22 | Packet schema frozen against one named asset and one named market. The registry reads live authority and reserve facts. **Check-in 1 (09-18): the decision to stop expanding mechanism, and why the issuer is a gate rather than a buyer.** |
-| **Week 2** | → 09-29 | The one command works end to end for a stranger. First approaches go out — a 20-minute ask with the packet attached, not a pitch. **Check-in 2 (09-25): the packet, and the first thing an outside reader got wrong about it.** |
-| **Week 3** | → 10-06 | Replies worked into the packet; whatever a risk owner said is unanswerable gets answered or recorded as unanswerable. **Check-in 3 (10-02): what the conversations killed.** |
-| **Week 4** | → 10-12 | Submission videos, evidence frozen, links and disclosures checked. **Check-in 4 (10-09): the conditional decision if it exists, and plainly its absence if it does not.** |
+| **Week 1** | → 09-22 | Is the Kamino reason real — answered either way, in writing. Packet schema frozen against `SPCX` and one named Kamino market. The registry reads live authority and reserve facts. **The seizure repair closed out, capped at one day** (below). **Check-in 1 (09-18): the decision to stop expanding mechanism, and why the issuer is a gate rather than a buyer.** |
+| **Week 2** | → 09-29 | The one command works end to end for a stranger, and **prints the number**. The three-minute narrative is drafted and tested against the artifact now, not in week 4. First approaches go out with the packet attached — upside, off the critical path. **Check-in 2 (09-25): the number the command prints, and the first thing an outside reader got wrong about it.** |
+| **Week 3** | → 10-06 | Coverage: the command runs over **every** live tokenized-equity mint, not one, so any row is checkable by a stranger. Any reply that did arrive is worked in; anything a reader called unanswerable is answered or recorded as unanswerable. **Check-in 3 (10-02): what the coverage run found that the single case hid.** |
+| **Week 4** | → 10-12 | Submission videos cut against the week-2 narrative, evidence frozen, links and disclosures checked. **Check-in 4 (10-09): the finished artifact, and traction stated as zero if it is zero.** |
 
 **Point of no return: 09-29.** After the packet is out with a named asset and named market, the
 framing is public and reverting to "a disclosure primitive looking for a home" costs more than
-continuing.
+continuing. It is a framing commitment, not a bet on anyone else's behaviour.
+
+## The one piece of unfinished mechanism
+
+`deshield` is disabled and returns an error. Releasing seized collateral needs the withdraw proof
+contexts and the amount in the loan record, and the record has no room for them; without that a
+caller can de-shield one token, mark the loan settled and strand the rest. Three of the four
+findings from the implementation review are repaired (`334fe5b`); this is the fourth.
+
+It is **not** new mechanism — it is the repair of something already claimed, which is why it is
+here at all and not on the refuse list. **One day, capped.** Resize the loan record, bind the
+contexts, re-run the end-to-end script, redeploy, and correct the prose in
+[`SEIZURE.md`](SEIZURE.md) that the repair banner currently flags. If it runs over, the honest end
+state is a disabled instruction with the note that is already on it — that costs a line in the
+video and nothing in the argument, and it is strictly better than a half-finished custody path.
 
 ## Refused
 
@@ -116,13 +164,19 @@ Named so the temptation is on the record rather than in the head:
 
 ## What this leaves if nobody answers
 
-Stated now, while it is still a forecast rather than an excuse. If no risk owner replies by 10-12:
+Stated plainly, because after 2026-09-16 this is the **expected** case rather than the failure
+case. If no risk owner replies by 10-12:
 
-- a reusable collateral-admission packet, and a registry saying where live assets are usable,
-  conditionally usable, or not underwritable at all, with provenance on every fact
+- one command a stranger can run that computes, from live chain data, what confidential tokenized
+  equity can be borrowed against today, what caps it, and what removing the cap is worth
+- a reusable collateral-admission packet for a named asset and a named market, and a registry
+  saying where live assets are usable, conditionally usable, or not underwritable at all, with
+  provenance and expiry on every fact
 - a documented map of exactly which issuer-controlled facts cap collateral capacity, and at what
+- the mechanism that removes one of those facts, running end to end
 - everything that already runs, untouched
 
-That is a due-diligence asset and a research result. **It is not traction, and it will not be
-described as traction.** The wager is that one number from one risk owner is worth more than
-twenty-seven more days of mechanism, and the wager can be lost.
+**That is not traction, and it will not be described as traction.** What changed on 09-16 is that
+it is no longer being described as a consolation prize either. The wager is that a number anyone
+can recompute beats a number someone agreed to say — and that wager is settled by work, not by a
+stranger's calendar.
