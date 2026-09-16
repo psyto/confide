@@ -90,7 +90,7 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
 |---|---|
 | 動く | 3本の証明がライブ ZK プログラムに受理される（`./scripts/seizure-proofs.sh`）。context state account 3つを作成・検証・読み返し確認済み。プログラムは SBF ビルド + ローカルデプロイ済み |
 | **完了** | **seizure は end-to-end で通った** — `./scripts/seizure-e2e.sh`。借り手の 173,000 が、争えないデフォルトで貸し手に移る。両側とも秘匿のまま、借り手は handover 後に一度も署名しない。前提4つは全部潰れた |
-| **devnet でも通った** | プログラム `Gn3rzw8U…`、escrow `AdgKdUhv…`（loan PDA 所有、残高 0）、貸し手 `ERUF4Y5W…`（173,000 保有）、loan 口座 `HbbvY8hY…` が `seized=1`。**クリックで確認できる** |
+| **devnet でも通った** | プログラム `Gn3rzw8U…`、escrow `HfdcgCmf…`（loan PDA 所有、残高 0）、貸し手 `Kzv6RiLo…`（173,000 保有）、loan 口座 `26QJWCRw…` が `seized=1`。**クリックで確認できる** |
 | 資金の誤解 | 「0.62 SOL で不可能」は**誤り**だった。`solana balance` は `solana config` の鍵を読み、それが別プロジェクト（liquet）のものだった。本物の `~/.config/solana/id.json` は最初から 134 SOL。実費は既定 0.936 / `--max-len` 0.489 SOL |
 | 実際の障害 | 公開 RPC が 92KB のアップロードをレート制限すること。専用エンドポイントで解決 |
 | 次の一手 | 提出動画2本（2〜3分プレゼン / 3分以内デモ）と traction |

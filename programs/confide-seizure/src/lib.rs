@@ -175,7 +175,7 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
         (ctx_floor_equality, PROOF_TYPE_EQUALITY, "floor equality"),
         (ctx_floor_range, PROOF_TYPE_BATCHED_RANGE_U64, "floor range"),
     ] {
-        if let Err(e) = context_is_armed(&account.try_borrow_data()?, proof_type, loan.key) {
+        if let Err(e) = context_is_armed(account.owner, &account.try_borrow_data()?, proof_type, loan.key) {
             msg!("{} context: {}", what, disarm_reason(&e));
             return Err(e);
         }
@@ -459,7 +459,28 @@ pub fn loan_address(program_id: &Pubkey, escrow: &Pubkey) -> (Pubkey, u8) {
 /// authority**. If that authority is the borrower, they withdraw the proofs the day before default
 /// and the seizure evaporates with nothing on chain looking wrong. Everything else about these
 /// proofs the token program re-checks at transfer time; this it has no opinion about.
-pub fn context_is_armed(data: &[u8], proof_type: u8, loan: &Pubkey) -> Result<(), ProgramError> {
+/// A context account is only worth reading if the ZK proof program wrote it.
+///
+/// **This owner check was claimed as repaired on 2026-09-16 and was not present.** Without it the
+/// binding below is decoration: an attacker supplies an account their own program owns, carrying
+/// the escrow's real ElGamal key and ciphertext — both public — the right proof-type byte, the
+/// right authority, and any commitment they like. Every remaining check passes and no proof was
+/// ever verified. The key and ciphertext matching prove the account *names* this escrow; only the
+/// ZK program having written it proves the commitment is *about* the balance.
+///
+/// Checked here, at origination, because an account's owner cannot change afterwards — so the
+/// addresses the loan records stay trustworthy for the life of the loan.
+pub fn context_is_armed(
+    owner: &Pubkey,
+    data: &[u8],
+    proof_type: u8,
+    loan: &Pubkey,
+) -> Result<(), ProgramError> {
+    // The interface crate spells its id as an `Address` and this program speaks `Pubkey`; they are
+    // the same 32 bytes, so compare those rather than introduce a conversion that could go stale.
+    if owner.to_bytes() != solana_zk_elgamal_proof_interface::id().to_bytes() {
+        return Err(ProgramError::IllegalOwner);
+    }
     if data.len() <= CTX_PROOF_TYPE {
         return Err(ProgramError::InvalidAccountData);
     }
@@ -474,6 +495,7 @@ pub fn context_is_armed(data: &[u8], proof_type: u8, loan: &Pubkey) -> Result<()
 
 fn disarm_reason(e: &ProgramError) -> &'static str {
     match e {
+        ProgramError::IllegalOwner => "was not written by the ZK proof program, so its contents prove nothing",
         ProgramError::InvalidAccountOwner => "can still be closed by someone other than this loan",
         _ => "is not a verified proof of the kind this slot needs",
     }
@@ -907,6 +929,12 @@ mod discriminants {
 mod arming {
     use super::*;
 
+    /// What a real context account is owned by. Anything else and its contents are whatever the
+    /// account's owner felt like writing.
+    fn zk() -> Pubkey {
+        Pubkey::new_from_array(solana_zk_elgamal_proof_interface::id().to_bytes())
+    }
+
     /// A context state account as the ZK program writes one: authority, then proof type, then the
     /// context itself. Only the first 33 bytes decide whether a seizure can be disarmed.
     fn context(authority: &Pubkey, proof_type: u8) -> Vec<u8> {
@@ -921,19 +949,39 @@ mod arming {
     #[test]
     fn a_context_the_loan_can_close_is_armed() {
         let loan = Pubkey::new_unique();
-        assert!(context_is_armed(&context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan).is_ok());
+        assert!(context_is_armed(&zk(), &context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan).is_ok());
     }
 
     /// **A2 — the attack this program exists to stop.** The borrower keeps the context authority,
     /// so they can close the accounts the day before default and the proofs vanish. Token-2022
     /// has no opinion about this; if origination lets it through, the loan is unsecured and
     /// everything on chain still looks correct.
+    /// The hole this file shipped with for most of 2026-09-16, after a repair that claimed to have
+    /// closed it. Every other check here can be satisfied by an attacker who owns the account: the
+    /// escrow's ElGamal key and ciphertext are public, the authority is derivable, and the proof
+    /// type is one byte. **Only the owner says a proof was ever verified.**
+    #[test]
+    fn a_context_the_zk_program_did_not_write_is_refused() {
+        let loan = Pubkey::new_unique();
+        let attacker = Pubkey::new_unique();
+        let d = context(&loan, PROOF_TYPE_EQUALITY);
+        assert!(
+            context_is_armed(&zk(), &d, PROOF_TYPE_EQUALITY, &loan).is_ok(),
+            "these bytes under the ZK program are a verified proof"
+        );
+        assert_eq!(
+            context_is_armed(&attacker, &d, PROOF_TYPE_EQUALITY, &loan),
+            Err(ProgramError::IllegalOwner),
+            "the identical bytes under someone else's program prove nothing at all"
+        );
+    }
+
     #[test]
     fn a_context_the_borrower_can_close_is_refused() {
         let loan = Pubkey::new_unique();
         let borrower = Pubkey::new_unique();
         assert_eq!(
-            context_is_armed(&context(&borrower, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan),
+            context_is_armed(&zk(), &context(&borrower, PROOF_TYPE_EQUALITY), PROOF_TYPE_EQUALITY, &loan),
             Err(ProgramError::InvalidAccountOwner),
         );
     }
@@ -945,7 +993,7 @@ mod arming {
     fn a_verified_proof_of_the_wrong_kind_is_refused() {
         let loan = Pubkey::new_unique();
         assert_eq!(
-            context_is_armed(&context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_BATCHED_RANGE_U128, &loan),
+            context_is_armed(&zk(), &context(&loan, PROOF_TYPE_EQUALITY), PROOF_TYPE_BATCHED_RANGE_U128, &loan),
             Err(ProgramError::InvalidAccountData),
         );
     }
@@ -957,7 +1005,7 @@ mod arming {
         let loan = Pubkey::new_unique();
         for len in [0usize, 32, CTX_PROOF_TYPE] {
             assert_eq!(
-                context_is_armed(&vec![0u8; len], PROOF_TYPE_EQUALITY, &loan),
+                context_is_armed(&zk(), &vec![0u8; len], PROOF_TYPE_EQUALITY, &loan),
                 Err(ProgramError::InvalidAccountData),
                 "a {len}-byte account was accepted as a proof context",
             );
@@ -973,7 +1021,7 @@ mod arming {
         let types = [PROOF_TYPE_EQUALITY, PROOF_TYPE_BATCHED_VALIDITY_3, PROOF_TYPE_BATCHED_RANGE_U128];
         for expected in types {
             for actual in types {
-                let got = context_is_armed(&context(&loan, actual), expected, &loan);
+                let got = context_is_armed(&zk(), &context(&loan, actual), expected, &loan);
                 assert_eq!(got.is_ok(), expected == actual, "slot {expected} accepted type {actual}");
             }
         }

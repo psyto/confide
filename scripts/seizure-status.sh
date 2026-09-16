@@ -11,9 +11,9 @@ cd "$(dirname "$0")/.."
 R="${RPC:-https://api.devnet.solana.com}"
 
 PROGRAM=Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
-LOAN=HbbvY8hYbit4BRwVsu6Fj4tvCCfJqoHFZkWWmhZDLomH
-ESCROW=AdgKdUhv8w8XddZxSS9p4jABGkq4tk78sU9avjEt4one
-LENDER=ERUF4Y5Wf4rzrfWvd2AJauEP5wwFfWAm1Am899DRr1MC
+LOAN=26QJWCRwvPd1dLwvgH4Drb8D5F4ga2RPMdS8PrbRw4Hj
+ESCROW=HfdcgCmfMaWEu9ycjGEu12Mm9cAuxM8RxHQnELMimNx5
+LENDER=Kzv6RiLoENQaEgHuVpmV6UubJmtBRgzprbv7YgnYq4X
 
 acct() { curl -s --max-time 25 "$R" -H 'Content-Type: application/json' \
   -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$1\",{\"encoding\":\"$2\",\"commitment\":\"confirmed\"}]}"; }

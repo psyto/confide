@@ -14,7 +14,7 @@
 >
 > | what was claimed | what was true | now |
 > |---|---|---|
-> | the floor check is sound | the arithmetic was right and the **binding was absent** — nothing checked the context accounts were owned by the ZK program or that the equality context concerned *this escrow*; `EQ_PUBKEY` and `EQ_CIPHERTEXT` were defined and never read, so fabricated accounts with the right header bytes passed | **repaired** — both are read, the ZK-program owner is required, and a genuine proof about a *different* escrow is refused, with a test |
+> | the floor check is sound | the arithmetic was right and the **binding was absent** — nothing checked the context accounts were owned by the ZK program or that the equality context concerned *this escrow*; `EQ_PUBKEY` and `EQ_CIPHERTEXT` were defined and never read, so fabricated accounts with the right header bytes passed | **repaired twice.** `EQ_PUBKEY` and `EQ_CIPHERTEXT` are read, and a genuine proof about a *different* escrow is refused. **The ZK-program owner check was claimed here on 09-16 and was not in the code**; without it the binding is decoration, because an attacker who owns the account can fill in the escrow's real key and ciphertext — both public — and any commitment they like. It is there now, with a test that fails on the exact bytes an attacker would supply |
 > | one escrow, one loan | `originate` never verified the escrow was owned by the loan PDA, so a borrower could originate against an account they still held | **repaired** — the SPL owner is checked before anything is recorded |
 > | `q_min` means one thing | the record and the default predicate called it whole tokens; the floor check compared it to base units | **repaired** — scaled by the mint's own `decimals` |
 > | mode B needs no issuer signature | `autoApproveNewAccounts: false` means the escrow must be approved by the mint authority before it can be funded, and §6 already recorded that from the other end | **corrected in §4c** — the issuer signs once per escrow |
@@ -517,9 +517,9 @@ the position is confidential on both sides of the transfer the whole way.
 | | |
 |---|---|
 | the program | [`Gn3rzw8…QduN`](https://explorer.solana.com/address/Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN?cluster=devnet) — 92,032 bytes, 0.4684 SOL |
-| the escrow, now the loan's | [`AdgKdUh…4one`](https://explorer.solana.com/address/AdgKdUhv8w8XddZxSS9p4jABGkq4tk78sU9avjEt4one?cluster=devnet) — public balance 0, confidential balance 0 |
-| the lender's account | [`ERUF4Y5…r1MC`](https://explorer.solana.com/address/ERUF4Y5Wf4rzrfWvd2AJauEP5wwFfWAm1Am899DRr1MC?cluster=devnet) — public balance 0, holding 173,000 |
-| the loan | [`HbbvY8h…LomH`](https://explorer.solana.com/address/HbbvY8hYbit4BRwVsu6Fj4tvCCfJqoHFZkWWmhZDLomH?cluster=devnet) — 415 bytes, `seized = 1` |
+| the escrow, now the loan's | [`HfdcgCm…mNx5`](https://explorer.solana.com/address/HfdcgCmfMaWEu9ycjGEu12Mm9cAuxM8RxHQnELMimNx5?cluster=devnet) — public balance 0, confidential balance 0 |
+| the lender's account | [`Kzv6RiL…q4X`](https://explorer.solana.com/address/Kzv6RiLoENQaEgHuVpmV6UubJmtBRgzprbv7YgnYq4X?cluster=devnet) — public balance 0, holding 173,000 |
+| the loan | [`26QJWCR…w4Hj`](https://explorer.solana.com/address/26QJWCRwvPd1dLwvgH4Drb8D5F4ga2RPMdS8PrbRw4Hj?cluster=devnet) — 415 bytes, `seized = 1` |
 
 **This document said, for one day, that the deployment was blocked by funding.** It was not. The
 balance being read belonged to another project's keypair, because `solana balance` reads whatever
