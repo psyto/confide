@@ -116,11 +116,13 @@ Ranked by how directly the pain is already a number they track:
 
 ## What gets built
 
-**0. The compatibility verdict**, because it comes before every other question. Can a Kamino
-reserve custody, value and liquidate a confidential Token-2022 balance without a Kamino-side
-integration? Reproducible, `PASS` / `BLOCKED` / `REQUIRES INTEGRATION`. **A packet that proposes an
-LLTV for collateral whose operational path is unproven deserves to be refused**, so this is the gate
-and not an appendix.
+**0. The compatibility verdict** — **done, 2026-09-16: [`REQUIRES INTEGRATION`](KAMINO.md)**,
+reproducible with `./scripts/kamino-verdict.sh`. Kamino names the confidential-transfer extensions
+on its allow-lists and requires them to be inert, on the *user's* account as well as its own vault,
+on deposit, borrow and both sides of liquidation. Both SpaceX mints clear every other condition, so
+the gap is confidentiality and nothing else — four line numbers wide. **That is the gate the packet
+had to pass before proposing an LLTV for anything**, and it is now a citation rather than an
+argument.
 
 **1. The collateral admission packet** — for one named mint and one named market, answering what a
 risk owner must answer anyway:
