@@ -6,7 +6,7 @@
 Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
 ```
 
-## Description — 4913 / 5000 characters
+## Description — 4964 / 5000 characters
 
 ```
 1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
@@ -51,7 +51,7 @@ WHAT RUNS, ALL OF IT ON CHAIN
 • A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
 • Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
 • Restatement across a stock split that refuses rather than guessing
-• Taking that collateral on default — a transfer the borrower authorises at origination and cannot later refuse. Three proofs (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof) parked on chain under an authority they cannot close, then fired by a program that owns the escrow. No key reconstructed, nobody asked, neither account ever shows what moved. The floor and the price are the loan's to establish, not the chain's. Program on devnet: Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
+• Taking that collateral on default — a transfer the borrower authorises at origination and cannot later refuse. Three proofs (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof) parked on chain under an authority they cannot close, then fired by a program that owns the escrow. No key reconstructed, nobody asked, neither account ever shows what moved. The floor is proved on chain against the escrow's own ciphertext; the price is the loan's to establish, not the chain's. Program on devnet: Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
 
 Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
 
