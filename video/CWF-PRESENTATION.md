@@ -46,12 +46,12 @@ has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 | 1 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
 | 2 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
 | 3 | already shipped | 20 + 2 | 45 | 139 | the mint scan finishing, the auditor slot empty |
-| 4 | whose money | 18 | 40 | 138 | the 19 Kamino reserves, live |
+| 4 | whose money | 19 | 43 | 140 | the 19 Kamino reserves, live |
 | 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
 | 6 | what runs | 24 | 54 | 138 | the proofs accepted by Solana's ZK program; the seizure on devnet |
 | 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
 | 8 | what you can run | 19 | 42 | 137 | `./scripts/packet.sh SPCX.US`, then the page URL |
-| | | **164 s** | **343** | | |
+| | | **165 s** | **346** | | |
 
 ## The script
 
@@ -83,12 +83,13 @@ end is the line** — one company being careful is a story about that company.
 
 ### 4 — whose money
 
-> Which would be a curiosity, except that people are already lending against these. Kamino has
-> nineteen live markets in tokenized stock, with loan-to-values someone chose and money already
-> borrowed against them. Every position in every one of them is public.
+> Which would be a curiosity, except that people are already lending against these. Twenty-one
+> million dollars of tokenized stock is sitting in Kamino reserves right now, and the caps
+> authorise eighty-one million of borrowing against it. Every one of those positions is public.
 
-*Shows:* the reserve table, live. **The voice does not read the numbers** — the table is on screen
-and the sentence that matters is the last one. Confide is not in this scene.
+*Shows:* the reserve table, live, with the two totals. **Two numbers and the last sentence** — the
+table carries the rest. Confide is not in this scene, and the figures are Kamino's own caps, LTVs
+and prices, computed by `./scripts/capacity.sh`.
 
 ### 5 — the refusal
 

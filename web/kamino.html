@@ -58,11 +58,11 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 <div class="wrap">
 
 <h1>Can Kamino take this<br>as collateral?</h1>
-<div class="lede">Kamino already lends against tokenized stocks — <b>19 live reserves</b>, at LTVs
-its market owners chose, four of them being borrowed against right now. Every position in them is
-public. Kamino Lend is open source, and it does not ignore confidential tokens: it <b>names</b>
-them, and requires them to be switched off before a deposit will land. Pick any of the 1,869
-tokenized stocks below. <b>The chain reading is made by your browser, now.</b></div>
+<div class="lede"><b id="ledeHeld">$21 million</b> of tokenized stock is sitting in Kamino reserves
+right now, and their caps authorise <b id="ledeCap">$81 million</b> of borrowing against it.
+<b>Every one of those positions is public</b>, because Kamino's own program refuses a deposit from
+an account carrying confidential value. Pick any of the 1,869 tokenized stocks below.
+<b>The chain reading is made by your browser, now.</b></div>
 <div class="sub"><a href="https://github.com/psyto/confide">GitHub</a> ·
 <a href="index.html">what Confide is</a> ·
 <a href="https://github.com/psyto/confide/blob/main/docs/KAMINO.md">the full verdict</a> ·
@@ -96,6 +96,14 @@ no wallet, no key</div>
   <div class="lede">The <a href="index.html">1,869</a> is incidence — how many tokenized stocks have
   confidential transfers switched on. It is not the number a lender cares about, and until this page
   they were the same number here. These are two questions with two answers.</div>
+  <div class="grid2">
+    <div class="panel"><div class="lbl">borrowing those caps and LTVs already authorise</div>
+      <div class="stat" style="color:var(--cyn)" id="nCap">—</div>
+      <div class="prov" id="nCapSub">cap × LTV × the reserve's own price</div></div>
+    <div class="panel"><div class="lbl">of it reachable while your position stays confidential</div>
+      <div class="stat bad">$0</div>
+      <div class="prov">the deposit path refuses the account — <span class="mono">constraints.rs:187</span></div></div>
+  </div>
   <div class="grid2">
     <div class="panel"><div class="lbl">tokenized stocks Kamino <b>already</b> lends against</div>
       <div class="stat" style="color:var(--cyn)" id="nRes">—</div>
@@ -307,7 +315,17 @@ function render(filter){
       bo.toLocaleString()+" borrowed, every position public";
   }catch(e){}
   try{
-    const k=await (await fetch("kamino.json")).json();
+    const c=await (await fetch("capacity.json")).json();
+    const usd=n=>"$"+(n>=1e6?(n/1e6).toFixed(1)+" million":Math.round(n).toLocaleString());
+    document.getElementById("nCap").textContent=usd(c.authorised_capacity_usd);
+    document.getElementById("nCapSub").textContent=
+      usd(c.held_usd)+" deposited · "+c.reserves_priced+" of "+c.reserves_total+
+      " reserves carry a price; the rest are excluded";
+    document.getElementById("ledeHeld").textContent=usd(c.held_usd);
+    document.getElementById("ledeCap").textContent=usd(c.authorised_capacity_usd);
+  }catch(e){}
+  try{
+    const k=await (await fetch("kamino-summary.json")).json();
     document.getElementById("nAdm").textContent=
       k.counts.admissible.toLocaleString()+" / "+k.counts.total.toLocaleString();
     document.getElementById("kTag").textContent=k.klend.tag;

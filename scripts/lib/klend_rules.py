@@ -106,6 +106,7 @@ OFF_LIQ_MINT = OFF_LIQUIDITY + 0
 OFF_LIQ_AVAILABLE = OFF_LIQUIDITY + 96
 OFF_LIQ_BORROWED_SF = OFF_LIQUIDITY + 104     # u128, scaled by 2**60
 OFF_LIQ_PRICE_SF = OFF_LIQUIDITY + 120        # u128, scaled by 2**60
+OFF_LIQ_PRICE_TS = OFF_LIQUIDITY + 136       # unix seconds; 0 means never refreshed
 OFF_LIQ_DECIMALS = OFF_LIQUIDITY + 144
 
 OFF_CONFIG = 4856                              # liquidity 1232 + pad 1200 + collateral 1096 + pad 1200
@@ -147,4 +148,5 @@ def decode_reserve(data):
         "available": u64(OFF_LIQ_AVAILABLE) / unit,
         "borrowed": u128(OFF_LIQ_BORROWED_SF) / SF / unit,
         "price": u128(OFF_LIQ_PRICE_SF) / SF,
+        "price_ts": u64(OFF_LIQ_PRICE_TS),
     }

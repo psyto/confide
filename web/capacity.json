@@ -1,0 +1,16 @@
+{
+ "generated_from": "scripts/capacity.sh",
+ "held_usd": 21102146,
+ "borrowed_usd": 147557,
+ "authorised_capacity_usd": 81634727,
+ "reachable_confidentially_usd": 0,
+ "reserves_priced": 14,
+ "reserves_total": 19,
+ "unpriced": [
+  "MU.US",
+  "QQQx",
+  "SKHY.US",
+  "SPCX.US",
+  "SPYx"
+ ]
+}

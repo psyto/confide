@@ -96,9 +96,14 @@ lender needs now run on devnet — the check, and the seizure.
 > collateral carrying confidential value cannot get in, and what cannot get in cannot be borrowed
 > against or liquidated. **1,869 of 1,869** tokenized-equity mints clear every other condition.
 >
-> And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %, thirteen
-> holding more than a seed — ≈89,192 tokens of available liquidity and ≈230 borrowed. SpaceX has
-> one: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in them is public.**
+> And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %. At the
+> reserves' own prices that is **$21.1 m of tokenized stock deposited** and **$81.6 m of borrowing
+> their caps already authorise** — of which **$0 is reachable while a position stays confidential**.
+> SpaceX has a reserve too: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in all of
+> them is public**, and that is the only way in.
+>
+> `./scripts/capacity.sh` computes those two figures from Kamino's own caps, LTVs and prices.
+> **Nobody has to agree to anything for the number to exist.**
 >
 > `./scripts/kamino-verdict.sh` · `./scripts/kamino-reserves.sh` · `./scripts/packet.sh SPCX.US` ·
 > [`docs/KAMINO.md`](docs/KAMINO.md) · the reasoning is in [`docs/27-DAYS.md`](docs/27-DAYS.md).
@@ -171,6 +176,7 @@ watch. Source in
 ./scripts/kamino-admissible.sh # the same question against all 1,869, not one
 ./scripts/kamino-reserves.sh  # which tokenized stocks Kamino already lends against, on what terms
 ./scripts/packet.sh SPCX.US   # the collateral admission packet, generated from live data
+./scripts/capacity.sh         # what is on the table in dollars, and how much a confidential holder reaches
 ./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm

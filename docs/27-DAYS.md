@@ -158,8 +158,14 @@ not because the asset is risky but because the position cannot enter*. Facts, Ka
 Confide's inference are three visually separate lanes. The commands stay underneath, because they
 are what make the page checkable rather than a claim about live data.
 
-**4. The market evidence map** — **done, 2026-09-16**, and sharper than expected in both
-directions:
+**4. The market evidence map** — **done, 2026-09-16**. The bet said *make the number computable by
+anyone, from live chain data, without asking anyone's permission.* `./scripts/capacity.sh`:
+
+> **$21.1 m** of tokenized stock deposited across Kamino's reserves, and **$81.6 m** of borrowing
+> their caps and LTVs already authorise. **$0 of it reachable while a position stays confidential.**
+
+Computed from Kamino's own caps, LTVs and prices. Nobody had to agree to anything. And sharper than
+expected in both directions:
 
 > **1,869 of 1,869** tokenized-equity mints could be held by a Kamino reserve today.
 > **0** of them can be held while the position is confidential.

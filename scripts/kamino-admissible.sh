@@ -72,5 +72,8 @@ json.dump({
     'counts': {'total': len(rows), 'admissible': len(adm)},
     'mints': rows,
 }, open('web/kamino.json', 'w'), indent=1)
-print('\n  wrote web/kamino.json')
+json.dump({'klend': {'pin': K.KLEND_PIN, 'tag': K.KLEND_TAG},
+           'counts': {'total': len(rows), 'admissible': len(adm)}},
+          open('web/kamino-summary.json', 'w'), indent=1)
+print('\n  wrote web/kamino.json (full, for the repository) and web/kamino-summary.json (for the page)')
 PY

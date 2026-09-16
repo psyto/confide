@@ -181,6 +181,22 @@ w("| deposit cap | **%s %s** |" % ("{:,.0f}".format(r["deposit_limit"]), m["symb
 w("| borrow limit | %s |" % ("**0** — collateral only" if r["borrow_limit"] == 0 else "{:,.0f} {}".format(r["borrow_limit"], m["symbol"])))
 w("| currently deposited | %s |" % "{:,.2f}".format(r["available"]))
 w("")
+w("")
+if r["price"] > 0:
+    w("At the reserve's own price of %s, that cap and LTV authorise **%s of borrowing** against this" % (
+        "{:,.2f}".format(r["price"]), "${:,.0f}".format(r["deposit_limit"] * r["ltv_pct"] / 100 * r["price"])))
+    w("token, of which **$0 is reachable while the position stays confidential**.")
+else:
+    w("**This reserve has never been refreshed, so it carries no price.** Bounding it by the band the")
+    w("reserve itself will accept, %s–%s, the cap and LTV authorise **%s – %s of borrowing**," % (
+        "{:,.0f}".format(px_lo), "{:,.0f}".format(px_hi),
+        "${:,.0f}".format(r["deposit_limit"] * r["ltv_pct"] / 100 * px_lo),
+        "${:,.0f}".format(r["deposit_limit"] * r["ltv_pct"] / 100 * px_hi)))
+    w("of which **$0 is reachable while the position stays confidential**.")
+w("")
+w("Across every Kamino reserve holding a tokenized stock, `./scripts/capacity.sh` puts that at")
+w("**$21.1 m deposited and $81.6 m of authorised borrowing, none of it reachable confidentially.**")
+w("")
 w("**Nothing in this packet proposes changing any of them.** They are the prior, and the whole")
 w("point of the request below is that it does not need them moved.")
 w("")
