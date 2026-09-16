@@ -45,10 +45,13 @@ def evaluate_mint(info):
         if name not in ALLOWED_MINT_EXTENSIONS:
             why.append("%s is not on the allow-list (constraints.rs:42)" % name)
 
+    # klend does NOT require the confidential-transfer extension to be present -- a legacy SPL mint
+    # returns Ok immediately, and a Token-2022 mint only needs its extensions to be supported. An
+    # earlier version of this function rejected a mint without it, which invented a condition the
+    # source does not have. Whether the extension is present is reported separately, because it is
+    # what decides if the confidentiality question arises at all, not whether klend would take it.
     ct = exts.get("confidentialTransferMint")
-    if ct is None:
-        why.append("no confidentialTransferMint — nothing here to keep confidential")
-    elif ct.get("autoApproveNewAccounts"):
+    if ct is not None and ct.get("autoApproveNewAccounts"):
         why.append("autoApproveNewAccounts is true (constraints.rs:131)")
 
     hook = exts.get("transferHook")
@@ -74,6 +77,11 @@ def evaluate_mint(info):
     return (not why), why, sorted(exts)
 
 
+def has_confidential_transfers(info):
+    """Separate from admissibility: does the confidentiality question even arise for this mint?"""
+    return any(e["extension"] == "confidentialTransferMint" for e in info.get("extensions", []))
+
+
 # ---------------------------------------------------------------------------
 # Reserve layout.
 #
@@ -88,6 +96,9 @@ def evaluate_mint(info):
 # shows up as a failure and not as a plausible wrong number.
 
 RESERVE_DISCRIMINATOR = bytes.fromhex("2bf2ccca1af73b7f")  # sha256("account:Reserve")[:8]
+RESERVE_LEN = 8624   # filtered on as well as the discriminator: a collision is implausible, but a
+                     # size filter costs nothing and makes a wrong decode impossible rather than
+                     # unlikely.
 
 OFF_LENDING_MARKET = 32
 OFF_LIQUIDITY = 128
@@ -130,6 +141,9 @@ def decode_reserve(data):
         "borrow_factor_pct": u64(OFF_CFG_BORROW_FACTOR_PCT),
         "deposit_limit": u64(OFF_CFG_DEPOSIT_LIMIT) / unit,
         "borrow_limit": u64(OFF_CFG_BORROW_LIMIT) / unit,
+        # `total_available_amount` is the liquidity sitting in the vault, NOT what was supplied.
+        # klend's own total is available + borrowed - accumulated fees, so calling this "deposited"
+        # understated it by whatever is currently lent out. Both are reported, separately named.
         "available": u64(OFF_LIQ_AVAILABLE) / unit,
         "borrowed": u128(OFF_LIQ_BORROWED_SF) / SF / unit,
         "price": u128(OFF_LIQ_PRICE_SF) / SF,

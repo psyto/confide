@@ -7,7 +7,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/kamino.html" />
 <meta property="og:title" content="Can Kamino take this as collateral?" />
-<meta property="og:description" content="The gap is four lines wide, and they are in Kamino's own source. Pick a mint, read mainnet in your browser, see what a reserve could hold." />
+<meta property="og:description" content="Kamino's deposit path refuses an account holding confidential value, in its own source. Pick a mint, read mainnet in your browser, see what a reserve could hold." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090d'/%3E%3Cpath d='M11 10h10M11 16h6M11 22h10' stroke='%2363cf83' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
 <style>
 :root{--bg:#08090d;--fg:#c9d1de;--dim:#59647a;--bold:#f4f7fb;--red:#ef6b73;--grn:#63cf83;
@@ -59,9 +59,10 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 
 <h1>Can Kamino take this<br>as collateral?</h1>
 <div class="lede">Kamino already lends against tokenized stocks — <b>19 live reserves</b>, at LTVs
-its market owners chose. Every position in them is public. Kamino Lend is open source, and it does
-not ignore confidential tokens: it <b>names</b> them, and requires them to be switched off. Pick any
-of the 1,869 tokenized stocks below. <b>The chain reading is made by your browser, now.</b></div>
+its market owners chose, four of them being borrowed against right now. Every position in them is
+public. Kamino Lend is open source, and it does not ignore confidential tokens: it <b>names</b>
+them, and requires them to be switched off before a deposit will land. Pick any of the 1,869
+tokenized stocks below. <b>The chain reading is made by your browser, now.</b></div>
 <div class="sub"><a href="https://github.com/psyto/confide">GitHub</a> ·
 <a href="index.html">what Confide is</a> ·
 <a href="https://github.com/psyto/confide/blob/main/docs/KAMINO.md">the full verdict</a> ·
@@ -69,9 +70,12 @@ no wallet, no key</div>
 
 <section>
   <h2>The rule, in four lines of Kamino's source</h2>
-  <div class="lede">A reserve refuses a token account that can hold value confidentially. The same
-  check runs on <b>the holder's own account</b>, not only on Kamino's vault — so it gates the
-  counterparty, and it gates deposit, borrowing <b>and both sides of liquidation</b> alike.</div>
+  <div class="lede"><b>The ordinary deposit path refuses a token account that can hold value
+  confidentially</b> — and it checks the account the tokens come <i>from</i>, which is the holder's,
+  not Kamino's vault. Collateral that cannot get in cannot be borrowed against or liquidated either;
+  that follows from the deposit refusal rather than from separate checks, and it is worth saying
+  which. <span class="muted">Borrow checks the account receiving the borrowed asset; liquidation
+  checks the liquidator's accounts; <code>flash_repay</code> does not check at all.</span></div>
   <div class="panel">
     <table>
       <tr><th>klend</th><th>the condition</th><th>what it refuses</th></tr>
@@ -96,14 +100,14 @@ no wallet, no key</div>
     <div class="panel"><div class="lbl">tokenized stocks Kamino <b>already</b> lends against</div>
       <div class="stat" style="color:var(--cyn)" id="nRes">—</div>
       <div class="prov" id="nResSub">live reserves, LTVs chosen by their market owners</div></div>
-    <div class="panel"><div class="lbl">of those deposits, held confidentially</div>
+    <div class="panel"><div class="lbl">of those positions, held confidentially</div>
       <div class="stat bad">0</div>
       <div class="prov">every position in them is visible to anyone who looks</div></div>
   </div>
   <div class="grid2">
-    <div class="panel"><div class="lbl">mints a Kamino reserve could hold today</div>
+    <div class="panel"><div class="lbl">mints that pass klend's mint-extension check</div>
       <div class="stat ok" id="nAdm">—</div>
-      <div class="prov">every extension on the allow-list, every conditional one passing</div></div>
+      <div class="prov">one gate of several — not oracle, liquidity, eligibility, or whether anyone would supply it</div></div>
     <div class="panel"><div class="lbl">of those, usable while the position is confidential</div>
       <div class="stat bad">0</div>
       <div class="prov">no holder can satisfy constraints.rs:187 and :201 — that is what the rule says</div></div>
@@ -261,7 +265,7 @@ async function show(m){
 
     (hasCT&&v.ok?
     '<div class="lane infer"><h3>What caps it <span>Confide\'s inference, not Kamino\'s statement</span></h3>'+
-      '<table><tr><td>A holder of this token whose position is confidential cannot deposit it, cannot borrow against it, and cannot be liquidated out of it — <span class="mono">constraints.rs:187</span> and <span class="mono">:201</span> refuse the account on all three paths.</td></tr>'+
+      '<table><tr><td>A holder of this token whose position is confidential <b>cannot deposit it</b> — <span class="mono">lending_checks.rs:186</span> passes their own account to <span class="mono">constraints.rs:187</span> and <span class="mono">:201</span>. Collateral that cannot enter cannot be borrowed against or liquidated either.</td></tr>'+
       '<tr><td><b>Economic consequence: proposed cap $0</b>, at any LLTV. Not because the asset is risky — because the position cannot enter.</td></tr>'+
       '<tr><td class="muted">Removing it needs a proved floor and custody that survives the holder, both of which run, plus re-proving and a liquidation hand-off, neither of which does. See below.</td></tr>'+
       '</table></div>':"")+
@@ -296,9 +300,11 @@ function render(filter){
     for(const r of rr.reserves) (RESERVES[r.mint]=RESERVES[r.mint]||[]).push(r);
     const live=rr.reserves.filter(r=>r.available>1);
     document.getElementById("nRes").textContent=rr.reserves.length;
+    const av=Math.round(live.reduce((a,r)=>a+r.available,0));
+    const bo=Math.round(live.reduce((a,r)=>a+(r.borrowed||0),0));
     document.getElementById("nResSub").textContent=
-      live.length+" of them hold a real balance — "+
-      Math.round(live.reduce((a,r)=>a+r.available,0)).toLocaleString()+" tokens, every one public";
+      live.length+" hold more than a seed — "+av.toLocaleString()+" available, "+
+      bo.toLocaleString()+" borrowed, every position public";
   }catch(e){}
   try{
     const k=await (await fetch("kamino.json")).json();

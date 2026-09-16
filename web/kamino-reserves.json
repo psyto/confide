@@ -133,7 +133,7 @@
    "borrow_factor_pct": 250,
    "deposit_limit": 90000.0,
    "borrow_limit": 0.0,
-   "available": 29660.76218736,
+   "available": 29658.30218736,
    "borrowed": 0.0,
    "price": 129.65
   },
@@ -178,7 +178,7 @@
    "deposit_limit": 18000.0,
    "borrow_limit": 500.0,
    "available": 11143.19846082,
-   "borrowed": 41.37076455896131,
+   "borrowed": 41.37091893404117,
    "price": 212.52593441929986
   },
   {
@@ -222,7 +222,7 @@
    "deposit_limit": 16000.0,
    "borrow_limit": 1000.0,
    "available": 3802.75260481,
-   "borrowed": 63.575540294758994,
+   "borrowed": 63.57593592219891,
    "price": 706.5100286446905
   },
   {
@@ -266,7 +266,7 @@
    "deposit_limit": 20000.0,
    "borrow_limit": 5000.0,
    "available": 5221.06802135,
-   "borrowed": 121.4628258397511,
+   "borrowed": 121.46354007586581,
    "price": 761.567293631163
   },
   {
@@ -353,8 +353,8 @@
    "borrow_factor_pct": 225,
    "deposit_limit": 20000.0,
    "borrow_limit": 2500.0,
-   "available": 7555.60024985,
-   "borrowed": 3.767391968059879,
+   "available": 7554.8536328,
+   "borrowed": 3.767415127313688,
    "price": 356.72
   },
   {

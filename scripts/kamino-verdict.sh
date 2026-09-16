@@ -56,12 +56,17 @@ expect "$C" 194 "allow_non_confidential_credits" "a token account that cannot re
 expect "$C" 201 "closable().is_err()"           "a token account holding any confidential balance is refused"
 echo
 
-echo "${bold}ON THE USER'S OWN ACCOUNT, NOT ONLY THE VAULT${off} — so it gates the counterparty too"
-expect "$K" 186 "check_only_supported_liquidity_token_extensions" "deposit checks it"
-expect "$K" 102 "check_only_supported_liquidity_token_extensions" "withdraw checks it"
-expect "$K" 60  "check_only_supported_liquidity_token_extensions" "borrow checks it"
-expect "$K" 255 "check_only_supported_liquidity_token_extensions" "liquidation checks it — the repay side"
-expect "$K" 260 "check_only_supported_liquidity_token_extensions" "liquidation checks it — the withdraw side"
+echo "${bold}ON THE DEPOSITOR'S OWN ACCOUNT${off} — which is the whole finding"
+expect "$K" 186 "check_only_supported_liquidity_token_extensions" "deposit checks the account the tokens come FROM"
+expect "$K" 188 "user_source_liquidity" "  …and that account is the user's, not the vault"
+echo
+echo "${bold}AND NOT ELSEWHERE, WHICH IS WORTH KNOWING${off} — these check a different account"
+expect "$K" 61  "borrow_reserve_liquidity_mint" "borrow checks the account receiving the BORROWED asset"
+expect "$K" 256 "repay_reserve_liquidity_mint" "liquidation checks the LIQUIDATOR's repay source"
+expect "$K" 261 "withdraw_reserve_liquidity_mint" "liquidation checks the LIQUIDATOR's destination"
+printf '      %sso "cannot borrow against it" and "cannot be liquidated out of it" follow from the\n' "$dim"
+printf '      deposit refusal, not from these. flash_repay_reserve_liquidity_checks omits the\n'
+printf '      check entirely. "Every path is checked" is not true and is not claimed.%s\n' "$off"
 echo
 
 echo "${bold}THE ASSET, AGAINST THOSE CONDITIONS${off} — read live from mainnet, not from a table here"
@@ -105,18 +110,22 @@ if [ "$fail" -eq 0 ]; then
   it touches: no confidential credits, public credits mandatory, and a confidential
   balance of exactly zero.
 
-  So collateral must be public by the time it reaches Kamino. A holder whose account
-  carries any confidential balance cannot deposit, cannot borrow, and cannot be
-  liquidated — the same check gates all three.
+  So collateral must be public by the time it reaches Kamino. The ordinary deposit
+  path refuses an account carrying confidential value, and collateral that cannot
+  get in cannot be borrowed against or liquidated either — as a consequence of the
+  deposit refusal, not because those paths check the holder's collateral account.
+  They do not; see the lines above.
 
   Both SpaceX mints pass every mint-level condition today. Kamino could open a
   reserve for either one now, and the reason it cannot take a confidential position
   in them is neither the asset nor Token-2022 support. It is the account-level rule,
   and nothing else.
 
-  The missing capability is one thing: a reserve that can value a balance it cannot
-  read. That needs a proof of what the balance is worth, and a way to recover the
-  collateral at default without the holder's cooperation.
+  What is missing is not one thing. A reserve would need to value a balance it cannot
+  read -- a proved floor, re-proved on some schedule -- and recover the collateral at
+  default without the holder's cooperation, inside its own liquidation path. And the
+  issuer has to approve each confidential escrow, because these mints set
+  autoApproveNewAccounts to false. That last one is not Kamino's decision at all.
 VERDICT
 else
   printf '  %sthe pinned lines have moved in %d place(s) — re-read the source before trusting the verdict%s\n' "$red" "$fail" "$off"

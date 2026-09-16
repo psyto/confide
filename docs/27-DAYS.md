@@ -120,9 +120,14 @@ Ranked by how directly the pain is already a number they track:
 reproducible with `./scripts/kamino-verdict.sh`. Kamino names the confidential-transfer extensions
 on its allow-lists and requires them to be inert, on the *user's* account as well as its own vault,
 on deposit, borrow and both sides of liquidation. Both SpaceX mints clear every other condition, so
-the gap is confidentiality and nothing else — four line numbers wide. **That is the gate the packet
-had to pass before proposing an LLTV for anything**, and it is now a citation rather than an
-argument.
+the gap is confidentiality. **That is the gate the packet had to pass before proposing an LLTV for
+anything**, and it is now a citation rather than an argument.
+
+**Corrected the same day, after review:** the first version of this said the four lines gate
+deposit, borrowing and both sides of liquidation. They gate **the deposit path**, on the
+depositor's own account, and the rest follows from collateral being unable to enter. *"Only four
+lines stop a confidential position"* also died: closing it needs a floor that is re-proved, a
+liquidation hand-off, **and the issuer approving each escrow** — which is not Kamino's decision.
 
 **1. The collateral admission packet** — **first version generated, 2026-09-16**:
 [`packets/SPCX.US.md`](packets/SPCX.US.md), and [`packets/NVDAx.md`](packets/NVDAx.md) to show it
@@ -160,8 +165,8 @@ directions:
 > **0** of them can be held while the position is confidential.
 >
 > And the admission question is not hypothetical: **19 tokenized-equity reserves are live on
-> Kamino**, thirteen of them holding real balances totalling ≈89,195 tokens at LTVs from 30 % to
-> 73 %. **SpaceX has one already** — `SPCX.US`, Active, 40 % LTV, 15,000 cap. Every one of those
+> Kamino**, thirteen holding more than a seed — ≈89,192 tokens available, ≈230 borrowed — at LTVs
+> from 30 % to 73 %. **SpaceX has one already** — `SPCX.US`, Active, 40 % LTV, 15,000 cap. Every one of those
 > deposited positions is public.
 
 The first number is admissibility, the second is usability, and until now this repository had one

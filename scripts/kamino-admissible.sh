@@ -54,9 +54,11 @@ for (issuer, verdict), n in sorted(by.items()):
     print('    %-10s %-14s %d' % (issuer, verdict, n))
 
 print()
-print('  ADMISSIBLE means a Kamino reserve could hold this mint today: every extension on it is')
-print('  on the allow-list and every conditional one passes. It does NOT mean a confidential')
-print('  position in it is usable — no holder can satisfy the account-level rules. See docs/KAMINO.md.')
+print('  ADMISSIBLE means MINT-EXTENSION COMPATIBLE: every extension on the mint is on klend\'s')
+print('  allow-list and every conditional one passes. That is one gate of several — it says nothing')
+print('  about oracle, liquidity, legal eligibility or whether anyone would supply the market.')
+print('  It especially does NOT mean a confidential position is usable: the ordinary deposit path')
+print('  refuses an account carrying confidential value. See docs/KAMINO.md.')
 
 if len(adm) != len(rows):
     print()

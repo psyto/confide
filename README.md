@@ -91,13 +91,14 @@ lender needs now run on devnet — the check, and the seizure.
 > been asked. **The lender is first**, and the evidence is no longer an argument.
 >
 > Kamino's lending program names the confidential-transfer extensions on its allow-lists and
-> requires them to be **inert** — `constraints.rs:187`, `:194`, `:201`, `:131` — on the *holder's*
-> account, on deposit, borrowing and both sides of liquidation. So the gap is four lines wide, and
-> it is confidentiality alone: **1,869 of 1,869** tokenized-equity mints clear every other condition.
+> requires them to be **inert** — `constraints.rs:187`, `:194`, `:201`, `:131`. **The ordinary
+> deposit path applies them to the depositor's own account** (`lending_checks.rs:186`), so
+> collateral carrying confidential value cannot get in, and what cannot get in cannot be borrowed
+> against or liquidated. **1,869 of 1,869** tokenized-equity mints clear every other condition.
 >
-> And Kamino already lends against these. **19 live reserves**, thirteen holding real balances
-> totalling ≈89,195 tokens at LTVs from 30 % to 73 %. SpaceX has one — `SPCX.US`, Active, 40 % LTV,
-> 15,000 cap. **Every one of those positions is public.**
+> And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %, thirteen
+> holding more than a seed — ≈89,192 tokens of available liquidity and ≈230 borrowed. SpaceX has
+> one: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in them is public.**
 >
 > `./scripts/kamino-verdict.sh` · `./scripts/kamino-reserves.sh` · `./scripts/packet.sh SPCX.US` ·
 > [`docs/KAMINO.md`](docs/KAMINO.md) · the reasoning is in [`docs/27-DAYS.md`](docs/27-DAYS.md).

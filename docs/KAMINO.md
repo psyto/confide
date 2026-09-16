@@ -36,14 +36,33 @@ Kamino Lend is open source. Everything below is `klend` at `a087609`, `release/v
 | `constraints.rs:194` | `allow_non_confidential_credits` must be true | an account that can only be paid confidentially |
 | `constraints.rs:201` | `closable()` must succeed | an account holding **any** confidential balance — `closable()` requires `pending_lo`, `pending_hi` and `available` to all be the zero ciphertext |
 
-**And the check runs on the user's own account, not only on the reserve's vault.** That is what
-makes it a gate on the counterparty rather than on the protocol's own bookkeeping:
+**And the deposit check runs on the user's own account, not only on the reserve's vault** —
+`lending_checks.rs:186` passes `accounts.user_source_liquidity`. That is what makes it a gate on
+the counterparty rather than on the protocol's own bookkeeping, and it is the whole finding:
 
-`lending_checks.rs:186` deposit · `:102` withdraw · `:60` borrow · `:255` and `:260` liquidation,
-both sides · `handler_init_reserve.rs:65` reserve creation.
+> **Kamino's ordinary deposit path rejects a token account carrying confidential value.**
 
-So the rule is uniform: **a holder whose position is confidential cannot deposit it, cannot borrow
-against it, and cannot be liquidated out of it.** The same four lines decide all three.
+Collateral that cannot get in cannot be borrowed against or liquidated, so those follow. **They do
+not follow from separate checks on the holder's collateral account, and an earlier version of this
+document said they did.**
+
+> **Corrected 2026-09-16, same day, after review.** The claim here was that the same four lines
+> gate deposit, borrowing and both sides of liquidation on the holder's collateral account. Reading
+> the arguments rather than the call sites: **borrow** checks `user_destination_liquidity`, the
+> account receiving the *borrowed* asset (`lending_checks.rs:60`); **liquidation** checks the
+> *liquidator's* repay source and receiving account (`:255`, `:260`), not the borrower's collateral.
+> Three citations were doing the work of one, and the one is enough.
+>
+> **The checks are also not uniform across every value-moving path.**
+> `flash_repay_reserve_liquidity_checks` omits the extension check entirely while its handler
+> transfers `user_source_liquidity → reserve_destination_liquidity`. In practice a flash repay must
+> pair with a flash borrow, and *that* is checked on the receiving account — but "every path is
+> checked" was never true and is not claimed here.
+>
+> Found by [the week-1 review](reviews/2026-09-16-codex-week-1.md). Its own line numbers for
+> `constraints.rs` were wrong — it could not clone the repository and inferred them — and the ones
+> in this document were verified against the file at the pin. The substance of the finding stands
+> regardless.
 
 **Two handlers do not run the check, and that was worth confirming rather than assuming.**
 `deposit_obligation_collateral` and `withdraw_obligation_collateral` move the *collateral* token —
@@ -87,13 +106,16 @@ stock as their liquidity mint**, and they are not placeholders. `./scripts/kamin
 |---|---|
 | live reserves for tokenized equity | **19** |
 | of those, holding a real balance rather than a seed | **13**, all Backed's xStocks |
-| deposited across them | **≈89,195 tokens** |
+| available liquidity across them | **≈89,192 tokens**, plus ≈230 borrowed |
 | LTVs, chosen by whoever owns those markets | **30 % – 73 %** |
 | held confidentially | **0** |
 
-`SPYx` at 73 % LTV against a 20,000 cap with 5,221 deposited. `GOOGLx` at 60 % with 8,010 of
-12,000. `MSTRx` at 30 % with 29,660 of 90,000. These are underwriting decisions someone already
-made, with real money behind them.
+`SPYx` at 73 % LTV against a 20,000 cap with 5,221 available and 121 borrowed. `GOOGLx` at 60 %
+with 8,010 of 12,000. `MSTRx` at 30 % with 29,658 of 90,000. These are underwriting decisions
+someone already made, and four of the rows are being borrowed against right now.
+
+**"Available" is what sits in the vault at this snapshot, not what was supplied** — klend's own
+total is available plus borrowed minus accumulated fees. Neither figure is a flow.
 
 **And SpaceX has a reserve already.** Backpack's `SPCX.US`:
 
@@ -112,8 +134,8 @@ So the packet is not asking anyone to consider a new asset class, or to pick an 
 **Both were chosen already.** The question it asks is narrower and much easier to answer: *the
 holder who will not post this collateral publicly — what would it take to let them post it at all?*
 
-**Every one of those 89,195 deposited tokens is a public position.** A holder who does not want
-that has exactly one option today, and it is not to post the collateral.
+**Every position in those reserves is public.** A holder who does not want that has exactly one
+option today, and it is not to post the collateral.
 
 ## What this establishes, and what it does not
 
@@ -123,11 +145,12 @@ confidentiality alone.
 
 **Not established, and not to be claimed:**
 
-- **That the empty SPCX reserve is empty because of confidentiality.** It holds 0.1 tokens; so do
-  the other two Backpack reserves, while Backed's thirteen hold real balances. The likeliest
-  explanation is that Backpack's tokenized stocks are newer and thinner, not that privacy is the
-  binding constraint. **Nothing here should be read as "demand is being suppressed"** — that is a
-  hypothesis this repository cannot test.
+- **Anything about *why* the SPCX reserve is nearly empty.** The disciplined statement is the
+  observation and nothing else: at this snapshot all three Backpack rows hold seed-scale liquidity
+  while thirteen Backed rows exceed one token. **"Privacy is the binding constraint" is untestable
+  here — and so is "Backpack's tokens are newer and thinner", which an earlier version of this
+  document asserted as the likely explanation.** Deciding between them needs reserve age, flows,
+  holders, market-making and eligibility evidence, none of which is in this repository.
 - **That Kamino wants to relax it.** Nobody at Kamino has been asked. These conditions are a
   reasonable design: a reserve that cannot read a balance cannot mark a position, and refusing what
   you cannot value is correct underwriting, not an oversight.
