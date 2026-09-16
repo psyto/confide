@@ -1,0 +1,10 @@
+{
+ "klend": {
+  "pin": "a08760976f51a3a58c4a0c6ea27b4a0e565bca79",
+  "tag": "release/v1.25.0"
+ },
+ "counts": {
+  "total": 1869,
+  "admissible": 1869
+ }
+}
