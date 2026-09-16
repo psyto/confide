@@ -73,32 +73,15 @@ for PAIR in "Backed SPCXx Xs3oZwbHvqis4NYcf4YKWmEia2eC84wSiVrcYcTqpH8" \
     -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$MINT\",{\"encoding\":\"jsonParsed\"}]}" \
     | ISSUER="$ISSUER" SYM="$SYM" MINT="$MINT" python3 -c '
 import sys, json, os
-# klend allow-list, constraints.rs:42-54 -- keyed by the jsonParsed spelling
-ALLOWED = {"confidentialTransferFeeConfig","confidentialTransferMint","mintCloseAuthority",
-           "metadataPointer","permanentDelegate","transferFeeConfig","tokenMetadata",
-           "transferHook","defaultAccountState","scaledUiAmountConfig","pausableConfig"}
-v = json.load(sys.stdin).get("result",{}).get("value")
+sys.path.insert(0, "scripts/lib")
+import klend_rules as K              # the rules live in one place; the lines above check they still match
+v = json.load(sys.stdin).get("result", {}).get("value")
 sym, issuer, mint = os.environ["SYM"], os.environ["ISSUER"], os.environ["MINT"]
-if not v: print("MISSING|%s|%s|mint not found" % (issuer, sym)); raise SystemExit
-info = v["data"]["parsed"]["info"]
-exts = {e["extension"]: e.get("state") for e in info.get("extensions", [])}
-bad = []
-for n in exts:
-    if n not in ALLOWED: bad.append("%s is not on the allow-list" % n)
-st = exts.get("confidentialTransferMint")
-if st is None: bad.append("no confidentialTransferMint -- nothing to make confidential")
-elif st.get("autoApproveNewAccounts"): bad.append("autoApproveNewAccounts is true (constraints.rs:131)")
-st = exts.get("transferHook")
-if st and st.get("programId"): bad.append("transfer hook program is set (constraints.rs:121)")
-st = exts.get("defaultAccountState")
-if st and st.get("accountState") not in ("initialized","frozen"): bad.append("defaultAccountState is %s (constraints.rs:139)" % st.get("accountState"))
-st = exts.get("pausableConfig")
-if st and st.get("paused"): bad.append("mint is paused (constraints.rs:152)")
-st = exts.get("transferFeeConfig")
-if st:
-    for k in ("olderTransferFee","newerTransferFee"):
-        if int((st.get(k) or {}).get("transferFeeBasisPoints", 0)): bad.append("transfer fee is not zero (constraints.rs:107)")
-print("%s|%s|%s|%s|%s" % ("BAD" if bad else "OK", issuer, sym, mint, "; ".join(bad) or "every mint-level condition met"))
+if not v:
+    print("BAD|%s|%s|%s|the mint account does not exist" % (issuer, sym, mint)); raise SystemExit
+ok, why, _ = K.evaluate_mint(v["data"]["parsed"]["info"])
+print("%s|%s|%s|%s|%s" % ("OK" if ok else "BAD", issuer, sym, mint,
+                          "; ".join(why) or "every mint-level condition met"))
 ')"
   STATUS="${OUT%%|*}"; REST="${OUT#*|}"
   I="${REST%%|*}"; REST="${REST#*|}"; S="${REST%%|*}"; REST="${REST#*|}"

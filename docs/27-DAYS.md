@@ -142,15 +142,22 @@ missing condition stated as its economic consequence — *"no issuer-attested re
 proposed cap $0"*, never *"the issuer has not signed"*. Facts, issuer assertions, third-party
 attestations and our own inference kept visibly apart.
 
-**3. The decision page.** A URL where someone picks the exact mint and gets the verdict, the
-evidence with its provenance and expiry, and the missing condition — read by someone who has never
-seen this repository and will not clone it. The command stays underneath, because it is what makes
-the page checkable rather than a claim about live data.
+**3. The decision page** — **first version live, 2026-09-16**:
+[`web/kamino.html`](../web/kamino.html). Pick any of the 1,869 mints, and the browser reads it from
+mainnet and applies Kamino's rules: the facts with their provenance and their expiry, the verdict,
+and the missing condition **stated as its economic consequence** — *proposed cap $0, at any LLTV,
+not because the asset is risky but because the position cannot enter*. Facts, Kamino's rules and
+Confide's inference are three visually separate lanes. The commands stay underneath, because they
+are what make the page checkable rather than a claim about live data.
 
-**4. The market evidence map.** The 1,869-mint scan is incidence, not market size, and the two are
-currently one number. Separate **"confidential transfers enabled"** from **"economically
-lendable"** — the second is the addressable set, and it is the one that belongs in a sentence about
-how big this is.
+**4. The market evidence map** — **done, 2026-09-16**, and it is a sharper number than expected:
+
+> **1,869 of 1,869** tokenized-equity mints could be held by a Kamino reserve today.
+> **0** of them can be held while the position is confidential.
+
+The first number is admissibility, the second is usability, and until now this repository had one
+number doing both jobs. `./scripts/kamino-admissible.sh` produces them; `web/kamino.json` carries
+the per-mint result.
 
 ## Twenty-seven days
 

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Can Kamino take this as collateral? — Confide</title>
+<meta name="description" content="Kamino Lend names the confidential-transfer extensions and requires them to be inert. Pick any of 1,869 tokenized stocks and see what a reserve could hold, read live from mainnet in your browser." />
+<link rel="canonical" href="https://psyto.github.io/confide/kamino.html" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://psyto.github.io/confide/kamino.html" />
+<meta property="og:title" content="Can Kamino take this as collateral?" />
+<meta property="og:description" content="The gap is four lines wide, and they are in Kamino's own source. Pick a mint, read mainnet in your browser, see what a reserve could hold." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090d'/%3E%3Cpath d='M11 10h10M11 16h6M11 22h10' stroke='%2363cf83' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+<style>
+:root{--bg:#08090d;--fg:#c9d1de;--dim:#59647a;--bold:#f4f7fb;--red:#ef6b73;--grn:#63cf83;
+ --yel:#f0c05a;--cyn:#5cc0cf;--line:#1b2030;--panel:#0b0e15}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;padding:64px 24px 96px}
+.wrap{max-width:960px;margin:0 auto}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+h1{font-size:40px;font-weight:700;letter-spacing:-.02em;color:var(--bold);line-height:1.18;margin-bottom:14px}
+h2{font-size:21px;font-weight:600;color:var(--bold);margin:0 0 6px}
+h3{font-size:15px;font-weight:600;color:var(--bold);margin:0 0 8px}
+.sub{color:var(--dim);font-size:16px;margin-bottom:10px}
+.lede{font-size:18px;max-width:790px;margin-bottom:14px}
+.lede b{color:var(--bold);font-weight:600}
+section{margin-top:56px;padding-top:32px;border-top:1px solid var(--line)}
+.note{color:var(--dim);font-size:14px;margin-top:12px}
+.panel{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:20px;margin-top:20px}
+table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+td,th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top;
+ word-break:break-word;overflow-wrap:anywhere}
+table{table-layout:fixed}
+th{color:var(--dim);font-weight:500;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase}
+tr:last-child td{border-bottom:none}
+input,select{background:#0e121b;border:1px solid var(--line);color:var(--fg);border-radius:8px;
+ padding:11px 13px;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;width:100%}
+input:focus,select:focus{outline:none;border-color:#33415c}
+a{color:var(--cyn);text-decoration:none}a:hover{text-decoration:underline}
+footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:14px}
+.muted{color:var(--dim)}
+.ok{color:var(--grn)}.bad{color:var(--red)}.warn{color:var(--yel)}
+.pill{display:inline-block;border-radius:6px;padding:3px 10px;font-size:12.5px;font-weight:500}
+.pill.g{background:rgba(99,207,131,.12);color:var(--grn);border:1px solid rgba(99,207,131,.35)}
+.pill.r{background:rgba(239,107,115,.12);color:var(--red);border:1px solid rgba(239,107,115,.35)}
+.pill.y{background:rgba(240,192,90,.12);color:var(--yel);border:1px solid rgba(240,192,90,.35)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+.stat{font-family:ui-monospace,Menlo,monospace;font-size:30px;font-weight:600}
+.lbl{color:var(--dim);font-size:13px;margin-bottom:6px}
+.prov{font-size:11.5px;color:var(--dim);font-family:ui-monospace,Menlo,monospace;margin-top:3px}
+.lane{border-left:2px solid var(--line);padding-left:14px;margin-top:18px}
+.lane.fact{border-color:rgba(99,207,131,.45)}
+.lane.infer{border-color:rgba(240,192,90,.45)}
+.lane h3 span{font-weight:400;color:var(--dim);font-size:12.5px;margin-left:8px;text-transform:none;letter-spacing:0}
+.verdict{font-family:ui-monospace,Menlo,monospace;font-size:22px;font-weight:600;letter-spacing:.02em}
+.row2{display:grid;grid-template-columns:1fr 260px;gap:10px;margin-top:16px}
+@media(max-width:720px){.grid2,.row2{grid-template-columns:1fr}h1{font-size:31px}}
+</style></head><body>
+<div class="wrap">
+
+<h1>Can Kamino take this<br>as collateral?</h1>
+<div class="lede">Kamino Lend is open source, and it does not ignore confidential tokens —
+it <b>names</b> them, and requires them to be switched off. Pick any of the 1,869 tokenized stocks
+on Solana below. <b>The chain reading is made by your browser, now.</b> The rules it is checked
+against are transcribed from Kamino's own program at a pinned release.</div>
+<div class="sub"><a href="https://github.com/psyto/confide">GitHub</a> ·
+<a href="index.html">what Confide is</a> ·
+<a href="https://github.com/psyto/confide/blob/main/docs/KAMINO.md">the full verdict</a> ·
+no wallet, no key</div>
+
+<section>
+  <h2>The rule, in four lines of Kamino's source</h2>
+  <div class="lede">A reserve refuses a token account that can hold value confidentially. The same
+  check runs on <b>the holder's own account</b>, not only on Kamino's vault — so it gates the
+  counterparty, and it gates deposit, borrowing <b>and both sides of liquidation</b> alike.</div>
+  <div class="panel">
+    <table>
+      <tr><th>klend</th><th>the condition</th><th>what it refuses</th></tr>
+      <tr><td class="mono">constraints.rs:187</td><td class="mono">allow_confidential_credits == false</td><td>an account that can <b>receive</b> value confidentially</td></tr>
+      <tr><td class="mono">constraints.rs:194</td><td class="mono">allow_non_confidential_credits == true</td><td>an account that can only be paid confidentially</td></tr>
+      <tr><td class="mono">constraints.rs:201</td><td class="mono">closable() succeeds</td><td>an account holding <b>any</b> confidential balance</td></tr>
+      <tr><td class="mono">constraints.rs:131</td><td class="mono">auto_approve_new_accounts == false</td><td>a mint anyone can open a confidential account on</td></tr>
+    </table>
+    <div class="prov">klend <a href="https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/utils/constraints.rs">a087609</a>,
+    release/v1.25.0, 2026-08-18 · re-checked by <span class="mono">./scripts/kamino-verdict.sh</span>, which fails if any of these lines moves</div>
+  </div>
+  <div class="note">Refusing what you cannot value is correct underwriting, not an oversight. This
+  page is not an argument that Kamino is wrong. It is an answer to <b>what would it take</b>.</div>
+</section>
+
+<section>
+  <h2>How many, of all of them</h2>
+  <div class="lede">The <a href="index.html">1,869</a> is incidence — how many tokenized stocks have
+  confidential transfers switched on. It is not the number a lender cares about, and until this page
+  they were the same number here. These are two questions with two answers.</div>
+  <div class="grid2">
+    <div class="panel"><div class="lbl">mints a Kamino reserve could hold today</div>
+      <div class="stat ok" id="nAdm">—</div>
+      <div class="prov">every extension on the allow-list, every conditional one passing</div></div>
+    <div class="panel"><div class="lbl">of those, usable while the position is confidential</div>
+      <div class="stat bad">0</div>
+      <div class="prov">no holder can satisfy constraints.rs:187 and :201 — that is what the rule says</div></div>
+  </div>
+  <div class="note">Generated by <span class="mono">./scripts/kamino-admissible.sh</span> against
+  klend <span class="mono" id="kTag">—</span>. The per-mint reading below is live and does not come
+  from this file.</div>
+</section>
+
+<section>
+  <h2>Pick a mint</h2>
+  <div class="row2">
+    <input id="q" placeholder="SPCX, NVDA, Tesla, or a mint address" autocomplete="off" />
+    <select id="pick"></select>
+  </div>
+  <div id="out"></div>
+</section>
+
+<section>
+  <h2>What it would take</h2>
+  <div class="lede">A reserve that can value a balance it cannot read needs two things. Confide has
+  parts of both, and the parts it does not have are named here rather than skipped.</div>
+  <div class="panel">
+    <table>
+      <tr><th>needed</th><th>state</th><th></th></tr>
+      <tr><td>A <b>floor</b>, proved — not the balance, a lower bound on it, so a reserve can value the position at <span class="mono">q_min × price</span> and ignore the rest</td>
+          <td><span class="pill g">runs</span></td>
+          <td class="muted">Solana's ZK program checks it; the escrow's own ciphertext is bound in</td></tr>
+      <tr><td><b>Custody that survives the holder</b> — a proved floor is worthless if the holder can withdraw below it afterwards</td>
+          <td><span class="pill g">runs</span></td>
+          <td class="muted">origination verifies the escrow's owner is the loan PDA before recording anything</td></tr>
+      <tr><td><b>Re-proving</b> — a floor proved once is a floor at one moment, and a reserve marks continuously</td>
+          <td><span class="pill r">not built</span></td>
+          <td class="muted">either on a schedule the reserve enforces, or the trigger absorbs the staleness</td></tr>
+      <tr><td><b>Liquidation hand-off</b> — the seizure has to fit <b>inside</b> Kamino's liquidation instruction, not beside it</td>
+          <td><span class="pill r">not built</span></td>
+          <td class="muted">de-shielding is disabled; finishing it is not the work, reaching a liquidator is</td></tr>
+      <tr><td><b>An exemption</b> — the escrow is PDA-owned and confidential, so it fails <span class="mono">:187</span> and <span class="mono">:201</span> by design</td>
+          <td><span class="pill y">Kamino's call</span></td>
+          <td class="muted">the alternative is making the value public at deposit, which gives up the point</td></tr>
+    </table>
+  </div>
+  <div class="note">Nobody at Kamino has been asked. Nothing on this page implies otherwise.</div>
+</section>
+
+<footer>
+  Confide · Apache-2.0 · <a href="https://github.com/psyto/confide">github.com/psyto/confide</a><br>
+  Reproduce every claim here: <span class="mono">./scripts/kamino-verdict.sh</span> for one mint,
+  <span class="mono">./scripts/kamino-admissible.sh</span> for all 1,869.
+</footer>
+</div>
+
+<script>
+const RPCS=["https://solana-rpc.publicnode.com","https://api.mainnet-beta.solana.com"];
+// constraints.rs:42-54 — the allow-list, in the spelling jsonParsed uses.
+const ALLOWED=new Set(["confidentialTransferFeeConfig","confidentialTransferMint","mintCloseAuthority",
+ "metadataPointer","permanentDelegate","transferFeeConfig","tokenMetadata","transferHook",
+ "defaultAccountState","scaledUiAmountConfig","pausableConfig"]);
+let MINTS=[];
+
+async function rpc(body){
+  let last;
+  for(const url of RPCS){
+    try{
+      const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      const j=await r.json(); if(j.error) throw new Error(j.error.message); return j.result;
+    }catch(e){ last=e; }
+  }
+  throw last;
+}
+
+function evaluate(info){
+  const exts={}; for(const e of (info.extensions||[])) exts[e.extension]=e.state;
+  const why=[];
+  for(const n of Object.keys(exts)) if(!ALLOWED.has(n)) why.push([n+" is not on the allow-list","constraints.rs:42"]);
+  const ct=exts.confidentialTransferMint;
+  if(!ct) why.push(["no confidentialTransferMint — nothing here to keep confidential",""]);
+  else if(ct.autoApproveNewAccounts) why.push(["autoApproveNewAccounts is true","constraints.rs:131"]);
+  const hook=exts.transferHook;
+  if(hook&&hook.programId) why.push(["a transfer hook program is set","constraints.rs:121"]);
+  const das=exts.defaultAccountState;
+  if(das&&!["initialized","frozen"].includes(das.accountState)) why.push(["defaultAccountState is "+das.accountState,"constraints.rs:139"]);
+  const p=exts.pausableConfig;
+  if(p&&p.paused) why.push(["the mint is paused","constraints.rs:152"]);
+  const f=exts.transferFeeConfig;
+  if(f){ for(const k of ["olderTransferFee","newerTransferFee"]){
+    const bps=+(((f[k]||{}).transferFeeBasisPoints)||0);
+    if(bps){ why.push(["the transfer fee is "+bps+" bps, not 0","constraints.rs:107"]); break; } } }
+  return {ok:why.length===0, why, exts};
+}
+
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+async function show(m){
+  const out=document.getElementById("out");
+  out.innerHTML='<div class="panel muted">reading mainnet…</div>';
+  let info;
+  try{
+    const r=await rpc({jsonrpc:"2.0",id:1,method:"getAccountInfo",params:[m.mint,{encoding:"jsonParsed"}]});
+    if(!r||!r.value) throw new Error("the mint account does not exist");
+    info=r.value.data.parsed.info;
+  }catch(e){
+    out.innerHTML='<div class="panel bad">could not read mainnet: '+esc(e.message)+
+      '<div class="prov">a public RPC refusing is not a finding — reload, or run ./scripts/kamino-verdict.sh</div></div>';
+    return;
+  }
+  const v=evaluate(info);
+  const read=new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";
+  const hasCT=!!v.exts.confidentialTransferMint;
+
+  const verdict = !hasCT
+    ? ['<span class="verdict warn">NOT THIS PROBLEM</span>','y',
+       "This mint has no confidential-transfer extension, so there is no confidential position to be blocked. Whether Kamino would hold it is an ordinary admission question."]
+    : v.ok
+    ? ['<span class="verdict ok">REQUIRES INTEGRATION</span>','g',
+       "A Kamino reserve could hold this mint today — every extension on it is on the allow-list and every conditional one passes. What it cannot hold is a <b>confidential position</b> in it. The gap is confidentiality, and nothing else."]
+    : ['<span class="verdict bad">INADMISSIBLE</span>','r',
+       "Kamino would refuse this mint before confidentiality ever came up."];
+
+  let rows="";
+  for(const [n,st] of Object.entries(v.exts)){
+    const bad=!ALLOWED.has(n);
+    const raw=JSON.stringify(st)||"";
+    const cut=raw.length>150?raw.slice(0,150)+" …":raw;
+    rows+='<tr><td class="mono'+(bad?' bad':'')+'" style="width:34%">'+esc(n)+'</td><td class="muted mono">'+
+      esc(cut)+'</td></tr>';
+  }
+  const whyRows=v.why.map(w=>'<tr><td class="bad">'+esc(w[0])+'</td><td class="mono muted">'+esc(w[1])+'</td></tr>').join("");
+
+  out.innerHTML=
+  '<div class="panel">'+
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">'+
+      '<div><span style="font-size:19px;color:var(--bold);font-weight:600">'+esc(m.symbol)+'</span> '+
+      '<span class="muted">'+esc(m.name)+' · '+esc(m.issuer)+'</span></div>'+verdict[0]+'</div>'+
+    '<div class="lede" style="margin-top:12px;font-size:16px">'+verdict[2]+'</div>'+
+
+    '<div class="lane fact"><h3>Facts <span>read from mainnet by your browser</span></h3>'+
+      '<table>'+rows+'</table>'+
+      '<div class="prov">'+esc(m.mint)+' · decimals '+esc(info.decimals)+' · read '+read+
+      ' · expires the moment the issuer changes a setting; reload to re-read</div></div>'+
+
+    (whyRows?'<div class="lane"><h3 class="bad">Why Kamino would refuse the mint <span>Kamino\'s rules, applied here</span></h3><table>'+whyRows+'</table></div>':'')+
+
+    (hasCT&&v.ok?
+    '<div class="lane infer"><h3>What caps it <span>Confide\'s inference, not Kamino\'s statement</span></h3>'+
+      '<table><tr><td>A holder of this token whose position is confidential cannot deposit it, cannot borrow against it, and cannot be liquidated out of it — <span class="mono">constraints.rs:187</span> and <span class="mono">:201</span> refuse the account on all three paths.</td></tr>'+
+      '<tr><td><b>Economic consequence: proposed cap $0</b>, at any LLTV. Not because the asset is risky — because the position cannot enter.</td></tr>'+
+      '<tr><td class="muted">Removing it needs a proved floor and custody that survives the holder, both of which run, plus re-proving and a liquidation hand-off, neither of which does. See below.</td></tr>'+
+      '</table></div>':"")+
+  '</div>';
+}
+
+function render(filter){
+  const sel=document.getElementById("pick");
+  const f=(filter||"").trim().toLowerCase();
+  const rank=m=>{
+    const sym=m.symbol.toLowerCase(), name=(m.name||"").toLowerCase();
+    if(!f) return 4;
+    if(sym===f) return 0;                       // SPCX must not lose to CSPCx
+    if(m.mint.toLowerCase().startsWith(f)) return 1;
+    if(sym.startsWith(f)) return 2;
+    if(sym.includes(f)||name.startsWith(f)) return 3;
+    if(name.includes(f)) return 4;
+    return 9;
+  };
+  const hits=MINTS.map(m=>[rank(m),m]).filter(p=>p[0]<9)
+    .sort((a,b)=>a[0]-b[0]||a[1].symbol.localeCompare(b[1].symbol))
+    .map(p=>p[1]).slice(0,300);
+  sel.innerHTML=hits.map(m=>'<option value="'+m.mint+'">'+esc(m.symbol)+' — '+esc(m.issuer)+'</option>').join("")
+    || '<option value="">no match</option>';
+  return hits;
+}
+
+(async()=>{
+  MINTS=await (await fetch("mints.json")).json();
+  try{
+    const k=await (await fetch("kamino.json")).json();
+    document.getElementById("nAdm").textContent=
+      k.counts.admissible.toLocaleString()+" / "+k.counts.total.toLocaleString();
+    document.getElementById("kTag").textContent=k.klend.tag;
+  }catch(e){ document.getElementById("nAdm").textContent="run kamino-admissible.sh"; }
+  const q=document.getElementById("q"), sel=document.getElementById("pick");
+  q.value="SPCX";
+  const first=render("SPCX");
+  if(first.length) show(first[0]);
+  let t;
+  q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{
+    const hits=render(q.value); if(hits.length) show(hits[0]);
+  },220);});
+  sel.addEventListener("change",()=>{
+    const m=MINTS.find(x=>x.mint===sel.value); if(m) show(m);
+  });
+})();
+</script>
+</body></html>
