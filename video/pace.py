@@ -5,14 +5,15 @@ The table drifted from the words within minutes of both being written, which is 
 repository keeps having: a number typed once and then maintained by hand. Run this after editing
 any narration block.
 
-    python3 video/pace.py           # check, exit 1 if the table disagrees
-    python3 video/pace.py --write   # rewrite the table from the words
+    python3 video/pace.py                       # check every scripted file
+    python3 video/pace.py --write               # rewrite their tables from the words
+    python3 video/pace.py video/CHECKIN-1.md    # just one
 """
 import io, re, sys
 
 WPM = 137          # the pace the earlier recording actually held
 TAIL = 0.6         # a line should finish before the picture does
-DOC = "video/CWF-PRESENTATION.md"
+DOCS = ["video/CWF-PRESENTATION.md", "video/CHECKIN-1.md"]
 
 def scenes(text):
     """Each scene heading is `### N — title`, optionally followed by `· +P s silence`.
@@ -46,7 +47,8 @@ def build(sc):
     rows.append("| | | **%d s** | **%d** | | |" % (total_s, total_w))
     return rows, total_s, total_w
 
-SHOWS = {
+SHOWS_BY_DOC = {
+ "video/CWF-PRESENTATION.md": {
  1: "a position climbing across a quarter, watched",
  2: "`spl-token balance` says 0; the confidential balance says 173,000",
  3: "the mint scan finishing, the auditor slot empty",
@@ -55,26 +57,44 @@ SHOWS = {
  6: "the proofs accepted by Solana's ZK program; the seizure on devnet",
  7: "the three missing pieces, as text",
  8: "`./scripts/packet.sh SPCX.US`, then the page URL",
+ },
+ "video/CHECKIN-1.md": {
+ 1: "the commit log for the week",
+ 2: "the Kamino reserve table, live",
+ 3: "the three missing pieces, as text",
+ },
 }
 
-text = io.open(DOC, encoding="utf-8").read()
-sc = scenes(text)
-if len(sc) != len(SHOWS):
-    print("  found %d scenes, expected %d — the heading format changed" % (len(sc), len(SHOWS)))
-    raise SystemExit(1)
-rows, total_s, total_w = build(sc)
+import sys as _s
+targets = [a for a in _s.argv[1:] if not a.startswith("--")] or DOCS
+write = "--write" in _s.argv
+bad = 0
 
-head = "| | scene | seconds (+ silence) | words | pace | what it shows |\n|---|---|---|---|---|---|\n"
-table = head + "\n".join(rows)
-old = re.search(r"\| \| scene \| seconds.*?\n\| \| \| \*\*\d+ s\*\* \| \*\*\d+\*\* \| \| \|", text, re.S)
-if not old:
-    print("  the table is not where this expects it"); raise SystemExit(1)
+for DOC in targets:
+    SHOWS = SHOWS_BY_DOC[DOC]
+    text = io.open(DOC, encoding="utf-8").read()
+    sc = scenes(text)
+    if len(sc) != len(SHOWS):
+        print("  %s: found %d scenes, expected %d — the heading format changed" % (DOC, len(sc), len(SHOWS)))
+        bad += 1
+        continue
+    rows, total_s, total_w = build(sc)
 
-if "--write" in sys.argv:
-    io.open(DOC, "w", encoding="utf-8").write(text[:old.start()] + table + text[old.end():])
-    print("  table rewritten — %d s, %d words, %d scenes" % (total_s, total_w, len(sc)))
-elif old.group(0).strip() != table.strip():
-    print("  the table disagrees with the script. Run: python3 video/pace.py --write")
-    raise SystemExit(1)
-else:
-    print("  table matches the script — %d s, %d words" % (total_s, total_w))
+    head = "| | scene | seconds (+ silence) | words | pace | what it shows |\n|---|---|---|---|---|---|\n"
+    table = head + "\n".join(rows)
+    old = re.search(r"\| \| scene \| seconds.*?\n\| \| \| \*\*\d+ s\*\* \| \*\*\d+\*\* \| \| \|", text, re.S)
+    if not old:
+        print("  %s: the table is not where this expects it" % DOC)
+        bad += 1
+        continue
+
+    if write:
+        io.open(DOC, "w", encoding="utf-8").write(text[:old.start()] + table + text[old.end():])
+        print("  %s rewritten — %d s, %d words, %d scenes" % (DOC, total_s, total_w, len(sc)))
+    elif old.group(0).strip() != table.strip():
+        print("  %s: the table disagrees with the script. Run: python3 video/pace.py --write" % DOC)
+        bad += 1
+    else:
+        print("  %s matches its script — %d s, %d words" % (DOC, total_s, total_w))
+
+raise SystemExit(1 if bad else 0)
