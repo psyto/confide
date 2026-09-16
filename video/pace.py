@@ -15,30 +15,46 @@ TAIL = 0.6         # a line should finish before the picture does
 DOC = "video/CWF-PRESENTATION.md"
 
 def scenes(text):
+    """Each scene heading is `### N — title`, optionally followed by `· +P s silence`.
+
+    Seconds and words are NOT in the heading: they are derived from the words below it. A heading
+    that carried them would be one more number maintained by hand, which is the thing this file
+    exists to stop.
+
+    Silence is declared rather than inferred. A scene whose whole point is the gap before its last
+    line -- "the chain says it holds nothing" ... "it holds a hundred and seventy-three thousand"
+    -- is not a pace problem, and a formula that only divides words by time will always price that
+    scene as too short. The pause is part of the picture, so it is part of the duration and not
+    part of the pace.
+    """
     out = []
-    for m in re.finditer(r"^### (\d+) — (.+?) · .*?$\n\n((?:^> .*\n)+)", text, re.M):
-        words = len(re.sub(r"^> ", "", m.group(3), flags=re.M).split())
-        out.append((int(m.group(1)), m.group(2), words))
+    for m in re.finditer(r"^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)", text, re.M):
+        head = m.group(0).split("\n")[0]
+        pause = re.search(r"\+\s*([\d.]+)\s*s silence", head)
+        body = re.sub(r"^> ?", "", m.group(3), flags=re.M)
+        out.append((int(m.group(1)), m.group(2), len(body.split()), float(pause.group(1)) if pause else 0.0))
     return out
 
 def build(sc):
     rows, total_s, total_w = [], 0.0, 0
-    for n, title, words in sc:
-        secs = round(words / WPM * 60 + TAIL)
-        pace = round(words / (secs - TAIL) * 60)
-        rows.append("| %d | %s | %d | %d | %d | %s |" % (n, title, secs, words, pace, SHOWS[n]))
+    for n, title, words, pause in sc:
+        secs = round(words / WPM * 60 + TAIL + pause)
+        pace = round(words / (secs - TAIL - pause) * 60)
+        held = ("%d + %g" % (secs - pause, pause)) if pause else str(secs)
+        rows.append("| %d | %s | %s | %d | %d | %s |" % (n, title, held, words, pace, SHOWS[n]))
         total_s += secs; total_w += words
     rows.append("| | | **%d s** | **%d** | | |" % (total_s, total_w))
     return rows, total_s, total_w
 
 SHOWS = {
- 1: "the 1,869 count, live from mainnet",
- 2: "the 19 Kamino reserves, LTVs and balances",
- 3: "`constraints.rs` on screen, the four conditions",
- 4: "the floor proof accepted by Solana's ZK program; the seizure on devnet",
- 5: "the three missing pieces, as text",
- 6: "`./scripts/packet.sh SPCX.US` and its output",
- 7: "traction, stated",
+ 1: "a position climbing across a quarter, watched",
+ 2: "`spl-token balance` says 0; the confidential balance says 173,000",
+ 3: "the mint scan finishing, the auditor slot empty",
+ 4: "the 19 Kamino reserves, live",
+ 5: "`constraints.rs` on screen",
+ 6: "the proofs accepted by Solana's ZK program; the seizure on devnet",
+ 7: "the three missing pieces, as text",
+ 8: "`./scripts/packet.sh SPCX.US`, then the page URL",
 }
 
 text = io.open(DOC, encoding="utf-8").read()
@@ -48,7 +64,7 @@ if len(sc) != len(SHOWS):
     raise SystemExit(1)
 rows, total_s, total_w = build(sc)
 
-head = "| | scene | seconds | words | pace | what it shows |\n|---|---|---|---|---|---|\n"
+head = "| | scene | seconds (+ silence) | words | pace | what it shows |\n|---|---|---|---|---|---|\n"
 table = head + "\n".join(rows)
 old = re.search(r"\| \| scene \| seconds.*?\n\| \| \| \*\*\d+ s\*\* \| \*\*\d+\*\* \| \| \|", text, re.S)
 if not old:

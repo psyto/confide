@@ -4,7 +4,7 @@
 week the video has to exist. If a scene cannot be shown with something that already runs, the
 problem is the story, not the footage — and this is the cheap moment to learn that.
 
-Target **150 s**, against a 2–3 minute allowance, so there is room to slow down rather than cut.
+Target **~170 s**, inside the 2–3 minute allowance, so there is room to slow down rather than cut.
 Pacing budget is words over clip length minus 0.6 s of tail, the convention
 [`segments/LINES.md`](segments/LINES.md) already uses. Anything over 180 wpm is reading without
 pauses.
@@ -12,93 +12,122 @@ pauses.
 **This is not the weekly check-in.** That is one minute, Colosseum asks for it, and the first
 opens 09-18. See [`../docs/27-DAYS.md`](../docs/27-DAYS.md).
 
+## What this learned from the published cut
+
+The first draft of this script was better argued and worse told than
+[`voiceover.md`](voiceover.md), the narration for the Stocklana video. Four things that one does
+and the draft did not:
+
+- **It speaks to the viewer.** *"If you hold tokenized stocks on Solana, everyone can see your
+  position."* The draft opened on a statistic — a fact about the world rather than about the person
+  watching.
+- **It reframes in seven words.** *"Nobody attacked anything. The chain simply publishes it."* The
+  draft had no equivalent, and without one the opening reads as an accusation nobody made.
+- **It shows before it counts.** A fund buying NVIDIA across a quarter, watched; *then* the 1,869
+  lands as a reveal. The draft spent its statistics before the viewer had felt anything.
+- **It has one moment.** *"The chain says it holds nothing."* — pause — *"It holds a hundred and
+  seventy-three thousand shares."* The draft put an abstraction in that slot.
+
+And one rule it states that the draft broke: **the narration does not read the screen.** The draft's
+second scene recited numbers the table already showed.
+
+What the draft had that the published cut does not, and which stays: conceding that Kamino's
+refusal is correct, and saying out loud what is missing. Those are worth more here than they were
+there, because **viability and traction are judged at this hackathon and were not at the last one.**
+
 ## The shape
 
 Four of the seven judging criteria are non-engineering and get read first, so the order is: **the
 market before the mechanism, the citation before the claim, and the gaps out loud before anyone
-has to find them.** Confide's mechanism is good and it is scene 4 of 7, not scene 1.
+has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 
-| | scene | seconds | words | pace | what it shows |
+| | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | the fact | 17 | 38 | 139 | the 1,869 count, live from mainnet |
-| 2 | whose money | 25 | 56 | 138 | the 19 Kamino reserves, LTVs and balances |
-| 3 | the refusal | 22 | 48 | 135 | `constraints.rs` on screen, the four conditions |
-| 4 | what runs | 30 | 66 | 135 | the floor proof accepted by Solana's ZK program; the seizure on devnet |
-| 5 | what does not | 27 | 61 | 139 | the three missing pieces, as text |
-| 6 | what you can run | 18 | 39 | 134 | `./scripts/packet.sh SPCX.US` and its output |
-| 7 | the close | 12 | 26 | 137 | traction, stated |
-| | | **151 s** | **334** | | |
+| 1 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
+| 2 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
+| 3 | already shipped | 20 + 2 | 45 | 139 | the mint scan finishing, the auditor slot empty |
+| 4 | whose money | 18 | 40 | 138 | the 19 Kamino reserves, live |
+| 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
+| 6 | what runs | 24 | 54 | 138 | the proofs accepted by Solana's ZK program; the seizure on devnet |
+| 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
+| 8 | what you can run | 19 | 42 | 137 | `./scripts/packet.sh SPCX.US`, then the page URL |
+| | | **164 s** | **343** | | |
 
 ## The script
 
-### 1 — the fact · 18 s · 40 words
+### 1 — your position · +2 s silence
 
-> One thousand eight hundred and sixty-nine tokenized stocks trade on Solana today. Every one of
-> them has confidential transfers switched on. Every one has the auditor key empty. The privacy is
-> already shipped, and nobody can use it.
+> If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything.
+> The chain simply publishes it, the moment each purchase settles.
 
-*Shows:* the mint scan finishing. This is the finding the project has had from the start, and it is
-still the right opening because it is checkable in one RPC call.
+*Shows:* a position climbing across a quarter, watched. **Second person, and the second sentence is
+the one that has to land** — this is the default behaviour, not an incident.
 
-### 2 — whose money · 28 s · 63 words
+### 2 — this account · +5 s silence
 
-> Kamino lends against nineteen of them right now. Real markets — loan-to-value from thirty to
-> seventy-three percent, picked by the people who own those markets. Thirteen hold more than a seed.
-> Four are being borrowed against today. SpaceX has a reserve: forty percent, fifteen thousand cap.
-> And every position in every one of them is public.
+> This is a real account on Solana, right now. The chain says it holds nothing.
+>
+> It holds a hundred and seventy-three thousand shares.
 
-*Shows:* the reserve table. **This scene is why the project is worth looking at**, and it is not
-about Confide at all. Someone else already underwrote this asset class with their own money; the
-privacy question arrives on top of a market that exists.
+*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** This
+is the strongest ten seconds available and it is borrowed from the published cut on purpose.
 
-### 3 — the refusal · 26 s · 58 words
+### 3 — already shipped · +2 s silence
 
-> Kamino is not ignoring confidentiality. Its program names the confidential-transfer extensions,
-> and requires them to be switched off before a deposit will land. That is not an oversight. A
-> reserve that cannot read a balance cannot mark a position, and refusing what you cannot value is
-> correct underwriting.
+> Solana already built this. Eighteen hundred and sixty-nine tokenized stocks have confidential
+> transfers switched on, from two issuers with nothing to do with each other. And every one of them
+> leaves the auditor key empty, because the only key on offer reads everyone's everything, forever.
 
-*Shows:* `constraints.rs` lines 187 and 201, then `lending_checks.rs:186` passing the depositor's
-own account. **Conceding that the refusal is correct is what makes the rest credible** — the
-alternative framing, that a protocol overlooked something, is both wrong and the kind of wrong a
-judge who reads code will catch.
+*Shows:* the scan finishing, the slot empty. **Two issuers arriving independently at the same dead
+end is the line** — one company being careful is a story about that company.
 
-### 4 — what runs · 30 s · 68 words
+### 4 — whose money
 
-> So prove the thing a lender needs without revealing the balance. A floor — this account holds at
-> least X — computed over the account's own on-chain ciphertext, and checked by Solana's ZK
-> program, not by us. Then custody that outlives the borrower: the escrow belongs to a program, and
-> origination refuses to record anything until it verifies that. Both run, end to end, on devnet.
+> Which would be a curiosity, except that people are already lending against these. Kamino has
+> nineteen live markets in tokenized stock, with loan-to-values someone chose and money already
+> borrowed against them. Every position in every one of them is public.
 
-*Shows:* `prove-collateral.sh` output with the ZK program's acceptance, then the seizure on devnet
-with the explorer link. **Nothing here is a diagram of a thing that might work.**
+*Shows:* the reserve table, live. **The voice does not read the numbers** — the table is on screen
+and the sentence that matters is the last one. Confide is not in this scene.
 
-### 5 — what does not · 24 s · 54 words
+### 5 — the refusal
 
-> Three pieces are missing, and they are named rather than hidden. A floor proved once is a floor at
-> one moment — re-proving is not built. The seizure has to sit inside Kamino's liquidation path, not
-> beside it — not built. And the issuer must approve each escrow, because these mints do not
-> auto-approve. That one is nobody's decision but theirs.
+> Kamino is not ignoring confidentiality. Its program names it, and requires it switched off before
+> a deposit will land. That is not an oversight. A lender who cannot read a balance cannot price it,
+> and refusing what you cannot value is how underwriting is supposed to work.
 
-*Shows:* plain text, three lines. **This scene exists because the packet has it and the video must
-not be the softer version of the document.** It is also the scene most likely to be cut for time by
-someone who has forgotten why it is there.
+*Shows:* `constraints.rs` on screen. **Conceding the refusal is correct is what makes everything
+after it credible.**
 
-### 6 — what you can run · 16 s · 36 words
+### 6 — what runs
 
-> One command builds the whole admission packet for any of the eighteen hundred, from live chain
-> data. Every authority and who holds it. The oracle path. The numbers someone already chose. Every
-> unknown capped at zero instead of guessed.
+> So prove what a lender needs without showing the balance. This account holds at least the
+> collateral — checked by Solana's own zero-knowledge program, not by us. And if the loan defaults,
+> the collateral moves, because the escrow belongs to a program rather than to the borrower. Both of
+> those run on devnet today.
 
-*Shows:* `./scripts/packet.sh SPCX.US` running, then the generated document scrolling.
+*Shows:* the proofs accepted, then the seizure and its explorer link. **"Checked by Solana's own"
+is the point** — everything before it is setup.
 
-### 7 — the close · 10 s · 22 words
+### 7 — what does not
 
-> Traction is zero. Nobody outside this repository has used any of it. What exists is a mechanism
-> that runs, and a gap you can check yourself.
+> Three things are missing, and I would rather say them than have you find them. A floor proved once
+> is only true once — re-proving is not built. The seizure has to happen inside Kamino's liquidation,
+> not beside it — not built. And the issuer has to approve each account, because these mints do not
+> approve them automatically. That last one is nobody's decision but theirs.
 
-*Shows:* the page URL. **Ending on the weakest fact is deliberate** — it is the first thing a judge
-will test, and saying it first is worth more than the twenty seconds it costs.
+*Shows:* three lines of text. **The scene most likely to be cut for time by someone who has
+forgotten why it is here.**
+
+### 8 — what you can run
+
+> One command builds the whole admission packet for any of those mints, from live chain data, with
+> every unknown capped at zero instead of guessed. Nobody outside this repository has used any of
+> it yet. You can check all of it yourself.
+
+*Shows:* `./scripts/packet.sh SPCX.US`, then the page URL. **Traction is stated as part of the
+close rather than as its own scene** — it is honest either way, and a scene of its own made the
+ending apologetic.
 
 ## What this needs to become a cut
 
