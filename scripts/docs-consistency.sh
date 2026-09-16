@@ -70,6 +70,9 @@ PY
 
 echo
 echo "  THE COUNTS — measured, not remembered"
+python3 video/pace.py >/dev/null 2>&1 \
+  && ok "the presentation's timing table matches its own script" \
+  || bad "video/CWF-PRESENTATION.md's table disagrees with its script — python3 video/pace.py --write"
 t=$(cargo test 2>/dev/null | grep -E '^test result' | awk -F'[ ;]' '{s+=$4} END {print s+0}')
 grep -q "cargo test  *# $t tests" README.md && ok "README says $t tests, and $t run" \
                                             || bad "$t tests run; README says something else"
