@@ -88,3 +88,25 @@ did not do is worse than no video, and the failure mode it guards against is the
 that still renders after the thing it demonstrates stopped working.
 
 `puppeteer` is pinned to `19.0.0` because `puppeteer-screen-recorder@3.0.6` requires exactly that.
+
+## The weekly check-in
+
+`checkin-1.mp4` — 61s, three scenes, silent. Script and timings:
+[`CHECKIN-1.md`](CHECKIN-1.md), whose table `pace.py` derives from the narration's own word counts.
+
+```bash
+node video/record-checkin.js     # -> checkin-1.mp4 + checkin-manifest.json
+```
+
+**Scene 1 is the published page actually being operated**, not a picture of it: the recorder opens
+the same URL a judge would, types a symbol, and *waits for the verdict to arrive from mainnet*
+before holding the frame. If the page stops answering, the recording throws rather than producing
+a still of something that no longer works.
+
+Scene 2's table is the stdout of `./scripts/kamino-reserves.sh` run moments earlier — the same rule
+`record.js` follows, and the reason the row count is checked: an earlier take clipped the last three
+reserves, which were the Backpack ones the argument is partly about.
+
+Scene durations are read out of `CHECKIN-1.md` rather than repeated in the recorder. The narration
+decides them; two places holding the same number is how the Stocklana cut ended up with a manifest
+that described a different edit.
