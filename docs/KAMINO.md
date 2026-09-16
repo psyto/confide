@@ -117,7 +117,11 @@ someone already made, and four of the rows are being borrowed against right now.
 **"Available" is what sits in the vault at this snapshot, not what was supplied** — klend's own
 total is available plus borrowed minus accumulated fees. Neither figure is a flow.
 
-**And SpaceX has a reserve already.** Backpack's `SPCX.US`:
+**And SpaceX has a reserve already** — though it is the blocked case rather than the control. Its
+reserve holds 0.1 tokens and has never been refreshed, so it carries no price; the case where every
+figure is real is [`NVDAx`](packets/NVDAx.md), which is also the mint the devnet mechanism mirrors.
+SpaceX is here because **pre-IPO exposure is where a holder's reason not to publish is undeniable**,
+not because its numbers are the strongest. Backpack's `SPCX.US`:
 
 | | |
 |---|---|

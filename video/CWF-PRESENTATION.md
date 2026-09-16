@@ -48,10 +48,10 @@ has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 | 3 | already shipped | 20 + 2 | 45 | 139 | the mint scan finishing, the auditor slot empty |
 | 4 | whose money | 19 | 43 | 140 | the 19 Kamino reserves, live |
 | 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
-| 6 | what runs | 24 | 54 | 138 | the proofs accepted by Solana's ZK program; the seizure on devnet |
+| 6 | what runs | 25 | 55 | 135 | the proofs accepted by Solana's ZK program; the seizure on devnet |
 | 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
-| 8 | what you can run | 19 | 42 | 137 | `./scripts/packet.sh SPCX.US`, then the page URL |
-| | | **165 s** | **346** | | |
+| 8 | what you can run | 19 | 41 | 134 | `./scripts/packet.sh SPCX.US`, then the page URL |
+| | | **166 s** | **346** | | |
 
 ## The script
 
@@ -102,7 +102,7 @@ after it credible.**
 
 ### 6 — what runs
 
-> So prove what a lender needs without showing the balance. This account holds at least the
+> So prove what a lender needs without showing the balance. This NVIDIA account holds at least the
 > collateral — checked by Solana's own zero-knowledge program, not by us. And if the loan defaults,
 > the collateral moves, because the escrow belongs to a program rather than to the borrower. Both of
 > those run on devnet today.
@@ -124,9 +124,9 @@ forgotten why it is here.**
 
 > One command builds the whole admission packet for any of those mints, from live chain data, with
 > every unknown capped at zero instead of guessed. Nobody outside this repository has used any of
-> it yet. You can check all of it yourself.
+> it yet. You can check every number yourself.
 
-*Shows:* `./scripts/packet.sh SPCX.US`, then the page URL. **Traction is stated as part of the
+*Shows:* `./scripts/packet.sh NVDAx` — the control, where every figure is real — then the page URL. **Traction is stated as part of the
 close rather than as its own scene** — it is honest either way, and a scene of its own made the
 ending apologetic.
 

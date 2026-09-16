@@ -229,6 +229,18 @@ hold it. That makes it an excellent demonstration of why *price × LTV* is not a
 decision. It makes it a bad thing to promise an LLTV for. **So it is the flagship blocked case, and
 a continuously priced listed equity is the control case that shows what a passing one looks like.**
 
+> **That rule was written on 09-16 and then not followed** — SpaceX became the named case
+> everywhere and no control was designated, which the founder caught the same day. SpaceX's reserve
+> holds 0.1 tokens and carries no price, so leading with it alone trades the strongest evidence for
+> the strongest motive.
+>
+> **The control is `NVDAx`**: a live price, $2.37 m deposited, borrowing happening now, and the
+> issuer's authorities split across four keys rather than concentrated in one. It is also the mint
+> the devnet mechanism already mirrors, **so the proof and the market point at the same asset** —
+> which is why reconfiguring that mirror to SpaceX, briefly considered, would have been backwards.
+>
+> Both roles are stated in [`packets/README.md`](packets/) rather than left for a reader to infer.
+
 ### Outreach, with the numbers written down
 
 Off the critical path, still done, and forecast rather than hoped:
