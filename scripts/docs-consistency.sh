@@ -76,6 +76,15 @@ python3 video/pace.py >/dev/null 2>&1 \
 t=$(cargo test 2>/dev/null | grep -E '^test result' | awk -F'[ ;]' '{s+=$4} END {print s+0}')
 grep -q "cargo test  *# $t tests" README.md && ok "README says $t tests, and $t run" \
                                             || bad "$t tests run; README says something else"
+z=$(cd programs/confide-seizure && cargo test 2>/dev/null | grep -E '^test result' | awk -F'[ ;]' '{s+=$4} END {print s+0}')
+grep -q "# $z more, over the seizure program" README.md \
+  && ok "README says $z over the seizure program, and $z run" \
+  || bad "$z run over the seizure program; README says something else"
+# The submission drifted to "69 tests, 19 over the seizure program" while it was live, because
+# only README was being checked. It is a separate surface and gets its own line.
+grep -q "^$((t + z)) tests, $z over the seizure program\." _submission/full.md \
+  && ok "_submission/full.md says $((t + z)) tests, $z over the seizure program, and that is what runs" \
+  || bad "$((t + z)) tests run, $z of them over the seizure program; _submission/full.md says something else"
 n=$(python3 -c "print(len(open('_submission/full.md',encoding='utf-8').read()))")
 [ "$n" -le 5000 ] && ok "_submission/full.md is $n characters, inside 5,000" \
                   || bad "_submission/full.md is $n characters, over 5,000"
