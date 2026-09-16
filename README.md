@@ -175,7 +175,7 @@ watch. Source in
 ./scripts/kamino-verdict.sh  # can Kamino take confidential collateral — read out of its own source
 ./scripts/kamino-admissible.sh # the same question against all 1,869, not one
 ./scripts/kamino-reserves.sh  # which tokenized stocks Kamino already lends against, on what terms
-./scripts/packet.sh SPCX.US   # the collateral admission packet, generated from live data
+./scripts/packet.sh --all     # an admission packet for every mint that has a Kamino reserve
 ./scripts/capacity.sh         # what is on the table in dollars, and how much a confidential holder reaches
 ./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
 ./scripts/onchain-check.sh    # four of them in detail

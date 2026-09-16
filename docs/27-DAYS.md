@@ -130,8 +130,9 @@ lines stop a confidential position"* also died: closing it needs a floor that is
 liquidation hand-off, **and the issuer approving each escrow** — which is not Kamino's decision.
 
 **1. The collateral admission packet** — **first version generated, 2026-09-16**:
-[`packets/SPCX.US.md`](packets/SPCX.US.md), and [`packets/NVDAx.md`](packets/NVDAx.md) to show it
-generalises. `./scripts/packet.sh <symbol>`.
+[`packets/`](packets/) — **all fourteen mints that have a Kamino reserve**, not one.
+`./scripts/packet.sh --all`, which also writes the index, because generating them one at a time is
+how a directory acquires a stale document nobody notices.
 
 **Generated rather than authored**, which is the part that matters: the day it disagrees with the
 chain is the day someone changed something, not the day the document went stale. It answers what is

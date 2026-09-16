@@ -13,8 +13,55 @@
 # something, not the day the document went stale. Writes docs/packets/<SYMBOL>.md.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SYM="${1:?usage: packet.sh <symbol>   e.g. SPCX.US}"
+SYM="${1:?usage: packet.sh <symbol|--all>   e.g. SPCX.US}"
 RPC="${RPC:-https://api.mainnet-beta.solana.com}"
+
+if [ "$SYM" = "--all" ]; then
+  # Every mint that has a Kamino reserve. Regenerating one at a time is how a directory ends up
+  # with a stale document nobody notices, so this exists and the index below is written from the
+  # same run rather than by hand.
+  SYMS="$(python3 -c "
+import json
+print(' '.join(sorted({r['symbol'] for r in json.load(open('web/kamino-reserves.json'))['reserves']})))")"
+  for s in $SYMS; do "$0" "$s" | tail -1; done
+  python3 - <<'IDX'
+import json, io, datetime
+d = json.load(open('web/kamino-reserves.json'))
+cap = json.load(open('web/capacity.json'))
+by = {}
+for r in d["reserves"]:
+    by.setdefault(r["symbol"], []).append(r)
+L = ["# Collateral admission packets",
+     "",
+     "One per tokenized stock that **already has a Kamino reserve**. Generated from mainnet by",
+     "`./scripts/packet.sh --all`, so a document here disagrees with the chain only when something",
+     "changed. The question each one asks is the same:",
+     "",
+     "> A holder who will not post this collateral publicly — what would it take to let them post it",
+     "> at all?",
+     "",
+     "Across all of them: **${:,} deposited**, **${:,} of borrowing already authorised** by these caps".format(cap["held_usd"], cap["authorised_capacity_usd"]),
+     "and LTVs, and **$0 of it reachable while a position stays confidential**. See",
+     "[`../KAMINO.md`](../KAMINO.md) for why, and `./scripts/capacity.sh` to recompute.",
+     "",
+     "| | issuer | LTV | cap | reserves | authorised |",
+     "|---|---|---|---|---|---|"]
+for sym in sorted(by):
+    rs = by[sym]
+    r = max(rs, key=lambda x: x["available"])
+    auth = sum(x["deposit_limit"] * x["ltv_pct"] / 100 * x["price"] for x in rs)
+    L.append("| [`%s`](%s.md) | %s | %d %% | %s | %d | %s |" % (
+        sym, sym, r["issuer"], r["ltv_pct"], "{:,.0f}".format(r["deposit_limit"]), len(rs),
+        "${:,.0f}".format(auth) if auth else "*no price*"))
+L += ["",
+      "*`cap` and `LTV` are the largest reserve's, where a symbol has more than one. `authorised` is",
+      "summed across all of a symbol's reserves at each one's own price; a reserve that has never been",
+      "refreshed carries no price and is left out rather than guessed.*"]
+io.open("docs/packets/README.md", "w", encoding="utf-8").write("\n".join(L) + "\n")
+print("  wrote docs/packets/README.md")
+IDX
+  exit 0
+fi
 
 python3 - "$RPC" "$SYM" <<'PY'
 import base64, json, struct, sys, urllib.request, datetime
