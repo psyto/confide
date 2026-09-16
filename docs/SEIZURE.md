@@ -517,9 +517,9 @@ the position is confidential on both sides of the transfer the whole way.
 | | |
 |---|---|
 | the program | [`Gn3rzw8…QduN`](https://explorer.solana.com/address/Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN?cluster=devnet) — 92,032 bytes, 0.4684 SOL |
-| the escrow, now the loan's | [`8dbUaPA…aaaG`](https://explorer.solana.com/address/8dbUaPA1kQy8DLWq3jJhJ8rZqxG4STY1QZ7gxNYuaaaG?cluster=devnet) — public balance 0, confidential balance 0 |
-| the lender's account | [`Gxtqwzn…hLhr`](https://explorer.solana.com/address/GxtqwznSGEMCpM62Tg6d63WvUfKpKQomnmW94M1vhLhr?cluster=devnet) — public balance 0, holding 173,000 |
-| the loan | [`Bu6HviM…UdfX`](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) — 415 bytes, `seized = 1` |
+| the escrow, now the loan's | [`AdgKdUh…4one`](https://explorer.solana.com/address/AdgKdUhv8w8XddZxSS9p4jABGkq4tk78sU9avjEt4one?cluster=devnet) — public balance 0, confidential balance 0 |
+| the lender's account | [`ERUF4Y5…r1MC`](https://explorer.solana.com/address/ERUF4Y5Wf4rzrfWvd2AJauEP5wwFfWAm1Am899DRr1MC?cluster=devnet) — public balance 0, holding 173,000 |
+| the loan | [`HbbvY8h…LomH`](https://explorer.solana.com/address/HbbvY8hYbit4BRwVsu6Fj4tvCCfJqoHFZkWWmhZDLomH?cluster=devnet) — 415 bytes, `seized = 1` |
 
 **This document said, for one day, that the deployment was blocked by funding.** It was not. The
 balance being read belonged to another project's keypair, because `solana balance` reads whatever

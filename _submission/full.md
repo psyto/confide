@@ -51,7 +51,7 @@ they settle, and has Solana's ZK program check the collateral proof on a button 
 | A disclosure bound to a date | 147 bytes on devnet over **that account's own ciphertext**; a figure restated later will not open it |
 | Opening on schedule without the holder | five processes; the holder's exited in September, and what they publish opens the seal |
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio and are refused |
-| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides — the [loan account](https://explorer.solana.com/address/Bu6HviMHncufhC3didbMUgZZHbtvZpKTWGWLBtk8UdfX?cluster=devnet) still reads `seized` |
+| **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides — the [loan account](https://explorer.solana.com/address/HbbvY8hYbit4BRwVsu6Fj4tvCCfJqoHFZkWWmhZDLomH?cluster=devnet) still reads `seized` |
 
 87 tests, 32 over the seizure program. `./scripts/healthcheck.sh` re-checks every row against the chain
 and exits with the number that died — judging runs three weeks and devnet resets.
