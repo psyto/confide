@@ -301,6 +301,13 @@ public while solvent**, and a default is exactly the event that ends the holder'
 position becomes readable at the moment the obligation crystallises, on a schedule the holder can
 neither bring forward nor prevent — which is I1 and I2 with the clock replaced by a price.
 
+`deshield` is instruction 2 of the program, and it shares its preconditions with `seize` through
+one tested function rather than a second copy — settling either way closes the other, neither
+settles a solvent loan, and neither accepts an account the loan did not name. De-shielding
+publishes the position, so letting it happen outside default would leak exactly what the borrower
+is paying to keep private; that guard living in one place is why it cannot become true of one mode
+and not the other.
+
 Both proofs are accepted by the live ZK program: `./scripts/deshield-proofs.sh`. Five invariants in
 `mod deshielding` hold the arithmetic, including the one that makes the substitution legitimate —
 a withdrawn amount is encoded with a **zero opening**, so it is a commitment in the clear that *any*

@@ -105,6 +105,7 @@ fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progra
     match disc {
         0 => originate(program_id, accounts, rest),
         1 => seize(program_id, accounts, rest),
+        2 => deshield(program_id, accounts, rest),
         _ => Err(ProgramError::InvalidInstructionData),
     }
 }
@@ -435,21 +436,36 @@ pub struct Cited<'a> {
 /// Note what is *not* here: who is calling. Default is a public fact about public numbers, and a
 /// seizure only the lender could fire is a seizure the lender could also decline to fire.
 pub fn may_seize(d: &[u8], cited: Cited, oracle_signed: bool, price: u64) -> ProgramResult {
+    may_settle(d, cited.escrow, cited.mint, cited.oracle, oracle_signed, price)?;
+    // The accounts only a confidential transfer touches. Everything shared with the de-shield path
+    // is in `may_settle`, so both settlement modes are held by the same tested code rather than by
+    // two copies that agree until one is edited.
+    check(&d[OFF_DESTINATION..], cited.destination)?;
+    check(&d[OFF_CTX_EQUALITY..], cited.ctx_equality)?;
+    check(&d[OFF_CTX_VALIDITY..], cited.ctx_validity)?;
+    check(&d[OFF_CTX_RANGE..], cited.ctx_range)?;
+    Ok(())
+}
+
+/// Everything both settlement modes must establish: the loan is real and unspent, the accounts are
+/// the ones it recorded, the price is signed by the oracle it names, and the predicate holds.
+pub fn may_settle(
+    d: &[u8],
+    escrow: &Pubkey,
+    mint: &Pubkey,
+    oracle: &Pubkey,
+    oracle_signed: bool,
+    price: u64,
+) -> ProgramResult {
     if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
         return Err(ProgramError::UninitializedAccount);
     }
     if d[OFF_SEIZED] != 0 {
         return Err(ProgramError::InvalidAccountData); // opening is not repeatable
     }
-    // Every account the transfer touches comes from the record, not from the caller, so a caller
-    // cannot redirect a seizure by passing different ones.
-    check(&d[OFF_ESCROW..], cited.escrow)?;
-    check(&d[OFF_DESTINATION..], cited.destination)?;
-    check(&d[OFF_MINT..], cited.mint)?;
-    check(&d[OFF_CTX_EQUALITY..], cited.ctx_equality)?;
-    check(&d[OFF_CTX_VALIDITY..], cited.ctx_validity)?;
-    check(&d[OFF_CTX_RANGE..], cited.ctx_range)?;
-    check(&d[OFF_ORACLE..], cited.oracle)?;
+    check(&d[OFF_ESCROW..], escrow)?;
+    check(&d[OFF_MINT..], mint)?;
+    check(&d[OFF_ORACLE..], oracle)?;
     if !oracle_signed {
         return Err(ProgramError::MissingRequiredSignature);
     }
@@ -461,6 +477,76 @@ pub fn may_seize(d: &[u8], cited: Cited, oracle_signed: bool, price: u64) -> Pro
     ) {
         return Err(ProgramError::InvalidArgument);
     }
+    Ok(())
+}
+
+/// `Deshield` — the predicate, then make the collateral public where it sits.
+///
+/// `Withdraw` has no recipient, which is the whole reason this exists: seizure by confidential
+/// transfer must name its destination at origination, because the proofs bind to that key. A venue
+/// with permissionless liquidation cannot name one. So this makes the balance public in place and
+/// stops; whatever moves it afterwards is an ordinary SPL transfer that needs no proof and no
+/// foresight.
+///
+/// Accounts: loan(w), escrow(w), mint, ctx_equality, ctx_range, oracle(s), token_program
+///
+/// Data: price u64 | amount u64 | decimals u8 | new_decryptable[36]
+///
+/// The amount and the new decryptable balance ride in the instruction rather than the loan record
+/// because the record is full and they are not secret. A wrong amount is caught by Token-2022: the
+/// pre-verified proofs are over `balance − amount`, and any other amount fails there.
+fn deshield(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    let i = &mut accounts.iter();
+    let loan = next_account_info(i)?;
+    let escrow = next_account_info(i)?;
+    let mint = next_account_info(i)?;
+    let ctx_equality = next_account_info(i)?;
+    let ctx_range = next_account_info(i)?;
+    let oracle = next_account_info(i)?;
+    let token_program = next_account_info(i)?;
+
+    if loan.owner != program_id {
+        return Err(ProgramError::IllegalOwner);
+    }
+    if data.len() != 8 + 8 + 1 + 36 {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+    let price = u64::from_le_bytes(data[..8].try_into().unwrap());
+    let amount = u64::from_le_bytes(data[8..16].try_into().unwrap());
+    let decimals = data[16];
+
+    let bump = {
+        let d = loan.try_borrow_data()?;
+        may_settle(&d, escrow.key, mint.key, oracle.key, oracle.is_signer, price)?;
+        d[OFF_BUMP]
+    };
+
+    let ix = withdraw_instruction(
+        token_program.key,
+        escrow.key,
+        mint.key,
+        amount,
+        decimals,
+        loan.key,
+        ctx_equality.key,
+        ctx_range.key,
+        &data[17..],
+    )?;
+    invoke_signed(
+        &ix,
+        &[
+            escrow.clone(),
+            mint.clone(),
+            ctx_equality.clone(),
+            ctx_range.clone(),
+            loan.clone(),
+            token_program.clone(),
+        ],
+        &[&[b"loan", escrow.key.as_ref(), &[bump]]],
+    )?;
+
+    loan.try_borrow_mut_data()?[OFF_SEIZED] = 1;
+    msg!("de-shielded: the collateral is public where it sits, and anything can move it now");
     Ok(())
 }
 
@@ -483,6 +569,53 @@ fn slice32(d: &[u8], at: usize) -> [u8; 32] {
 ///
 /// `ProofLocation::ContextStateAccount` is the variant this design turns on: the proofs were
 /// verified once, at origination, and this names them rather than carrying them.
+/// `Withdraw`, with both proofs cited by address. Two, not three: no destination means no validity
+/// proof to prove anything about.
+#[allow(clippy::too_many_arguments)]
+fn withdraw_instruction(
+    token_program: &Pubkey,
+    escrow: &Pubkey,
+    mint: &Pubkey,
+    amount: u64,
+    decimals: u8,
+    authority: &Pubkey,
+    ctx_equality: &Pubkey,
+    ctx_range: &Pubkey,
+    new_decryptable: &[u8],
+) -> Result<solana_program::instruction::Instruction, ProgramError> {
+    use spl_token_2022_interface::extension::confidential_transfer::instruction::inner_withdraw;
+    use spl_token_confidential_transfer_proof_extraction::instruction::ProofLocation;
+
+    let a = |k: &Pubkey| solana_address::Address::from(k.to_bytes());
+    let ix = inner_withdraw(
+        &a(token_program),
+        &a(escrow),
+        &a(mint),
+        amount,
+        decimals,
+        bytemuck::from_bytes(new_decryptable),
+        &a(authority),
+        &[],
+        ProofLocation::ContextStateAccount(&a(ctx_equality)),
+        ProofLocation::ContextStateAccount(&a(ctx_range)),
+    )
+    .map_err(|_| ProgramError::IncorrectProgramId)?;
+
+    Ok(solana_program::instruction::Instruction {
+        program_id: Pubkey::new_from_array(ix.program_id.to_bytes()),
+        accounts: ix
+            .accounts
+            .into_iter()
+            .map(|m| solana_program::instruction::AccountMeta {
+                pubkey: Pubkey::new_from_array(m.pubkey.to_bytes()),
+                is_signer: m.is_signer,
+                is_writable: m.is_writable,
+            })
+            .collect(),
+        data: ix.data,
+    })
+}
+
 #[allow(clippy::too_many_arguments)]
 fn transfer_instruction(
     token_program: &Pubkey,
@@ -972,5 +1105,68 @@ mod floor {
         let (eq, rp) = contexts(173_000, 100_000);
         assert!(floor_is_proved(&eq[..40], &rp, 100_000).is_err());
         assert!(floor_is_proved(&eq, &rp[..40], 100_000).is_err());
+    }
+}
+
+#[cfg(test)]
+mod settlement {
+    use super::*;
+
+    fn loan_bytes() -> (Vec<u8>, Pubkey, Pubkey, Pubkey) {
+        let (escrow, mint, oracle) = (Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let mut d = vec![0u8; LOAN_LEN];
+        d[0] = LOAN_TAG;
+        for (off, k) in [(OFF_ESCROW, &escrow), (OFF_MINT, &mint), (OFF_ORACLE, &oracle)] {
+            d[off..off + 32].copy_from_slice(&k.to_bytes());
+        }
+        d[OFF_Q_MIN..OFF_Q_MIN + 8].copy_from_slice(&100_000u64.to_le_bytes());
+        d[OFF_PRINCIPAL..OFF_PRINCIPAL + 8].copy_from_slice(&5_000_000u64.to_le_bytes());
+        d[OFF_RATIO_BPS..OFF_RATIO_BPS + 8].copy_from_slice(&20_000u64.to_le_bytes());
+        (d, escrow, mint, oracle)
+    }
+
+    /// **S1 — both settlement modes refuse a loan that still covers itself.** De-shielding publishes
+    /// the position, so letting it happen outside default would leak exactly what the borrower is
+    /// paying to keep private. The two paths share `may_settle` so that this cannot become true of
+    /// one and not the other.
+    #[test]
+    fn neither_mode_settles_a_solvent_loan() {
+        let (d, e, m, o) = loan_bytes();
+        assert_eq!(may_settle(&d, &e, &m, &o, true, 100), Err(ProgramError::InvalidArgument));
+        assert!(may_settle(&d, &e, &m, &o, true, 99).is_ok());
+    }
+
+    /// **S2 — an unsigned price is refused on both.** Otherwise anyone could publish any borrower's
+    /// collateral by sending a transaction with a low number in it.
+    #[test]
+    fn neither_mode_settles_on_an_unsigned_price() {
+        let (d, e, m, o) = loan_bytes();
+        assert_eq!(
+            may_settle(&d, &e, &m, &o, false, 99),
+            Err(ProgramError::MissingRequiredSignature),
+        );
+    }
+
+    /// **S3 — settling once is settling.** A loan that has been seized cannot then be de-shielded,
+    /// or de-shielded and then seized: the flag is shared, so the modes are alternatives rather
+    /// than a sequence.
+    #[test]
+    fn settling_either_way_closes_the_other() {
+        let (mut d, e, m, o) = loan_bytes();
+        assert!(may_settle(&d, &e, &m, &o, true, 99).is_ok());
+        d[OFF_SEIZED] = 1;
+        assert_eq!(may_settle(&d, &e, &m, &o, true, 99), Err(ProgramError::InvalidAccountData));
+    }
+
+    /// **S4 — substituting the escrow, the mint or the oracle is refused on both.** The de-shield
+    /// path touches fewer accounts than the transfer path, which is exactly why the shared ones
+    /// have to be checked in the shared place.
+    #[test]
+    fn neither_mode_accepts_an_account_the_loan_did_not_name() {
+        let (d, e, m, o) = loan_bytes();
+        let other = Pubkey::new_unique();
+        assert!(may_settle(&d, &other, &m, &o, true, 99).is_err());
+        assert!(may_settle(&d, &e, &other, &o, true, 99).is_err());
+        assert!(may_settle(&d, &e, &m, &other, true, 99).is_err());
     }
 }
