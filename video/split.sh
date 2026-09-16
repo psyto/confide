@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Cut confide.mp4 into one clip per narration block.
+# Cut a recording into one clip per narration block.
 #
-#   ./video/split.sh
+#   ./video/split.sh            # confide.mp4      -> segments/
+#   ./video/split.sh checkin    # checkin-1.mp4    -> segments-checkin/
+#
+# One splitter for both cuts rather than a copy per cut. The copy is what this file is guarding
+# against everywhere else; it would be odd to make one here.
 #
 # Boundaries come from the CONFIDE_SCENE lines the page logs during a recording, not from a guess,
 # and are kept in segments/manifest.json. Frame-accurate re-encodes rather than `-c copy`, because
@@ -11,10 +15,14 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 PROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
-SRC=video/confide.mp4
-SEG=video/segments
+case "${1:-main}" in
+  main)    SRC=video/confide.mp4;   SEG=video/segments;          MAKE="cd video && npm run record";;
+  checkin) SRC=video/checkin-1.mp4; SEG=video/segments-checkin;  MAKE="node video/record-checkin.js";;
+  *) echo "usage: split.sh [main|checkin]" >&2; exit 2;;
+esac
 
-[ -f "$SRC" ] || { echo "missing $SRC — run: cd video && npm run record" >&2; exit 1; }
+[ -f "$SRC" ] || { echo "missing $SRC — run: $MAKE" >&2; exit 1; }
+[ -f "$SEG/manifest.json" ] || { echo "missing $SEG/manifest.json — run: $MAKE" >&2; exit 1; }
 
 LIST=$(mktemp)
 python3 -c "
@@ -40,9 +48,9 @@ rm -f "$LIST"
 
 # Every clip present, one resolution, nothing else in the directory. A mixed set still decodes in
 # ffmpeg and still yields frames; it breaks in players, after upload, where nobody is looking.
-python3 - <<'PY' || exit 1
+SEG="$SEG" python3 - <<'PY' || exit 1
 import json, os, subprocess
-seg = 'video/segments'
+seg = os.environ['SEG']
 want = {e['file'] for e in json.load(open(f'{seg}/manifest.json'))}
 have = {f for f in os.listdir(seg) if f.endswith('.mp4')}
 sizes = set()
@@ -62,5 +70,11 @@ print(f'  {len(want)} clips, all {sizes.pop()}')
 PY
 
 echo
-echo "  narrated/ is not touched. Those clips carry the recorded voice over the PREVIOUS render;"
-echo "  re-run ./video/lift-narration.sh to put that voice back onto these."
+if [ "$SEG" = video/segments-checkin ]; then
+  python3 video/lines.py
+fi
+
+if [ "$SEG" = video/segments ]; then
+  echo "  narrated/ is not touched. Those clips carry the recorded voice over the PREVIOUS render;"
+  echo "  re-run ./video/lift-narration.sh to put that voice back onto these."
+fi

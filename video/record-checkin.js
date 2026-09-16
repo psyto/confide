@@ -12,7 +12,7 @@
 //
 // Durations come from video/CHECKIN-1.md, whose table pace.py derives from the narration.
 import path from "node:path";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { execFileSync, spawn } from "node:child_process";
 import puppeteer from "puppeteer";
@@ -131,6 +131,9 @@ const manifest = files.map((file, i) => ({
   file, start: +marks[i].toFixed(2), end: +marks[i + 1].toFixed(2),
   seconds: +(marks[i + 1] - marks[i]).toFixed(2),
 }));
-writeFileSync(path.join(dir, "checkin-manifest.json"), JSON.stringify(manifest, null, 1) + "\n");
+// Next to the clips, named the way split.sh expects, so one splitter serves both cuts.
+const segDir = path.join(dir, "segments-checkin");
+mkdirSync(segDir, { recursive: true });
+writeFileSync(path.join(segDir, "manifest.json"), JSON.stringify(manifest, null, 1) + "\n");
 process.stderr.write(`\n✓ ${outFile}  (${marks[3].toFixed(1)}s)\n`);
 for (const m of manifest) process.stderr.write(`   ${m.file}  ${m.seconds}s\n`);

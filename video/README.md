@@ -95,8 +95,13 @@ that still renders after the thing it demonstrates stopped working.
 [`CHECKIN-1.md`](CHECKIN-1.md), whose table `pace.py` derives from the narration's own word counts.
 
 ```bash
-node video/record-checkin.js     # -> checkin-1.mp4 + checkin-manifest.json
+node video/record-checkin.js     # -> checkin-1.mp4 + segments-checkin/manifest.json
+./video/split.sh checkin         # -> segments-checkin/*.mp4 and LINES.md
 ```
+
+`split.sh` takes which cut to slice rather than existing twice; `segments-checkin/LINES.md` pairs
+each clip with the line that goes on it, generated from the script and the manifest so the pairing
+cannot drift from either.
 
 **Scene 1 is the published page actually being operated**, not a picture of it: the recorder opens
 the same URL a judge would, types a symbol, and *waits for the verdict to arrive from mainnet*
