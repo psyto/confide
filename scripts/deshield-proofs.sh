@@ -4,10 +4,15 @@
 #   ./scripts/deshield-proofs.sh                              # a throwaway escrow; no keys needed
 #   ./scripts/deshield-proofs.sh <token_account> <amount|all> [keys.json]
 #
-# De-shielding is what makes a seizure work on a venue with permissionless liquidation: `Withdraw`
-# has no recipient, so the proofs bind to nobody, and once the balance is public an ordinary SPL
-# transfer moves it wherever the liquidation path decides — which nobody had to know at origination.
-# See docs/SEIZURE.md section 4d.
+# This composes the two proofs and has the live ZK program check them. It does NOT de-shield:
+# instruction 2 of the seizure program is disabled and returns an error, because the loan record
+# has no room for these proof contexts or the amount, and without them a caller could de-shield
+# one token, mark the loan settled and strand the rest.
+#
+# The design also needs a correction the proofs cannot supply. `Withdraw` makes the balance public
+# but does not change the account's owner, which stays the loan PDA — so an ordinary SPL transfer
+# CANNOT move it. Releasing the collateral needs this program to transfer it to a recorded
+# destination. See docs/SEIZURE.md section 4d.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RPC="${RPC:-https://api.devnet.solana.com}"

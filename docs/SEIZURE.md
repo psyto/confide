@@ -332,15 +332,26 @@ balance**, and that single fact removes the constraint:
   3 proofs, 223,000 CU                   2 proofs, 118,000 CU
   binds to one destination key           binds to no destination at all
   fires a confidential transfer          makes the balance public, in place
-  the recipient must exist at            anything can move it afterwards,
-  origination                            with an ordinary SPL transfer
+  the recipient must exist at            this program moves it afterwards,
+  origination                            to the destination the loan records
 ```
 
-**Once the collateral is public, moving it needs no proof and no foresight.** A liquidation path
-that did not exist when the loan was written can pick it up. The integration line in a collateral
-packet stops reading *"your liquidator must call our program"* and starts reading **"your
-liquidation path is unchanged"** — which is the difference between a venue evaluating a proposal
-and a venue evaluating a rewrite.
+> **This section describes a design that does not run.** It was written believing that a public
+> balance is a movable one. It is not: `Withdraw` publishes the amount and **leaves the account
+> owned by the loan PDA**, so an ordinary SPL transfer cannot move it and only this program can.
+> Releasing the collateral therefore means de-shielding *and* transferring to a destination the
+> loan records — which needs the withdraw proof contexts and the amount in a record that has no
+> room for them. Instruction 2 returns an error until it does. The paragraphs below are kept
+> because the reasoning about *why* a recipient-free settlement is worth having is still the
+> reasoning; the claims about what happens afterwards were wrong.
+
+**Once the collateral is public, moving it needs one instruction and no foresight** — this
+program's, transferring to the recorded destination. A liquidation path that did not exist when the
+loan was written can still be the destination, because the destination is a plain address rather
+than a proof binding. What it cannot be is *nothing*: the escrow is a PDA-owned account and
+something has to move it. The integration line in a collateral packet reads **"your liquidator
+calls one instruction, and the asset is an ordinary token by then"** — weaker than *"your
+liquidation path is unchanged"*, and the weaker one is the true one.
 
 It is also the thesis rather than a departure from it. Confidentiality here was always **against the
 public while solvent**, and a default is exactly the event that ends the holder's claim to it. The

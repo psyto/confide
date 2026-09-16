@@ -21,9 +21,13 @@ arrive. Four of the seven criteria were hostage to it, and they are the four rea
 So the bet is the one thing that is entirely within reach:
 
 > **Make the number computable by anyone, from live chain data, without asking anyone's
-> permission.** One command, for a named asset and a named market, prints the collateral capacity
-> that exists today and why it is what it is, the specific removable fact that caps it, and the
-> capacity once that fact is removed — with every input traceable, and the removal itself running.
+> permission.** For a named mint and a named market: the collateral capacity that exists today and
+> why it is what it is, the specific condition that caps it, and what removing it is worth — every
+> input traceable, and the removal itself running.
+>
+> **A page, not a command.** A command is tryable by a developer. The constraint says *without
+> calling their engineers*, and a risk owner is not going to clone a repository. The CLI stays,
+> because it is what makes the page checkable; the artifact is the URL.
 
 This answers *potential market size* with a computation instead of a claim, and *viability* with a
 cost and a parameter that each carry the loss assumption behind them. **Neither answer needs a
@@ -80,13 +84,27 @@ markets may be permissionless, but the decision that matters is whether anyone s
 LLTV are fixed per market and bad debt lands on lenders, which is exactly why the decision is
 careful and exactly why a number from one of them means something.
 
-**The named case is `SPCX` on Kamino** (decided 2026-09-16). Kamino rather than Morpho is a
-deliberate choice, and the reason it is written here is that the aspiration is larger than venue
-preference: **that Confide creates the reason to do this on Kamino specifically.** That reason is
-not established yet. Either Kamino's market structure can express a collateral admission whose
-condition is a disclosure fact — in which case it is the strongest thing in this plan and week 1
-is where it gets written down — or it cannot, and then the venue is a preference and should be
-called one. **Checking which is week-1 work, and the answer is allowed to be the unwelcome one.**
+**The named case is SpaceX exposure on Kamino** (decided 2026-09-16). The hope was that Confide
+could create a reason to do this on Kamino *rather than* Morpho. **Checked on 2026-09-16, and in
+its strong form that reason is false:** "we require a disclosure fact before we admit or allocate"
+is expressible on both — Kamino through a reserve whose risk parameters its market owner can
+change, Morpho through a curator deciding whether to supply a permissionlessly created market whose
+own parameters are immutable. Kamino's real advantages are native Solana settlement, operational
+risk parameters that can move after admission, and a risk-governance surface with a name on it.
+Those are good reasons. **Logical exclusivity is not one, and claiming it would not have survived
+the first person who knows both systems.**
+
+What is genuinely open, and is the week-1 gate:
+
+> **Can a Kamino reserve take confidential Token-2022 collateral at all, without a Kamino-side
+> integration — and can its existing liquidation path recover it?**
+
+Generic Token-2022 support is not confidential-transfer support. Confide's own demo shows a
+confidential account whose *public* balance is zero while it holds value, and an ordinary reserve
+that reads the public balance sees nothing. So the honest outputs are `PASS`, `BLOCKED`, or
+`REQUIRES INTEGRATION`, and `BLOCKED: requires a Kamino-native confidential reserve` is a real
+research result rather than a failure. **What it is not is an admission product, and the plan says
+which one it has.**
 
 Ranked by how directly the pain is already a number they track:
 
@@ -98,14 +116,21 @@ Ranked by how directly the pain is already a number they track:
 
 ## What gets built
 
-**1. The collateral admission packet** — for one named token and one named market, answering what a
+**0. The compatibility verdict**, because it comes before every other question. Can a Kamino
+reserve custody, value and liquidate a confidential Token-2022 balance without a Kamino-side
+integration? Reproducible, `PASS` / `BLOCKED` / `REQUIRES INTEGRATION`. **A packet that proposes an
+LLTV for collateral whose operational path is unproven deserves to be refused**, so this is the gate
+and not an appendix.
+
+**1. The collateral admission packet** — for one named mint and one named market, answering what a
 risk owner must answer anyway:
 
 - every authority on the token: pause, blacklist, seize, upgrade, mint/burn, and who holds each
 - reserve evidence: source, signer, freshness, coverage, what is independently verifiable
 - the oracle path, its fallback, and its staleness and deviation rules
 - the liquidation path, including what happens when a liquidator is not eligible to hold the asset
-- a proposed LLTV, cap and liquidation incentive, **each with the loss assumption behind it**
+- a proposed LLTV, cap and liquidation incentive, **each with the loss assumption behind it** —
+  and **every unknown produces a cap of $0**, never an invented number
 - cost to integrate: contracts touched, audit surface, operations runbook, owner-hours
 - what Confide changes, expressed as a change in those parameters
 
@@ -115,14 +140,21 @@ missing condition stated as its economic consequence — *"no issuer-attested re
 proposed cap $0"*, never *"the issuer has not signed"*. Facts, issuer assertions, third-party
 attestations and our own inference kept visibly apart.
 
-**3. One command that produces both**, run against live chain data by someone who has never seen
-this repository.
+**3. The decision page.** A URL where someone picks the exact mint and gets the verdict, the
+evidence with its provenance and expiry, and the missing condition — read by someone who has never
+seen this repository and will not clone it. The command stays underneath, because it is what makes
+the page checkable rather than a claim about live data.
+
+**4. The market evidence map.** The 1,869-mint scan is incidence, not market size, and the two are
+currently one number. Separate **"confidential transfers enabled"** from **"economically
+lendable"** — the second is the addressable set, and it is the one that belongs in a sentence about
+how big this is.
 
 ## Twenty-seven days
 
 | | date | beat |
 |---|---|---|
-| **Week 1** | → 09-22 | Is the Kamino reason real — answered either way, in writing. Packet schema frozen against `SPCX` and one named Kamino market. The registry reads live authority and reserve facts. **The seizure repair closed out, capped at one day** (below). **Check-in 1 (09-18): the decision to stop expanding mechanism, and why the issuer is a gate rather than a buyer.** |
+| **Week 1** | → 09-22 | The Kamino gate answered `PASS` / `BLOCKED` / `REQUIRES INTEGRATION`, reproducibly. Packet schema frozen against one named mint and one named Kamino market. The registry reads live authority and reserve facts. **A rough 150-second presentation recorded by 09-18 and its structure locked by 09-22** — the story gets tested now, not in week 4. **Check-in 1 (09-18): the decision to stop expanding mechanism, and why the issuer is a gate rather than a buyer.** |
 | **Week 2** | → 09-29 | The one command works end to end for a stranger, and **prints the number**. The three-minute narrative is drafted and tested against the artifact now, not in week 4. First approaches go out with the packet attached — upside, off the critical path. **Check-in 2 (09-25): the number the command prints, and the first thing an outside reader got wrong about it.** |
 | **Week 3** | → 10-06 | Coverage: the command runs over **every** live tokenized-equity mint, not one, so any row is checkable by a stranger. Any reply that did arrive is worked in; anything a reader called unanswerable is answered or recorded as unanswerable. **Check-in 3 (10-02): what the coverage run found that the single case hid.** |
 | **Week 4** | → 10-12 | Submission videos cut against the week-2 narrative, evidence frozen, links and disclosures checked. **Check-in 4 (10-09): the finished artifact, and traction stated as zero if it is zero.** |
@@ -131,19 +163,58 @@ this repository.
 framing is public and reverting to "a disclosure primitive looking for a home" costs more than
 continuing. It is a framing commitment, not a bet on anyone else's behaviour.
 
+### "SPCX" is not a decision object
+
+There are **two** SpaceX mints in `web/mints.json` and they are different legal and risk assets:
+
+| | issuer | mint | what the holder has |
+|---|---|---|---|
+| `SPCXx` | Backed | `Xs3oZwbHvqis4NYcf4YKWmEia2eC84wSiVrcYcTqpH8` | a tracker certificate — **not** ownership of the underlying share |
+| `SPCX.US` | Backpack | `SPCXxcqXj6e5dJDVNovHN8744zkbhM2bYudU45BimGb` | convertible through Backpack Securities to a securities entitlement |
+
+Plus two leveraged SPCX ETFs that are neither. **Every sentence names the issuer and the mint**, or
+it is not saying anything a risk owner can act on.
+
+And SpaceX exposure is the *hardest* first asset, not the most compelling one: pre-IPO, no
+continuous price, a redemption path that runs through a broker, eligibility restrictions on who may
+hold it. That makes it an excellent demonstration of why *price × LTV* is not an admission
+decision. It makes it a bad thing to promise an LLTV for. **So it is the flagship blocked case, and
+a continuously priced listed equity is the control case that shows what a passing one looks like.**
+
+### Outreach, with the numbers written down
+
+Off the critical path, still done, and forecast rather than hoped:
+
+| | |
+|---|---|
+| personalised contacts, 15–20 organisations, by 09-18 | **30**, two follow-ups each |
+| replies, with no network | **3–6** |
+| substantive conversations | **1–3** (6 needs warm introductions or 60–90 contacts) |
+| written, attributable conditional decision | **budget zero** — upside, never the output |
+
+**The first ask is not an LLTV.** It is twenty minutes to falsify the compatibility verdict and the
+packet. Asking a risk owner to price an asset whose custody and liquidation path is unproven invites
+a correct refusal, and it is the plan asking the question in the wrong order. The priced question
+comes only after they agree the decision surface is real. Founder-only work; the agent contacts
+nobody.
+
 ## The one piece of unfinished mechanism
 
-`deshield` is disabled and returns an error. Releasing seized collateral needs the withdraw proof
-contexts and the amount in the loan record, and the record has no room for them; without that a
-caller can de-shield one token, mark the loan settled and strand the rest. Three of the four
-findings from the implementation review are repaired (`334fe5b`); this is the fourth.
+`deshield` is disabled and returns an error. Three of the four findings from the implementation
+review are repaired (`334fe5b`); this is the fourth, and **it stays disabled this month.**
 
-It is **not** new mechanism — it is the repair of something already claimed, which is why it is
-here at all and not on the refuse list. **One day, capped.** Resize the loan record, bind the
-contexts, re-run the end-to-end script, redeploy, and correct the prose in
-[`SEIZURE.md`](SEIZURE.md) that the repair banner currently flags. If it runs over, the honest end
-state is a disabled instruction with the note that is already on it — that costs a line in the
-video and nothing in the argument, and it is strictly better than a half-finished custody path.
+The reason is not time. A repaired generic de-shield does not establish anything this plan needs:
+the repair has to transfer to a recorded destination, and connecting that destination to a Kamino
+reserve, obligation and liquidation lifecycle is the actual integration — weeks and a counterparty,
+not a one-day fix. Doing the day of work would produce a working instruction that no argument here
+depends on.
+
+What did need doing, and is done, is the **claim boundary**. Three places said or implied that
+de-shielding runs and that the asset is freely movable afterwards: the README's script list, the
+script's own header, and §4d of [`SEIZURE.md`](SEIZURE.md). It does not run, and a public balance in
+a PDA-owned account is **not** movable by an ordinary transfer — that was the error in the original
+design, not just in the prose. All three now say so. **That is not polish; a false claim next to the
+seizure path is what makes a judge doubt the seizure path.**
 
 ## Refused
 
@@ -151,10 +222,16 @@ Named so the temptation is on the record rather than in the head:
 
 - **On-chain verification of `q_min`** — repairs an engineering boundary already disclosed honestly;
   establishes no demand.
-- **A price feed**, unless a specific risk owner names the feed and the acceptance condition. A
-  generic oracle makes the demo look financial and proves no underwriting policy.
-- **Partial seizure, repayment, interest, liquidation engines** — a more elaborate prototype, not a
-  more credible business. Repayment re-enters only if a conversation asks for it.
+- **A price feed** — decided 2026-09-16 rather than deferred to a buyer who is not in the plan.
+  It stays out: a generic oracle makes the demo look financial and proves no underwriting policy,
+  and the packet's job is to state *which* feed a venue would need and what its staleness and
+  deviation rules must be, which is the useful half and does not require wiring one.
+- **Partial seizure, interest, liquidation engines** — a more elaborate prototype, not a more
+  credible business.
+- **Repayment** — same decision, same date, and this one is closer. It stays out because the
+  argument is about admission, not about the loan lifecycle, and a release path that does not end
+  at a real venue is the same shape of unfinished as `deshield`.
+- **Finishing `deshield`** — a working instruction no argument here depends on. See above.
 - **Mainnet deployment** — custody, security and legal exposure with no user and no approval, and
   actively bad if it is used to imply production readiness.
 - **A wrapper token** — it can make a lender's policy programmable and it cannot make issuer
