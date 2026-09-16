@@ -45,7 +45,7 @@ they settle, and has Solana's ZK program check the collateral proof on a button 
 
 | | evidence |
 |---|---|
-| A position that reads as zero | devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`; the confidential balance holds 173,000 |
+| A position that reads as zero | devnet `Cgv2eDN…BrX1P`: `spl-token balance` is `0`, the confidential balance 173,000 |
 | **"This account holds at least X"**, over the account's *own* ciphertext | two proofs accepted by the live ZK program — `VerifyCiphertextCommitmentEquality` 6,400 CU, `VerifyBatchedRangeProofU64` 111,000 CU |
 | The auditor slot, filled | one `UpdateMint` on a mirror of NVDAx's confidential-transfer configuration, not of the whole mint |
 | A disclosure bound to a date | 147 bytes on devnet over **that account's own ciphertext**; a figure restated later will not open it |
@@ -54,7 +54,7 @@ they settle, and has Solana's ZK program check the collateral proof on a button 
 | **Taking that collateral on default** | `./scripts/seizure-e2e.sh` on devnet: a transfer authorised at origination fires without the borrower, 173,000 moving confidentially on both sides — the [loan account](https://explorer.solana.com/address/26QJWCRwvPd1dLwvgH4Drb8D5F4ga2RPMdS8PrbRw4Hj?cluster=devnet) still reads `seized` |
 
 88 tests, 33 over the seizure program. `./scripts/healthcheck.sh` re-checks every row against the chain
-and exits with the number that died — judging runs three weeks and devnet resets.
+and exits with the number that died — judging runs weeks and devnet resets.
 
 ## What is not built
 
@@ -62,8 +62,8 @@ and exits with the number that died — judging runs three weeks and devnet rese
   account there needs the issuer to sign. On the mirror that approval is a step you can watch; on
   `NVDAx` it is a conversation nobody has had yet.
 - **A loan.** Seizure runs; origination, interest, a liquidation engine and an oracle do not. The
-  floor is recorded rather than verified on chain and the price is asserted by the loan's named
-  oracle. Confide enforces a default someone else defines.
+  floor is **proved on chain** against the escrow's own ciphertext; the price is asserted by the
+  loan's named oracle. Confide enforces a default someone else defines.
 - **No claim to discharge any filing.** xStocks are Swiss-issued with their own ISIN and are not
   Section 13(f) securities; Backpack's carry US CUSIPs and are called security entitlements, **a
   question for counsel, not for me**. What Confide serves is the report a GP owes its LPs.
