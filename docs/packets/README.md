@@ -19,7 +19,7 @@ changed. The question each one asks is the same:
 > A holder who will not post this collateral publicly — what would it take to let them post it
 > at all?
 
-Across all of them: **$21,102,146 deposited**, **$81,634,727 of borrowing already authorised** by these caps
+Across all of them: **$21,125,233 deposited**, **$81,634,727 of borrowing already authorised** by these caps
 and LTVs, and **$0 of it reachable while a position stays confidential**. See
 [`../KAMINO.md`](../KAMINO.md) for why, and `./scripts/capacity.sh` to recompute.
 
