@@ -241,22 +241,30 @@ a continuously priced listed equity is the control case that shows what a passin
 >
 > Both roles are stated in [`packets/README.md`](packets/) rather than left for a reader to infer.
 
-### Outreach, with the numbers written down
+### Outreach — retired 2026-09-18 by the founder
 
-Off the critical path, still done, and forecast rather than hoped:
+The forecast that stood here — 30 personalised contacts by 09-18, two follow-ups each, 3–6 replies,
+1–3 substantive conversations — **is withdrawn. There will be no individual outreach.** Recorded as a
+dated reversal rather than deleted, because the plan was built on top of it and the next reader needs
+to know it was a decision and not an oversight.
 
-| | |
-|---|---|
-| personalised contacts, 15–20 organisations, by 09-18 | **30**, two follow-ups each |
-| replies, with no network | **3–6** |
-| substantive conversations | **1–3** (6 needs warm introductions or 60–90 contacts) |
-| written, attributable conditional decision | **budget zero** — upside, never the output |
+This is the second thing in this plan to be retired for the same underlying reason. The first bet
+depended on a stranger replying; this one depended on a stranger being written to. Neither is work
+that can be finished by doing more of it.
 
-**The first ask is not an LLTV.** It is twenty minutes to falsify the compatibility verdict and the
-packet. Asking a risk owner to price an asset whose custody and liquidation path is unproven invites
-a correct refusal, and it is the plan asking the question in the wrong order. The priced question
-comes only after they agree the decision surface is real. Founder-only work; the agent contacts
-nobody.
+**What replaces it is one-way and public.** Written once, no addressee, no reply obligation, no
+follow-up schedule: the artifact and what it computes, posted where the people who would care
+already are. The founder posts; the agent drafts and contacts nobody, as before.
+
+**What this costs, stated rather than absorbed.** The first ask was going to be twenty minutes to
+falsify the compatibility verdict — a refusal with a reason is information, and silence is not. A
+public post does not produce refusals with reasons. It produces silence or it produces people who
+arrive on their own, and **the second is the only one that can ever become traction.**
+
+So the denominator now matters more than it did. If a post goes out and the page is instrumented,
+the honest sentence is *"one post, N people opened the decision page, M ran a verdict, here are the
+dates"* — and that sentence belongs under demand validation, **never under traction**. Traction is
+zero until somebody outside this repository uses this for something of their own.
 
 ## The one piece of unfinished mechanism
 
