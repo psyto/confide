@@ -100,7 +100,9 @@ const scenes = [
     kind: "evidence",
     label: "A live account on devnet.",
     body: slice(balance, /account\s+/, /elgamal ciphertext/),
-    emphasis: ["0", "173000 units"],
+    // Not a bare "0": it matches every zero inside 17300000000000 as well as the balance, which
+    // is what the published upload shows. See the note on ansi() in demo.html.
+    emphasis: ["public balance     0", "173000 units"],
     hold: 9.6,
   },
   {

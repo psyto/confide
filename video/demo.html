@@ -74,8 +74,20 @@ const ICONS={
 };
 const MA=String.fromCharCode(1), MB=String.fromCharCode(2), ESC=String.fromCharCode(27);
 const CLS={"2":"d","1":"b","31":"r","32":"g","33":"y","36":"c"};
+// Emphasis is marked in ONE pass, longest string first.
+//
+// It used to be a loop of split/join, one emphasis at a time, and that is wrong twice over. Given
+// ["0", "173000 units"] it painted every 0 inside 17300000000000, and then failed to find
+// "173000 units" at all, because the first pass had already threaded marker characters through it.
+// The strongest pane of the published Stocklana cut therefore highlights a row of stray zeros and
+// leaves the number the narration says unmarked. Found by looking at the file, on 2026-09-18;
+// no check could have caught it, because every check was on the text and the bug was in the paint.
 function ansi(line,em){
-  if(em) for(const e of em) line=line.split(e).join(MA+e+MB);
+  if(em&&em.length){
+    const q=t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    const re=new RegExp([...em].sort((a,b)=>b.length-a.length).map(q).join("|"),"g");
+    line=line.replace(re,m=>MA+m+MB);
+  }
   const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   let out="",open=0,last=0,m;
   const re=new RegExp(ESC+"\\[([0-9;]*)m","g");
