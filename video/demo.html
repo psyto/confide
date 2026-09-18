@@ -56,6 +56,24 @@
   .g{color:var(--grn)}.y{color:var(--yel)}.c{color:var(--cyn)}
   .stamp{display:inline-block;background:rgba(99,207,131,.12);color:var(--grn);
     border:1px solid rgba(99,207,131,.35);border-radius:6px;padding:2px 9px;font-size:13px;margin-left:10px}
+
+  /* Added for the CWF presentation cut. Nothing above is touched: the published Stocklana cut
+     renders from the same file and must come out of a re-render byte-identical in layout. */
+  .figs{display:grid;grid-template-columns:repeat(var(--cols,3),1fr);gap:20px;margin-top:22px}
+  .fig{border:1px solid var(--line);border-radius:12px;background:#0b0e15;padding:20px 22px}
+  .fig .n{font-family:ui-monospace,Menlo,monospace;font-size:40px;font-weight:600;letter-spacing:-.01em;
+    color:var(--cyn)}
+  .fig.warn .n{color:var(--red)}
+  .fig .k{color:var(--dim);font-size:13.5px;margin-top:8px;line-height:1.45}
+  .miss{display:flex;flex-direction:column;gap:22px;margin-top:4px}
+  .miss .row{display:flex;gap:18px;align-items:baseline}
+  .miss .num{color:var(--red);font-family:ui-monospace,Menlo,monospace;font-size:19px;flex:0 0 18px}
+  .miss .tx{font-size:24px;color:var(--bold);line-height:1.45}
+  .miss .tx em{font-style:normal;color:var(--red);font-family:ui-monospace,Menlo,monospace;font-size:19px;
+    margin-left:9px}
+  .cmd{font-family:ui-monospace,Menlo,monospace;font-size:26px;color:var(--grn)}
+  .cmd .p{color:var(--dim)}
+  .url{font-family:ui-monospace,Menlo,monospace;font-size:26px;color:var(--cyn)}
 </style>
 <div id="stage"></div>
 <script>
@@ -106,14 +124,28 @@ const put=h=>{stage.innerHTML=h;return [...stage.querySelectorAll(".fade")]};
 async function reveal(els,step){for(const e of els){e.classList.add("on");await sleep(step||140)}}
 async function out(hold){await sleep(hold*1000);
   [...stage.querySelectorAll(".fade")].forEach(e=>e.classList.remove("on"));await sleep(450)}
+// Two ways to say how long a scene lasts, and they mean different things.
+//
+//   hold  — seconds to sit still AFTER the scene has finished arriving. What the published
+//           Stocklana cut was timed with, one scene at a time, by watching it.
+//   total — seconds for the whole scene, arrival and fade included. What the CWF presentation
+//           uses, because its durations are derived from the narration's word counts and the
+//           narration does not care how long a card took to fade in.
+//
+// A scene passing `total` subtracts whatever its own animation already spent. Doing that
+// arithmetic in the recorder instead would mean the recorder knowing how long each kind of scene
+// takes to arrive — the same number in two files, which is the drift this repository keeps having.
+const rest=(s,t0)=>s.total==null?s.hold:Math.max(0,s.total-(performance.now()-t0)/1000-0.45);
 
 async function hero(s){
+  const t0=performance.now();
   const els=put('<div><h1 class="fade">Confide</h1>'
    +'<div class="sub fade">hold tokenized stocks without publishing your position</div>'
    +'<div class="lede fade">'+s.lede+'</div></div>');
-  await sleep(80); await reveal(els,320); await out(s.hold);
+  await sleep(80); await reveal(els,320); await out(rest(s,t0));
 }
 async function leak(s){
+  const t0=performance.now();
   put('<div><div class="cap fade">You buy NVDAx through the quarter.</div>'
    +'<div class="wrap"><div class="pos fade"><span id="n">0</span><span class="u">NVDAx</span></div>'
    +'<div><div class="cap fade" style="margin-bottom:12px">and this is who can read it</div>'
@@ -127,9 +159,10 @@ async function leak(s){
     for(let k=0;k<4;k++){const e=eyes[i*4+k]; if(e)e.classList.add("on")}
     await sleep(540);
   }
-  await out(s.hold);
+  await out(rest(s,t0));
 }
 async function slot(s){
+  const t0=performance.now();
   const set=[["NVDAx","Backed"],["TSLAx","Backed"],["NVDA.US","Backpack"],["AAPL.US","Backpack"]];
   const cards=set.map(a=>'<div class="card fade">'
     +'<div class="sym">'+a[0]+'</div><div class="iss">'+a[1]+'</div>'
@@ -144,9 +177,10 @@ async function slot(s){
    +'the only key on offer reads <span class="hl">everyone\'s everything, forever</span>.</div>'
    +'<div class="cap fade" style="margin:14px 0 0">One issuer would be a quirk. Two, independently, '
    +'is the problem.</div></div>');
-  await sleep(80); await reveal(els,180); await out(s.hold);
+  await sleep(80); await reveal(els,180); await out(rest(s,t0));
 }
 async function views(s){
+  const t0=performance.now();
   const data=[["pub","The market","<span class=\"nothing\">nothing</span>"],
     ["","A lender","<span class=\"bit\">&ldquo;covers the loan&rdquo;</span><br><span class=\"nothing\">and no more</span>"],
     ["","Your auditor","<span class=\"g\">173,000</span>"],
@@ -155,25 +189,80 @@ async function views(s){
   const els=put('<div><div class="cap fade">With Confide, the same position &mdash; seen four ways.</div>'
    +'<div class="cols">'+cols+'</div>'
    +'<div class="lede fade" style="margin-top:32px;font-size:22px">You choose <b>who</b>, <b>how much</b>, and <b>when</b>.</div></div>');
-  await sleep(80); await reveal(els,220); await out(s.hold);
+  await sleep(80); await reveal(els,220); await out(rest(s,t0));
 }
 async function benefits(s){
+  const t0=performance.now();
   const rows=s.items.map(a=>'<div class="ben fade"><div class="ic">'+ICONS[a[0]]+'</div>'
     +'<div class="tx">'+a[1]+'<span class="note">'+a[2]+'</span></div></div>').join("");
   const els=put('<div><div class="cap fade">'+s.label+'</div><div class="bens">'+rows+'</div></div>');
-  await sleep(80); await reveal(els,360); await out(s.hold);
+  await sleep(80); await reveal(els,360); await out(rest(s,t0));
 }
+const term=(b,em)=>b.split("\n").map(l=>ansi(l,em)).join("\n");
+// `then` is a second pane inside the same scene: the same caption and the same frame, its text
+// replaced `at` seconds in. Two scenes of the presentation are built on a withheld line —
+// "the chain says it holds nothing" … "it holds a hundred and seventy-three thousand" — and a
+// second scene would throw away the fact that it is the same account being looked at.
 async function evidence(s){
-  const body=s.body.split("\n").map(l=>ansi(l,s.emphasis)).join("\n");
-  const els=put('<div><div class="cap fade">'+s.label
-   +'<span class="stamp">real output, just now</span></div><pre class="fade">'+body+'</pre></div>');
-  await sleep(80); await reveal(els,220); await out(s.hold);
+  const t0=performance.now();
+  const els=put('<div><div class="cap fade"><span id="cap">'+s.label+'</span>'
+   +'<span class="stamp">real output, just now</span></div>'
+   +'<pre class="fade" id="pane">'+term(s.body,s.emphasis)+'</pre></div>');
+  await sleep(80); await reveal(els,220);
+  if(!s.then){ await out(rest(s,t0)); return; }
+  await sleep(s.then.at*1000);
+  const pane=stage.querySelector("#pane");
+  pane.classList.remove("on"); await sleep(420);
+  pane.innerHTML=term(s.then.body,s.then.emphasis);
+  if(s.then.label) stage.querySelector("#cap").textContent=s.then.label;
+  pane.classList.add("on"); await sleep(420);
+  await out(rest(s,t0));
+}
+// The reserve table, then the totals it adds up to. The table is there from the first frame —
+// it is the evidence, not a reveal — and the figures land on the beats the narration takes them.
+async function reserves(s){
+  const t0=performance.now();
+  put('<div><div class="cap fade">'+s.label+'<span class="stamp">real output, just now</span></div>'
+   +'<pre class="fade">'+term(s.body,s.emphasis)+'</pre>'
+   +'<div class="figs" style="--cols:'+s.figures.length+'">'
+   +s.figures.map(f=>'<div class="fig fade'+(f[2]?" "+f[2]:"")+'">'
+     +'<div class="n">'+f[0]+'</div><div class="k">'+f[1]+'</div></div>').join("")
+   +'</div></div>');
+  const all=[...stage.querySelectorAll(".fade")];
+  await sleep(80); await reveal(all.slice(0,2),220);
+  const at=s.figuresAt??6, step=s.figuresStep??1.9;
+  await sleep(at*1000);
+  for(const e of all.slice(2)){ e.classList.add("on"); await sleep(step*1000) }
+  await out(rest(s,t0));
+}
+// Numbered gaps, one per beat. Slower than a bullet list on purpose: this is the scene a viewer
+// is most likely to think was hidden, so each line gets long enough to be read and disbelieved.
+async function missing(s){
+  const t0=performance.now();
+  put('<div><div class="cap fade">'+s.label+'</div><div class="miss">'
+   +s.items.map((t,i)=>'<div class="row fade"><div class="num">'+(i+1)+'</div>'
+     +'<div class="tx">'+t+'</div></div>').join("")+'</div></div>');
+  const all=[...stage.querySelectorAll(".fade")];
+  const lead=s.lead??4.5, step=s.step??7;
+  all[0].classList.add("on"); await sleep(lead*1000);
+  for(const e of all.slice(1)){ e.classList.add("on"); await sleep(step*1000) }
+  await out(rest(s,t0));
+}
+async function runnable(s){
+  const t0=performance.now();
+  const els=put('<div><div class="cap fade">'+s.label+'</div>'
+   +'<div class="cmd fade" style="margin-top:6px"><span class="p">$ </span>'+s.command+'</div>'
+   +'<pre class="fade" style="margin-top:20px">'+term(s.body,s.emphasis)+'</pre>'
+   +'<div class="url fade" style="margin-top:32px">'+s.url+'</div>'
+   +'<div class="cap fade" style="margin:16px 0 0">'+s.note+'</div></div>');
+  await sleep(80); await reveal(els,700); await out(rest(s,t0));
 }
 async function close(s){
+  const t0=performance.now();
   const els=put('<div><div class="lede fade" style="font-size:30px;margin-bottom:26px">'
    +'Your position is <b>yours</b>.<br>And you can still prove what you must.</div>'
    +'<div class="sub fade" style="margin:0">github.com/psyto/confide &middot; Apache-2.0</div></div>');
-  await sleep(80); await reveal(els,420); await out(s.hold);
+  await sleep(80); await reveal(els,420); await out(rest(s,t0));
 }
 window.__play=async()=>{
   const t0=performance.now();
@@ -185,6 +274,9 @@ window.__play=async()=>{
     else if(s.kind==="views")await views(s);
     else if(s.kind==="benefits")await benefits(s);
     else if(s.kind==="close")await close(s);
+    else if(s.kind==="reserves")await reserves(s);
+    else if(s.kind==="missing")await missing(s);
+    else if(s.kind==="runnable")await runnable(s);
     else await evidence(s);
   }
   const secs=(performance.now()-t0)/1000;

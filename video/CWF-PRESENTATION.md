@@ -50,7 +50,7 @@ has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 | 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
 | 6 | what runs | 25 | 55 | 135 | the proofs accepted by Solana's ZK program; the seizure on devnet |
 | 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
-| 8 | what you can run | 19 | 41 | 134 | `./scripts/packet.sh SPCX.US`, then the page URL |
+| 8 | what you can run | 19 | 41 | 134 | `./scripts/packet.sh NVDAx`, then the page URL |
 | | | **166 s** | **346** | | |
 
 ## The script
@@ -151,3 +151,25 @@ To find out, before the last week, whether:
 - scene 5 can be delivered without the video feeling like a retraction;
 - 150 seconds is enough for seven scenes, or whether one has to go — and if so, which, decided on
   purpose rather than in a hurry on 10-11.
+
+## What the rough cut found — 2026-09-18
+
+**Cut, and the length question is settled.** The render holds every scene's scripted duration to the
+second, because the page derives them from this script's own table rather than from a hold typed
+next to each scene. Eight scenes stand; nothing has to go for time.
+
+The structural questions — whether scene 2 lands without Confide in it, whether scene 5 can concede
+that Kamino is right without sounding like a retraction — need the voice on it, and the voice is
+founder-only. `segments-presentation/LINES.md` pairs each clip with the line that goes on it.
+
+**What it found instead was in the pictures.** The pane carrying the strongest ten seconds — *the
+chain says it holds nothing* — was highlighting **every zero inside `17300000000000`** and leaving
+`173000 units`, the number the narration actually says, unmarked. The published Stocklana cut has
+the same frame and the same defect, already uploaded. The cause was in the emphasis painter: it
+marked one string at a time, so the first pass threaded marker characters through the text the
+second pass was looking for. Fixed in `demo.html`.
+
+**No check could have caught it.** Every guard in the recorders is on the *text* of a pane, and the
+text was correct — the fault was in the paint. It was found by extracting a frame and looking at it,
+which is the only thing that would have. The published upload is left as it is, since the argument
+in it is unaffected; a re-render now paints the right number.

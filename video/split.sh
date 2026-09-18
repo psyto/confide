@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Cut a recording into one clip per narration block.
 #
-#   ./video/split.sh            # confide.mp4      -> segments/
-#   ./video/split.sh checkin    # checkin-1.mp4    -> segments-checkin/
+#   ./video/split.sh                 # confide.mp4       -> segments/
+#   ./video/split.sh checkin         # checkin-1.mp4     -> segments-checkin/
+#   ./video/split.sh presentation    # presentation.mp4  -> segments-presentation/
 #
 # One splitter for both cuts rather than a copy per cut. The copy is what this file is guarding
 # against everywhere else; it would be odd to make one here.
@@ -16,9 +17,11 @@ cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 PROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
 case "${1:-main}" in
-  main)    SRC=video/confide.mp4;   SEG=video/segments;          MAKE="cd video && npm run record";;
-  checkin) SRC=video/checkin-1.mp4; SEG=video/segments-checkin;  MAKE="node video/record-checkin.js";;
-  *) echo "usage: split.sh [main|checkin]" >&2; exit 2;;
+  main)    SRC=video/confide.mp4;      SEG=video/segments;               MAKE="cd video && npm run record";;
+  checkin) SRC=video/checkin-1.mp4;    SEG=video/segments-checkin;       MAKE="node video/record-checkin.js";;
+  presentation)
+           SRC=video/presentation.mp4; SEG=video/segments-presentation;  MAKE="node video/record-presentation.js";;
+  *) echo "usage: split.sh [main|checkin|presentation]" >&2; exit 2;;
 esac
 
 [ -f "$SRC" ] || { echo "missing $SRC — run: $MAKE" >&2; exit 1; }
@@ -70,9 +73,10 @@ print(f'  {len(want)} clips, all {sizes.pop()}')
 PY
 
 echo
-if [ "$SEG" = video/segments-checkin ]; then
-  python3 video/lines.py
-fi
+case "$SEG" in
+  video/segments-checkin)      python3 video/lines.py checkin;;
+  video/segments-presentation) python3 video/lines.py presentation;;
+esac
 
 if [ "$SEG" = video/segments ]; then
   echo "  narrated/ is not touched. Those clips carry the recorded voice over the PREVIOUS render;"

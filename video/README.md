@@ -115,3 +115,49 @@ reserves, which were the Backpack ones the argument is partly about.
 Scene durations are read out of `CHECKIN-1.md` rather than repeated in the recorder. The narration
 decides them; two places holding the same number is how the Stocklana cut ended up with a manifest
 that described a different edit.
+
+## The CWF submission presentation
+
+`presentation.mp4` — eight scenes, silent, at the length its script asks for. **The rough cut, and
+not for publication**: its only job is to find out whether the story in
+[`CWF-PRESENTATION.md`](CWF-PRESENTATION.md) holds before the week the real video has to exist. The
+length is in that file's table, which `pace.py` derives from the narration, and is not repeated
+here.
+
+```bash
+node video/record-presentation.js   # -> presentation.mp4 + segments-presentation/manifest.json
+./video/split.sh presentation       # -> segments-presentation/*.mp4 and LINES.md
+```
+
+**It renders from `demo.html`, the same page as the published cut.** Five of its scenes use kinds
+that page already had (`leak`, `slot`, `evidence`); three kinds are new (`reserves`, `missing`,
+`runnable`). A second renderer would have been a copy of the first within a week. What is *not*
+reused is the footage: two scenes of the published cut make claims this script deliberately does
+not, so nothing is lifted from `segments/`.
+
+Five of the eight scenes are the stdout of a command run moments before the recording — eight panes
+across them — and the recorder throws rather than records if any of them stops carrying its claim.
+One of those commands reads **somebody else's repository**: `kamino-verdict.sh`, at a pinned commit,
+because scene 5 is a quotation from Kamino Lend and they can change it without telling us. When that
+happens the recording should fail, not narrate a line that is no longer there.
+
+`evidence` grew a second pane, `then`, which replaces the text inside the same frame partway
+through. Two scenes are built on a withheld line — *"the chain says it holds nothing"* … *"it holds
+a hundred and seventy-three thousand"* — and cutting to a new scene for the second half throws away
+the fact that it is the same account being looked at.
+
+### Two ways of saying how long a scene is
+
+The published cut was timed by watching it: each scene's `hold` is how long it sits still **after**
+it has finished arriving, and how long the arrival took was never written down anywhere. The
+presentation's durations are derived from the narration's word counts instead, so they have to mean
+the whole scene. A scene given `total` subtracts whatever its own animation spent; one given `hold`
+behaves exactly as before.
+
+The arithmetic lives in the page, which is the only thing that knows how long its own animations
+take. Putting it in the recorder would have meant the recorder holding a second copy of every
+scene's lead-in — the drift this repository keeps having, installed deliberately.
+
+**The render is the check.** `LINES.md` computes each clip's pace from the words in the script and
+the length the recorder actually logged — two sources that only agree if the render matched the
+narration. A scene that had drifted shows up there as a pace nobody could read.

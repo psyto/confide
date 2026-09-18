@@ -60,13 +60,20 @@ fi
 
 echo
 echo "  THE CUT — the manifest against the clips on disk"
-python3 - <<'PY' && ok "manifest, clip files and LINES.md name the same set" || bad "manifest, clips and LINES.md disagree"
+# Every cut, not just the first one. This checked video/segments alone while two more cuts were
+# added next to it, so the check-in and the presentation were cut, split and committed with nothing
+# measuring them at all.
+for seg in video/segments video/segments-checkin video/segments-presentation; do
+  SEG="$seg" python3 - <<'PY' && ok "${seg#video/}: manifest, clips and LINES.md name the same set" \
+                              || bad "${seg#video/}: manifest, clips and LINES.md disagree"
 import json, os, sys
-man = [e["file"] for e in json.load(open("video/segments/manifest.json"))]
-disk = sorted(f for f in os.listdir("video/segments") if f.endswith(".mp4"))
-lines = open("video/segments/LINES.md", encoding="utf-8").read()
+seg = os.environ["SEG"]
+man = [e["file"] for e in json.load(open(f"{seg}/manifest.json"))]
+disk = sorted(f for f in os.listdir(seg) if f.endswith(".mp4"))
+lines = open(f"{seg}/LINES.md", encoding="utf-8").read()
 sys.exit(0 if sorted(man) == disk and all(n in lines for n in man) else 1)
 PY
+done
 
 echo
 echo "  THE WIRE — the client against the program"

@@ -56,7 +56,7 @@ SHOWS_BY_DOC = {
  5: "`constraints.rs` on screen",
  6: "the proofs accepted by Solana's ZK program; the seizure on devnet",
  7: "the three missing pieces, as text",
- 8: "`./scripts/packet.sh SPCX.US`, then the page URL",
+ 8: "`./scripts/packet.sh NVDAx`, then the page URL",
  },
  "video/CHECKIN-1.md": {
  1: "the page being used — a mint typed in, the verdict appearing",
