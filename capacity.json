@@ -1,7 +1,7 @@
 {
  "generated_from": "scripts/capacity.sh",
- "held_usd": 21102146,
- "borrowed_usd": 147557,
+ "held_usd": 21125233,
+ "borrowed_usd": 147560,
  "authorised_capacity_usd": 81634727,
  "reachable_confidentially_usd": 0,
  "reserves_priced": 14,
