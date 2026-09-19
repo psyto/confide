@@ -25,20 +25,20 @@ and LTVs, and **$0 of it reachable while a position stays confidential**. See
 
 | | issuer | LTV | cap | reserves | authorised |
 |---|---|---|---|---|---|
-| [`AAPLx`](AAPLx.md) | Backed | 40 % | 2,000 | 1 | $265,906 |
-| [`CRCLx`](CRCLx.md) | Backed | 30 % | 50,000 | 1 | $1,294,950 |
-| [`GOOGLx`](GOOGLx.md) | Backed | 60 % | 12,000 | 1 | $2,489,833 |
-| [`HOODx`](HOODx.md) | Backed | 30 % | 12,000 | 1 | $397,602 |
+| [`AAPLx`](AAPLx.md) | Backed | 40 % | 2,000 | 1 | $270,554 |
+| [`CRCLx`](CRCLx.md) | Backed | 30 % | 50,000 | 1 | $1,276,125 |
+| [`GOOGLx`](GOOGLx.md) | Backed | 60 % | 12,000 | 1 | $2,506,937 |
+| [`HOODx`](HOODx.md) | Backed | 30 % | 12,000 | 1 | $395,280 |
 | [`METAx`](METAx.md) | Backed | 35 % | 0 | 1 | *no price* |
-| [`MSTRx`](MSTRx.md) | Backed | 30 % | 90,000 | 1 | $3,500,550 |
+| [`MSTRx`](MSTRx.md) | Backed | 30 % | 90,000 | 1 | $3,571,020 |
 | [`MU.US`](MU.US.md) | Backpack | 40 % | 2,500 | 1 | *no price* |
-| [`NVDAx`](NVDAx.md) | Backed | 55 % | 18,000 | 2 | $15,544,147 |
-| [`QQQx`](QQQx.md) | Backed | 70 % | 16,000 | 3 | $24,332,205 |
+| [`NVDAx`](NVDAx.md) | Backed | 55 % | 18,000 | 2 | $16,069,819 |
+| [`QQQx`](QQQx.md) | Backed | 70 % | 16,000 | 3 | $24,752,655 |
 | [`SKHY.US`](SKHY.US.md) | Backpack | 40 % | 15,000 | 1 | *no price* |
 | [`SPCX.US`](SPCX.US.md) | Backpack | 40 % | 15,000 | 1 | *no price* |
-| [`SPYx`](SPYx.md) | Backed | 73 % | 20,000 | 3 | $28,829,891 |
-| [`STRCx`](STRCx.md) | Backed | 50 % | 20,000 | 1 | $1,055,722 |
-| [`TSLAx`](TSLAx.md) | Backed | 55 % | 20,000 | 1 | $3,923,920 |
+| [`SPYx`](SPYx.md) | Backed | 73 % | 20,000 | 3 | $29,031,675 |
+| [`STRCx`](STRCx.md) | Backed | 50 % | 20,000 | 1 | $1,065,825 |
+| [`TSLAx`](TSLAx.md) | Backed | 55 % | 20,000 | 1 | $4,026,440 |
 
 *`cap` and `LTV` are the largest reserve's, where a symbol has more than one. `authorised` is
 summed across all of a symbol's reserves at each one's own price; a reserve that has never been

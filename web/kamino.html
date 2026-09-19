@@ -89,6 +89,29 @@ no wallet, no key</div>
   </div>
   <div class="note">Refusing what you cannot value is correct underwriting, not an oversight. This
   page is not an argument that Kamino is wrong. It is an answer to <b>what would it take</b>.</div>
+
+  <h3>The last line is a pincer, and it closes on every mint</h3>
+  <div class="lede"><code>constraints.rs:131</code> reads differently from the other three. The
+  first three refuse an <b>account</b>. This one refuses a <b>mint</b> &mdash; and it refuses the
+  mint that would let anyone open a confidential account without asking the issuer.</div>
+  <div class="lede">So the flag Kamino <b>requires</b> is the flag that puts the issuer <b>in the
+  path</b>. They are the same field, read from two sides.</div>
+  <div class="panel">
+    <table>
+      <tr><th><span class="mono">autoApproveNewAccounts</span></th><th>issuer must approve each escrow</th><th>Kamino accepts the mint</th></tr>
+      <tr><td class="mono">false</td><td><b>yes</b></td><td>&#10003;</td></tr>
+      <tr><td class="mono">true</td><td>no</td><td>refused at <span class="mono">constraints.rs:131</span></td></tr>
+    </table>
+    <div class="prov">Measured across every tokenized-equity mint on Solana by
+    <span class="mono">./scripts/slot-scan.sh</span>, which fails if any mint ever auto-approves:
+    <b>1,869 of 1,869 set it false</b> &mdash; Backed 732, Backpack 1,137. <b>Zero auto-approve.</b></div>
+  </div>
+  <div class="note"><b>There is no mint in the population on the ungated side</b>, so this is not
+  solved by choosing a different ticker. The <span class="mono">$0</span> below is not a property of
+  an asset, a reserve or a parameter &mdash; it is a property of the configuration the whole market
+  shares. <b>No engineering on Confide's side removes it:</b> the floor can be proved, the
+  collateral locked and the default settled without the holder, and the position still cannot exist,
+  because the account it would live in cannot be opened without the issuer.</div>
 </section>
 
 <section>
