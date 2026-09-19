@@ -206,92 +206,71 @@ power trip the loan instead of silently emptying it.
 
 ---
 
-## Step 2 is blocked, and not by Confide — 2026-09-19
+## Step 2 — wrong twice, and the second correction is the founder's — 2026-09-19
 
-The sizing above was wrong in the direction that matters. It said the U256 verify transaction goes
-43 bytes over and that two more lookup-table addresses buy back sixty. **There is nothing left to
-move into a lookup table**: the only other static keys in that transaction are the fee payer and the
-ZK program id, and a v0 message may not source a program id from a table.
+### What I claimed
 
-Measured — `cargo test -p confide-ct --test fee_tx_size`:
+That `TransferWithFee` is **unreachable on Solana**: its range proof is `BatchedRangeProofU256`,
+whose verify transaction is 1,269 bytes in its smallest form against a 1,232-byte limit, with
+nothing left to move into a lookup table. I had the official `spl-token` CLI failing on the same
+mint as corroboration, and I proposed recording it as a platform finding.
 
-| proof | legacy | v0 + lookup table | 1,232-byte limit |
-|---|---|---|---|
-| equality | 557 | 531 | fits |
-| 3-handle validity | 781 | 755 | fits |
-| percentage-with-cap | 597 | 571 | fits |
-| 2-handle fee validity | 653 | 627 | fits |
-| **`BatchedRangeProofU256`** | **1,301** | **1,275** | **over** |
+### Why it is wrong
 
-And with the context authority set to the fee payer — the concession Confide deliberately does not
-make, because the borrower could then close the context accounts — it is **1,269. Still 37 over.**
+**The founder asked whether this should be reported to the people who build Token-2022.** Checking
+whether it was already known is what found the mistake, before anything was sent anywhere.
 
-`ProofLocation` has two variants and neither helps: `InstructionOffset` puts the same 1,064 bytes
-into a transaction that also carries the Token-2022 transfer and its accounts, and
-`ContextStateAccount` is the row above. The ZK program's instruction set is `CloseContextState` plus
-`Verify*` — **there is no way to write proof data into an account across several transactions.**
+The ZK ElGamal Proof Program's verify instructions accept **four** account layouts, not two. I had
+read `ProofLocation` in the *extraction* crate — which says where **Token-2022** finds the proof
+*context* — and taken it for the whole story. The proof program's own documentation says:
 
-### The confirmation that makes this a fact about Solana rather than about Confide
-
-The official `spl-token` CLI, on a mint created by the same CLI with
-`--transfer-fee-basis-points 50 --enable-confidential-transfers auto`, on devnet:
-
-```
-$ spl-token transfer <mint> 100 <dest> --confidential
-Program log: ConfidentialTransferInstruction::Transfer
-Program log: Error: InvalidInstructionData
-```
-
-**The reference tooling builds the fee-free instruction too.** Deposit, apply and configure all
-succeed; the transfer is where it stops, for everyone.
-
-### Whose finding this is — corrected 2026-09-19, by the founder
-
-The first version of this section led with *"PreStocks switched a 50 bps transfer fee on…"*, which
-reads as a defect report about a company. **That framing was wrong, and the founder caught it while
-reading the bounty they sponsor.** Two reasons, and the second matters more than the first:
-
-1. It is not their defect. They enabled **two standard Token-2022 extensions**, each supported and
-   each individually fine. Nothing warns that the pair does not compose.
-2. **The finding is about the platform**, and stating it as a company's mistake is both less
-   accurate and worse behaviour.
-
-So, correctly:
-
-> **Token-2022's confidential transfers and its transfer fees do not compose on Solana today.** A
-> transfer on a fee-bearing mint requires `TransferWithFee`, whose range proof is
-> `BatchedRangeProofU256`, and that proof's verify transaction does not fit in a Solana
-> transaction — 1,269 bytes in its smallest form against a 1,232-byte limit. The official
-> `spl-token` CLI does not implement the with-fee path either.
+> **4. Proof in account, with context state:**
+> — `[]` Account to read the proof from
+> — `[writable]` The proof context account to create
+> — `[]` The proof context account owner
 >
-> **Eight live mints are currently in that combination**, all from PreStocks. Their accounts
-> configure, deposit and apply correctly. Only the transfer stops, and it stops for every client.
+> The instruction expects either: i. the proof data if provided as instruction data, or
+> **ii. a `u32` byte offset if the proof is provided as an account**
 
-That is the same shape as the repository's flagship result and one level beneath it: 1,992 mints
-ship a disclosure feature nobody can use because the only key on offer is the wrong shape, and a
-subset ship a combination the platform cannot execute.
+**The proof does not have to travel in the transaction.** It is written into an account first — the
+reference client uses `spl-record` and chunks it across several transactions
+(`confidential_transfer_create_record_account`, `generate_split_transfer_with_fee_proof_data`) —
+and the verify instruction then carries four bytes.
 
-### Before any of this is published
+### What survives
 
-**This is a live product's behaviour, found by someone with no relationship to them, during an event
-they are sponsoring.** Telling them before telling everyone is the ordinary courtesy, and it is a
-different act from the sales outreach retired on 2026-09-18 — it asks for nothing.
+The measurements were right; the conclusion drawn from them was not. They now explain **why the
+record-account path exists** rather than pretending nothing does:
 
-**Founder's call, and nothing about these eight mints goes into the public post until it is made.**
-The post's finding is the Kamino pincer; this belongs in the repository and at most as a footnote
-there.
+| proof | verify tx, proof in instruction data | fits in 1,232 |
+|---|---|---|
+| equality / 3-handle validity / percentage-with-cap / 2-handle validity | 531–755 | yes |
+| **`BatchedRangeProofU256`** | **1,269 at best** | **no** |
 
-**Stated with the hedge it deserves:** two measurements, not a proof. If someone has a working
-confidential transfer on a fee-bearing Token-2022 mint, that is worth more to this project than
-being right — `crates/confide-ct/tests/fee_tx_size.rs` asserts the size and **starts failing the day
-it stops being true.**
+So on a fee-bearing mint the range proof **must** go through a record account. That is a real extra
+step and it is why this is more than swapping one instruction for another.
 
-### So the plan changes
+And the CLI observation stands as what it is: `spl-token transfer --confidential` builds the
+fee-free instruction and fails on a fee mint. That is a **known CLI gap**, tracked as
+`solana-program/token-2022#861`, not evidence of impossibility.
 
-- **Step 1 stands and was worth doing.** A PreStocks token can be held confidentially and a floor
-  proved over its ciphertext. Every analysis surface — the decision page, the packets, the capacity
-  computation — is honest across all 1,992.
-- **Step 2 is withdrawn.** It is not a day or two of work; it is unreachable until Solana's limits
-  or the proof size change. `max_fee_bps` and the fee-netted default predicate are withdrawn with
-  it: there is no settlement for them to protect.
-- **What replaces it is the finding**, which is worth more than the instruction would have been.
+### Nothing gets reported
+
+There is nothing to report. The behaviour is designed for, documented in the proof program's own
+instruction docs, and implemented in the reference client. **A finding about someone else's
+platform, drawn from two measurements and an unread third page, would have been wrong in public** —
+and it would have been sent to the people who wrote the page I had not read.
+
+### So step 2 is open again, and larger than first sized
+
+1. `seizure-ctx` builds five transfer contexts instead of three.
+2. The range proof goes into a record account in chunks, then a verify instruction reads it by
+   offset. **New machinery: a record account per proof, its lifecycle, and its rent.**
+3. The loan record grows by two context pubkeys per route.
+4. `transfer_instruction` calls `inner_transfer_with_fee` when the mint charges one.
+5. The fee is netted from the recoverable amount, and `max_fee_bps` comes back — a seizure on a
+   fee-bearing mint delivers less than the floor that was proved.
+
+**Not a day or two.** Whether it is worth it against 23 days and the unbuilt submission deliverables
+is the founder's call, and the honest input is that step 1 already made every analysis surface true
+across all 1,992 mints, while step 5 is the only part that changes what a lender is protected from.

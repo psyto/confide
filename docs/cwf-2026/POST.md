@@ -103,16 +103,19 @@ post quoting a number the page contradicts is worse than no post. Current readin
 
 ## What is deliberately not in it
 
-**The transfer-fee finding.** Eight live mints are in a Token-2022 combination the platform cannot
-execute ([`PRE-IPO.md`](PRE-IPO.md)), and it is **not** in this post and should not be added to it
-without a decision. Three reasons:
+**The transfer-fee material**, and the reason is now stronger than when this section was written:
+**there is no finding.** Confidential transfer with a fee works — the range proof goes into a record
+account first, which is documented in the proof program's own instruction docs and implemented in
+the reference client. What this repository briefly had was a wrong conclusion drawn from a real
+measurement ([`PRE-IPO.md`](PRE-IPO.md)).
 
-- The post has one finding and it is the Kamino pincer. A second one halves both.
-- Those eight mints belong to a company **sponsoring the event this is being submitted to**. A
-  public note about their product's behaviour, from someone with no relationship to them, is a
-  different act from a note about a boundary in Kamino's source — and Kamino's is framed as
-  *correct underwriting*, which this one cannot be.
-- **They have not been told.** That comes first, and it is the founder's to do or not.
+Two things follow, and they outlive the mistake:
+
+- The post has one finding and it is the Kamino pincer. A second one halves both, and a second one
+  that turns out to be an error destroys the first.
+- Those eight mints belong to a company **sponsoring the event this is being submitted to**. Even
+  a correct note about a live product, from a stranger, during their event, is a different act from
+  a note about a boundary in Kamino's source — and Kamino's is framed as *correct underwriting*.
 
 ## What not to do afterwards
 

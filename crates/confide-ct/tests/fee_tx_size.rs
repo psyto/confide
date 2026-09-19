@@ -1,19 +1,20 @@
-//! Does the U256 range-proof verify transaction fit?
+//! How the with-fee proof set has to be submitted, measured.
 //!
-//! The fee-free U128 one already runs at 1,211 bytes against the 1,232-byte limit, with a lookup
-//! table holding the context account and its authority. U256 is 64 bytes more, and nothing else in
-//! that transaction can move into a table — its only other static keys are the fee payer and the
-//! ZK program id, and a v0 message may not source a program id from a lookup table.
+//! Four of the five proofs fit in an ordinary verify transaction with the proof in instruction
+//! data. `BatchedRangeProofU256` does not — 1,269 bytes at best against the 1,232-byte limit, and
+//! there is nothing left to move into a lookup table, because the only other static keys are the
+//! fee payer and the ZK program id and a v0 message may not source a program id from a table.
 //!
-//! So this measures rather than argues, and the measurement says it does not fit — by 37 bytes in
-//! its smallest form. That is why Confide settles nothing on a fee-bearing mint, and it is not a
-//! Confide limitation: the official `spl-token` CLI fails on the same mint with
-//! `ConfidentialTransferInstruction::Transfer / InvalidInstructionData`, because it builds the
-//! fee-free instruction too.
+//! **That is a routing fact, not an impossibility, and this file said otherwise for one commit.**
+//! The ZK ElGamal Proof Program's verify instructions take four account layouts, and the fourth
+//! reads the proof **from an account** with a `u32` offset as the whole instruction data. The
+//! reference client writes the proof into an `spl-record` account in chunks and points the verify
+//! instruction at it. So on a fee-bearing mint the range proof must go through a record account —
+//! which is why with-fee settlement is more work than swapping one instruction for another.
 //!
-//! **This test exists to notice if that ever changes.** If Solana raises the packet limit or the
-//! proof shrinks, the assertion below starts failing and the with-fee settlement path becomes
-//! reachable.
+//! What this test is for: if the numbers below ever come in under the limit, the record account
+//! stops being necessary and the simpler path opens.
+
 use solana_zk_sdk::encryption::{auth_encryption::AeKey, elgamal::ElGamalKeypair};
 use spl_token_confidential_transfer_proof_generation::transfer_with_fee::transfer_with_fee_split_proof_data;
 
@@ -109,9 +110,8 @@ fn the_verify_transaction_for_each_proof() {
             Some(ContextStateInfo { context_state_account: &ctx, context_state_authority: &authority }), &d.range_proof_data));
     println!("\nworst case {worst} bytes against 1232");
     assert!(worst > 1232,
-            "the with-fee proof set now fits in a transaction ({worst} bytes) — \
-             confidential settlement on a fee-bearing mint has become possible, \
-             and docs/cwf-2026/PRE-IPO.md says it is not");
+            "the with-fee proof set now fits with the proof in instruction data ({worst} bytes) — \
+             the spl-record detour docs/cwf-2026/PRE-IPO.md describes is no longer needed");
 
     // The same range proof with the context authority set to the fee payer. Confide deliberately
     // makes the authority the loan PDA so the borrower cannot close the context accounts; this
