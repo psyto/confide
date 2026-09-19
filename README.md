@@ -205,7 +205,14 @@ confidential balance and proving over it are things only the holder can do; that
 ./scripts/read-balance.sh <account> account-keys.json
 ./scripts/prove-collateral.sh <account> 100000 account-keys.json
 ./scripts/refresh-proofs.sh <account> 100000    # rewrite the page's proofs for a new account
+./scripts/refresh-loans.sh                     # which devnet loans the page reads, and their layout
 ```
+
+`refresh-loans.sh` writes `web/loans.json` — **which** accounts the page should open, not what they
+say. The page fetches each loan off devnet and decodes the flags in the visitor's browser, so a
+re-run or a devnet reset shows through instead of leaving the page asserting an outcome the chain no
+longer has. The record layout is copied into that file so a browser can decode without the program;
+`docs-consistency.sh` checks the copy against `programs/confide-seizure/src/lib.rs`.
 
 **Needs a devnet-funded keypair:**
 

@@ -121,6 +121,35 @@ print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).grou
 # third issuer appeared on 2026-09-19. Same rule as the market totals: prose that speaks in the
 # present tense has to match the file. Dated records — the reviews, the published cut's script and
 # its YouTube description — describe a moment and are deliberately not listed.
+# The loan record layout lives in Rust and is copied into web/loans.json so a browser can decode
+# an account without a program. Two places holding one layout is the drift this repository keeps
+# having, so the copy is checked against the original rather than trusted.
+echo
+echo "  THE LOAN LAYOUT — web/loans.json against the program"
+python3 - <<'PY' && ok "web/loans.json's offsets match programs/confide-seizure/src/lib.rs" || bad "the loan layout in web/loans.json has drifted from the program — ./scripts/refresh-loans.sh"
+import json, re, sys, pathlib
+rs = pathlib.Path("programs/confide-seizure/src/lib.rs").read_text(encoding="utf-8")
+def const(name):
+    m = re.search(r"const %s: usize = (\d+);" % name, rs)
+    return int(m.group(1)) if m else None
+want = {"escrow": const("OFF_ESCROW"), "destination": const("OFF_DESTINATION"),
+        "mint": const("OFF_MINT"), "oracle": const("OFF_ORACLE"),
+        "q_min": const("OFF_Q_MIN"), "principal": const("OFF_PRINCIPAL"),
+        "ratio_bps": const("OFF_RATIO_BPS"), "seized": const("OFF_SEIZED"),
+        "release_destination": const("OFF_RELEASE_DESTINATION"), "released": const("OFF_RELEASED")}
+lens = {"len_v1": const("LOAN_LEN_V1") or int(re.search(r"LOAN_LEN_V1: usize = (\d+)", rs).group(1)),
+        "len_v2": int(re.search(r"pub const LOAN_LEN: usize = (\d+);", rs).group(1))}
+try:
+    got = json.load(open("web/loans.json"))
+except FileNotFoundError:
+    print("      web/loans.json is missing"); sys.exit(1)
+bad = [f"{k}: program {v}, loans.json {got['offsets'].get(k)}"
+       for k, v in want.items() if got["offsets"].get(k) != v]
+bad += [f"{k}: program {v}, loans.json {got.get(k)}" for k, v in lens.items() if got.get(k) != v]
+for b in bad[:8]: print("      " + b)
+sys.exit(1 if bad else 0)
+PY
+
 echo
 echo "  THE MINT COUNT — prose against web/mints.json"
 python3 - <<'PY' && ok "every quoted mint count matches web/mints.json" || bad "a quoted mint count has drifted — ./scripts/refresh-mints.sh, then fix the prose"
