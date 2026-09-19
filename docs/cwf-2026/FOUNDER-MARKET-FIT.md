@@ -35,7 +35,14 @@ together into one claim:
 
 This is not a claim that requires having worked in the industry. It requires reading what is on
 chain, and it is **falsifiable, which is why it is worth stating**: if an issuer shipped a
-disclosure model tomorrow, the claim would be dead. Instead, every mint says the opposite —
+disclosure model tomorrow, the claim would be dead.
+
+**And it is stronger than "these two issuers chose badly".** A new issuer has two settings to pick
+between and neither works: `autoApproveNewAccounts: true` frees its holders and gets the mint
+refused by Kamino at `constraints.rs:131`; `false` keeps the venue and keeps the gate. The auditor
+slot offers the same two bad options to everyone. **There is no correct configuration available**,
+which is why the answer to "build a better issuer" is no — see
+[`THE-PINCER.md`](THE-PINCER.md). Instead, every mint says the opposite —
 **1,992 tokenized-equity mints with confidential transfers switched on and the auditor slot empty,
 from three issuers with nothing to do with each other** (`./scripts/slot-scan.sh`, mainnet). One
 issuer leaving it empty is a story about that issuer. Two, independently, is the market.

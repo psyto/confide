@@ -156,3 +156,48 @@ Not a fix on this side. The position would have to move into a pledgeable accoun
 on a mint with `autoApproveNewAccounts: false` is the gate. An escrow pre-approved and handed to a
 loan PDA *before* the holder funds it would need the PDA to apply a pending balance, which the
 program has no instruction for. **Recorded as unsolved rather than as an idea.**
+
+---
+
+## Would a better issuer fix it? — asked 2026-09-19, and the answer is no
+
+The founder asked whether to build a competing tokenized-equity service that configures its mints
+correctly. Working out what "correctly" could mean is what produced the strongest form of this
+finding, so the question earned its answer even though the answer is no.
+
+**A new issuer has exactly two settings to choose between, and neither works.**
+
+| `autoApproveNewAccounts` | can a holder open an account unaided? | will Kamino admit the mint? |
+|---|---|---|
+| **`true`** | **yes — the gate disappears** | **no.** `constraints.rs:131` refuses the *mint*: *"Auto approve new accounts must be false for liquidity tokens"* |
+| **`false`** | no — the same gate everyone else has | yes |
+
+**There is no configuration that gives both.** Ungated accounts cost you the venue; venue
+admissibility costs your holders the gate. Both halves are measured: the refusal is in Kamino's
+pinned source, and 1,992 of 1,992 live mints sit on the `false` side.
+
+And the auditor slot offers no third option either. Token-2022 gives one disclosure model — a
+global key that decrypts everyone's everything forever — so *every* issuer's choice is between a
+key no holder should accept and a null that lets no holder prove anything. **A new issuer chooses
+from the same two.**
+
+### What that changes about the claim
+
+This repository's flagship result has been *"1,992 mints ship a privacy feature nobody can use"*,
+which reads as an observation about two companies' decisions. It is not:
+
+> **Backed and Backpack did not choose badly. There is no good choice available.** Anybody issuing
+> a tokenized stock on Solana today picks between an ungated token no venue will lend against and a
+> venue-admissible token whose every account needs their signature — and, separately, between an
+> auditor key that reads everything and one that reads nothing.
+
+That is a property of the substrate, and it is why the answer to "build a competitor" is no. **A
+new issuer would hit both walls on its first day.**
+
+### And it is why this project is a layer rather than a competitor
+
+An issuer who genuinely wanted to fix it would have to ship the missing disclosure mechanism
+alongside the token. That mechanism is what this repository is. **Confide is what Backed or
+Backpack would adopt, not what would replace them** — and a twenty-three-day project claiming to
+compete with regulated issuers, with no custody, prospectus or licence behind it, would be read as
+naive by anyone who looked.
