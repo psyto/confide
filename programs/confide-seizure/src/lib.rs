@@ -23,6 +23,10 @@
 //!   1 Seize — the predicate, then the transfer. Callable by anyone: default is a public fact.
 
 use solana_zk_elgamal_proof_interface::proof_data::ProofType;
+// Re-exported so a caller can build the `Pubkey` these predicates take without guessing which
+// version of solana-program to depend on. The lender's verifier uses this.
+pub use solana_program;
+
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,

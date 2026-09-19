@@ -208,6 +208,27 @@ confidential balance and proving over it are things only the holder can do; that
 ./scripts/refresh-loans.sh                     # which devnet loans the page reads, and their layout
 ```
 
+**Being the lender.** Until 2026-09-19 both sides of a loan were the same person —
+`seizure-e2e.sh` generates the borrower *and* the lender — so nothing established what the other
+side could confirm on their own. Now:
+
+```bash
+MODE=open ./scripts/seizure-e2e.sh             # originate and stop, leaving a loan open
+./scripts/lender-check.sh <loan> <my-account> [q_min] [principal_cents] [ratio_bps]
+```
+
+`lender-check` **calls the program's own predicates** — `floor_is_proved` and `context_is_armed`,
+imported from `confide-seizure` and pointed at data fetched from RPC — rather than a second
+implementation that could disagree with the chain. It answers whether the collateral is out of the
+borrower's hands, whether the seizure proofs are armed under an authority they cannot close, and
+whether the route points at *your* account. **It says nothing about whether the asset is worth
+lending against**; that is `docs/packets/`.
+
+It also says what it cannot establish: **the floor proof contexts are not recorded in the loan**, so
+a lender relies on the program having checked them at origination rather than re-deriving the floor
+themselves. The first version of the tool hid that by checking the transfer proofs and calling them
+the floor, which failed on a healthy loan — which is how the gap was found.
+
 `refresh-loans.sh` writes `web/loans.json` — **which** accounts the page should open, not what they
 say. The page fetches each loan off devnet and decodes the flags in the visitor's browser, so a
 re-run or a devnet reset shows through instead of leaving the page asserting an outcome the chain no

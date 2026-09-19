@@ -29,6 +29,7 @@ PRICE_BAD="${PRICE_BAD:-99}"       # one cent under, and the loan is in default
 # Which exit to demonstrate. Same loan, same setup, two endings: `seize` is the lender taking it on
 # default, `release` is the holder getting it back. One script, because the twenty steps before the
 # branch are the same twenty steps and a second copy of them would drift within a week.
+#   open     — originate and stop, leaving a loan a lender can actually check and lend against
 MODE="${MODE:-seize}"
 
 rpc() { curl -s "$R" -H 'Content-Type: application/json' -d "$1"; }
@@ -172,6 +173,25 @@ cargo run --quiet -p confide-ct --bin seizure-client -- originate "$W/borrower.j
   "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" "$(solana-keygen pubkey "$W/lender.json")" "$(bh)" > "$W/orig.txt" 2>/dev/null
 go "originate" "$(cat "$W/orig.txt")"
 echo "    proved floor $Q_MIN tokens against a \$$((PRINCIPAL/100)) loan at $((RATIO_BPS/100))%"
+
+if [ "$MODE" = open ]; then
+  # Stop here. Everything above is the borrower's half: the collateral is locked under the loan PDA,
+  # the floor is proved against the escrow's current ciphertext, and the seizure route is armed to
+  # the lender's account. Nothing after this point is the borrower's to do.
+  echo
+  echo "  --- the loan is open. What the lender checks, and how ---"
+  echo
+  echo "    ./scripts/lender-check.sh \\"
+  echo "      $LOAN \\"
+  echo "      $DEST \\"
+  echo "      $Q_MIN $PRINCIPAL $RATIO_BPS"
+  echo
+  echo "  The lender runs that themselves, against the chain, and it calls the program's own"
+  echo "  predicates rather than a second copy of them. It answers whether the collateral is out of"
+  echo "  the borrower's hands and whether the floor is about the balance the escrow holds now."
+  echo "  It says nothing about whether the asset is worth lending against — docs/packets/."
+  exit 0
+fi
 
 if [ "$MODE" = release ]; then
   # ── the way back ───────────────────────────────────────────────────────────────────────────────

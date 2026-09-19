@@ -2,3 +2,8 @@
 [workspace]
 resolver = "2"
 members = ["crates/confide-embargo", "crates/confide-equity", "crates/confide-ct", "crates/confide-committee", "crates/confide-onchain", "crates/confide-demo"]
+# The on-chain program keeps its own workspace — it builds with `cargo build-sbf` against a
+# different target and must not inherit this one's profiles. `exclude` says so explicitly, which
+# is what lets confide-ct take a path dependency on it: the lender's verifier calls the program's
+# own predicates rather than a second copy of them.
+exclude = ["programs/confide-seizure"]

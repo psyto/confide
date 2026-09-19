@@ -34,6 +34,10 @@ name = "seizure-ctx"
 path = "src/seizure_ctx.rs"
 
 [[bin]]
+name = "lender-check"
+path = "src/lender_check.rs"
+
+[[bin]]
 name = "build-deshield-proofs"
 path = "src/build_deshield_proofs.rs"
 
@@ -51,6 +55,10 @@ spl-token-confidential-transfer-proof-extraction = "0.6"
 # with-fee set adds a percentage-with-cap sigma proof and a 2-handle fee validity proof, and
 # hand-rolling those would be inventing cryptography this crate already ships.
 spl-token-confidential-transfer-proof-generation = "0.6"
+# The lender runs the PROGRAM's own predicates against the chain rather than a second
+# implementation of them. Two verifiers of the same rule is the drift this repository keeps
+# having, and here it would be a lender and a chain disagreeing about whether a loan is safe.
+confide-seizure = { path = "../../programs/confide-seizure" }
 solana-address = { version = "2", features = ["curve25519", "std"] }
 solana-keypair = "3"
 solana-signer = "3"

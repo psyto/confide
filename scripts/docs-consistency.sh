@@ -126,7 +126,7 @@ print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).grou
 # having, so the copy is checked against the original rather than trusted.
 echo
 echo "  THE LOAN LAYOUT — web/loans.json against the program"
-python3 - <<'PY' && ok "web/loans.json's offsets match programs/confide-seizure/src/lib.rs" || bad "the loan layout in web/loans.json has drifted from the program — ./scripts/refresh-loans.sh"
+python3 - <<'PY' && ok "loans.json and lender-check use the program's own loan offsets" || bad "a copy of the loan layout has drifted from the program"
 import json, re, sys, pathlib
 rs = pathlib.Path("programs/confide-seizure/src/lib.rs").read_text(encoding="utf-8")
 def const(name):
@@ -146,6 +146,16 @@ except FileNotFoundError:
 bad = [f"{k}: program {v}, loans.json {got['offsets'].get(k)}"
        for k, v in want.items() if got["offsets"].get(k) != v]
 bad += [f"{k}: program {v}, loans.json {got.get(k)}" for k, v in lens.items() if got.get(k) != v]
+
+# The lender's verifier keeps the same copy, because the offsets are private to the program.
+lc = pathlib.Path("crates/confide-ct/src/lender_check.rs").read_text(encoding="utf-8")
+names = {"escrow": "OFF_ESCROW", "destination": "OFF_DESTINATION", "mint": "OFF_MINT",
+         "oracle": "OFF_ORACLE", "q_min": "OFF_Q_MIN", "principal": "OFF_PRINCIPAL",
+         "ratio_bps": "OFF_RATIO_BPS", "seized": "OFF_SEIZED", "released": "OFF_RELEASED"}
+for key, cname in names.items():
+    m = re.search(r"const %s: usize = (\d+);" % cname, lc)
+    if m is None or int(m.group(1)) != want[key]:
+        bad.append(f"{cname}: program {want[key]}, lender_check.rs {m.group(1) if m else 'missing'}")
 for b in bad[:8]: print("      " + b)
 sys.exit(1 if bad else 0)
 PY
