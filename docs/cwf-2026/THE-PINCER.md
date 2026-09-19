@@ -1,0 +1,73 @@
+# The pincer — why this market cannot open itself
+
+Measured 2026-09-19 with `./scripts/slot-scan.sh`, over **every** tokenized-equity mint on Solana.
+Not a sample. The repository has had to correct that exact shortcut once already.
+
+## The two halves
+
+**Kamino refuses a liquidity mint that auto-approves confidential accounts.** Its own words, at
+`constraints.rs:131` in the pinned release:
+
+> `Auto approve new accounts must be false for liquidity tokens`
+
+**On a mint where it is false, every new confidential account needs the issuer's approval** —
+Confide's escrow included. That is what the flag means.
+
+So the setting Kamino *requires* is the setting that puts the issuer *in the path*. **They are the
+same field, read from two sides.**
+
+| | issuer approval needed per escrow | Kamino accepts the mint |
+|---|---|---|
+| `autoApproveNewAccounts = false` | **yes** | ✅ |
+| `autoApproveNewAccounts = true` | no | ❌ refused at `constraints.rs:131` |
+
+## Which side is the market on
+
+**All of it. 1,869 of 1,869.**
+
+```
+  THE APPROVAL GATE — the same field Kamino reads at constraints.rs:131
+    1869 of 1869 set autoApproveNewAccounts = false
+    0 auto-approve, so 0 can hold a confidential position without the issuer
+```
+
+Both issuers, independently, on every mint they have ever shipped: Backed 732, Backpack 1,137.
+**There is no mint in the population that escapes the gate**, so there is no version of this that
+is solved by picking a different ticker.
+
+## What this makes true
+
+The repository already computed that **$21.1m is deposited across Kamino's tokenized-equity
+reserves and $81.6m of borrowing is authorised against it, of which $0 is reachable confidentially.**
+Until today that `$0` was a *demonstration* — here is a rule, here is an account, watch it fail.
+
+**It is now a result.** Every mint in the asset class sits on the gated side of a fork whose other
+side Kamino refuses by name. The $0 does not depend on which asset, which reserve, or which
+parameters: it is a property of the configuration the whole market shares.
+
+**No amount of engineering on this side removes it.** Confide can prove a floor without revealing a
+balance, lock collateral so the holder cannot reduce it, and settle on default without the holder's
+signature — all of which it does — and the position still cannot exist, because the account it
+would live in cannot be opened without the issuer.
+
+## The part that is a hypothesis, and is labelled as one
+
+**The issuer is the gate, and may also be the beneficiary.** That is a third position, and it is
+not yet evidence.
+
+- The submission filed to Stocklana says *"the issuer is the customer, not the obstacle."*
+- That was reversed on 2026-09-16: *an issuer whose business is issuing and selling is a gate on
+  eligibility, not a buyer.* The founder's own reading, and the reason was incentive — a disclosure
+  model is a cost to them.
+- **What the pincer adds** is that the incentive may not be about disclosure at all. An issuer whose
+  token cannot be used as collateral by anyone unwilling to publish their position is leaving a
+  **quantified** amount of lending demand unreachable. That is an argument in their units — token
+  utility — and it does not ask them to care about privacy.
+
+**Nobody has been asked, so this is untested.** It is recorded as a hypothesis with a date, the way
+the two positions before it were.
+
+## What it does not fix
+
+Traction is zero and is reported as zero. A structural result about why a market is closed is
+insight, not demand.
