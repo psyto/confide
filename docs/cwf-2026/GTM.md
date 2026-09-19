@@ -15,10 +15,16 @@ But the issuer gate turns out to be **per account and one-time, not per loan**
 ([`THE-PINCER.md`](THE-PINCER.md)): `SetAuthority` moves an already-approved confidential account
 to a loan PDA and leaves the approval in place. So:
 
-> **A holder who already holds a tokenized-equity position confidentially can pledge it today, to
-> anyone, without asking the issuer, Kamino, or us.** They hand the account over, a floor is proved
-> over its ciphertext by Solana's own ZK program, and the collateral moves to the lender on a priced
-> default or back to them on an attested release.
+> **A holder whose confidential position sits in a token account with its own keypair can pledge it
+> today, to anyone, without asking the issuer, Kamino, or us.** They hand the account over, a floor
+> is proved over its ciphertext by Solana's own ZK program, and the collateral moves to the lender
+> on a priced default or back to them on an attested release.
+>
+> **Corrected later the same day, and it costs most of the beachhead.** An *associated* token
+> account carries `ImmutableOwner` and cannot be handed over at all — `SetAuthority` fails with
+> `TokenError::ImmutableOwner`, measured by running it. Wallets create ATAs, so the reachable
+> holder is the one whose position happens to sit elsewhere, and everyone else is back behind the
+> issuer gate. See [`THE-PINCER.md`](THE-PINCER.md).
 
 That is not a protocol integration. **It is a bilateral loan**, and it is exactly what
 `./scripts/seizure-e2e.sh` has been demonstrating since it was written — one borrower, one lender,
@@ -50,11 +56,12 @@ Kamino reserve. The `$0` stands.
 
 | | who | what they already have | what they still need |
 |---|---|---|---|
-| 1 | a holder with an **approved confidential position** and a counterparty | the account, already approved | a lender who will underwrite on a proved floor |
+| 1 | a holder whose approved position is in a **non-ATA** account | the account, already approved and pledgeable | a lender who will underwrite on a proved floor |
+| 1b | a holder whose position is in an **ATA** — the common case | the position | another account, which needs the issuer |
 | 2 | a **fund or desk** wanting a loan without publishing its book | the position, publicly held | to configure confidentially — one issuer approval |
 | 3 | a **vault curator** | capital and a mandate | everything in [`THE-PINCER.md`](THE-PINCER.md): a venue-side integration |
 
-**Row 1 needs nobody's permission. Row 3 needs a protocol's roadmap.** The month was written for
+**Row 1 needs nobody's permission and is rarer than it sounds. Row 1b is most holders. Row 3 needs a protocol's roadmap.** The month was written for
 row 3 and the mechanism was always row 1.
 
 ## Demand validation — what has been done, and it is very little

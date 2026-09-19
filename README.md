@@ -208,6 +208,24 @@ confidential balance and proving over it are things only the holder can do; that
 ./scripts/refresh-loans.sh                     # which devnet loans the page reads, and their layout
 ```
 
+**Being the borrower, from a position you already hold.**
+
+```bash
+./scripts/borrow.sh <your-keypair> <your-account> <your-keys.json> \
+                    <lender-elgamal-pubkey> <lender-token-account> <oracle-pubkey> \
+                    [q_min] [principal_cents] [ratio_bps]
+```
+
+It creates no mint and configures no account: the issuer gate on `autoApproveNewAccounts: false` is
+per account and was paid when yours was opened. It prints what the handover costs you before it
+signs anything, builds the proofs while you still own the account, hands it over, originates, and
+ends with the exact `lender-check` line to send the other party.
+
+**It refuses an associated token account, up front, before you pay for ten proof transactions.** An
+ATA carries `ImmutableOwner` and `SetAuthority` on one fails — so a position sitting where a wallet
+put it cannot be pledged this way, which is most of them. That is the gate again, and
+[`docs/cwf-2026/THE-PINCER.md`](docs/cwf-2026/THE-PINCER.md) says how far it reaches.
+
 **Being the lender.** Until 2026-09-19 both sides of a loan were the same person —
 `seizure-e2e.sh` generates the borrower *and* the lender — so nothing established what the other
 side could confirm on their own. Now:

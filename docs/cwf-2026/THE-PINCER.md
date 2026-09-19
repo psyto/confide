@@ -117,3 +117,42 @@ it. Nothing above lets a confidential position into a Kamino reserve.
 
 What narrows is the claim about **Confide's own escrow**: it is not true that every loan needs a
 fresh approval from the issuer. It is true that every *new account* does.
+
+---
+
+## Narrowed again, the other way — 2026-09-19, later the same day
+
+Building the borrower's half found the limit the section above missed. **An associated token
+account cannot be handed over**, and an ATA is what a wallet creates.
+
+`SetAuthority` on one fails with `TokenError::ImmutableOwner` (0x22). The extension exists
+precisely to stop an ATA changing hands, and the handover is exactly that. Measured on devnet, by
+running it:
+
+```
+THE HANDOVER
+  SetAuthority: ERR custom program error: 0x22   → TokenError::ImmutableOwner
+```
+
+The account had `extensions: ['immutableOwner', 'confidentialTransferAccount']`. This repository
+already knew the fact and had written it down for the *escrow* — `seizure-e2e.sh` says *"NOT an
+associated account: an ATA carries ImmutableOwner and can never be handed over"* — and did not
+carry it across to the holder's side when the handover became a way to pledge.
+
+### The statement, third version and narrower than the second
+
+| the holder's position sits in… | can they pledge it today? |
+|---|---|
+| a token account with its own keypair, already approved | **yes** — handover works, no issuer involved |
+| an **associated token account**, already approved | **no** — `ImmutableOwner`. They need another account, and another account needs the issuer |
+
+**The second row is the ordinary case.** Wallets create ATAs. So the gate bites most holders after
+all, and the morning's "a holder can pledge today, without asking anyone" is true of a minority and
+was written as though it were true of everyone.
+
+### What it would take to reach an ATA holder
+
+Not a fix on this side. The position would have to move into a pledgeable account, and opening one
+on a mint with `autoApproveNewAccounts: false` is the gate. An escrow pre-approved and handed to a
+loan PDA *before* the holder funds it would need the PDA to apply a pending balance, which the
+program has no instruction for. **Recorded as unsolved rather than as an idea.**
