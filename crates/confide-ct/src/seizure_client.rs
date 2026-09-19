@@ -78,6 +78,9 @@ fn main() {
             for k in ["new_decryptable_b64", "auditor_lo_b64", "auditor_hi_b64"] {
                 data.extend_from_slice(&d64(ctx[k].as_str().unwrap()));
             }
+            // Who may hand the collateral back. Recorded now, while both sides are present, because
+            // the borrower arms the destination later and must not also choose the trigger.
+            data.extend_from_slice(addr(&a[11]).as_ref());
 
             let ix = Instruction {
                 program_id: program,
@@ -98,7 +101,7 @@ fn main() {
                 data,
             };
             eprintln!("  loan account       {loan}");
-            emit(&[ix], &payer, &[], &a[11]);
+            emit(&[ix], &payer, &[], &a[12]);
         }
         "seize" => {
             let payer = keypair(&a[1]);
@@ -139,6 +142,72 @@ fn main() {
                 data,
             };
             emit(&[cb, ix], &payer, &[&oracle], &a[9]);
+        }
+        // The way back. `arm-release` is the borrower recording where their position should land;
+        // `release` is the recorded authority signing to send it there. Two steps, two signers, and
+        // neither can do the other's half.
+        "arm-release" => {
+            let payer = keypair(&a[1]);
+            let program = addr(&a[2]);
+            let ctx = artifact(&a[3]);
+            let (escrow, dest) = (addr(&a[4]), addr(&a[5]));
+            let (loan, _) = loan_pda(&program, &escrow);
+
+            let mut data = vec![3u8];
+            for k in ["new_decryptable_b64", "auditor_lo_b64", "auditor_hi_b64"] {
+                data.extend_from_slice(&d64(ctx[k].as_str().unwrap()));
+            }
+
+            let ix = Instruction {
+                program_id: program,
+                accounts: vec![
+                    AccountMeta::new_readonly(payer.pubkey(), true),
+                    AccountMeta::new(loan, false),
+                    AccountMeta::new_readonly(escrow, false),
+                    AccountMeta::new_readonly(dest, false),
+                    AccountMeta::new_readonly(addr(ctx["equality"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["validity"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["range"].as_str().unwrap()), false),
+                ],
+                data,
+            };
+            emit(&[ix], &payer, &[], &a[6]);
+        }
+        "release" => {
+            let payer = keypair(&a[1]);
+            let program = addr(&a[2]);
+            let ctx = artifact(&a[3]);
+            let (escrow, dest, mint) = (addr(&a[4]), addr(&a[5]), addr(&a[6]));
+            let authority = keypair(&a[7]);
+            let (loan, _) = loan_pda(&program, &escrow);
+
+            // Same budget as seize, and for the same reason: one Transfer, three proof contexts,
+            // two confidential accounts rewritten.
+            let cb = Instruction {
+                program_id: addr("ComputeBudget111111111111111111111111111111"),
+                accounts: vec![],
+                data: {
+                    let mut d = vec![0x02];
+                    d.extend_from_slice(&700_000u32.to_le_bytes());
+                    d
+                },
+            };
+            let ix = Instruction {
+                program_id: program,
+                accounts: vec![
+                    AccountMeta::new(loan, false),
+                    AccountMeta::new(escrow, false),
+                    AccountMeta::new_readonly(mint, false),
+                    AccountMeta::new(dest, false),
+                    AccountMeta::new_readonly(addr(ctx["equality"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["validity"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["range"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(authority.pubkey(), true),
+                    AccountMeta::new_readonly(addr(TOKEN_2022), false),
+                ],
+                data: vec![4u8],
+            };
+            emit(&[cb, ix], &payer, &[&authority], &a[8]);
         }
         other => panic!("unknown subcommand {other}"),
     }

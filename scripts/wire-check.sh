@@ -23,13 +23,25 @@ prog() { awk "/fn $1\(/,/^}/" "$P" | grep -c "next_account_info"; }
 # The client builds them as an AccountMeta vec inside the arm named for the instruction.
 clnt() { awk "/\"$1\" => \{/,/^        \}/" "$C" | grep -c "AccountMeta::"; }
 
+# The discriminator each side uses. The account count is one way to be out of step; sending the
+# wrong leading byte is another, and it was not checked at all — a release that sent a 3 would be
+# dispatched as arm_release and quietly rewrite the record instead of moving the collateral.
+prog_disc() { grep -oE "^\s+([0-9]+) => $1\(" "$P" | grep -oE "[0-9]+" | head -1; }
+clnt_disc() { awk "/\"$1\" => \{/,/^        \}/" "$C" | grep -oE "vec!\[[0-9]+u8" | grep -oE "[0-9]+" | head -1; }
+
 echo
-for ix in originate seize; do
-  p=$(prog "$ix"); c=$(clnt "$ix")
-  if [ "$p" = "$c" ]; then
-    printf '  %s✓%s %-10s program reads %s accounts, client sends %s\n' "$green" "$off" "$ix" "$p" "$c"
+# Program handler, then the client arm that builds it. They are spelled differently on purpose:
+# Rust functions use underscores and the CLI subcommands use hyphens.
+for pair in originate:originate seize:seize arm_release:arm-release release:release; do
+  ix="${pair%%:*}"; arm="${pair##*:}"
+  p=$(prog "$ix"); c=$(clnt "$arm")
+  pd=$(prog_disc "$ix"); cd=$(clnt_disc "$arm")
+  if [ "$p" = "$c" ] && [ "$pd" = "$cd" ] && [ -n "$pd" ]; then
+    printf '  %s✓%s %-12s disc %s · program reads %s accounts, client sends %s\n' \
+           "$green" "$off" "$ix" "$pd" "$p" "$c"
   else
-    printf '  %s✗%s %-10s program reads %s accounts, client sends %s\n' "$red" "$off" "$ix" "$p" "$c"
+    printf '  %s✗%s %-12s disc %s/%s · program reads %s accounts, client sends %s\n' \
+           "$red" "$off" "$ix" "${pd:-?}" "${cd:-?}" "$p" "$c"
     printf '      %sone of them changed without the other. This is the bug that shipped on 09-16.%s\n' "$dim" "$off"
     fail=$((fail+1))
   fi

@@ -60,7 +60,13 @@ pub const LOAN_TAG: u8 = 1;
 ///   [413]      bump
 ///   [414]      seized
 /// ```
-pub const LOAN_LEN: usize = 415;
+/// A loan written before the release route existed. Still readable, still seizable: the devnet
+/// loan the documents and the published video point at is one of these, and growing `LOAN_LEN`
+/// without this would have made it unreadable by its own program.
+pub const LOAN_LEN_V1: usize = 415;
+/// A loan with both exits recorded. The seizure route's offsets are unchanged and the release
+/// route is appended, so a v1 account is a prefix of a v2 one rather than a different thing.
+pub const LOAN_LEN: usize = 740;
 
 const OFF_ESCROW: usize = 1;
 const OFF_DESTINATION: usize = 33;
@@ -77,6 +83,27 @@ const OFF_AUDITOR_LO: usize = 285;
 const OFF_AUDITOR_HI: usize = 349;
 const OFF_BUMP: usize = 413;
 const OFF_SEIZED: usize = 414;
+// ── the release route, appended ──────────────────────────────────────────────────────────────────
+// The escrow has exactly two exits and at most one of them ever fires. Both are confidential
+// transfers out of the same account, authorised by the same PDA, and they differ in who may pull
+// the trigger and where the value lands.
+//
+//   seize    — the ORACLE signs, the predicate must hold, the value goes to the lender.
+//   release  — the RELEASE AUTHORITY signs, no predicate, the value goes back to the holder.
+//
+// `release_authority` is recorded at origination and not by the borrower, or a borrower could name
+// themselves and walk the collateral out. The borrower chooses the destination, because it is their
+// account, and may re-arm it while the loan is open — a citation that no longer matches the record
+// fails the release rather than redirecting it.
+const OFF_RELEASE_AUTHORITY: usize = 415;
+const OFF_RELEASE_DESTINATION: usize = 447;
+const OFF_RELEASE_CTX_EQUALITY: usize = 479;
+const OFF_RELEASE_CTX_VALIDITY: usize = 511;
+const OFF_RELEASE_CTX_RANGE: usize = 543;
+const OFF_RELEASE_NEW_DECRYPTABLE: usize = 575;
+const OFF_RELEASE_AUDITOR_LO: usize = 611;
+const OFF_RELEASE_AUDITOR_HI: usize = 675;
+const OFF_RELEASED: usize = 739;
 
 /// A context state account is `[authority(32) | proof_type(1) | context]`.
 const CTX_AUTHORITY: usize = 0;
@@ -106,6 +133,8 @@ fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progra
         0 => originate(program_id, accounts, rest),
         1 => seize(program_id, accounts, rest),
         2 => deshield(program_id, accounts, rest),
+        3 => arm_release(program_id, accounts, rest),
+        4 => release(program_id, accounts, rest),
         _ => Err(ProgramError::InvalidInstructionData),
     }
 }
@@ -136,7 +165,7 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     if !payer.is_signer {
         return Err(ProgramError::MissingRequiredSignature);
     }
-    if data.len() != 8 + 8 + 8 + 36 + 64 + 64 {
+    if data.len() != 8 + 8 + 8 + 36 + 64 + 64 + 32 {
         return Err(ProgramError::InvalidInstructionData);
     }
 
@@ -223,11 +252,161 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     d[OFF_CTX_RANGE..OFF_CTX_RANGE + 32].copy_from_slice(&ctx_range.key.to_bytes());
     d[OFF_ORACLE..OFF_ORACLE + 32].copy_from_slice(&oracle.key.to_bytes());
     d[OFF_Q_MIN..OFF_NEW_DECRYPTABLE].copy_from_slice(&data[..24]);
-    d[OFF_NEW_DECRYPTABLE..OFF_BUMP].copy_from_slice(&data[24..]);
+    d[OFF_NEW_DECRYPTABLE..OFF_BUMP].copy_from_slice(&data[24..188]);
     d[OFF_BUMP] = bump;
     d[OFF_SEIZED] = 0;
+    // Who may hand the collateral back. Recorded here, at the one moment both sides are present,
+    // because a borrower who could name this could name themselves.
+    d[OFF_RELEASE_AUTHORITY..OFF_RELEASE_AUTHORITY + 32].copy_from_slice(&data[188..220]);
+    d[OFF_RELEASED] = 0;
 
     msg!("loan originated; seizure is armed and the borrower cannot disarm it");
+    Ok(())
+}
+
+/// `ArmRelease` — the borrower records the way back.
+///
+/// Until this runs the escrow is a one-way door: collateral goes in and the only exit is seizure,
+/// so a holder whose obligation is settled has no way to get their position back. That was a real
+/// deficiency in this program and not a missing feature of a lending story.
+///
+/// The borrower calls it, because they hold the escrow's ElGamal secret and so they are the only
+/// party who can build a transfer out of it. They may call it again while the loan is open; a
+/// release citing a route that no longer matches the record fails rather than redirecting.
+///
+/// Accounts: payer(s), loan(w), escrow, destination, ctx_equality, ctx_validity, ctx_range
+///
+/// Data: new_decryptable[36] | auditor_lo[64] | auditor_hi[64]
+fn arm_release(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    let i = &mut accounts.iter();
+    let payer = next_account_info(i)?;
+    let loan = next_account_info(i)?;
+    let escrow = next_account_info(i)?;
+    let destination = next_account_info(i)?;
+    let ctx_equality = next_account_info(i)?;
+    let ctx_validity = next_account_info(i)?;
+    let ctx_range = next_account_info(i)?;
+
+    if !payer.is_signer {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    if loan.owner != program_id {
+        return Err(ProgramError::IllegalOwner);
+    }
+    if data.len() != 36 + 64 + 64 {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+
+    let mut d = loan.try_borrow_mut_data()?;
+    // A v1 loan has no room for a return route. It is not upgraded in place: the account was sized
+    // at origination, and silently half-writing one would be worse than refusing.
+    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+        return Err(ProgramError::UninitializedAccount);
+    }
+    if d[OFF_SEIZED] != 0 || d[OFF_RELEASED] != 0 {
+        return Err(ProgramError::InvalidAccountData); // the escrow is already empty
+    }
+    check(&d[OFF_ESCROW..], escrow.key)?;
+
+    d[OFF_RELEASE_DESTINATION..OFF_RELEASE_DESTINATION + 32]
+        .copy_from_slice(&destination.key.to_bytes());
+    d[OFF_RELEASE_CTX_EQUALITY..OFF_RELEASE_CTX_EQUALITY + 32]
+        .copy_from_slice(&ctx_equality.key.to_bytes());
+    d[OFF_RELEASE_CTX_VALIDITY..OFF_RELEASE_CTX_VALIDITY + 32]
+        .copy_from_slice(&ctx_validity.key.to_bytes());
+    d[OFF_RELEASE_CTX_RANGE..OFF_RELEASE_CTX_RANGE + 32]
+        .copy_from_slice(&ctx_range.key.to_bytes());
+    d[OFF_RELEASE_NEW_DECRYPTABLE..OFF_RELEASED].copy_from_slice(data);
+
+    msg!("release armed; the lender still has to sign, and can no longer redirect it");
+    Ok(())
+}
+
+/// `Release` — the collateral goes back.
+///
+/// **This is an attested release, not a repayment, and the difference is stated rather than
+/// blurred.** No principal moves through this program — `principal` is an input to the default
+/// predicate and nothing is ever disbursed — so nothing on chain knows whether an obligation was
+/// met. The release authority recorded at origination says it was, by signing.
+///
+/// What that buys the holder is narrower than repayment and is worth naming: the lender cannot
+/// redirect the collateral, cannot take it anywhere but the armed destination, and cannot make the
+/// borrower sign again. What it does not buy is a lender who refuses to sign at all.
+///
+/// Accounts: loan(w), escrow(w), mint, destination(w), ctx_equality, ctx_validity, ctx_range,
+/// authority(s), token_program
+fn release(program_id: &Pubkey, accounts: &[AccountInfo], _data: &[u8]) -> ProgramResult {
+    let i = &mut accounts.iter();
+    let loan = next_account_info(i)?;
+    let escrow = next_account_info(i)?;
+    let mint = next_account_info(i)?;
+    let destination = next_account_info(i)?;
+    let ctx_equality = next_account_info(i)?;
+    let ctx_validity = next_account_info(i)?;
+    let ctx_range = next_account_info(i)?;
+    let authority = next_account_info(i)?;
+    let token_program = next_account_info(i)?;
+
+    if loan.owner != program_id {
+        return Err(ProgramError::IllegalOwner);
+    }
+
+    let (escrow_key, destination_key, new_decryptable, auditor_lo, auditor_hi, bump) = {
+        let d = loan.try_borrow_data()?;
+        may_release(
+            &d,
+            Cited {
+                escrow: escrow.key,
+                destination: destination.key,
+                mint: mint.key,
+                ctx_equality: ctx_equality.key,
+                ctx_validity: ctx_validity.key,
+                ctx_range: ctx_range.key,
+                oracle: authority.key,
+            },
+            authority.is_signer,
+        )?;
+        (
+            Pubkey::new_from_array(slice32(&d, OFF_ESCROW)),
+            Pubkey::new_from_array(slice32(&d, OFF_RELEASE_DESTINATION)),
+            d[OFF_RELEASE_NEW_DECRYPTABLE..OFF_RELEASE_AUDITOR_LO].to_vec(),
+            d[OFF_RELEASE_AUDITOR_LO..OFF_RELEASE_AUDITOR_HI].to_vec(),
+            d[OFF_RELEASE_AUDITOR_HI..OFF_RELEASED].to_vec(),
+            d[OFF_BUMP],
+        )
+    };
+
+    let ix = transfer_instruction(
+        token_program.key,
+        &escrow_key,
+        mint.key,
+        &destination_key,
+        loan.key,
+        ctx_equality.key,
+        ctx_validity.key,
+        ctx_range.key,
+        &new_decryptable,
+        &auditor_lo,
+        &auditor_hi,
+    )?;
+
+    invoke_signed(
+        &ix,
+        &[
+            escrow.clone(),
+            mint.clone(),
+            destination.clone(),
+            ctx_equality.clone(),
+            ctx_validity.clone(),
+            ctx_range.clone(),
+            loan.clone(),
+            token_program.clone(),
+        ],
+        &[&[b"loan", escrow_key.as_ref(), &[bump]]],
+    )?;
+
+    loan.try_borrow_mut_data()?[OFF_RELEASED] = 1;
+    msg!("collateral released to the holder; the escrow is closed to both exits");
     Ok(())
 }
 
@@ -535,6 +714,38 @@ pub struct Cited<'a> {
 ///
 /// Note what is *not* here: who is calling. Default is a public fact about public numbers, and a
 /// seizure only the lender could fire is a seizure the lender could also decline to fire.
+/// The release predicate. Deliberately *not* `may_settle`: this path has no oracle, no price and
+/// no default test, because handing collateral back is not a settlement of the loan's terms — it is
+/// the recorded authority saying the terms no longer bind.
+///
+/// `cited.oracle` carries the signing authority here. The field is reused rather than widened
+/// because `Cited` exists to name the accounts a transfer touches, and giving it a second
+/// authority field would leave both paths carrying one they ignore.
+pub fn may_release(d: &[u8], cited: Cited, authority_signed: bool) -> ProgramResult {
+    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+        return Err(ProgramError::UninitializedAccount);
+    }
+    if d[OFF_SEIZED] != 0 || d[OFF_RELEASED] != 0 {
+        return Err(ProgramError::InvalidAccountData); // one exit, once
+    }
+    check(&d[OFF_ESCROW..], cited.escrow)?;
+    check(&d[OFF_MINT..], cited.mint)?;
+    check(&d[OFF_RELEASE_AUTHORITY..], cited.oracle)?;
+    if !authority_signed {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    // An unarmed route is thirty-two zero bytes, and a zero destination would be a burn. Refuse it
+    // here rather than discovering it as a transfer to nowhere.
+    if d[OFF_RELEASE_DESTINATION..OFF_RELEASE_DESTINATION + 32] == [0u8; 32] {
+        return Err(ProgramError::UninitializedAccount);
+    }
+    check(&d[OFF_RELEASE_DESTINATION..], cited.destination)?;
+    check(&d[OFF_RELEASE_CTX_EQUALITY..], cited.ctx_equality)?;
+    check(&d[OFF_RELEASE_CTX_VALIDITY..], cited.ctx_validity)?;
+    check(&d[OFF_RELEASE_CTX_RANGE..], cited.ctx_range)?;
+    Ok(())
+}
+
 pub fn may_seize(d: &[u8], cited: Cited, oracle_signed: bool, price: u64) -> ProgramResult {
     may_settle(d, cited.escrow, cited.mint, cited.oracle, oracle_signed, price)?;
     // The accounts only a confidential transfer touches. Everything shared with the de-shield path
@@ -557,11 +768,16 @@ pub fn may_settle(
     oracle_signed: bool,
     price: u64,
 ) -> ProgramResult {
-    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+    // V1, not LOAN_LEN. A loan written before the release route existed must stay seizable by the
+    // program that grew — including the one on devnet that the published video shows.
+    if d.len() < LOAN_LEN_V1 || d[0] != LOAN_TAG {
         return Err(ProgramError::UninitializedAccount);
     }
     if d[OFF_SEIZED] != 0 {
         return Err(ProgramError::InvalidAccountData); // opening is not repeatable
+    }
+    if d.len() >= LOAN_LEN && d[OFF_RELEASED] != 0 {
+        return Err(ProgramError::InvalidAccountData); // already went back to the holder
     }
     check(&d[OFF_ESCROW..], escrow)?;
     check(&d[OFF_MINT..], mint)?;
@@ -858,7 +1074,27 @@ mod invariants {
             cursor += len;
         }
         assert_eq!(cursor, OFF_BUMP, "the fields must run up to the bump");
-        assert_eq!(LOAN_LEN, OFF_SEIZED + 1);
+        assert_eq!(LOAN_LEN_V1, OFF_SEIZED + 1, "v1 ends at the seized flag");
+
+        // The release route, appended. A v1 loan is a prefix of a v2 one, which is what lets the
+        // program grow without making the loan already on devnet unreadable.
+        let release: [(usize, usize); 8] = [
+            (OFF_RELEASE_AUTHORITY, 32),
+            (OFF_RELEASE_DESTINATION, 32),
+            (OFF_RELEASE_CTX_EQUALITY, 32),
+            (OFF_RELEASE_CTX_VALIDITY, 32),
+            (OFF_RELEASE_CTX_RANGE, 32),
+            (OFF_RELEASE_NEW_DECRYPTABLE, 36),
+            (OFF_RELEASE_AUDITOR_LO, 64),
+            (OFF_RELEASE_AUDITOR_HI, 64),
+        ];
+        let mut cursor = OFF_SEIZED + 1;
+        for (at, len) in release {
+            assert_eq!(at, cursor, "release field at {at} does not start where the previous ended");
+            cursor += len;
+        }
+        assert_eq!(cursor, OFF_RELEASED, "the release fields must run up to the released flag");
+        assert_eq!(LOAN_LEN, OFF_RELEASED + 1);
     }
 
     /// **L2 — origination writes exactly the instruction data it was given.** The two bulk copies
@@ -1075,6 +1311,131 @@ mod protocol {
                     oracle: &self.oracle }
         }
         fn at(&self, price: u64) -> ProgramResult { may_seize(&self.d, self.cited(), true, price) }
+    }
+
+    // ── the release route ────────────────────────────────────────────────────────────────────────
+    //
+    // The escrow used to be a one-way door. These are the ways the way back must refuse, written
+    // before the path was trusted on devnet — each one is a way a holder loses a position or a
+    // lender loses collateral.
+
+    /// A v2 loan with the release route armed, and `who` as the authority recorded at origination.
+    fn armed(l: &Loan, who: &Pubkey, dest: &Pubkey, eq: &Pubkey, va: &Pubkey, rp: &Pubkey) -> Vec<u8> {
+        let mut d = l.d.clone();
+        for (off, k) in [(OFF_RELEASE_AUTHORITY, who), (OFF_RELEASE_DESTINATION, dest),
+                         (OFF_RELEASE_CTX_EQUALITY, eq), (OFF_RELEASE_CTX_VALIDITY, va),
+                         (OFF_RELEASE_CTX_RANGE, rp)] {
+            d[off..off + 32].copy_from_slice(&k.to_bytes());
+        }
+        d
+    }
+    fn cite<'a>(l: &'a Loan, who: &'a Pubkey, dest: &'a Pubkey,
+                eq: &'a Pubkey, va: &'a Pubkey, rp: &'a Pubkey) -> Cited<'a> {
+        Cited { escrow: &l.escrow, destination: dest, mint: &l.mint,
+                ctx_equality: eq, ctx_validity: va, ctx_range: rp, oracle: who }
+    }
+
+    /// **R1 — the lender's signature is the whole authorisation, so its absence is the whole
+    /// refusal.** No principal moves through this program, so nothing on chain knows an obligation
+    /// was met. If an unsigned release worked, the borrower could take the collateral back while
+    /// still owing.
+    #[test]
+    fn a_release_nobody_authorised_does_not_happen() {
+        let l = loan();
+        let (who, dest, eq, va, rp) = (Pubkey::new_unique(), Pubkey::new_unique(),
+            Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let d = armed(&l, &who, &dest, &eq, &va, &rp);
+        assert_eq!(may_release(&d, cite(&l, &who, &dest, &eq, &va, &rp), false),
+                   Err(ProgramError::MissingRequiredSignature));
+        assert_eq!(may_release(&d, cite(&l, &who, &dest, &eq, &va, &rp), true), Ok(()));
+    }
+
+    /// **R2 — only the authority recorded at origination.** The borrower arms the destination but
+    /// never names who may pull the trigger; if they could, they would name themselves.
+    #[test]
+    fn somebody_elses_signature_is_not_the_lenders() {
+        let l = loan();
+        let (who, dest, eq, va, rp) = (Pubkey::new_unique(), Pubkey::new_unique(),
+            Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let d = armed(&l, &who, &dest, &eq, &va, &rp);
+        let impostor = Pubkey::new_unique();
+        assert_eq!(may_release(&d, cite(&l, &impostor, &dest, &eq, &va, &rp), true),
+                   Err(ProgramError::InvalidArgument));
+    }
+
+    /// **R3 — the lender cannot redirect it.** They sign, and the collateral goes where the
+    /// borrower armed it. A release citing any other destination or context is refused, which is
+    /// what makes re-arming safe rather than a race the borrower loses.
+    #[test]
+    fn the_authority_cannot_send_the_collateral_somewhere_else() {
+        let l = loan();
+        let (who, dest, eq, va, rp) = (Pubkey::new_unique(), Pubkey::new_unique(),
+            Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+        let d = armed(&l, &who, &dest, &eq, &va, &rp);
+        let theirs = Pubkey::new_unique();
+        assert_eq!(may_release(&d, cite(&l, &who, &theirs, &eq, &va, &rp), true),
+                   Err(ProgramError::InvalidArgument));
+        for swapped in [cite(&l, &who, &dest, &theirs, &va, &rp),
+                        cite(&l, &who, &dest, &eq, &theirs, &rp),
+                        cite(&l, &who, &dest, &eq, &va, &theirs)] {
+            assert_eq!(may_release(&d, swapped, true), Err(ProgramError::InvalidArgument),
+                       "a swapped proof context must fail the release");
+        }
+    }
+
+    /// **R4 — an unarmed route is not a burn.** Thirty-two zero bytes is what the field holds
+    /// before the borrower arms it, and a transfer to the zero address destroys the position.
+    #[test]
+    fn a_release_that_was_never_armed_is_not_a_transfer_to_nowhere() {
+        let l = loan();
+        let who = Pubkey::new_unique();
+        let zero = Pubkey::new_from_array([0u8; 32]);
+        let mut d = l.d.clone();
+        d[OFF_RELEASE_AUTHORITY..OFF_RELEASE_AUTHORITY + 32].copy_from_slice(&who.to_bytes());
+        assert_eq!(may_release(&d, cite(&l, &who, &zero, &zero, &zero, &zero), true),
+                   Err(ProgramError::UninitializedAccount));
+    }
+
+    /// **R5 — the escrow has two exits and at most one fires.** Both directions check both flags,
+    /// so a seized loan cannot also be released and a released loan cannot also be seized. Without
+    /// this the second caller moves a balance that is already gone.
+    #[test]
+    fn the_escrow_cannot_be_emptied_twice_in_either_direction() {
+        let l = loan();
+        let (who, dest, eq, va, rp) = (Pubkey::new_unique(), Pubkey::new_unique(),
+            Pubkey::new_unique(), Pubkey::new_unique(), Pubkey::new_unique());
+
+        let mut seized = armed(&l, &who, &dest, &eq, &va, &rp);
+        seized[OFF_SEIZED] = 1;
+        assert_eq!(may_release(&seized, cite(&l, &who, &dest, &eq, &va, &rp), true),
+                   Err(ProgramError::InvalidAccountData));
+
+        let mut released = armed(&l, &who, &dest, &eq, &va, &rp);
+        released[OFF_RELEASED] = 1;
+        assert_eq!(may_release(&released, cite(&l, &who, &dest, &eq, &va, &rp), true),
+                   Err(ProgramError::InvalidAccountData));
+        // and the seizure path must see the released flag it did not used to know about
+        assert_eq!(may_settle(&released, &l.escrow, &l.mint, &l.oracle, true, 1),
+                   Err(ProgramError::InvalidAccountData));
+    }
+
+    /// **R6 — a loan written before this existed stays seizable.** The record grew by 325 bytes,
+    /// and the loan on devnet that the documents and the published video point at is 415 of them.
+    /// Growing `LOAN_LEN` without this would have made that account unreadable by its own program:
+    /// the evidence would have gone stale silently, with every test still passing.
+    #[test]
+    fn a_loan_from_before_the_release_route_is_still_seizable() {
+        let l = loan();
+        // Exactly what is on devnet: the record as it was before the release route was appended.
+        let v1 = &l.d[..LOAN_LEN_V1];
+        assert_eq!(v1.len(), LOAN_LEN_V1);
+        assert_eq!(may_seize(v1, l.cited(), true, 99), Ok(()),
+                   "a v1 loan in default must still seize after the record grew");
+        assert_eq!(may_seize(v1, l.cited(), true, 101), Err(ProgramError::InvalidArgument));
+        // …and it cannot be released, because it has nowhere to record a way back.
+        let who = Pubkey::new_unique();
+        assert_eq!(may_release(v1, cite(&l, &who, &who, &who, &who, &who), true),
+                   Err(ProgramError::UninitializedAccount));
     }
 
     /// **P1 — seizure is impossible before the predicate holds.** The first of the three invariants
