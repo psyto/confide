@@ -128,7 +128,7 @@ import json, re, sys, pathlib
 mints = json.load(open("web/mints.json"))
 want = {"{:,}".format(len(mints)), str(len(mints))}
 files = ["README.md", "STATUS.md", "DESIGN.md", "docs/ONCHAIN.md", "docs/27-DAYS.md",
-         "docs/cwf-2026/THE-PINCER.md", "docs/cwf-2026/FOUNDER-MARKET-FIT.md",
+         "docs/cwf-2026/THE-PINCER.md", "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "docs/cwf-2026/GTM.md",
          "docs/cwf-2026/POST.md", "_submission/full.md", "web/index.html", "web/kamino.html"]
 bad = []
 for f in files:
@@ -155,7 +155,7 @@ want = {"%.1f" % (cap["held_usd"] / 1e6), "%.1f" % (cap["authorised_capacity_usd
 # Files that speak in the present tense about the market. CHECKIN-1.md and the reviews describe a
 # dated recording and a dated review, so they are allowed to hold the number that was true then.
 files = ["README.md", "docs/27-DAYS.md", "docs/cwf-2026/THE-PINCER.md",
-         "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "_submission/full.md"]
+         "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "docs/cwf-2026/GTM.md", "_submission/full.md"]
 files += [str(p) for p in pathlib.Path("docs/packets").glob("*.md")]
 bad = []
 for f in files:

@@ -95,6 +95,20 @@ edit, and it is the substance of one of the weekly check-ins.
 
 ## The buyer
 
+> **Reversed 2026-09-19, and this section is left standing because the month was built on it.**
+> The buyer below is a vault curator, and reaching one needs a venue-side integration that the
+> [pincer](cwf-2026/THE-PINCER.md) says nobody can do without the issuer. **But the issuer gate is
+> per account, not per loan** — `SetAuthority` moves an already-approved confidential account to a
+> loan PDA and leaves the approval in place, verified on devnet.
+>
+> So **a holder who already holds a position confidentially can pledge it today, bilaterally, with
+> nobody's permission.** That is one borrower and one lender, which is what
+> `./scripts/seizure-e2e.sh` has demonstrated since it was written and what nobody read it as. The
+> first customer is a counterparty, not a protocol; the curator is the second.
+>
+> The capacity number keeps its job and loses a different one: **$22.0 m deposited and $83.0 m
+> authorised is the size of the problem, not a pipeline.** See [`cwf-2026/GTM.md`](cwf-2026/GTM.md).
+
 Not "a lending protocol". A **vault curator or market creator with capital to allocate** —
 markets may be permissionless, but the decision that matters is whether anyone supplies. Oracle and
 LLTV are fixed per market and bad debt lands on lenders, which is exactly why the decision is
