@@ -71,3 +71,49 @@ the two positions before it were.
 
 Traction is zero and is reported as zero. A structural result about why a market is closed is
 insight, not demand.
+
+---
+
+## Narrowed — 2026-09-19, and it should have been stated this way first
+
+The founder asked whether Confide had run out of room to extend. Checking rather than answering
+found that **this page overstates its own finding.**
+
+`autoApproveNewAccounts: false` gates **opening a new confidential account.** It does not gate an
+account that is already open and already approved. And `SetAuthority` — the handover that turns a
+holder's account into a loan escrow — **does not touch the approval.**
+
+Read off devnet from the escrow of today's release run, now owned by the loan PDA:
+
+```
+owner now           9yfKfFD5ixUeoEGZxN3fxAwRW2rzWB74R5sexzsYiMJo   (the loan PDA)
+approved            True
+allowConfCredits    True
+```
+
+The issuer approved it while the borrower still owned it. The handover changed the owner and left
+the approval in place. **Confide's own end-to-end run has been demonstrating this all along, in the
+order `approve` → `handover`, and nobody read it that way.**
+
+### So the honest statement
+
+| | needs the issuer? |
+|---|---|
+| opening a **new** confidential account on any of the 1,992 | **yes, every time** |
+| handing over an account **already open and approved** | **no** |
+| pledging **part** of a position — which needs a second account | **yes**, back to row one |
+
+**The gate is per account and one-time, not per loan**, and it is paid by whoever configured the
+account rather than by Confide or by a lender. A holder who already holds their position
+confidentially can pledge it today without anyone's permission — they give up the whole account,
+which is the real cost, and it is a different cost from "the issuer must sign".
+
+### What does not change
+
+**The `$0` stands**, because it never rested on this. It rests on Kamino refusing a deposit from an
+account holding value confidentially — `constraints.rs:187`, `:194`, `:201` via
+`lending_checks.rs:186` — and that refusal is about the depositor's account, not about who approved
+it. Nothing above lets a confidential position into a Kamino reserve.
+
+What narrows is the claim about **Confide's own escrow**: it is not true that every loan needs a
+fresh approval from the issuer. It is true that every *new account* does.
