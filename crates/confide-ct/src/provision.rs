@@ -49,6 +49,16 @@ const DECIMALS: u8 = 8;
 /// cited as `InstructionOffset(1)`, meaning *the next instruction*; reordering these silently
 /// points that offset at the wrong one, which the runtime reports as a bad proof rather than as a
 /// bad order.
+///
+/// `charges_fee` is not a PreStocks special case. `TransferFeeConfig` is a standard Token-2022
+/// extension and a mint that carries one requires `ConfidentialTransferFeeAmount` on every account
+/// that holds it confidentially. Without that room `ConfigureAccount` fails the same way it fails
+/// without room for the confidential extension itself — `InvalidAccountData`, three instructions
+/// away from anything that mentions fees.
+///
+/// One issuer already switched a fee on mid-flight: PreStocks' older config was 0 bps at epoch 848
+/// and its newer one is 50 bps from epoch 1032. **Any issuer can do that to any mint at any time**,
+/// so this is not support for one token — it is the difference between working and silently not.
 pub fn configure_instructions(
     program: &Address,
     account: &Address,
@@ -56,14 +66,19 @@ pub fn configure_instructions(
     owner: &Address,
     zero: &PodAeCiphertext,
     proof: &PubkeyValidityProofData,
+    charges_fee: bool,
 ) -> Vec<Instruction> {
+    let mut extensions = vec![ExtensionType::ConfidentialTransferAccount];
+    if charges_fee {
+        extensions.push(ExtensionType::ConfidentialTransferFeeAmount);
+    }
     let mut ixs = vec![reallocate(
         program,
         account,
         owner,
         owner,
         &[],
-        &[ExtensionType::ConfidentialTransferAccount],
+        &extensions,
     )
     .expect("reallocate")];
     ixs.extend(
@@ -94,6 +109,15 @@ fn main() {
     let amount: u64 = a.next().expect("amount").parse().unwrap();
     let blockhash = Hash::from_str(&a.next().expect("blockhash")).unwrap();
     let keys_path = a.next().expect("keys.json");
+    // Required rather than defaulted. A default of "no fee" would be wrong exactly on the mints
+    // where being wrong costs the most, and it would be wrong silently — the failure surfaces as
+    // InvalidAccountData on a later instruction. The caller has the mint in front of it; let it say.
+    let charges_fee = match a.next().as_deref() {
+        Some("fee") => true,
+        Some("nofee") => false,
+        other => panic!("last argument must be `fee` or `nofee`, got {other:?} — read the mint's \
+                         transferFeeConfig and say which"),
+    };
 
     let program = Address::from_str(TOKEN_2022).unwrap();
     let base = amount * 10u64.pow(DECIMALS as u32);
@@ -121,7 +145,8 @@ fn main() {
             let proof = build_pubkey_validity_proof_data(&elgamal).expect("pubkey validity proof");
             let zero: PodAeCiphertext = ae.encrypt(0).into();
 
-            configure_instructions(&program, &account, &mint, &owner.pubkey(), &zero, &proof)
+            configure_instructions(&program, &account, &mint, &owner.pubkey(), &zero, &proof,
+                                   charges_fee)
         }
         // The issuer's signature on this account. On a mint with autoApproveNewAccounts false, the
         // confidential extension stays unapproved and every later instruction fails without it.
@@ -181,7 +206,7 @@ mod configuring {
     #[test]
     fn the_account_is_grown_before_it_is_configured() {
         let (program, account, mint, owner, zero, proof) = parts();
-        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof);
+        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof, false);
         assert!(ixs.len() >= 2, "configure produced {} instruction(s)", ixs.len());
 
         // Compare against the reallocate this should be, not against "addressed to the token
@@ -202,7 +227,7 @@ mod configuring {
     #[test]
     fn the_proof_sits_immediately_after_the_instruction_that_cites_it() {
         let (program, account, mint, owner, zero, proof) = parts();
-        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof);
+        let ixs = configure_instructions(&program, &account, &mint, &owner, &zero, &proof, false);
         let configure = ixs.len() - 2;
         assert_eq!(
             ixs[configure + 1].program_id,
@@ -226,7 +251,7 @@ mod configuring {
     fn nothing_is_addressed_anywhere_unexpected() {
         let (program, account, mint, owner, zero, proof) = parts();
         let zk = solana_zk_elgamal_proof_interface::id();
-        for ix in configure_instructions(&program, &account, &mint, &owner, &zero, &proof) {
+        for ix in configure_instructions(&program, &account, &mint, &owner, &zero, &proof, false) {
             assert!(ix.program_id == program || ix.program_id == zk, "unexpected program {}", ix.program_id);
         }
     }

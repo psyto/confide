@@ -52,7 +52,19 @@ import sys,json
 i=json.load(sys.stdin)['result']['value']['data']['parsed']['info']
 s=next(e['state'] for e in i['extensions'] if e['extension']=='confidentialTransferAccount')
 print(s['decryptableAvailableBalance'], s['availableBalance'], i['tokenAmount']['uiAmountString'], i['owner'])"; }
-prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$2" "$MINT" "$3" "$4" "$(bh)" "$5" 2>/dev/null)"; }
+# FEE is read off the mint rather than inferred from FEE_BPS, so this also tells the truth when a
+# PROGRAM and MINT from a previous run are reused. A confidential account on a fee-bearing mint
+# needs room for ConfidentialTransferFeeAmount, and without it ConfigureAccount fails three
+# instructions away from anything that mentions fees.
+mint_charges_fee() {
+  rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$1\",{\"encoding\":\"jsonParsed\"}]}" \
+  | python3 -c "
+import sys,json
+v=json.load(sys.stdin)['result']['value']
+ex=v['data']['parsed']['info'].get('extensions',[]) if v else []
+print('fee' if any(e['extension']=='transferFeeConfig' for e in ex) else 'nofee')"
+}
+prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$2" "$MINT" "$3" "$4" "$(bh)" "$5" "$FEE" 2>/dev/null)"; }
 
 # The bundled Token-2022 is older than the one on devnet and silently refuses current instructions.
 SZ=$(rpc '{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY",{"encoding":"base64","dataSlice":{"offset":0,"length":0}}]}' \
@@ -81,13 +93,16 @@ echo "  --- the mint, configured the way NVDAx is ---"
 # transfer, confidential ones included, and Confide builds the plain confidential `Transfer` rather
 # than `TransferWithFee`. Rather than assert what that does, run it: `FEE_BPS=50 ./scripts/seizure-e2e.sh`.
 FEE_BPS="${FEE_BPS:-0}"
+# Expanded as ${FEE_ARGS[@]+...} below: bash 3.2 treats an empty array as unbound under `set -u`,
+# so the plain "${FEE_ARGS[@]}" broke the default path and only the default path.
 FEE_ARGS=()
 [ "$FEE_BPS" = 0 ] || FEE_ARGS=(--transfer-fee-basis-points "$FEE_BPS" --transfer-fee-maximum-fee 18446744073709551615)
 MINT=$(spl-token -C "$W/borrower.yml" create-token --program-2022 --decimals "$DECIMALS" \
-  "${FEE_ARGS[@]}" --enable-confidential-transfers auto 2>&1 \
+  ${FEE_ARGS[@]+"${FEE_ARGS[@]}"} --enable-confidential-transfers auto 2>&1 \
   | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
 go "auditor slot filled" "$(cargo run --quiet -p confide-ct --bin set-auditor -- "$W/borrower.json" "$MINT" "$(bh)" "$W/auditor.json" 2>/dev/null)"
-echo "    mint      $MINT   (auditor set, autoApproveNewAccounts false — as on NVDAx)"
+FEE=$(mint_charges_fee "$MINT")
+echo "    mint      $MINT   (auditor set, autoApproveNewAccounts false — as on NVDAx; $FEE)"
 
 echo "  --- the escrow. NOT an associated account: an ATA carries ImmutableOwner and can never be handed over ---"
 solana-keygen new --no-bip39-passphrase --silent --force -o "$W/escrow.json" >/dev/null

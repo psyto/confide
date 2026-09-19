@@ -123,3 +123,77 @@ cover Backed's `SPCXx` and Backpack's `SPCX.US`, both pre-IPO. **Dropping them t
 refused**: it is the Clawpump reasoning in [`../../STATUS.md`](../../STATUS.md) — retracting a
 written judgement for a prize, where a judge reading both notices the retraction more than the
 prize. Whether to enter anyway, and let the sponsor rule on it, is the founder's call.
+
+---
+
+## Step 1 is done — 2026-09-19
+
+`provision` now allocates `ConfidentialTransferFeeAmount` when the mint carries a fee config, and
+the flag is **required** rather than defaulted, because a default of "no fee" is wrong precisely on
+the mints where being wrong costs most, and wrong silently. The scripts read the mint and say which.
+
+Measured on devnet with a 50 bps mirror, `FEE_BPS=50 ./scripts/seizure-e2e.sh`:
+
+```
+configure ok · approve ok · deposit ok · apply ok · 10 context txs ok
+handover ok · originate ok — proved floor 100000 tokens against a $50000 loan at 200%
+seize at 99c: ERR InstructionError [1, "InvalidInstructionData"]
+```
+
+**So a PreStocks token can now be held confidentially and have a floor proved over its ciphertext.**
+The analysis half — the decision page, the packets, the capacity computation — works on all 1,992.
+What still fails is settlement, and it fails in exactly one place: the confidential `Transfer`.
+
+A regression caught by re-running the ordinary path: `"${FEE_ARGS[@]}"` on an empty array is unbound
+under `set -u` in bash 3.2, so the change broke the **default** route and only the default route.
+
+## Step 2, sized properly
+
+`inner_transfer_with_fee` needs **five** proof contexts where `inner_transfer` needs three: the
+equality and 3-handle validity proofs are the same, and it adds a **percentage-with-cap fee sigma
+proof**, a **2-handle fee ciphertext validity proof**, and moves the range proof from **U128 to
+U256**.
+
+The wall this looked like it would hit is smaller than feared. Measured with `size_of`:
+
+| | bytes |
+|---|---|
+| `BatchedRangeProofU128Data` | 1,000 |
+| `BatchedRangeProofU256Data` | **1,064** — 64 more, not double |
+
+The U128 verify transaction already runs at **1,211 bytes against the 1,232 limit** with a lookup
+table. Sixty-four more is **1,275 — over by 43**, which is a packing problem and not a research one:
+two more addresses in the lookup table buy back about sixty.
+
+So step 2 is roughly a day or two of careful work, not a wall:
+
+1. `seizure-ctx` builds five transfer contexts instead of three, and the lookup table takes two more
+   addresses so the U256 verify transaction fits.
+2. The loan record grows by two context pubkeys **per route**, so 740 bytes becomes 868 — appended
+   again, so a v1 and a v2 loan both stay readable.
+3. `transfer_instruction` calls `inner_transfer_with_fee` when the mint charges one.
+4. **The underwriting change, which is the part that is not plumbing.** See below.
+
+## What the fee means for underwriting, and why this is the answer to the original question
+
+`MAX_FEE_BASIS_POINTS` is **10,000 — one hundred per cent.** The `transferFeeConfigAuthority` on
+PreStocks' mints is `WV9PJN7XTmTL…`, the same key that holds the other eight powers.
+
+> **The issuer can set the transfer fee to 100 %, and a seizure then delivers the lender nothing.**
+> Not a rounding error on 50 bps — a power to make pledged collateral worthless, held by one key,
+> exercisable with a two-epoch delay.
+
+`in_default` today computes `q_min × price` and compares it to the required cover. On a fee-bearing
+mint the lender does not receive `q_min`; they receive `q_min × (1 − fee)`. So the design is:
+
+- the loan records **`max_fee_bps`**, the fee the lender underwrote at origination
+- `seize` reads the **live** fee off the mint, which is already passed into the instruction
+- the recoverable amount is netted: `q_min × (10,000 − fee_bps) / 10,000`
+- and **"the issuer raised the fee above what we underwrote" becomes a default condition of its
+  own** — the collateral has been devalued by a third party, which is exactly when a lender wants
+  out
+
+**That is the answer to the founder's question, and it is not "privacy makes risky collateral
+safer".** It is narrower and it is real: an unbounded, invisible issuer power becomes a **bounded,
+monitored loan parameter**. Confide does not reduce the issuer's power. It makes exercising that
+power trip the loan instead of silently emptying it.

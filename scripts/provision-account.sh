@@ -43,7 +43,7 @@ confirm() {
 }
 step() {
   local name="$1" tx sig
-  tx=$(cargo run --quiet -p confide-ct --bin provision -- "$name" "$KP" "$MINT" "$ACC" "$AMOUNT" "$(blockhash)" "$KEYS")
+  tx=$(cargo run --quiet -p confide-ct --bin provision -- "$name" "$KP" "$MINT" "$ACC" "$AMOUNT" "$(blockhash)" "$KEYS" "$FEE")
   sig=$(send "$tx"); confirm "$sig"
   printf '  %-10s %s\n' "$name" "$sig"
   # Each step reads the state the previous one wrote, and "confirmed" is not yet visible to every
@@ -56,7 +56,10 @@ echo "  --- mint and account, via the CLI (no ZK key involved) ---"
 # that auto-approves would differ from NVDAx in two fields while claiming to differ in one.
 MINT=$(spl-token -C "$CFG" create-token --program-2022 --decimals 8 --enable-confidential-transfers manual 2>&1 \
   | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
-echo "  mint       $MINT"
+# This mirror carries no transfer fee, like the Backed and Backpack mints it mirrors. Said rather
+# than assumed, because `provision` now refuses to guess.
+FEE=nofee
+echo "  mint       $MINT   ($FEE)"
 spl-token -C "$CFG" create-account "$MINT" >/dev/null
 ACC=$(spl-token -C "$CFG" address --token "$MINT" --verbose 2>&1 \
   | grep -oE 'Associated token address: *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
