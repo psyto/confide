@@ -54,7 +54,7 @@ mainnet against Kamino's rules. Walkthrough: youtu.be/p1aQuEnzhQk
 | Surviving a stock split | 11 live actions: 8 restate exactly, 3 have no whole ratio, refused |
 | **Both exits from the escrow**, devnet, 173,000 confidential either way | `./scripts/seizure-e2e.sh` — on default a transfer authorised at origination fires without the borrower; loan `26QJWCRw…` reads `seized`. `MODE=release` — the borrower arms a return route, their own attempt is refused, the lender signs; loan `9yfKfFD5…` reads `released` |
 
-94 tests, 39 over the seizure program. `./scripts/healthcheck.sh` re-checks every row against the
+96 tests, 39 over the seizure program. `./scripts/healthcheck.sh` re-checks every row against the
 chain and exits with the number that died — judging runs weeks, devnet resets.
 
 ## What is not built

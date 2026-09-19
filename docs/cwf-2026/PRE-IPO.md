@@ -197,3 +197,70 @@ mint the lender does not receive `q_min`; they receive `q_min × (1 − fee)`. S
 safer".** It is narrower and it is real: an unbounded, invisible issuer power becomes a **bounded,
 monitored loan parameter**. Confide does not reduce the issuer's power. It makes exercising that
 power trip the loan instead of silently emptying it.
+
+---
+
+## Step 2 is blocked, and not by Confide — 2026-09-19
+
+The sizing above was wrong in the direction that matters. It said the U256 verify transaction goes
+43 bytes over and that two more lookup-table addresses buy back sixty. **There is nothing left to
+move into a lookup table**: the only other static keys in that transaction are the fee payer and the
+ZK program id, and a v0 message may not source a program id from a table.
+
+Measured — `cargo test -p confide-ct --test fee_tx_size`:
+
+| proof | legacy | v0 + lookup table | 1,232-byte limit |
+|---|---|---|---|
+| equality | 557 | 531 | fits |
+| 3-handle validity | 781 | 755 | fits |
+| percentage-with-cap | 597 | 571 | fits |
+| 2-handle fee validity | 653 | 627 | fits |
+| **`BatchedRangeProofU256`** | **1,301** | **1,275** | **over** |
+
+And with the context authority set to the fee payer — the concession Confide deliberately does not
+make, because the borrower could then close the context accounts — it is **1,269. Still 37 over.**
+
+`ProofLocation` has two variants and neither helps: `InstructionOffset` puts the same 1,064 bytes
+into a transaction that also carries the Token-2022 transfer and its accounts, and
+`ContextStateAccount` is the row above. The ZK program's instruction set is `CloseContextState` plus
+`Verify*` — **there is no way to write proof data into an account across several transactions.**
+
+### The confirmation that makes this a fact about Solana rather than about Confide
+
+The official `spl-token` CLI, on a mint created by the same CLI with
+`--transfer-fee-basis-points 50 --enable-confidential-transfers auto`, on devnet:
+
+```
+$ spl-token transfer <mint> 100 <dest> --confidential
+Program log: ConfidentialTransferInstruction::Transfer
+Program log: Error: InvalidInstructionData
+```
+
+**The reference tooling builds the fee-free instruction too.** Deposit, apply and configure all
+succeed; the transfer is where it stops, for everyone.
+
+### What that means for PreStocks, said carefully
+
+> **PreStocks switched a 50 bps transfer fee on — 0 bps at epoch 848, 50 from 1032 — on mints whose
+> confidential transfers cannot execute while it is on.** Not "cannot execute through Confide". The
+> standard client cannot either, and the proof the instruction requires does not fit in a Solana
+> transaction.
+
+This is the repository's own finding one level deeper. The flagship result is that 1,992 mints ship
+a disclosure feature nobody can use because the only key on offer is the wrong shape. **Eight of
+them ship one that does not run at all.**
+
+**Stated with the hedge it deserves:** two measurements, not a proof. If someone has a working
+confidential transfer on a fee-bearing Token-2022 mint, that is worth more to this project than
+being right — `crates/confide-ct/tests/fee_tx_size.rs` asserts the size and **starts failing the day
+it stops being true.**
+
+### So the plan changes
+
+- **Step 1 stands and was worth doing.** A PreStocks token can be held confidentially and a floor
+  proved over its ciphertext. Every analysis surface — the decision page, the packets, the capacity
+  computation — is honest across all 1,992.
+- **Step 2 is withdrawn.** It is not a day or two of work; it is unreachable until Solana's limits
+  or the proof size change. `max_fee_bps` and the fee-netted default predicate are withdrawn with
+  it: there is no settlement for them to protect.
+- **What replaces it is the finding**, which is worth more than the instruction would have been.
