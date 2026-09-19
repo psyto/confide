@@ -178,7 +178,7 @@ are what make the page checkable rather than a claim about live data.
 **4. The market evidence map** — **done, 2026-09-16**. The bet said *make the number computable by
 anyone, from live chain data, without asking anyone's permission.* `./scripts/capacity.sh`:
 
-> **$21.1 m** of tokenized stock deposited across Kamino's reserves, and **$81.6 m** of borrowing
+> **$22.0 m** of tokenized stock deposited across Kamino's reserves, and **$83.0 m** of borrowing
 > their caps and LTVs already authorise. **$0 of it reachable while a position stays confidential.**
 
 Computed from Kamino's own caps, LTVs and prices. Nobody had to agree to anything. And sharper than

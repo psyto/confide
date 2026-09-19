@@ -74,7 +74,11 @@ if spcx:
         g(r["deposit_limit"] * r["ltv_pct"] / 100 * hi)))
     print("      and $0 of it reachable without publishing the position.")
 
+# Every number here is a reading of a chain that moves. Undated, it is a claim; dated, it is a
+# measurement somebody can repeat and disagree with.
 json.dump({"generated_from": "scripts/capacity.sh",
+           "generated_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
+                             .strftime("%Y-%m-%d %H:%M:%S UTC"),
            "held_usd": round(held), "borrowed_usd": round(borrowed),
            "authorised_capacity_usd": round(capacity),
            "reachable_confidentially_usd": 0,

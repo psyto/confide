@@ -37,8 +37,8 @@ is solved by picking a different ticker.
 
 ## What this makes true
 
-The repository already computed that **$21.1m is deposited across Kamino's tokenized-equity
-reserves and $81.6m of borrowing is authorised against it, of which $0 is reachable confidentially.**
+The repository already computed that **$22.0m is deposited across Kamino's tokenized-equity
+reserves and $83.0m of borrowing is authorised against it, of which $0 is reachable confidentially.**
 Until today that `$0` was a *demonstration* — here is a rule, here is an account, watch it fail.
 
 **It is now a result.** Every mint in the asset class sits on the gated side of a fork whose other

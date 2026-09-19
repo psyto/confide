@@ -113,6 +113,31 @@ print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).grou
   && ok "youtube-paste.txt is what its generator produces" \
   || bad "youtube-paste.txt has drifted from youtube.md"
 
+# Every prose restatement of the market totals, against the file that computes them. On 2026-09-19
+# the chain moved from $21.1m to $22.0m and six documents plus the packet GENERATOR still said the
+# old number — the generator being the bad one, because regenerating the fourteen packets did not
+# fix them. Anything that quotes a figure in millions has to match capacity.json or say why.
+echo
+echo "  THE MARKET TOTALS — prose against the file that computes them"
+python3 - <<'PY' && ok "every quoted \$m figure matches web/capacity.json" || bad "a quoted \$m figure has drifted from web/capacity.json — ./scripts/capacity.sh, then fix the prose"
+import json, re, sys, pathlib
+cap = json.load(open("web/capacity.json"))
+want = {"%.1f" % (cap["held_usd"] / 1e6), "%.1f" % (cap["authorised_capacity_usd"] / 1e6)}
+# Files that speak in the present tense about the market. CHECKIN-1.md and the reviews describe a
+# dated recording and a dated review, so they are allowed to hold the number that was true then.
+files = ["README.md", "docs/27-DAYS.md", "docs/cwf-2026/THE-PINCER.md",
+         "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "_submission/full.md"]
+files += [str(p) for p in pathlib.Path("docs/packets").glob("*.md")]
+bad = []
+for f in files:
+    for n in re.findall(r"\$(\d{2}\.\d)\s?m\b", pathlib.Path(f).read_text(encoding="utf-8")):
+        if n not in want:
+            bad.append("%s says $%sm; capacity.json says %s" % (f, n, " / ".join(sorted(want))))
+for b in bad[:8]:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PY
+
 echo
 echo "  THE LINKS — one video, one program, everywhere"
 ids=$(grep -rhoE "youtu\.be/[A-Za-z0-9_-]{11}|embed/[A-Za-z0-9_-]{11}|VIDEO:-[A-Za-z0-9_-]{11}" \

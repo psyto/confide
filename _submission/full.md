@@ -19,10 +19,10 @@ the deadline by a committee you do not control. You choose **who**, **how much**
 ## Who uses this first
 
 **The lender — the money is already there.** Kamino runs 19 live markets in tokenized stock: at
-their own prices, **$21.1m deposited** and **$81.6m of borrowing their caps authorise**. SPYx at
+their own prices, **$22.0m deposited** and **$83.0m of borrowing their caps authorise**. SPYx at
 73% LTV, NVDAx at 55%, SpaceX at 40%. Every position is public, and that is the only way in —
 Kamino's own program refuses a deposit from an account holding value confidentially
-(`constraints.rs:187`, via `lending_checks.rs:186`). **$0 of that $81.6m is reachable without
+(`constraints.rs:187`, via `lending_checks.rs:186`). **$0 of that $83.0m is reachable without
 publishing what you hold.** Recompute it: `./scripts/capacity.sh`.
 
 **The issuer is a gate, not the buyer** — reversed 2026-09-16, in the open. A business whose revenue

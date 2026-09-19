@@ -108,6 +108,8 @@ dec = int(info["decimals"]); unit = 10 ** dec
 supply = int(info["supply"]) / unit
 
 reserves = json.load(open('web/kamino-reserves.json'))["reserves"] if __import__('os').path.exists('web/kamino-reserves.json') else []
+# The market totals, read rather than typed. This block used to carry them as literals.
+capacity = json.load(open('web/capacity.json'))
 rs = [r for r in reserves if r["mint"] == m["mint"]]
 if not rs:
     print("  no Kamino reserve for %s — run ./scripts/kamino-reserves.sh, or pick a token that has one" % SYM)
@@ -254,7 +256,12 @@ else:
     w("of which **$0 is reachable while the position stays confidential**.")
 w("")
 w("Across every Kamino reserve holding a tokenized stock, `./scripts/capacity.sh` puts that at")
-w("**$21.1 m deposited and $81.6 m of authorised borrowing, none of it reachable confidentially.**")
+# Derived, not typed. This line was "$21.1 m / $81.6 m" in the generator itself until 2026-09-19,
+# so fourteen generated documents carried a hand-maintained number and regenerating them did not
+# fix it. The chain had already moved to $22.0 m by the time anyone looked.
+w("**${:.1f} m deposited and ${:.1f} m of authorised borrowing, none of it reachable".format(
+    capacity["held_usd"] / 1e6, capacity["authorised_capacity_usd"] / 1e6))
+w("confidentially** — read {}.".format(capacity["generated_at"]))
 w("")
 w("**Nothing in this packet proposes changing any of them.** They are the prior, and the whole")
 w("point of the request below is that it does not need them moved.")
