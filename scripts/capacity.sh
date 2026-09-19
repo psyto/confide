@@ -50,7 +50,10 @@ print("  stay out.%s" % off)
 print()
 print("  %sWhat these numbers are, exactly:%s" % (bold, off))
 print("    · HELD is available liquidity × the reserve's own price. It is a snapshot, not a flow,")
-print("      and %s of it is currently borrowed against." % g(borrowed))
+print("      %s of the stock itself has been borrowed OUT of these reserves — somebody" % g(borrowed))
+print("      borrowing the share, not borrowing against it. Those are different trades and this")
+print("      line said the second one until 2026-09-19. What has been borrowed AGAINST this")
+print("      collateral is the debt side of the same markets: ./scripts/debt-side.sh.")
 print("    · CAP × LTV × PRICE is authorised capacity, not utilisation. Nobody is obliged to use it.")
 print("    · The price is klend's `market_price_sf`, refreshed when someone last touched the")
 print("      reserve. %d reserves read zero and are excluded entirely: %s." % (
@@ -79,7 +82,7 @@ if spcx:
 json.dump({"generated_from": "scripts/capacity.sh",
            "generated_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
                              .strftime("%Y-%m-%d %H:%M:%S UTC"),
-           "held_usd": round(held), "borrowed_usd": round(borrowed),
+           "held_usd": round(held), "stock_borrowed_out_usd": round(borrowed),
            "authorised_capacity_usd": round(capacity),
            "reachable_confidentially_usd": 0,
            "reserves_priced": len(priced), "reserves_total": len(rows),

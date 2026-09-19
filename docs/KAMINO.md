@@ -112,7 +112,12 @@ stock as their liquidity mint**, and they are not placeholders. `./scripts/kamin
 
 `SPYx` at 73 % LTV against a 20,000 cap with 5,221 available and 121 borrowed. `GOOGLx` at 60 %
 with 8,010 of 12,000. `MSTRx` at 30 % with 29,658 of 90,000. These are underwriting decisions
-someone already made, and four of the rows are being borrowed against right now.
+someone already made, and four of the rows have some of the **stock itself** borrowed out of them.
+
+> **Corrected 2026-09-19.** This sentence read *"four of the rows are being borrowed against right
+> now"*, which is a different trade: a reserve's `borrowed` field counts the token lent **out**, not
+> stablecoin drawn **against** it. What has been borrowed against this collateral is the debt side
+> of the same markets, and it is much larger — `./scripts/debt-side.sh`.
 
 **"Available" is what sits in the vault at this snapshot, not what was supplied** — klend's own
 total is available plus borrowed minus accumulated fees. Neither figure is a flow.
