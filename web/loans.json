@@ -1,6 +1,6 @@
 {
  "program": "Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN",
- "generated_utc": "2026-09-19 07:52:08 UTC",
+ "generated_utc": "2026-09-19 10:33:58 UTC",
  "offsets": {
   "escrow": 1,
   "destination": 33,
@@ -11,10 +11,12 @@
   "ratio_bps": 241,
   "seized": 414,
   "release_destination": 447,
-  "released": 739
+  "released": 739,
+  "floor_mode": 740
  },
  "len_v1": 415,
  "len_v2": 740,
+ "len_current": 741,
  "note": "Which devnet loans the page reads. The page decodes the flags off the chain itself; this file does not decide the outcome.",
  "loans": [
   {
@@ -30,6 +32,7 @@
    "ratio_bps": 20000,
    "seized": true,
    "released": false,
+   "floor": "proved",
    "outcome": "seized"
   },
   {
@@ -45,6 +48,7 @@
    "ratio_bps": 20000,
    "seized": false,
    "released": true,
+   "floor": "proved",
    "outcome": "released"
   }
  ]

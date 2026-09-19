@@ -70,7 +70,10 @@ pub const LOAN_TAG: u8 = 1;
 pub const LOAN_LEN_V1: usize = 415;
 /// A loan with both exits recorded. The seizure route's offsets are unchanged and the release
 /// route is appended, so a v1 account is a prefix of a v2 one rather than a different thing.
-pub const LOAN_LEN: usize = 740;
+pub const LOAN_LEN_V2: usize = 740;
+/// v2 plus one byte saying **which guarantee the floor carries**. Appended like everything else,
+/// and a loan written before it reads as `FLOOR_PROVED` — which is what all of them were.
+pub const LOAN_LEN: usize = 741;
 
 const OFF_ESCROW: usize = 1;
 const OFF_DESTINATION: usize = 33;
@@ -108,6 +111,15 @@ const OFF_RELEASE_NEW_DECRYPTABLE: usize = 575;
 const OFF_RELEASE_AUDITOR_LO: usize = 611;
 const OFF_RELEASE_AUDITOR_HI: usize = 675;
 const OFF_RELEASED: usize = 739;
+const OFF_FLOOR_MODE: usize = 740;
+
+/// The floor was proved on chain: `originate` ran `floor_is_proved` against this escrow's own key
+/// and ciphertext and refused without it. A lender relies on the program having checked.
+pub const FLOOR_PROVED: u8 = 0;
+/// The floor was **asserted by the lender**, who holds the escrow's keys and read the balance
+/// themselves. No proof is on chain and none is needed — but it is a different guarantee, and a
+/// reader must be able to tell which one they have. That is the whole reason this byte exists.
+pub const FLOOR_ATTESTED: u8 = 1;
 
 /// A context state account is `[authority(32) | proof_type(1) | context]`.
 const CTX_AUTHORITY: usize = 0;
@@ -140,6 +152,7 @@ fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progra
         3 => arm_release(program_id, accounts, rest),
         4 => release(program_id, accounts, rest),
         5 => apply_pending(program_id, accounts, rest),
+        6 => originate_attested(program_id, accounts, rest),
         _ => Err(ProgramError::InvalidInstructionData),
     }
 }
@@ -264,8 +277,107 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     // because a borrower who could name this could name themselves.
     d[OFF_RELEASE_AUTHORITY..OFF_RELEASE_AUTHORITY + 32].copy_from_slice(&data[188..220]);
     d[OFF_RELEASED] = 0;
+    d[OFF_FLOOR_MODE] = FLOOR_PROVED;
 
     msg!("loan originated; seizure is armed and the borrower cannot disarm it");
+    Ok(())
+}
+
+/// `OriginateAttested` — the same loan, with the floor asserted by the lender instead of proved.
+///
+/// **Mode B, and the repository has called it that since `docs/SEIZURE.md` was written**: the
+/// difference between the two is who holds the escrow's ElGamal key. In mode A the borrower holds
+/// it, the lender sees only a proved floor, and `originate` makes the chain check that proof. In
+/// mode B the lender holds it, reads the balance directly, and has nothing to verify — so a proof
+/// would be ceremony.
+///
+/// It exists because of `ImmutableOwner`. A holder whose position sits in an associated token
+/// account cannot hand that account over, so the escrow has to be one the lender opened, and an
+/// escrow the lender opened is one whose keys the lender has. **Mode B is not a weaker option
+/// offered for convenience; it is the only shape the common case can take.**
+///
+/// What the holder still gets: the position is hidden from the market, the collateral moves on a
+/// priced default without them signing, and it comes back on a release they armed. What they give
+/// up, and it is written here rather than left to be discovered: **the lender sees the amount.**
+///
+/// The release authority is taken from the signer rather than from the data. Whoever signs is
+/// asserting the floor and is the party the record will require for a release — you cannot name
+/// somebody else to carry that.
+///
+/// Accounts: payer(s,w), loan(w), escrow, destination, mint, ctx_equality, ctx_validity,
+/// ctx_range, oracle, authority(s), system_program
+///
+/// Data: q_min u64 | principal u64 | ratio_bps u64 | new_decryptable[36] | auditor_lo[64] |
+/// auditor_hi[64]
+fn originate_attested(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    let i = &mut accounts.iter();
+    let payer = next_account_info(i)?;
+    let loan = next_account_info(i)?;
+    let escrow = next_account_info(i)?;
+    let destination = next_account_info(i)?;
+    let mint = next_account_info(i)?;
+    let ctx_equality = next_account_info(i)?;
+    let ctx_validity = next_account_info(i)?;
+    let ctx_range = next_account_info(i)?;
+    let oracle = next_account_info(i)?;
+    let authority = next_account_info(i)?;
+    let system_program = next_account_info(i)?;
+
+    if !payer.is_signer {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    // The whole guarantee of this path. Without it anybody could record a floor nobody checked and
+    // name a lender who never agreed to it.
+    may_attest(authority.is_signer)?;
+    if data.len() != 8 + 8 + 8 + 36 + 64 + 64 {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+
+    let (expected, bump) = loan_address(program_id, escrow.key);
+    if expected != *loan.key {
+        return Err(ProgramError::InvalidArgument);
+    }
+    {
+        let e = escrow.try_borrow_data()?;
+        if e.len() < ACCOUNT_OWNER + 32 {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        if e[ACCOUNT_OWNER..ACCOUNT_OWNER + 32] != loan.key.to_bytes() {
+            msg!("the escrow has not been handed over — its owner is not this loan");
+            return Err(ProgramError::IllegalOwner);
+        }
+    }
+    // The seizure route still has to be armed and out of reach, exactly as in mode A. Only the
+    // floor's guarantee differs, not the settlement's.
+    context_is_armed(ctx_equality.owner, &ctx_equality.try_borrow_data()?, PROOF_TYPE_EQUALITY, loan.key)?;
+    context_is_armed(ctx_validity.owner, &ctx_validity.try_borrow_data()?, PROOF_TYPE_BATCHED_VALIDITY_3, loan.key)?;
+    context_is_armed(ctx_range.owner, &ctx_range.try_borrow_data()?, PROOF_TYPE_BATCHED_RANGE_U128, loan.key)?;
+
+    let rent = Rent::get()?.minimum_balance(LOAN_LEN);
+    invoke_signed(
+        &system_instruction::create_account(payer.key, loan.key, rent, LOAN_LEN as u64, program_id),
+        &[payer.clone(), loan.clone(), system_program.clone()],
+        &[&[b"loan", escrow.key.as_ref(), &[bump]]],
+    )?;
+
+    let mut d = loan.try_borrow_mut_data()?;
+    d[0] = LOAN_TAG;
+    d[OFF_ESCROW..OFF_ESCROW + 32].copy_from_slice(&escrow.key.to_bytes());
+    d[OFF_DESTINATION..OFF_DESTINATION + 32].copy_from_slice(&destination.key.to_bytes());
+    d[OFF_MINT..OFF_MINT + 32].copy_from_slice(&mint.key.to_bytes());
+    d[OFF_CTX_EQUALITY..OFF_CTX_EQUALITY + 32].copy_from_slice(&ctx_equality.key.to_bytes());
+    d[OFF_CTX_VALIDITY..OFF_CTX_VALIDITY + 32].copy_from_slice(&ctx_validity.key.to_bytes());
+    d[OFF_CTX_RANGE..OFF_CTX_RANGE + 32].copy_from_slice(&ctx_range.key.to_bytes());
+    d[OFF_ORACLE..OFF_ORACLE + 32].copy_from_slice(&oracle.key.to_bytes());
+    d[OFF_Q_MIN..OFF_NEW_DECRYPTABLE].copy_from_slice(&data[..24]);
+    d[OFF_NEW_DECRYPTABLE..OFF_BUMP].copy_from_slice(&data[24..]);
+    d[OFF_BUMP] = bump;
+    d[OFF_SEIZED] = 0;
+    d[OFF_RELEASE_AUTHORITY..OFF_RELEASE_AUTHORITY + 32].copy_from_slice(&authority.key.to_bytes());
+    d[OFF_RELEASED] = 0;
+    d[OFF_FLOOR_MODE] = FLOOR_ATTESTED;
+
+    msg!("loan originated; the floor is the lender's assertion, not a proof, and the record says so");
     Ok(())
 }
 
@@ -393,7 +505,7 @@ fn arm_release(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Pr
     let mut d = loan.try_borrow_mut_data()?;
     // A v1 loan has no room for a return route. It is not upgraded in place: the account was sized
     // at origination, and silently half-writing one would be worse than refusing.
-    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+    if d.len() < LOAN_LEN_V2 || d[0] != LOAN_TAG {
         return Err(ProgramError::UninitializedAccount);
     }
     if d[OFF_SEIZED] != 0 || d[OFF_RELEASED] != 0 {
@@ -815,7 +927,7 @@ pub struct Cited<'a> {
 /// because `Cited` exists to name the accounts a transfer touches, and giving it a second
 /// authority field would leave both paths carrying one they ignore.
 pub fn may_release(d: &[u8], cited: Cited, authority_signed: bool) -> ProgramResult {
-    if d.len() < LOAN_LEN || d[0] != LOAN_TAG {
+    if d.len() < LOAN_LEN_V2 || d[0] != LOAN_TAG {
         return Err(ProgramError::UninitializedAccount);
     }
     if d[OFF_SEIZED] != 0 || d[OFF_RELEASED] != 0 {
@@ -846,6 +958,34 @@ pub fn may_release(d: &[u8], cited: Cited, authority_signed: bool) -> ProgramRes
 /// they do not touch the available ciphertext the seizure and release proofs are built over.
 /// **Applying them is what would break both routes**, so once a loan is recorded this refuses, and
 /// a stranger cannot strand a live loan by sending it one unit.
+/// Whether an attested floor may be recorded at all.
+///
+/// One line, and a function rather than an inline `if` for one reason: **deleting the inline
+/// version built clean and no test noticed.** A guard with nothing watching it is the shape of the
+/// error this repository made on 2026-09-16, when a check was reported as added and was not in the
+/// code.
+///
+/// What it protects: in mode B nothing on chain verifies the floor, so the only thing standing
+/// between the record and a number somebody invented is that the party who will be relied on has
+/// signed for it. Without this, anyone could write a floor nobody checked and name a lender who
+/// never agreed to carry it.
+pub fn may_attest(authority_signed: bool) -> ProgramResult {
+    if !authority_signed {
+        msg!("mode B records the lender's assertion, so the lender has to sign it");
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    Ok(())
+}
+
+/// What a floor in this record is worth: proved by the chain, or asserted by the lender.
+///
+/// **A loan written before this byte existed reads as `FLOOR_PROVED`**, which is what every one of
+/// them was — `originate` has refused without `floor_is_proved` since it was written. The default
+/// is therefore a fact rather than an optimistic guess.
+pub fn floor_mode(loan_data: &[u8]) -> u8 {
+    if loan_data.len() > OFF_FLOOR_MODE { loan_data[OFF_FLOOR_MODE] } else { FLOOR_PROVED }
+}
+
 pub fn may_apply(loan_data: &[u8]) -> ProgramResult {
     if loan_data.len() >= LOAN_LEN_V1 && loan_data[0] == LOAN_TAG {
         msg!("a loan already exists over this escrow; applying would invalidate its proofs");
@@ -884,7 +1024,7 @@ pub fn may_settle(
     if d[OFF_SEIZED] != 0 {
         return Err(ProgramError::InvalidAccountData); // opening is not repeatable
     }
-    if d.len() >= LOAN_LEN && d[OFF_RELEASED] != 0 {
+    if d.len() >= LOAN_LEN_V2 && d[OFF_RELEASED] != 0 {
         return Err(ProgramError::InvalidAccountData); // already went back to the holder
     }
     check(&d[OFF_ESCROW..], escrow)?;
@@ -1202,7 +1342,9 @@ mod invariants {
             cursor += len;
         }
         assert_eq!(cursor, OFF_RELEASED, "the release fields must run up to the released flag");
-        assert_eq!(LOAN_LEN, OFF_RELEASED + 1);
+        assert_eq!(LOAN_LEN_V2, OFF_RELEASED + 1, "v2 ends at the released flag");
+        assert_eq!(OFF_FLOOR_MODE, OFF_RELEASED + 1, "the floor mode is the byte after it");
+        assert_eq!(LOAN_LEN, OFF_FLOOR_MODE + 1);
     }
 
     /// **L2 — origination writes exactly the instruction data it was given.** The two bulk copies
@@ -1419,6 +1561,45 @@ mod protocol {
                     oracle: &self.oracle }
         }
         fn at(&self, price: u64) -> ProgramResult { may_seize(&self.d, self.cited(), true, price) }
+    }
+
+    // ── which guarantee the floor carries ────────────────────────────────────────────────────────
+
+    /// **M1 — the two modes are distinguishable, or mode B is a way to launder an unchecked
+    /// floor.** A lender reading a record has to be able to tell whether the chain verified the
+    /// floor or whether somebody asserted it. If the byte were absent or ambiguous, an attested
+    /// loan could be presented as a proved one and the distinction this whole path rests on would
+    /// be unenforceable.
+    #[test]
+    fn a_reader_can_tell_a_proved_floor_from_an_asserted_one() {
+        let mut proved = loan();
+        proved.d[OFF_FLOOR_MODE] = FLOOR_PROVED;
+        let mut attested = loan();
+        attested.d[OFF_FLOOR_MODE] = FLOOR_ATTESTED;
+        assert_eq!(floor_mode(&proved.d), FLOOR_PROVED);
+        assert_eq!(floor_mode(&attested.d), FLOOR_ATTESTED);
+        assert_ne!(FLOOR_PROVED, FLOOR_ATTESTED);
+    }
+
+    /// **M3 — an attested floor needs the lender's signature, and nothing else stands behind it.**
+    /// In mode B the chain verifies no floor. The one thing separating the record from a number
+    /// somebody invented is that the party who will be relied on signed for it. This test exists
+    /// because the guard was an inline `if` until 2026-09-19 and deleting it built clean.
+    #[test]
+    fn an_asserted_floor_without_the_lender_signing_is_not_recorded() {
+        assert_eq!(may_attest(false), Err(ProgramError::MissingRequiredSignature));
+        assert_eq!(may_attest(true), Ok(()));
+    }
+
+    /// **M2 — a loan from before the byte existed reads as proved, because it was.** The devnet
+    /// loans the documents point at are 415 and 740 bytes. Defaulting them to "attested" would
+    /// quietly downgrade evidence that was in fact checked by the program.
+    #[test]
+    fn a_loan_older_than_this_byte_reads_as_proved() {
+        let l = loan();
+        assert_eq!(floor_mode(&l.d[..LOAN_LEN_V1]), FLOOR_PROVED, "a v1 loan");
+        assert_eq!(floor_mode(&l.d[..LOAN_LEN_V2]), FLOOR_PROVED, "a v2 loan");
+        assert_eq!(floor_mode(&[]), FLOOR_PROVED, "and nothing at all");
     }
 
     // ── applying a pending balance ───────────────────────────────────────────────────────────────

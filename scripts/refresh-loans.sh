@@ -25,8 +25,9 @@ rpc, program = os.environ["RPC"], os.environ["PROGRAM"]
 # reads offsets that came from one place; docs-consistency checks them against the Rust.
 OFF = {"escrow": 1, "destination": 33, "mint": 65, "oracle": 193,
        "q_min": 225, "principal": 233, "ratio_bps": 241,
-       "seized": 414, "release_destination": 447, "released": 739}
-V1, V2 = 415, 740
+       "seized": 414, "release_destination": 447, "released": 739,
+       "floor_mode": 740}
+V1, V2, V3 = 415, 740, 741
 
 def get(a):
     b = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "getAccountInfo",
@@ -56,20 +57,21 @@ for loan in sys.argv[1:]:
     seized = d[OFF["seized"]] != 0
     released = len(d) >= V2 and d[OFF["released"]] != 0
     out.append({
-        "loan": loan, "bytes": len(d), "version": 2 if len(d) >= V2 else 1,
+        "loan": loan, "bytes": len(d), "version": 3 if len(d) >= V3 else (2 if len(d) >= V2 else 1),
         "escrow": addr(OFF["escrow"]), "mint": addr(OFF["mint"]),
         "lender_destination": addr(OFF["destination"]),
         "holder_destination": addr(OFF["release_destination"]) if len(d) >= V2 else None,
         "q_min": u64(OFF["q_min"]), "principal_cents": u64(OFF["principal"]),
         "ratio_bps": u64(OFF["ratio_bps"]),
         "seized": seized, "released": released,
+        "floor": ("attested" if (len(d) > OFF["floor_mode"] and d[OFF["floor_mode"]] == 1) else "proved"),
         "outcome": "seized" if seized else "released" if released else "open",
     })
     print("  %s  %d bytes  %s" % (loan[:12] + "…", len(d), out[-1]["outcome"]))
 
 json.dump({"program": program,
            "generated_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
-           "offsets": OFF, "len_v1": V1, "len_v2": V2,
+           "offsets": OFF, "len_v1": V1, "len_v2": V2, "len_current": V3,
            "note": "Which devnet loans the page reads. The page decodes the flags off the chain "
                    "itself; this file does not decide the outcome.",
            "loans": out},

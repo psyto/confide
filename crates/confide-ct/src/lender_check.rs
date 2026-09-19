@@ -16,7 +16,7 @@
 //! answers one question — *is this loan what the borrower says it is, and is the collateral out of
 //! their hands?* Everything about the asset's risk is a separate document, `docs/packets/`.
 use confide_seizure::solana_program::pubkey::Pubkey;
-use confide_seizure::{context_is_armed, floor_is_proved, LOAN_LEN_V1};
+use confide_seizure::{context_is_armed, floor_is_proved, floor_mode, FLOOR_ATTESTED, LOAN_LEN_V1};
 use solana_address::Address;
 use std::str::FromStr;
 
@@ -227,17 +227,30 @@ fn main() {
     // record, and a tool that pretended to would be checking the transfer proofs and calling them
     // the floor. The first version of this file did exactly that and failed on a healthy loan,
     // which is how the gap was found.
-    println!("  \x1b[2m·\x1b[0m the program verified a floor of \x1b[1m{q_min}\x1b[0m base units at origination,");
-    println!("      \x1b[2magainst this escrow's own key and ciphertext. `originate` refuses without it,");
-    println!("      so this loan existing is the evidence that it passed.\x1b[0m");
+    // Which of two different guarantees this record carries. Reported before anything else in
+    // this section, because a reader who assumes the wrong one is relying on something that was
+    // never checked.
+    if floor_mode(&loan.data) == FLOOR_ATTESTED {
+        println!("  \x1b[1m!\x1b[0m \x1b[1mthis floor was ASSERTED, not proved\x1b[0m — mode B");
+        println!("      \x1b[2mNothing on chain verified {q_min}. The escrow's keys are held by the release");
+        println!("      authority below, who read the balance and signed for it. If that is you, this is");
+        println!("      your own figure and it is worth exactly what your reading of the balance is worth.");
+        println!("      \x1b[1mIf it is not you, this record proves nothing about the collateral's size.\x1b[0m\x1b[0m");
+    } else {
+        println!("  \x1b[2m·\x1b[0m the program verified a floor of \x1b[1m{q_min}\x1b[0m base units at origination,");
+        println!("      \x1b[2magainst this escrow's own key and ciphertext. `originate` refuses without it,");
+        println!("      so this loan existing is the evidence that it passed.\x1b[0m");
+    }
     check(
         esc_owner.to_string() == *loan_key,
         "and the floor cannot have fallen since: the borrower does not own the escrow",
         "a balance they cannot reduce is a lower bound that stays true".to_string(),
     );
-    println!("  \x1b[2m·\x1b[0m \x1b[1mwhat you cannot check here:\x1b[0m the floor proof contexts are not recorded in the");
-    println!("      \x1b[2mloan, so this relies on the program having checked them rather than on you");
-    println!("      re-deriving it. Recording them is the next version of the record.\x1b[0m");
+    if floor_mode(&loan.data) != FLOOR_ATTESTED {
+        println!("  \x1b[2m·\x1b[0m \x1b[1mwhat you cannot check here:\x1b[0m the floor proof contexts are not recorded in the");
+        println!("      \x1b[2mloan, so this relies on the program having checked them rather than on you");
+        println!("      re-deriving it. Recording them is the next version of the record.\x1b[0m");
+    }
 
     println!("\n\x1b[1mTHE ROUTE\x1b[0m — where the collateral goes if it is taken");
     check(
@@ -265,7 +278,12 @@ fn main() {
 
     println!();
     if failed == 0 {
-        println!("  \x1b[32mevery check passed\x1b[0m — the collateral is locked, the floor is proved against it now,");
+        let floor_line = if floor_mode(&loan.data) == FLOOR_ATTESTED {
+            "the collateral is locked, the floor is the release authority's assertion,"
+        } else {
+            "the collateral is locked, the floor was proved against it at origination,"
+        };
+        println!("  \x1b[32mevery check passed\x1b[0m — {floor_line}");
         println!("  and the seizure route points at you. \x1b[1mThis says nothing about whether the asset is good\x1b[0m:");
         println!("  freeze authority, permanent delegate, pause and transfer fees are in docs/packets/.\n");
     } else {

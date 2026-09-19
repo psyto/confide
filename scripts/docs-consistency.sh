@@ -132,13 +132,15 @@ rs = pathlib.Path("programs/confide-seizure/src/lib.rs").read_text(encoding="utf
 def const(name):
     m = re.search(r"const %s: usize = (\d+);" % name, rs)
     return int(m.group(1)) if m else None
-want = {"escrow": const("OFF_ESCROW"), "destination": const("OFF_DESTINATION"),
+want = {"floor_mode": const("OFF_FLOOR_MODE"),
+        "escrow": const("OFF_ESCROW"), "destination": const("OFF_DESTINATION"),
         "mint": const("OFF_MINT"), "oracle": const("OFF_ORACLE"),
         "q_min": const("OFF_Q_MIN"), "principal": const("OFF_PRINCIPAL"),
         "ratio_bps": const("OFF_RATIO_BPS"), "seized": const("OFF_SEIZED"),
         "release_destination": const("OFF_RELEASE_DESTINATION"), "released": const("OFF_RELEASED")}
-lens = {"len_v1": const("LOAN_LEN_V1") or int(re.search(r"LOAN_LEN_V1: usize = (\d+)", rs).group(1)),
-        "len_v2": int(re.search(r"pub const LOAN_LEN: usize = (\d+);", rs).group(1))}
+lens = {"len_v1": int(re.search(r"LOAN_LEN_V1: usize = (\d+)", rs).group(1)),
+        "len_v2": int(re.search(r"LOAN_LEN_V2: usize = (\d+)", rs).group(1)),
+        "len_current": int(re.search(r"pub const LOAN_LEN: usize = (\d+);", rs).group(1))}
 try:
     got = json.load(open("web/loans.json"))
 except FileNotFoundError:

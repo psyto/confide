@@ -209,6 +209,45 @@ fn main() {
             };
             emit(&[cb, ix], &payer, &[&authority], &a[8]);
         }
+        // Mode B origination: the lender holds the escrow's keys, read the balance themselves and
+        // signs for the floor. No floor proofs are cited because none exist — the record carries a
+        // byte saying so, which is what stops an asserted floor being read as a proved one.
+        "originate-attested" => {
+            let payer = keypair(&a[1]);
+            let program = addr(&a[2]);
+            let ctx = artifact(&a[3]);
+            let (escrow, dest, mint, oracle) = (addr(&a[4]), addr(&a[5]), addr(&a[6]), addr(&a[7]));
+            let authority = keypair(&a[11]);
+            let (loan, _) = loan_pda(&program, &escrow);
+
+            let mut data = vec![6u8];
+            for n in [&a[8], &a[9], &a[10]] {
+                data.extend_from_slice(&n.parse::<u64>().expect("u64").to_le_bytes());
+            }
+            for k in ["new_decryptable_b64", "auditor_lo_b64", "auditor_hi_b64"] {
+                data.extend_from_slice(&d64(ctx[k].as_str().unwrap()));
+            }
+
+            let ix = Instruction {
+                program_id: program,
+                accounts: vec![
+                    AccountMeta::new(payer.pubkey(), true),
+                    AccountMeta::new(loan, false),
+                    AccountMeta::new_readonly(escrow, false),
+                    AccountMeta::new_readonly(dest, false),
+                    AccountMeta::new_readonly(mint, false),
+                    AccountMeta::new_readonly(addr(ctx["equality"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["validity"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(addr(ctx["range"].as_str().unwrap()), false),
+                    AccountMeta::new_readonly(oracle, false),
+                    AccountMeta::new_readonly(authority.pubkey(), true),
+                    AccountMeta::new_readonly(addr(SYSTEM), false),
+                ],
+                data,
+            };
+            eprintln!("  loan account       {loan}");
+            emit(&[ix], &payer, &[&authority], &a[12]);
+        }
         // Settle a confidential credit into an escrow the loan PDA already owns, before any loan
         // exists over it. This is the step that lets a holder whose position sits in an ATA take
         // part: an ATA cannot be handed over, so they transfer into somebody else's escrow, and
