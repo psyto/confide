@@ -122,6 +122,19 @@ fn main() {
     let program = Address::from_str(TOKEN_2022).unwrap();
     let base = amount * 10u64.pow(DECIMALS as u32);
 
+    // Not a transaction — a value. `ApplyPendingBalance` carries the account's new available
+    // balance encrypted under its AE key, and on an escrow owned by a PDA the only party who can
+    // produce that is whoever configured it. Printed so a shell can hand it to `apply-pending`
+    // without this tool learning how to send anything.
+    if step == "decryptable" {
+        let keys: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(&keys_path).expect("keys.json")).unwrap();
+        let raw = d64(keys["ae_key_b64"].as_str().expect("ae_key_b64"));
+        let ae = AeKey::try_from(&raw[..]).expect("ae key");
+        println!("{}", b64(&ae.encrypt(base).to_bytes()));
+        return;
+    }
+
     let ixs = match step.as_str() {
         "configure" => {
             // The key this whole step exists for.

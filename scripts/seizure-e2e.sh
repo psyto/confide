@@ -30,6 +30,8 @@ PRICE_BAD="${PRICE_BAD:-99}"       # one cent under, and the loan is in default
 # default, `release` is the holder getting it back. One script, because the twenty steps before the
 # branch are the same twenty steps and a second copy of them would drift within a week.
 #   open     — originate and stop, leaving a loan a lender can actually check and lend against
+#   ata      — the common case: the holder's position is in an ASSOCIATED token account, which
+#              cannot be handed over, so the escrow is the lender's and the holder transfers in
 MODE="${MODE:-seize}"
 
 . "$(dirname "$0")/lib/chain.sh"
@@ -142,6 +144,86 @@ cargo run --quiet -p confide-ct --bin seizure-client -- originate "$W/borrower.j
   "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" "$(solana-keygen pubkey "$W/lender.json")" "$(bh)" > "$W/orig.txt" 2>/dev/null
 go "originate" "$(cat "$W/orig.txt")"
 echo "    proved floor $Q_MIN tokens against a \$$((PRINCIPAL/100)) loan at $((RATIO_BPS/100))%"
+
+if [ "$MODE" = ata ]; then
+  # ── the case borrow.sh refuses ─────────────────────────────────────────────────────────────────
+  # A wallet creates associated token accounts, and an ATA carries ImmutableOwner, so it can never
+  # become an escrow. Everything above built the escrow the borrower hands over; this branch throws
+  # that away and does it the way the common case has to.
+  #
+  # The division of labour is the point. The holder uses `spl-token transfer --confidential`, the
+  # ordinary CLI, and needs nothing from this repository. Confide is on the lender's side.
+  echo
+  echo "  --- the holder's position, where a wallet would have put it ---"
+  spl-token -C "$W/lender.yml" create-account "$MINT" >/dev/null 2>&1 || true
+  # reuse the borrower as the holder; their ATA is the position
+  spl-token -C "$W/borrower.yml" create-account "$MINT" >/dev/null 2>&1
+  HOLDER=$(spl-token -C "$W/borrower.yml" address --token "$MINT" --verbose 2>&1 \
+    | grep -oE 'Associated token address: *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  spl-token -C "$W/borrower.yml" mint "$MINT" "$UNITS" "$HOLDER" >/dev/null
+  # Configured by spl-token, NOT by this repository's provision tool, and that is not a stylistic
+  # choice. `provision` generates a random ElGamal/AE pair and writes it to a file; `spl-token`
+  # derives its pair from the wallet keypair. An account configured by one cannot be operated by
+  # the other — it decrypts its own balance to nonsense and fails with `IllegalBitLength`, which is
+  # exactly what happened here first. A real holder's account was configured by their wallet, so
+  # the demonstration has to start from one that was.
+  spl-token -C "$W/borrower.yml" configure-confidential-transfer-account --address "$HOLDER" >/dev/null
+  go "issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve "$W/borrower.json" "$HOLDER" "$MINT" "$(bh)")"
+  spl-token -C "$W/borrower.yml" deposit-confidential-tokens "$MINT" "$UNITS" --address "$HOLDER" >/dev/null
+  spl-token -C "$W/borrower.yml" apply-pending-balance --address "$HOLDER" >/dev/null
+  echo "    holder    $HOLDER   (an ATA — ImmutableOwner, cannot be handed over)"
+
+  echo
+  echo "  --- the lender opens the escrow, because the holder cannot ---"
+  solana-keygen new --no-bip39-passphrase --silent --force -o "$W/mb-escrow.json" >/dev/null
+  spl-token -C "$W/lender.yml" create-account "$MINT" "$W/mb-escrow.json" >/dev/null
+  MBE=$(solana-keygen pubkey "$W/mb-escrow.json")
+  prov configure "$W/lender.json" "$MBE" 0 "$W/mb-escrow-keys.json"
+  go "issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve "$W/borrower.json" "$MBE" "$MINT" "$(bh)")"
+  MBLOAN=$(cargo run --quiet -p confide-ct --bin seizure-client -- pda "$PROGRAM" "$MBE")
+  go "handover" "$(cargo run --quiet -p confide-ct --bin seizure-client -- handover "$W/lender.json" "$MBE" "$MBLOAN" "$(bh)")"
+  echo "    escrow    $MBE   (the LENDER's, holding the LENDER's keys — mode B)"
+  echo "    loan pda  $MBLOAN"
+
+  echo
+  echo "  --- the holder moves the position in, with the ordinary CLI ---"
+  spl-token -C "$W/borrower.yml" transfer "$MINT" "$UNITS" "$MBE" --confidential >/dev/null
+  echo "    transferred confidentially; it lands in the escrow's PENDING balance"
+
+  echo "  --- and nobody could settle it, because the owner is a program ---"
+  read -r DEC AVAIL PUB OWNER < <(ct "$MBE")
+  NEWDEC=$(cargo run --quiet -p confide-ct --bin provision -- decryptable "$W/lender.json" "$MINT" "$MBE" "$UNITS" "$(bh)" "$W/mb-escrow-keys.json" "$FEE" 2>/dev/null || true)
+  go "apply-pending" "$(cargo run --quiet -p confide-ct --bin seizure-client -- apply-pending "$W/lender.json" "$PROGRAM" "$MBE" "$MINT" 1 "$NEWDEC" "$(bh)")"
+  read -r DEC AVAIL PUB OWNER < <(ct "$MBE")
+  printf '    escrow    '; cargo run --quiet -p confide-ct --bin read-balance -- "$W/mb-escrow-keys.json" "$DEC" "$AVAIL" 2>/dev/null | sed -n '3p' | sed 's/^ *//'
+
+  echo
+  echo "  --- the lender builds the seizure route and records the loan ---"
+  LENDER_PK2=$(python3 -c "import json;print(json.load(open('$W/lender-keys.json'))['elgamal_pubkey_b64'])")
+  mbctx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$W/lender.json" "$W/mb-escrow-keys.json" \
+    "$DEC" "$AVAIL" "$LENDER_PK2" "$AUDITOR_PK" all "$(bh)" "$W/mbctx.json" "$MBLOAN" "$W/mbkeys" "$1" \
+    "$FLOOR_BASE"; }
+  mbctx none >/dev/null 2>"$W/mb1.err"
+  MBRANGE=$(python3 -c "import json;print(json.load(open('$W/mbctx.json'))['range'])")
+  MBALT=$(solana -u "$R" -k "$W/lender.json" address-lookup-table create --authority "$(solana-keygen pubkey "$W/lender.json")" \
+    | grep -oE 'Lookup Table Address: [1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  solana -u "$R" -k "$W/lender.json" address-lookup-table extend "$MBALT" --addresses "$MBRANGE,$MBLOAN" >/dev/null
+  sleep 3
+  mbctx "$MBALT" > "$W/mbtxs.txt" 2>"$W/mb2.err"
+  n=0; while read -r TX; do n=$((n+1)); go "proof tx $n" "$TX" >/dev/null || exit 1; done < "$W/mbtxs.txt"
+  echo "    $n proof transactions confirmed, built by the LENDER over their own escrow"
+
+  cargo run --quiet -p confide-ct --bin seizure-client -- originate-attested "$W/lender.json" "$PROGRAM" "$W/mbctx.json" \
+    "$MBE" "$DEST" "$MINT" "$(solana-keygen pubkey "$W/lender.json")" \
+    "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" "$W/lender.json" "$(bh)" > "$W/mborig.txt" 2>/dev/null
+  go "originate-attested" "$(cat "$W/mborig.txt")"
+
+  echo
+  echo "  --- what the lender sees when they check their own loan ---"
+  finalized "$MBLOAN" || echo "    (the record did not finalize within two minutes)"
+  RPC="$R" PROGRAM="$PROGRAM" ./scripts/lender-check.sh "$MBLOAN" "$DEST" "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" || true
+  exit 0
+fi
 
 if [ "$MODE" = open ]; then
   # Stop here. Everything above is the borrower's half: the collateral is locked under the loan PDA,

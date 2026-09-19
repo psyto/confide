@@ -16,7 +16,10 @@
 //! answers one question — *is this loan what the borrower says it is, and is the collateral out of
 //! their hands?* Everything about the asset's risk is a separate document, `docs/packets/`.
 use confide_seizure::solana_program::pubkey::Pubkey;
-use confide_seizure::{context_is_armed, floor_is_proved, floor_mode, FLOOR_ATTESTED, LOAN_LEN_V1};
+use confide_seizure::{
+    context_is_armed, floor_is_proved, floor_mode, FLOOR_ATTESTED, LOAN_LEN, LOAN_LEN_V1,
+    LOAN_LEN_V2,
+};
 use solana_address::Address;
 use std::str::FromStr;
 
@@ -34,7 +37,6 @@ const OFF_PRINCIPAL: usize = 233;
 const OFF_RATIO_BPS: usize = 241;
 const OFF_SEIZED: usize = 414;
 const OFF_RELEASED: usize = 739;
-const LOAN_LEN_V2: usize = 740;
 const LOAN_TAG: u8 = 1;
 
 // Proof types, as the ZK program writes them into a context account.
@@ -55,11 +57,15 @@ fn rpc(url: &str, body: String) -> serde_json::Value {
     serde_json::from_slice(&out.stdout).expect("rpc returned something that is not json")
 }
 
-fn account(url: &str, key: &str) -> Option<Acct> {
+/// Read at an explicit commitment rather than whatever the endpoint defaults to. A lender is
+/// deciding whether to part with money against this record, so the default here is `finalized`:
+/// a `confirmed` record can still be dropped, and the whole point of the check is that it is not
+/// taking anybody's word for anything.
+fn account(url: &str, key: &str, commitment: &str) -> Option<Acct> {
     let v = rpc(
         url,
         format!(
-            r#"{{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["{key}",{{"encoding":"base64"}}]}}"#
+            r#"{{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["{key}",{{"encoding":"base64","commitment":"{commitment}"}}]}}"#
         ),
     );
     let val = v.get("result")?.get("value")?;
@@ -82,7 +88,7 @@ fn escrow_confidential(url: &str, key: &str) -> Option<([u8; 32], [u8; 64])> {
     let v = rpc(
         url,
         format!(
-            r#"{{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["{key}",{{"encoding":"jsonParsed"}}]}}"#
+            r#"{{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["{key}",{{"encoding":"jsonParsed","commitment":"finalized"}}]}}"#
         ),
     );
     let exts = v["result"]["value"]["data"]["parsed"]["info"]["extensions"].as_array()?;
@@ -134,8 +140,15 @@ fn main() {
     };
 
     println!("\n\x1b[1mTHE LOAN\x1b[0m — is it this program's, and is it still open");
-    let Some(loan) = account(url, loan_key) else {
-        println!("  \x1b[31m✗\x1b[0m no account at {loan_key}");
+    let Some(loan) = account(url, loan_key, "finalized") else {
+        // Not the same answer as "there is no loan". Saying so is the difference between a lender
+        // walking away and a lender waiting thirty seconds.
+        if account(url, loan_key, "confirmed").is_some() {
+            println!("  \x1b[31m✗\x1b[0m {loan_key} exists but is not finalized yet");
+            println!("      \x1b[2mit was written recently and could still be dropped; nothing here is checkable until it is finalized\x1b[0m");
+        } else {
+            println!("  \x1b[31m✗\x1b[0m no account at {loan_key} (read at finalized)");
+        }
         std::process::exit(1);
     };
     check(
@@ -150,7 +163,15 @@ fn main() {
             "{} bytes, tag {} — v{}",
             loan.data.len(),
             loan.data[0],
-            if loan.data.len() >= LOAN_LEN_V2 { 2 } else { 1 }
+            // Widest first. Written the other way round once, and a v3 record reported itself
+            // as v2 — the one field a reader uses to decide whether the floor-mode byte is there.
+            if loan.data.len() >= LOAN_LEN {
+                3
+            } else if loan.data.len() >= LOAN_LEN_V2 {
+                2
+            } else {
+                1
+            }
         ),
     );
     if loan.data.len() < LOAN_LEN_V1 {
@@ -180,7 +201,7 @@ fn main() {
     );
 
     println!("\n\x1b[1mTHE COLLATERAL\x1b[0m — is it out of the borrower's hands");
-    let Some(esc) = account(url, &escrow.to_string()) else {
+    let Some(esc) = account(url, &escrow.to_string(), "finalized") else {
         println!("  \x1b[31m✗\x1b[0m the escrow {escrow} does not exist");
         std::process::exit(1);
     };
@@ -196,7 +217,7 @@ fn main() {
     let eq = addr_at(&loan.data, OFF_CTX_EQUALITY);
     let va = addr_at(&loan.data, OFF_CTX_VALIDITY);
     let rp = addr_at(&loan.data, OFF_CTX_RANGE);
-    let ctx = |k: &Address| account(url, &k.to_string());
+    let ctx = |k: &Address| account(url, &k.to_string(), "finalized");
     let (Some(eq_a), Some(va_a), Some(rp_a)) = (ctx(&eq), ctx(&va), ctx(&rp)) else {
         println!("  \x1b[31m✗\x1b[0m one of the seizure proof contexts is gone — the seizure cannot execute");
         std::process::exit(1);

@@ -57,12 +57,20 @@ Kamino reserve. The `$0` stands.
 | | who | what they already have | what they still need |
 |---|---|---|---|
 | 1 | a holder whose approved position is in a **non-ATA** account | the account, already approved and pledgeable | a lender who will underwrite on a proved floor |
-| 1b | a holder whose position is in an **ATA** — the common case | the position | another account, which needs the issuer |
+| 1b | a holder whose position is in an **ATA** — the common case | the position, and `spl-token transfer --confidential` | a lender willing to open the escrow and attest the floor |
 | 2 | a **fund or desk** wanting a loan without publishing its book | the position, publicly held | to configure confidentially — one issuer approval |
 | 3 | a **vault curator** | capital and a mandate | everything in [`THE-PINCER.md`](THE-PINCER.md): a venue-side integration |
 
-**Row 1 needs nobody's permission and is rarer than it sounds. Row 1b is most holders. Row 3 needs a protocol's roadmap.** The month was written for
-row 3 and the mechanism was always row 1.
+**Row 1 needs nobody's permission and is rarer than it sounds. Row 1b is most holders, and as of
+2026-09-19 it runs** — the lender opens the escrow, hands it to the loan PDA empty, and the holder
+moves the position in with the ordinary CLI ([`THE-PINCER.md`](THE-PINCER.md)). **Row 3 needs a
+protocol's roadmap.** The month was written for row 3 and the mechanism was always row 1.
+
+**Row 1b costs the proved floor**, and that is the whole of what it costs: the escrow's keys are
+the lender's, so the floor is attested by the lender rather than verified by the chain. For a
+lender pricing their own risk that is no loss. It means such a loan cannot be shown to a third
+party, and `lender-check.sh` prints that rather than hiding it. **The bilateral buyer is unaffected;
+the syndication buyer is not reachable this way.**
 
 ## Demand validation — what has been done, and it is very little
 

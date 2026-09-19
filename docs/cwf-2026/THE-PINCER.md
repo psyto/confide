@@ -157,6 +157,10 @@ on a mint with `autoApproveNewAccounts: false` is the gate. An escrow pre-approv
 loan PDA *before* the holder funds it would need the PDA to apply a pending balance, which the
 program has no instruction for. **Recorded as unsolved rather than as an idea.**
 
+> **Solved and run — 2026-09-19, later still.** The missing instruction is the whole of it. The
+> program now has `apply_pending` (discriminant 5), and `MODE=ata ./scripts/seizure-e2e.sh` runs
+> the ATA holder end to end on devnet. See the next section.
+
 ---
 
 ## Would a better issuer fix it? — asked 2026-09-19, and the answer is no
@@ -201,3 +205,55 @@ alongside the token. That mechanism is what this repository is. **Confide is wha
 Backpack would adopt, not what would replace them** — and a twenty-three-day project claiming to
 compete with regulated issuers, with no custody, prospectus or licence behind it, would be read as
 naive by anyone who looked.
+
+---
+
+## The ATA holder, reached — 2026-09-19, run on devnet
+
+The section above recorded the ATA case as unsolved and named what was missing: a PDA-owned escrow
+cannot apply its own pending balance, because a program holds no keys and `ApplyPendingBalance`
+needs the account's owner to sign. That is one instruction, and it now exists.
+
+**The order is inverted.** Instead of the holder handing over an account they cannot hand over, the
+**lender** opens an escrow, has it approved, and hands *that* to the loan PDA while it is still
+empty. The holder then moves the position in with `spl-token transfer --confidential` — the
+ordinary CLI, nothing from this repository — and it lands in the escrow's **pending** balance,
+where it is stuck, because the owner is a program. `apply_pending` is the program signing for its
+own escrow, and it refuses if a loan record already exists over that escrow, so it cannot be used
+to move the balance out from under proofs that were built against it.
+
+Run on devnet, every address readable:
+
+```
+holder ATA   F3cAsGnqFda7VrK7qMCVqGX65R5YccfhGupoRzBKB4L8   immutableOwner — never pledgeable
+escrow       5vrhLBsyqMybiuH5555cmK15BpA22e8SpbSgY9y9cCku   opened by the LENDER, handed over empty
+loan PDA     7aveKFCE3Fr6HvJDQRqSN6RicTJqnxTFuKs7vKt76CZB   741 bytes, v3, floor mode ATTESTED
+```
+
+### The statement, fourth version
+
+| the holder's position sits in… | can they pledge it? | who asks the issuer | the floor is |
+|---|---|---|---|
+| a token account with its own keypair | **yes** | nobody — already approved | **proved** |
+| an **associated token account** — the ordinary case | **yes, via the lender's escrow** | the **lender**, once per loan | **attested** |
+
+**What changed is who stands at the gate, not whether the gate is there.** Somebody still asks the
+issuer to approve the escrow. But it is now the lender — a repeat counterparty with a relationship,
+asking for the accounts they will use — instead of every holder individually, one at a time, to
+borrow once. That is the difference between a gate a business walks through and a gate a retail
+holder gives up at.
+
+### What it costs, said before anybody reads it as free
+
+**The floor stops being proved.** The escrow's ElGamal key is the lender's, so the lender reads the
+balance and signs for it: mode B, `FLOOR_ATTESTED`. For the lender's own book that is no loss —
+they are attesting to a number they themselves decrypted, with their own money at risk. **For
+anyone else it is worth nothing**, and `lender-check.sh` says so in those words rather than passing
+the check quietly:
+
+> *this floor was ASSERTED, not proved — Nothing on chain verified 100000. … If it is not you, this
+> record proves nothing about the collateral's size.*
+
+So a loan made this way cannot be sold on, syndicated, or used as evidence to a third party. **The
+proved floor and the reachable holder are, for now, alternatives.** Closing that gap means the PDA
+proving a floor over a balance whose key it does not hold, and that is not built.

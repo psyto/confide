@@ -94,10 +94,19 @@ if [ "$IMMUTABLE" = yes ]; then
       SetAuthority on it fails with TokenError::ImmutableOwner. A wallet creating a token account
       for you creates an ATA, so this is the ordinary case rather than an unlucky one.
 
-      What it would take: the position has to sit in a token account created with its own keypair.
-      Opening one on a mint with autoApproveNewAccounts false means asking the issuer to approve
-      it — which is the gate in docs/cwf-2026/THE-PINCER.md, and it is the whole of what this
-      script was meant to avoid.
+      There is a way, and it is not this script. Your LENDER opens the escrow, has the issuer
+      approve it, and hands it to the loan PDA while it is still empty. You then move the position
+      in yourself with the ordinary CLI:
+
+          spl-token transfer <mint> <amount> <the escrow they give you> --confidential
+
+      Nothing of this repository runs on your side, and you never give up an account. Run
+      `MODE=ata ./scripts/seizure-e2e.sh` to watch both halves of it end to end.
+
+      What it costs: the escrow's keys are the lender's, so the floor on the loan is the lender's
+      assertion rather than something the chain verified. For them that is fine — it is their money
+      against a number they decrypted themselves. It means the loan proves nothing to a third
+      party, and `lender-check.sh` says so rather than passing it quietly.
 
 WHY
   exit 1
