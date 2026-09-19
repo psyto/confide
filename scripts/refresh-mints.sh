@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 # Re-pull every tokenized-equity mint on Solana into web/mints.json.
 #
-# Two issuers, not one:
+# Three issuers, not one, and they do not have the same product:
 #   Backed Finance (xStocks)      — Swiss-issued, own ISIN, third-party product
 #   Backpack Securities           — US CUSIP, described by the issuer as a security entitlement
+#   PreStocks                     — pre-IPO private companies, added 2026-09-19
+#
+# PreStocks matters more than its eight mints suggest. Backed and Backpack both tokenize LISTED
+# equity; PreStocks tokenizes companies with no public market at all — SpaceX, OpenAI, Anthropic,
+# Neuralink. A third issuer, arriving independently at the same confidential-transfer configuration
+# in a different asset class, is what turns "two issuers did the same thing" into a property of the
+# substrate rather than a coincidence between two companies.
+#
+# Tessera is deliberately NOT here and its absence is the point: its T-SpaceX, T-OpenAI and
+# T-Kalshi are Token-2022 with no confidential-transfer extension at all, so there is nothing to
+# leave empty and nothing Confide can say about them. Checked on mainnet 2026-09-19. Not every
+# issuer enables this — which is why the claim is about the ones that do.
 #
 # Both paginate or bury the mint in a nested field, and taking the first page of either gives you a
 # confident, wrong answer.
@@ -47,13 +59,21 @@ for a in get("https://api.backpack.exchange/api/v1/assets"):
                                           "issuer": "Backpack", "cusip": cusip[sym]}
             break
 
+# --- PreStocks: a flat list, mint under `mint` ---
+for a in get("https://prestocks.com/api/prestocks"):
+    m = a.get("contract_address")
+    if not m:
+        continue
+    rows[m] = {"symbol": a.get("symbol"), "name": a.get("name") or a.get("symbol"),
+               "mint": m, "underlying": a.get("symbol"), "issuer": "PreStocks"}
+
 out = sorted(rows.values(), key=lambda r: (r["issuer"], r["symbol"]))
 json.dump(out, open("web/mints.json", "w"), indent=1)
 
 from collections import Counter
 c = Counter(r["issuer"] for r in out)
 print("%d mints -> web/mints.json   (%s)" % (len(out), ", ".join("%s %d" % kv for kv in c.items())))
-for s in ("NVDAx", "TSLAx", "SPYx", "AAPLx", "NVDA.US", "AAPL.US"):
+for s in ("NVDAx", "TSLAx", "SPYx", "AAPLx", "NVDA.US", "AAPL.US", "SPACEX", "OPENAI"):
     assert any(r["symbol"] == s for r in out), s + " missing — the fetch is incomplete"
 print("the symbols the page watches are all present")
 PY

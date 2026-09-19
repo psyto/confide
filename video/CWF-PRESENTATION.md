@@ -23,7 +23,7 @@ and the draft did not:
   watching.
 - **It reframes in seven words.** *"Nobody attacked anything. The chain simply publishes it."* The
   draft had no equivalent, and without one the opening reads as an accusation nobody made.
-- **It shows before it counts.** A fund buying NVIDIA across a quarter, watched; *then* the 1,869
+- **It shows before it counts.** A fund buying NVIDIA across a quarter, watched; *then* the 1,992
   lands as a reveal. The draft spent its statistics before the viewer had felt anything.
 - **It has one moment.** *"The chain says it holds nothing."* — pause — *"It holds a hundred and
   seventy-three thousand shares."* The draft put an abstraction in that slot.
@@ -45,13 +45,13 @@ has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 |---|---|---|---|---|---|
 | 1 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
 | 2 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 3 | already shipped | 20 + 2 | 45 | 139 | the mint scan finishing, the auditor slot empty |
+| 3 | already shipped | 22 + 2 | 49 | 137 | the mint scan finishing, the auditor slot empty |
 | 4 | whose money | 19 | 43 | 140 | the 19 Kamino reserves, live |
 | 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
 | 6 | what runs | 25 | 55 | 135 | the proofs accepted by Solana's ZK program; the seizure on devnet |
 | 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
 | 8 | what you can run | 19 | 41 | 134 | `./scripts/packet.sh NVDAx`, then the page URL |
-| | | **166 s** | **346** | | |
+| | | **168 s** | **350** | | |
 
 ## The script
 
@@ -74,12 +74,16 @@ is the strongest ten seconds available and it is borrowed from the published cut
 
 ### 3 — already shipped · +2 s silence
 
-> Solana already built this. Eighteen hundred and sixty-nine tokenized stocks have confidential
-> transfers switched on, from two issuers with nothing to do with each other. And every one of them
-> leaves the auditor key empty, because the only key on offer reads everyone's everything, forever.
+> Solana already built this. Nearly two thousand tokenized stocks have confidential transfers
+> switched on, from three issuers with nothing to do with each other — listed equity and pre-IPO
+> alike. Every one of them leaves the auditor key empty, because the only key on offer reads
+> everyone's everything, forever.
 
-*Shows:* the scan finishing, the slot empty. **Two issuers arriving independently at the same dead
-end is the line** — one company being careful is a story about that company.
+*Shows:* the scan finishing, the slot empty. **Three issuers arriving independently at the same dead
+end is the line** — one company being careful is a story about that company, and the third arrived
+after the script was written. **"Nearly two thousand" rather than the exact count on purpose**: the
+issuers keep minting, the number moved twice in four days, and a narration track cannot be
+re-recorded every time it does. The figure on screen comes off the chain at render time.
 
 ### 4 — whose money
 

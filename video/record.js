@@ -67,6 +67,13 @@ if ((collateral.match(/err\s*:\s*None/g) || []).length < 2) throw new Error("ref
 const manifestPath = path.join(dir, "segments", "manifest.json");
 
 // ── the cut ──────────────────────────────────────────────────────────────────────────────────────
+// The mint count and issuer count are read at render time, not written into the page. The slot
+// scene said "All 1,869" and "Two, independently" as literals until 2026-09-19, when a third
+// issuer appeared and neither the page nor any test noticed.
+const MINTS = JSON.parse(readFileSync(path.join(repo, "web/mints.json"), "utf8"));
+const MINT_COUNT = MINTS.length.toLocaleString("en-US");
+const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
+
 const scenes = [
   {
     file: "01-title.mp4",
@@ -75,7 +82,7 @@ const scenes = [
     hold: 8.1,
   },
   { file: "02-leak.mp4", kind: "leak", hold: 7.5 },
-  { file: "03-empty-slot.mp4", kind: "slot", hold: 21.0 },
+  { file: "03-empty-slot.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, hold: 21.0 },
   { file: "04-four-views.mp4", kind: "views", hold: 13.2 },
   {
     file: "05-benefits.mp4",

@@ -169,14 +169,14 @@ async function slot(s){
     +'<div class="row"><span class="k">program</span><span>Token-2022</span></div>'
     +'<div class="row"><span class="k">confidential transfers</span><span class="ok">ON</span></div>'
     +'<div class="slot">auditor key<br><b>EMPTY</b></div></div>').join("");
-  const els=put('<div><div class="cap fade">Two issuers with nothing to do with each other. '
+  const els=put('<div><div class="cap fade">'+(s.issuers||2)+' issuers with nothing to do with each other. '
    +'Read from mainnet just now.</div>'
    +'<div class="cards">'+cards+'</div>'
    +'<div class="lede fade" style="margin-top:30px;font-size:22px">'
-   +'<b>All 1,869 of them.</b> The privacy is already shipped and nobody can use it &mdash; '
+   +'<b>All '+(s.mints||'1,869')+' of them.</b> The privacy is already shipped and nobody can use it &mdash; '
    +'the only key on offer reads <span class="hl">everyone\'s everything, forever</span>.</div>'
-   +'<div class="cap fade" style="margin:14px 0 0">One issuer would be a quirk. Two, independently, '
-   +'is the problem.</div></div>');
+   +'<div class="cap fade" style="margin:14px 0 0">One issuer would be a quirk. '
+   +((s.issuers||2)>2?'Three':'Two')+', independently, is the problem.</div></div>');
   await sleep(80); await reveal(els,180); await out(rest(s,t0));
 }
 async function views(s){

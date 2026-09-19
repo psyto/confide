@@ -116,6 +116,13 @@ const script = [...md.matchAll(/^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n(
   .map((m) => m[3].replace(/^> ?/gm, "").trim().replace(/\n+/g, " "));
 if (script.length !== 8) throw new Error(`CWF-PRESENTATION.md: expected 8 scripted scenes, found ${script.length}`);
 
+// The mint count and issuer count are read at render time, not written into the page. The slot
+// scene said "All 1,869" and "Two, independently" as literals until 2026-09-19, when a third
+// issuer appeared and neither the page nor any test noticed.
+const MINTS = JSON.parse(readFileSync(path.join(repo, "web/mints.json"), "utf8"));
+const MINT_COUNT = MINTS.length.toLocaleString("en-US");
+const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
+
 const scenes = [
   { file: "01-your-position.mp4", kind: "leak", total: HOLD[0] },
   {
@@ -129,7 +136,7 @@ const scenes = [
             emphasis: ["public balance     0", "173000 units"] },
     total: HOLD[1],
   },
-  { file: "03-already-shipped.mp4", kind: "slot", total: HOLD[2] },
+  { file: "03-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[2] },
   {
     file: "04-whose-money.mp4", kind: "reserves",
     label: "Kamino, read just now.",

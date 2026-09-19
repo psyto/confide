@@ -18,12 +18,19 @@ post quoting a number the page contradicts is worse than no post. Current readin
 > **Every tokenized stock on Solana ships a privacy feature nobody can use. Here is exactly what it
 > costs, in someone else's numbers.**
 >
-> All 1,869 tokenized-equity mints on Solana — 732 from Backed, 1,137 from Backpack — have Token-2022
-> confidential transfers switched on. Every single one leaves the auditor key empty. Two issuers
-> with nothing to do with each other arrived at the same configuration, which makes it a property of
-> the market rather than a choice by either of them. The reason is that the only disclosure model on
-> offer is a global key that reads everyone's everything, forever: fill it and every holder is
-> readable by one party for good, leave it null and no holder can prove anything to anyone.
+> All 1,992 tokenized-equity mints on Solana have Token-2022 confidential transfers switched on, and
+> **every single one leaves the auditor key empty.** Backed 828, Backpack 1,156, PreStocks 8 —
+> **three issuers with nothing to do with each other**, and not even the same product: Backed and
+> Backpack tokenize listed equity, PreStocks tokenizes companies with no public market at all
+> (SpaceX, OpenAI, Anthropic, Neuralink). Three of them arriving independently at the same
+> configuration, across two different asset classes, makes it a property of the substrate rather
+> than a choice by any of them. The reason is that the only disclosure model on offer is a global
+> key that reads everyone's everything, forever: fill it and every holder is readable by one party
+> for good, leave it null and no holder can prove anything to anyone.
+>
+> (Not every issuer even gets that far. Tessera's T-SpaceX, T-OpenAI and T-Kalshi are Token-2022
+> with **no confidential-transfer extension at all** — there is nothing to leave empty, and no way
+> to hold them privately in the first place.)
 >
 > That would be a curiosity, except people are already lending against these tokens. Kamino has 19
 > tokenized-equity reserves live right now. **$22.0 m deposited, $83.0 m of borrowing that their own
@@ -43,7 +50,7 @@ post quoting a number the page contradicts is worse than no post. Current readin
 > the path of every escrow. **They are the same field read from two sides**, and satisfying either
 > forces the other.
 >
-> Which side is the market on? **1,869 of 1,869.** Zero auto-approve. There is no mint on the
+> Which side is the market on? **1,992 of 1,992.** Zero auto-approve. There is no mint on the
 > ungated side, so this is not solved by picking a different ticker, and no amount of engineering
 > outside Kamino or the issuers removes it.
 >
@@ -54,7 +61,7 @@ post quoting a number the page contradicts is worse than no post. Current readin
 > go away.**
 >
 > Everything above is checkable without taking my word for it. The decision page reads any of the
-> 1,869 from mainnet in your browser: https://psyto.github.io/confide/kamino.html
+> 1,992 from mainnet in your browser: https://psyto.github.io/confide/kamino.html
 > Code, scripts and the fourteen generated admission packets: https://github.com/psyto/confide
 >
 > **If I have read Kamino's source wrong, I would rather find out from you than from a judge.**
@@ -63,8 +70,8 @@ post quoting a number the page contradicts is worse than no post. Current readin
 
 ## Short form
 
-> Every tokenized stock on Solana — all 1,869, from two unrelated issuers — ships confidential
-> transfers with the auditor key empty.
+> Every tokenized stock on Solana — all 1,992, from three unrelated issuers, listed equity and
+> pre-IPO alike — ships confidential transfers with the auditor key empty.
 >
 > Kamino lends against them: $22.0 m deposited, $83.0 m authorised (19/09 02:01 UTC).
 > $0 of it is reachable if you want your position private.
@@ -73,7 +80,7 @@ post quoting a number the page contradicts is worse than no post. Current readin
 > `constraints.rs:131`, auto-approve must be false — is the same line that makes the issuer
 > approve every escrow. Same field, two sides.
 >
-> 1,869 of 1,869 are on the gated side. Not solvable by picking another ticker.
+> 1,992 of 1,992 are on the gated side. Not solvable by picking another ticker.
 >
 > Check it yourself: psyto.github.io/confide/kamino.html
 

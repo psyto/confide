@@ -117,6 +117,35 @@ print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).grou
 # the chain moved from $21.1m to $22.0m and six documents plus the packet GENERATOR still said the
 # old number — the generator being the bad one, because regenerating the fourteen packets did not
 # fix them. Anything that quotes a figure in millions has to match capacity.json or say why.
+# The mint count, which was restated in forty files and went stale in all of them at once when a
+# third issuer appeared on 2026-09-19. Same rule as the market totals: prose that speaks in the
+# present tense has to match the file. Dated records — the reviews, the published cut's script and
+# its YouTube description — describe a moment and are deliberately not listed.
+echo
+echo "  THE MINT COUNT — prose against web/mints.json"
+python3 - <<'PY' && ok "every quoted mint count matches web/mints.json" || bad "a quoted mint count has drifted — ./scripts/refresh-mints.sh, then fix the prose"
+import json, re, sys, pathlib
+mints = json.load(open("web/mints.json"))
+want = {"{:,}".format(len(mints)), str(len(mints))}
+files = ["README.md", "STATUS.md", "DESIGN.md", "docs/ONCHAIN.md", "docs/27-DAYS.md",
+         "docs/cwf-2026/THE-PINCER.md", "docs/cwf-2026/FOUNDER-MARKET-FIT.md",
+         "docs/cwf-2026/POST.md", "_submission/full.md", "web/index.html", "web/kamino.html"]
+bad = []
+for f in files:
+    t = pathlib.Path(f).read_text(encoding="utf-8")
+    # Only figures in a mint-count context. A bare four-digit number is as likely to be a
+    # character limit or one issuer's share, and flagging those taught the check to cry wolf.
+    pats = [r"([1-9],\d{3}) of \1", r"([1-9],\d{3}) (?:tokenized|mints|tokenized-equity)",
+            r"(?:all|any of the|the other) ([1-9],\d{3})\b", r"\bof the ([1-9],\d{3})\b"]
+    found = {m if isinstance(m, str) else m[0] for p2 in pats for m in re.findall(p2, t)}
+    for n in found:
+        if n not in want:
+            bad.append("%s says %s; web/mints.json holds %s" % (f, n, "{:,}".format(len(mints))))
+for b in sorted(set(bad))[:8]:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PY
+
 echo
 echo "  THE MARKET TOTALS — prose against the file that computes them"
 python3 - <<'PY' && ok "every quoted \$m figure matches web/capacity.json" || bad "a quoted \$m figure has drifted from web/capacity.json — ./scripts/capacity.sh, then fix the prose"

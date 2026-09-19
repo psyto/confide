@@ -36,8 +36,8 @@ together into one claim:
 This is not a claim that requires having worked in the industry. It requires reading what is on
 chain, and it is **falsifiable, which is why it is worth stating**: if an issuer shipped a
 disclosure model tomorrow, the claim would be dead. Instead, every mint says the opposite —
-**1,869 tokenized-equity mints with confidential transfers switched on and the auditor slot empty,
-from two issuers with nothing to do with each other** (`./scripts/slot-scan.sh`, mainnet). One
+**1,992 tokenized-equity mints with confidential transfers switched on and the auditor slot empty,
+from three issuers with nothing to do with each other** (`./scripts/slot-scan.sh`, mainnet). One
 issuer leaving it empty is a story about that issuer. Two, independently, is the market.
 
 ### 2. The founder changed their mind about the customer, in public, with a date on it
@@ -80,7 +80,7 @@ Phrased for the form. Each is checkable against the repository.
 
 **What firsthand observation led to this problem?**
 That tokenized equity is new enough that the layer around it has not been built, and that the gap is
-visible on chain: 1,869 mints ship a privacy feature with its only key left empty, because the one
+visible on chain: 1,992 mints ship a privacy feature with its only key left empty, because the one
 disclosure model on offer — a global key reading everyone's everything, forever — is one no holder
 should accept and no issuer should hold.
 

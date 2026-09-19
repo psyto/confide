@@ -2,17 +2,17 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/p1aQuEnzhQk) · no wallet, no API key, no install
 
-**1,869 tokenized stocks on Solana have confidential transfers switched on. Not one of them can be
+**1,992 tokenized stocks on Solana have confidential transfers switched on. Not one of them can be
 used.** Two independent issuers, every mint they publish checked rather than sampled —
 `./scripts/slot-scan.sh`:
 
 ```
-checked  1869 tokenized-equity mints on Solana
+checked  1992 tokenized-equity mints on Solana
   Backed     EMPTY   732      Swiss-issued, own ISIN (xStocks)
   Backpack   EMPTY   1137     US CUSIP, a security entitlement by the issuer's own description
 ```
 
-*The list comes from both issuers' own asset APIs (`scripts/refresh-mints.sh`), so the scan is
+*The list comes from each issuer's own asset API (`scripts/refresh-mints.sh`), so the scan is
 exhaustive over what Backed and Backpack publish and is not an issuer census of Solana.*
 
 One issuer would be a quirk. Two, arriving independently at the same dead end, is the shape of the
@@ -94,7 +94,7 @@ lender needs now run on devnet — the check, and the seizure.
 > requires them to be **inert** — `constraints.rs:187`, `:194`, `:201`, `:131`. **The ordinary
 > deposit path applies them to the depositor's own account** (`lending_checks.rs:186`), so
 > collateral carrying confidential value cannot get in, and what cannot get in cannot be borrowed
-> against or liquidated. **1,869 of 1,869** tokenized-equity mints clear every other condition.
+> against or liquidated. **1,992 of 1,992** tokenized-equity mints clear every other condition.
 >
 > And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %. At the
 > reserves' own prices that is **$22.0 m of tokenized stock deposited** and **$83.0 m of borrowing
@@ -173,11 +173,11 @@ watch. Source in
 
 ```bash
 ./scripts/kamino-verdict.sh  # can Kamino take confidential collateral — read out of its own source
-./scripts/kamino-admissible.sh # the same question against all 1,869, not one
+./scripts/kamino-admissible.sh # the same question against all 1,992, not one
 ./scripts/kamino-reserves.sh  # which tokenized stocks Kamino already lends against, on what terms
 ./scripts/packet.sh --all     # an admission packet for every mint that has a Kamino reserve
 ./scripts/capacity.sh         # what is on the table in dollars, and how much a confidential holder reaches
-./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,869, both issuers
+./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,992, three issuers
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
@@ -194,7 +194,7 @@ cd programs/confide-seizure && cargo test    # 39 more, over the seizure program
 
 `healthcheck.sh` covers the mainnet finding on NVDAx, the devnet program, account, mirror mint and
 its account gate, the anchored disclosure, the keys quoted in `docs/ONCHAIN.md`, and the four
-published links. **It is not a proof that every sentence here is true** — the 1,869-mint premise is
+published links. **It is not a proof that every sentence here is true** — the 1,992-mint premise is
 `slot-scan.sh`, and prose it does not know about can still rot. It is the set of claims worth
 failing loudly.
 
@@ -225,7 +225,7 @@ and two dates.** Deploying a program costs devnet rent proportional to its size,
 refuses — see [docs/DURABILITY.md](docs/DURABILITY.md) for the figures and for which keypair pays.
 
 Data the repo pins rather than fetching at runtime is refreshable:
-`./scripts/refresh-mints.sh` (the 1,869 mints) and `./scripts/refresh-actions.sh` (the corporate-action
+`./scripts/refresh-mints.sh` (the 1,992 mints) and `./scripts/refresh-actions.sh` (the corporate-action
 schedule). Both assert on what they must contain rather than writing whatever came back.
 
 The invariants are written as claims you can run, not prose:
@@ -320,7 +320,7 @@ program.
 The premise itself — every auditor slot still empty — is checked by `./scripts/slot-scan.sh` against
 mainnet and by `./scripts/healthcheck.sh` on the four mints this repo pins. The unit test named
 `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` guards those four constants and
-would stay green if Backed filled a key on any of the other 1,865. Its own doc comment says so; this
+would stay green if Backed filled a key on any mint outside those four. Its own doc comment says so; this
 sentence used to claim the opposite.
 
 ## Built on

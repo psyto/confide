@@ -1,5 +1,12 @@
 [
  {
+  "symbol": "AAFx",
+  "name": "Airtel Africa xStock",
+  "mint": "XskX5tputmVo1uUb7uSg27iuEpyQ1SFn53y9YR3Y6WX",
+  "underlying": "AAFL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "AAOIx",
   "name": "Applied Optoelectronics xStock",
   "mint": "XsGHwSbPaUJu6r5dtJLHXkXenPgCQf4Sx2hb4e2sbCZ",
@@ -25,6 +32,20 @@
   "name": "AbbVie xStock",
   "mint": "XswbinNKyPmzTa5CskMbCPvMW6G5CMnZXZEeQSSQoie",
   "underlying": "ABBV",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "ABDNx",
+  "name": "Aberdeen xStock",
+  "mint": "XsubSc7YfpRsK6PbLVnK3XCZRJkQEkkiRhvG9f2JQan",
+  "underlying": "ABDNL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "ABFx",
+  "name": "Associated British Foods xStock",
+  "mint": "XsWsRPQPNCtZj5G5k8bWRdAfd1x55Ct7qkHUiSzXZNH",
+  "underlying": "ABFL",
   "issuer": "Backed"
  },
  {
@@ -137,6 +158,13 @@
   "name": "Assurant xStock",
   "mint": "Xs7U7QD6amUpjuEZ1VM3rx5TSrKtJ3r7xU1aRcTHhw8",
   "underlying": "AIZ",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "AJBx",
+  "name": "AJ Bell xStock",
+  "mint": "XsKU1nPbnBTpVegUrMaapscL7thNmQTq365eLYidPZa",
+  "underlying": "AJBL",
   "issuer": "Backed"
  },
  {
@@ -266,6 +294,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "ANTOx",
+  "name": "Antofagasta xStock",
+  "mint": "Xs1HiAY2BitDiQVebt2EJ6TFueRLia5ujSGqnh3vp3w",
+  "underlying": "ANTOL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "APAx",
   "name": "APA xStock",
   "mint": "Xs5b8FFins32GgTH2FURV3Y873yA85jc4kZ6r8H9YyR",
@@ -385,6 +420,20 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "AUTO.GBx",
+  "name": "Auto Trader xStock",
+  "mint": "Xsuq2i3pPWHHM8o8i2jgvD9uAU6Kkzosi335iKRa1my",
+  "underlying": "AUTOL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "AV.GBx",
+  "name": "Aviva xStock",
+  "mint": "XsRUVKNpti3iMz5pU7nUTrfGHLVuLUKuh3qxXSsE9wZ",
+  "underlying": "AVL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "AVGOx",
   "name": "Broadcom xStock",
   "mint": "XsgSaSvNSqLTtFuyWPBhK9196Xb9Bbdyjj4fH3cPJGo",
@@ -441,6 +490,20 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "BA.GBx",
+  "name": "BAE Systems xStock",
+  "mint": "XsnpBvWb5ZUcVb9MhDUt8Jir8RyaFADjVujpF3REcME",
+  "underlying": "BAL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BAB.GBx",
+  "name": "Babcock International xStock",
+  "mint": "XsPJ7qgHgLGn78JVNuoMGsCXQsThJQmxcp3yGK86X5X",
+  "underlying": "BABL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "BACx",
   "name": "Bank of America xStock",
   "mint": "XswsQk4duEQmCbGzfqUUWYmi7pV7xpJ9eEmLHXCaEQP",
@@ -469,10 +532,31 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "BARCx",
+  "name": "Barclays xStock",
+  "mint": "Xsj83vfdGZqBQ6pTHJ7PRqWQBnm9UgUzWqT2fUztwme",
+  "underlying": "BARCL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BATSx",
+  "name": "British American Tobacco xStock",
+  "mint": "XsnHFPDQiWVbmZobbRvneRpvY5BL7AGKcJ9kMJGvUgk",
+  "underlying": "BATSL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "BAx",
   "name": "Boeing xStock",
   "mint": "XsBcnKnZMsPaerLiUQ4eMFy4Fjysot4RugYXYDjiqCP",
   "underlying": "BA",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BBY.GBx",
+  "name": "Balfour Beatty xStock",
+  "mint": "Xs6aBbsUaqRPpA1dCW5VTr3nytceSMFqf126ZixvFPk",
+  "underlying": "BBYL",
   "issuer": "Backed"
  },
  {
@@ -497,10 +581,24 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "BEZ.GBx",
+  "name": "Beazley xStock",
+  "mint": "Xs4gTbX4XBcHxQq5qFSn56zhuoe6NKwsSqKk3LoX226",
+  "underlying": "BEZL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "BEx",
   "name": "Bloom Energy xStock",
   "mint": "XsmGSEqT6VXpVis3aVBDxaNwPgHNXbkjkVUCncsLkNB",
   "underlying": "BE",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BGEOx",
+  "name": "Lion Finance xStock",
+  "mint": "XsbAuLnxt5JVLzcLC3nCo4h3jnRiFqxXzauVe4bHvDp",
+  "underlying": "BGEOL",
   "issuer": "Backed"
  },
  {
@@ -522,6 +620,13 @@
   "name": "BJ's Wholesale Club xStock",
   "mint": "XsAGAMqiAySqkUDf5ZXCTR4v6hSgcBj7mQQy7w3Nja7",
   "underlying": "BJ",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BKG.GBx",
+  "name": "Berkeley xStock",
+  "mint": "XseXMu35TstUhDHfyQZJjt8Gk3k1Ki7sNgJ7zyr5CNA",
+  "underlying": "BKGL",
   "issuer": "Backed"
  },
  {
@@ -553,6 +658,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "BNZLx",
+  "name": "Bunzl xStock",
+  "mint": "XsV7rBpwfAQVkKK1NmNTCMzJQvsVwXYxFciVYXeA9nV",
+  "underlying": "BNZLL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "BOCHKx",
   "name": "BOC Hong Kong xStock",
   "mint": "XsdyyYJSCDVHBdAujSoWnQEDBQi9Y85YxoGVueJNf1j",
@@ -571,6 +683,20 @@
   "name": "RoboStrategy xStock",
   "mint": "Xsi8P9r7ZWDBBnBj9JTfnKWqyKNV19X2CQPWQsGdjnS",
   "underlying": "BOT",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BPx",
+  "name": "BP xStock",
+  "mint": "Xsdj6kUSZo4jUq1bpJ5bh9z4deR1fVY6Fn8e2ySvrkJ",
+  "underlying": "BPL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BRBYx",
+  "name": "Burberry xStock",
+  "mint": "XsijAxbQkBewsynCHDdEgHWavY3pwuRkJfGi8jNdAnL",
+  "underlying": "BRBYL",
   "issuer": "Backed"
  },
  {
@@ -609,6 +735,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "BT.Ax",
+  "name": "BT xStock",
+  "mint": "XskY8Q5ZHvhVJuBBor4iVjCbztSfBV4hsmEtoa9vPnT",
+  "underlying": "BTL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "BTBTx",
   "name": "Bit Digital xStock",
   "mint": "XsPLBFy59Q3hY59KLAJur8QyvziMF4xUxGTxXqXE7cT",
@@ -620,6 +753,13 @@
   "name": "Bitgo xStock",
   "mint": "XsvHMmbDcd14DHHW16PkxPGW7ks77ehxUv1E9Zmxgj4",
   "underlying": "BTGO",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BTRWx",
+  "name": "Barratt Redrow xStock",
+  "mint": "Xs7Lv15gA3Rjf5W7jVjcLAnjce7LKHSknMRHBVAyNzT",
+  "underlying": "BTRWL",
   "issuer": "Backed"
  },
  {
@@ -641,6 +781,13 @@
   "name": "BWX Technologies xStock",
   "mint": "XsVpsBVdjW8SWAu4jAjqJ9qnGYzBmUzNDRcG6uiZ9xo",
   "underlying": "BWXT",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "BWYx",
+  "name": "Bellway xStock",
+  "mint": "Xs8NtGgTwwHAjdDvdhjcDBDYbEoF39ggi5QKKAwWu97",
+  "underlying": "BWYL",
   "issuer": "Backed"
  },
  {
@@ -697,6 +844,13 @@
   "name": "Cerebras Systems xStock",
   "mint": "Xstq9oUsBPd8LSyivHhnt8P8t9xK5RYoM9P6izLczvm",
   "underlying": "CBRS",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "CCC.GBx",
+  "name": "Computacenter xStock",
+  "mint": "Xsox8WPr1nuUYChxKKzXbwAdAUdtD3B62RBQHrwB2ws",
+  "underlying": "CCCL",
   "issuer": "Backed"
  },
  {
@@ -931,6 +1085,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "CNA.GBx",
+  "name": "Centrica xStock",
+  "mint": "XsNZhxqPhitSup6kZr8NUZZnhGzZy4JiYsPwJUCwuCu",
+  "underlying": "CNAL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "CNCx",
   "name": "Centene xStock",
   "mint": "XsegJtRFtvC3qqhNYdN2QXxumd2fjvWQmithQZ33ehS",
@@ -1064,6 +1225,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "CRDAx",
+  "name": "Croda International xStock",
+  "mint": "XshoX6qy11Q4HHcaJKU6h7JVmVqXiAXPLACiGLqLTxZ",
+  "underlying": "CRDAL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "CRESBx",
   "name": "China Resources Beer Holdings xStock",
   "mint": "XsptDxuTbpFNx9vic5CMDRiGzPDhNDcVp2i9bUdTktn",
@@ -1169,6 +1337,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "CTEC.GBx",
+  "name": "ConvaTec xStock",
+  "mint": "Xsftt2xCow4ZccztK3ai3tV8qjfNvMbiUMYmQUknLNV",
+  "underlying": "CTECL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "CTFJWx",
   "name": "Chow Tai Fook Jewellery xStock",
   "mint": "XsWgkRwEBBWSzUTXX8CU84LpRheciMF8o6ZdSMR3Gny",
@@ -1204,6 +1379,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "CURYx",
+  "name": "Currys xStock",
+  "mint": "XsmG4XcqGRyjuk6j6mAwT7QeVPom76GbXipBZ5TkirK",
+  "underlying": "CURYL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "CVNAx",
   "name": "Carvana xStock",
   "mint": "Xs8YT2AdFmjuG2HFjcvVTpXPwneiKNHMrR49muHY7z9",
@@ -1222,6 +1404,13 @@
   "name": "Chevron xStock",
   "mint": "XsNNMt7WTNA2sV3jrb1NNfNgapxRF5i4i6GcnTRRHts",
   "underlying": "CVX",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "CWK.GBx",
+  "name": "Cranswick xStock",
+  "mint": "XsESJA8L13skRorjkG6pMxKk2cPLthCeXoDsThiLhzc",
+  "underlying": "CWKL",
   "issuer": "Backed"
  },
  {
@@ -1292,6 +1481,13 @@
   "name": "DFDV xStock",
   "mint": "Xs2yquAgsHByNzx68WJC55WHjHBvG9JsMB7CWjTLyPy",
   "underlying": "DFDV",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "DGEx",
+  "name": "Diageo xStock",
+  "mint": "Xskk9MXXX59dgwbj8hSZZUCc6RCyVVE2jLk7AsAQhyw",
+  "underlying": "DGEL",
   "issuer": "Backed"
  },
  {
@@ -1386,6 +1582,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "DPLMx",
+  "name": "Diploma xStock",
+  "mint": "XsF4YQ8jUR5rRPoGdwSCEmJ9xrfJ2vorWoMxyzFCJp2",
+  "underlying": "DPLML",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "DRAMx",
   "name": "Storage ETF (Roundhill) xStock",
   "mint": "XsESMQjWyDczCfiJ3QDjZEiaKwp1uXYp3TMZ6viuLcm",
@@ -1397,6 +1600,13 @@
   "name": "Darden Restaurants xStock",
   "mint": "XsTNaRrDQtFJi56TAQbmk6tHzWQvihWGoafKSJzbJdY",
   "underlying": "DRI",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "DRXx",
+  "name": "Drax xStock",
+  "mint": "XsTf4WyqGhigiQC8mg3RHresyrwT5M9hmWKnvrnZ7wm",
+  "underlying": "DRXL",
   "issuer": "Backed"
  },
  {
@@ -1446,6 +1656,13 @@
   "name": "Ecolab xStock",
   "mint": "XsPPAW5wuUa1ALN1NstEkUAajbwycXTRxtWoLfFriy4",
   "underlying": "ECL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "EDV.GBx",
+  "name": "Endeavour Mining xStock",
+  "mint": "Xs3qTSWcLp9WP4BH8ihLcFsRLzv8CRw2tWHymhEfyTx",
+  "underlying": "EDVL",
   "issuer": "Backed"
  },
  {
@@ -1512,6 +1729,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "EMGx",
+  "name": "Man xStock",
+  "mint": "XshcRvneh6GUWeFNREY6bKRGHZvPK7C44TQyykaoaTf",
+  "underlying": "EMGL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "EMRx",
   "name": "Emerson Electric xStock",
   "mint": "Xskqq9tKh2gc1PBJHf2q6jMgBpt3AojT3HVkWhjoY5h",
@@ -1537,6 +1761,13 @@
   "name": "Entegris xStock",
   "mint": "XsD6kFBZCYumf4awQ9tgFFh8m2HGJBtTFdLYt7HcwRr",
   "underlying": "ENTG",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "ENTx",
+  "name": "Entain xStock",
+  "mint": "XsSZgwA3SCj5n6TEtkpfUweKXUuZWFgAJtn7SmkBBMV",
+  "underlying": "ENTL",
   "issuer": "Backed"
  },
  {
@@ -1677,6 +1908,13 @@
   "name": "Expeditors International of Washington xStock",
   "mint": "XsJB61YjcXkEf114fDGMMnWhhFf8a1x12Z6hARUUeAM",
   "underlying": "EXPD",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "EXPNx",
+  "name": "Experian xStock",
+  "mint": "XscBXwj1Xq7g5ayDwJCFUGF3UDxxsVVCnZuwpxMxSQ6",
+  "underlying": "EXPNL",
   "issuer": "Backed"
  },
  {
@@ -1834,6 +2072,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "FRESx",
+  "name": "Fresnillo xStock",
+  "mint": "XsLQMGy9R2u9nHvh3G7qbtRyREEXvXpUfjjmdLaxGcd",
+  "underlying": "FRESL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "FSLRx",
   "name": "First Solar xStock",
   "mint": "XsSbcq8MZso4DLAMgtRKjzCvgozdh4sje8PLj45kxJZ",
@@ -1880,6 +2125,13 @@
   "name": "Ford Motor xStock",
   "mint": "XsBNJXGu68cBH5hgFxdqZkeh8cMQv32jeEtZtYTYvfS",
   "underlying": "F",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "GAWx",
+  "name": "Games Workshop xStock",
+  "mint": "XsmZTCZ66HMRvK87zwbicJ9sthjqvu5GVbRV57mgTpc",
+  "underlying": "GAWL",
   "issuer": "Backed"
  },
  {
@@ -1981,6 +2233,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "GLENx",
+  "name": "Glencore xStock",
+  "mint": "Xsz31C1hLJRXCxcaw84pMhkUHdF54B5MSFdTWYLZ4Rh",
+  "underlying": "GLENL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "GLPIx",
   "name": "Gaming and Leisure Properties xStock",
   "mint": "XsbohnBoBBbXg2scrDy9yzBqeXhNN53F5dcjwFF8XFR",
@@ -2030,6 +2289,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "GNS.GBx",
+  "name": "Genus xStock",
+  "mint": "XsXXe4iwbJv1PkEgKzGL1oSrVtWT6QDD1qtuahFTfs7",
+  "underlying": "GNSL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "GOOGLx",
   "name": "Alphabet xStock",
   "mint": "XsCPL9dNWBMvFtTmwcCA5v3xWPSMEBCszbQdiLLq6aN",
@@ -2048,6 +2314,13 @@
   "name": "Global Payments xStock",
   "mint": "XsKbuY5Wyzz7Zzz6uxi69hHdxhrE53d746Sb1jBZyD1",
   "underlying": "GPN",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "GRG.GBx",
+  "name": "Greggs xStock",
+  "mint": "Xs1D8Yx8LY1gvRSXQZgyoapZDE6Yt8uM5QZDtunbQ4F",
+  "underlying": "GRGL",
   "issuer": "Backed"
  },
  {
@@ -2100,6 +2373,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "HBR.GBx",
+  "name": "Harbour Energy xStock",
+  "mint": "XsCb3TJrQb5f84KcDPsJSFf27aXfZkjK13J7v2T5zXG",
+  "underlying": "HBRL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "HCAx",
   "name": "HCA Healthcare xStock",
   "mint": "XsJ5MSaKx3Y6bKEfmrRmovGEdRM53KWqEEHuaNUsQpD",
@@ -2128,6 +2408,20 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "HIK.GBx",
+  "name": "Hikma Pharmaceuticals xStock",
+  "mint": "XsFWXQ48hsQxeYdoJg1tGsfANfFHPs8kbJZL8kkFgj6",
+  "underlying": "HIKL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "HILSx",
+  "name": "Hill & Smith xStock",
+  "mint": "XsNdESrkPBsGBunmPxvjkwfxLmBHn2yFukbLQpNzDBx",
+  "underlying": "HILSL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "HIMSx",
   "name": "Hims & Hers xStock",
   "mint": "XsprHSJzwz3qmHcEf7j7WcUk6hMUL4sPLuAdWaSY1oh",
@@ -2146,6 +2440,13 @@
   "name": "Hong Kong Exchanges and Clearing xStock",
   "mint": "XsZQt7qW9vH5SWXZPsn1ZAybCSkq5MW2r6HGo891u1X",
   "underlying": "388",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "HLMAx",
+  "name": "Halma xStock",
+  "mint": "XsaX2uNTuVMLS9suc8XfPmUqgjtatcJKgdfRtnXJ4pf",
+  "underlying": "HLMAL",
   "issuer": "Backed"
  },
  {
@@ -2198,10 +2499,24 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "HSBAx",
+  "name": "HSBC xStock",
+  "mint": "XsiABbf6PQ8oPyZhqWg9LFTh8K3xMbZWp3ybjhyhE9d",
+  "underlying": "HSBAL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "HSTx",
   "name": "Host Hotels & Resorts xStock",
   "mint": "XsYbh3CsZ4qCMcfPKEtHAYbePTywhwCkFvdN7Hx3bHA",
   "underlying": "HST",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "HSXx",
+  "name": "Hiscox xStock",
+  "mint": "XspeLbZhQF4oGcAPPJXhtfAToSMh273TBFSh77B47dv",
+  "underlying": "HSXL",
   "issuer": "Backed"
  },
  {
@@ -2233,10 +2548,24 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "HWDNx",
+  "name": "Howden Joinery xStock",
+  "mint": "XsderJhLTce957LZDcv8xkuRmjSU3AoaSbAWmf8BYHw",
+  "underlying": "HWDNL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "HWMx",
   "name": "Howmet Aerospace xStock",
   "mint": "XsCX8NnXq3qx6zUxXxWwjV2yQnGc9C5y6UyXvE6RG7r",
   "underlying": "HWM",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "IAG.GBx",
+  "name": "International Consolidated Airlines xStock",
+  "mint": "Xs1Y89cAPbtcPfkwmKY5E4EaET1SsLxwQ63pa6MR2YZ",
+  "underlying": "IAGL",
   "issuer": "Backed"
  },
  {
@@ -2268,6 +2597,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "ICG.GBx",
+  "name": "ICG xStock",
+  "mint": "XsWbh78UsRczCGeJz2xAojo918D13ks9dst83AbscyS",
+  "underlying": "ICGL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "IDXXx",
   "name": "IDEXX Laboratories xStock",
   "mint": "Xs2AVjDnFK6ShEvX6QfSFodHpy8znSBhimB4kvTFTa1",
@@ -2296,6 +2632,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "IGGx",
+  "name": "IG xStock",
+  "mint": "Xs5Fz9gcBsdz4NnLeTfcMNtE3qgFeXWugY1NctAmEGh",
+  "underlying": "IGGL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "IJRx",
   "name": "S&P Small Cap xStock",
   "mint": "XsyZcb97BzETAqi9BoP2C9D196MiMNBisGMVNje2Thz",
@@ -2310,10 +2653,38 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "IMBx",
+  "name": "Imperial Brands xStock",
+  "mint": "XsQCHobH4od9Yx67dDShF2YG34XYqApCeHVuvj9kchM",
+  "underlying": "IMBL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "IMIx",
+  "name": "IMI xStock",
+  "mint": "Xsyi8wDoaaArbZKnyFAVz9LJhed9iLeNxT586QwPwR6",
+  "underlying": "IMIL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "INCHx",
+  "name": "Inchcape xStock",
+  "mint": "XsdWpVSHxm4AZShvAkLBRa5PCaJq3LCdaamJGxgJLrd",
+  "underlying": "INCHL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "INCYx",
   "name": "Incyte xStock",
   "mint": "XspemH4yD2PcDuZP4g8whQEeve3jrGbX331ksyaR9G3",
   "underlying": "INCY",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "INF.GBx",
+  "name": "Informa xStock",
+  "mint": "XsM8Hrm1jMh4yAH3DpoVR66YNDV1a4xf5k2mmHv6Wqk",
+  "underlying": "INFL",
   "issuer": "Backed"
  },
  {
@@ -2349,6 +2720,20 @@
   "name": "Invitation Homes xStock",
   "mint": "XsQFmCYjvPGgqYYAth5zNhW8NSCabdamgM1kXMorJs7",
   "underlying": "INVH",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "INVPx",
+  "name": "Investec xStock",
+  "mint": "Xs2Ejy1fMZtHrC4yb9nM4XzsVHVKnJEENi9PZmPqo1L",
+  "underlying": "INVPL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "IONQx",
+  "name": "IonQ xStock",
+  "mint": "XsqFgFeprZEpayi92MTQGheZiNFmTi2TRJRmrHjCzMx",
+  "underlying": "IONQ",
   "issuer": "Backed"
  },
  {
@@ -2450,6 +2835,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "JD.GBx",
+  "name": "JD Sports Fashion xStock",
+  "mint": "Xsm81A6dr8mgCUBWPXSV47M2m8BkzFkkcq81vTMGqCL",
+  "underlying": "JDL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "JDHLTx",
   "name": "JD Health International xStock",
   "mint": "Xsaax31N2dJnKtkDbbJfvdYgz1zWmgx3xaYf6yjNuWx",
@@ -2531,6 +2923,13 @@
   "name": "KeyCorp xStock",
   "mint": "Xs5GgkWgze4XgU7NC5iXJqvbGufxQBJKH5JRN2MSPWQ",
   "underlying": "KEY",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "KGFx",
+  "name": "Kingfisher xStock",
+  "mint": "XsN6LCaYcQq8Gn1awaCdMge96gHyGaqFBmHmv8Zj2FW",
+  "underlying": "KGFL",
   "issuer": "Backed"
  },
  {
@@ -2667,6 +3066,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "LGENx",
+  "name": "Legal & General xStock",
+  "mint": "Xs15uYmUhCJzemqtBvfVEfMW5KTPsuKMZg2MDL1rwxm",
+  "underlying": "LGENL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "LHXx",
   "name": "L3Harris Technologies xStock",
   "mint": "XssE4tb3kc3f5V5cRL6dsuffP9wDm915W4bAsyNf62A",
@@ -2692,6 +3098,13 @@
   "name": "Lumentum Holdings Inc. xStock",
   "mint": "XsexQ9qqNbDkLE6XwCN9ceVhLo8Lxc7UheVR6eBkKyo",
   "underlying": "LITE",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "LLOYx",
+  "name": "Lloyds Banking xStock",
+  "mint": "XskhwomYHra5YRCmeH3PtiCZY9Lx9QprrxvREdk1YEQ",
+  "underlying": "LLOYL",
   "issuer": "Backed"
  },
  {
@@ -2748,6 +3161,20 @@
   "name": "Lattice Semiconductor xStock",
   "mint": "XsjaZAWtPNA1ZWqbPZxaDWtx1h9L23ucmRquwuSHQuf",
   "underlying": "LSCC",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "LSEGx",
+  "name": "London Stock Exchange xStock",
+  "mint": "Xsgqwc7TpDNsYD8j4MLTzwqJuECdAcvW4jB9S62FDfX",
+  "underlying": "LSEGL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "LULUx",
+  "name": "lululemon xStock",
+  "mint": "XsDmtC5EpfzJoCzDN2SJP98xpCsSR2CqdZauJSvHNXT",
+  "underlying": "LULU",
   "issuer": "Backed"
  },
  {
@@ -2912,6 +3339,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "MKS.GBx",
+  "name": "Marks & Spencer xStock",
+  "mint": "XsGy52e7g5whVEwDxXoN7JNxyfffh4Rr8QYvsXRgyNU",
+  "underlying": "MKSL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "MKSIx",
   "name": "MKS xStock",
   "mint": "XsVDmkYEQ3wwLkXKdkRmic3HroSbReejAcnY9eNmrRW",
@@ -2944,6 +3378,20 @@
   "name": "3M xStock",
   "mint": "XsTEo8W2L8JprN57bmJgatDT84z57ReJYizr5f32BfP",
   "underlying": "MMM",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "MNDIx",
+  "name": "Mondi xStock",
+  "mint": "XswrDgJ2NABYfT7TZzvkVG3XqSFRDkq2weMxeCURFxh",
+  "underlying": "MNDIL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "MNGx",
+  "name": "M&G xStock",
+  "mint": "XsBdWEWbrhQn3JUJA9UtmfatyQfWHtsczb6kaCFbPAF",
+  "underlying": "MNGL",
   "issuer": "Backed"
  },
  {
@@ -2986,6 +3434,13 @@
   "name": "Moderna xStock",
   "mint": "XsViHjyRbiSBskjizb1gszGTmZqtAH8TuqwJ7sB5AcP",
   "underlying": "MRNA",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "MROx",
+  "name": "Melrose Industries xStock",
+  "mint": "Xs8gEF9vKesfaRWz47hTQdiwi6DP55cQwbmZhmF5mYa",
+  "underlying": "MROL",
   "issuer": "Backed"
  },
  {
@@ -3150,6 +3605,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "NG.GBx",
+  "name": "National Grid xStock",
+  "mint": "Xsa4x5GF2utijLC8uY1DmPYKRpeHk9BT2QXkQD2ZRyz",
+  "underlying": "NGL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "NIx",
   "name": "NiSource xStock",
   "mint": "XsC3CiuRAFKN99m2ye6q7xrYMx4NuBdr1JR2gVWgFLD",
@@ -3266,6 +3728,13 @@
   "name": "NatWest xStock",
   "mint": "XsVXnJqySwKVHq3stnK9EKc7criyv5oTtrid7UJQot7",
   "underlying": "NWGL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "NXT.GBx",
+  "name": "Next xStock",
+  "mint": "Xs6MKSza8obeoELdtqLfdr68QerhhQsYkEaqe56Wzez",
+  "underlying": "NXTL",
   "issuer": "Backed"
  },
  {
@@ -3626,6 +4095,20 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "PSN.GBx",
+  "name": "Persimmon xStock",
+  "mint": "XsJJviVjnT7MjnkPierCHLBTUHrhG7yj8Drscvb5x4Z",
+  "underlying": "PSNL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "PSONx",
+  "name": "Pearson xStock",
+  "mint": "Xsama45PWCDWjND9x92h7C7uNLbqX76VubnyvYBvku1",
+  "underlying": "PSONL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "PSXx",
   "name": "Phillips 66 xStock",
   "mint": "XsYvZVxiNdjuHQQzdCmf4TMSTBgvarV2gLi2akooV8V",
@@ -3672,6 +4155,13 @@
   "name": "Qualcomm xStock",
   "mint": "XsUUG8bjFN2KvzLTpzavvEKdAjMAeLTZiTeAQJ9uhvB",
   "underlying": "QCOM",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "QQ.GBx",
+  "name": "QinetiQ xStock",
+  "mint": "XsTzDSVHNfFRcbXY8LVnkDgg54FGrpDGzgR1exVf9Cu",
+  "underlying": "QQL",
   "issuer": "Backed"
  },
  {
@@ -3745,6 +4235,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "REL.GBx",
+  "name": "Relx xStock",
+  "mint": "XsBs8gVk5onjugkDigC45ixK3FadqH5kAxjGHEvfSdE",
+  "underlying": "RELL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "RFx",
   "name": "Regions Financial xStock",
   "mint": "Xsk2PGWHCQweEwYWNqA72KbuUdNz518MBzHSaBDLowq",
@@ -3808,6 +4305,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "RMVx",
+  "name": "Rightmove xStock",
+  "mint": "Xsm7Xcc4TtVQKdgEs7KBUVMimkWpMhqMwjaJ24G2sdn",
+  "underlying": "RMVL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "RNRx",
   "name": "RenaissanceRe xStock",
   "mint": "Xs5m7mD1sRUu3ryXiYNDqCTd67hQVZRSro2zxxWqTtn",
@@ -3864,10 +4368,24 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "RR.GBx",
+  "name": "Rolls-Royce xStock",
+  "mint": "XsAUxvbWEvvdgVnXs1LRbk17Bgjfv2Y6cskPTGu6zrU",
+  "underlying": "RRL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "RRXx",
   "name": "Regal Rexnord xStock",
   "mint": "XszxuQCqE72vU4ABTFDFwhs28AeSUHqzbWWVWDkhfYZ",
   "underlying": "RRX",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "RS1.GBx",
+  "name": "RS xStock",
+  "mint": "XsTkvkzwuaCi712NQXeHB2xMQYwVTX8F7bFPVD2ZEcA",
+  "underlying": "RS1L",
   "issuer": "Backed"
  },
  {
@@ -3882,6 +4400,13 @@
   "name": "Reliance xStock",
   "mint": "XskVwPpXzyc9Fc4vqvHJ5v4ojMDWyjzcdPYTK8vFrUy",
   "underlying": "RS",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "RTOx",
+  "name": "Rentokil Initial xStock",
+  "mint": "XswGtwn9kLnkHMih5HCmDg1Z2yYEfdP3YbFzwNKNY1Y",
+  "underlying": "RTOL",
   "issuer": "Backed"
  },
  {
@@ -3927,6 +4452,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SBRYx",
+  "name": "Sainsbury xStock",
+  "mint": "Xsy7nzWTjrfA9NBHBBPL6Hs3mQfKWXX6fk2mUPQEjpR",
+  "underlying": "SBRYL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SBUXx",
   "name": "Starbucks xStock",
   "mint": "Xs9gd8SGbYQn9kkUYQayn46BdqQbvvUshEF6ZpRAzM7",
@@ -3955,6 +4487,20 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SCT.GBx",
+  "name": "Softcat xStock",
+  "mint": "Xsb8yBrDit2zkPSgWQtddBZPJz5Mzi4fWqjd1k6Vhq5",
+  "underlying": "SCTL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "SGE.GBx",
+  "name": "Sage xStock",
+  "mint": "XsnVJZpyWBoxhzVAqNgXdaqDuyBCUffdoPrUgrfaT9S",
+  "underlying": "SGEL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SGIx",
   "name": "Somnigroup International xStock",
   "mint": "XsU3RZd5ufTcCJneLjDhTrU47ma9ypnhXyvJACRZrTv",
@@ -3980,6 +4526,13 @@
   "name": "SHEIN xStock",
   "mint": "Xs8w8HvDjT1DxYeHzhSkRT8wYUahJB9kRC7Fuiic2Hf",
   "underlying": "625",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "SHELx",
+  "name": "Shell xStock",
+  "mint": "XsZY1Ta5ubY2ohQT94HNDNADiHUvyeSQX1RkTV8omx8",
+  "underlying": "SHELL",
   "issuer": "Backed"
  },
  {
@@ -4053,6 +4606,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SMIN.GBx",
+  "name": "Smiths xStock",
+  "mint": "XspAgeHZ7DAtDP9Y3t56sTpuhCFY1GafqstYjcu13f7",
+  "underlying": "SMINL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SMOIHx",
   "name": "Smoore International xStock",
   "mint": "XswbKzrwuU9XaDu5w5xLXFwSwr9AbyusuP8SMYirr49",
@@ -4064,6 +4624,13 @@
   "name": "NuScale Power Corporation xStock",
   "mint": "XsrwdnwLHjVnyy7fgE2Pdwjp3czEm73jPjkSC5xzUBw",
   "underlying": "SMR",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "SN.GBx",
+  "name": "Smith & Nephew xStock",
+  "mint": "XsWYNagePVR7FDVei6E5xirRMKnRCxhUvKzDYwVzPzM",
+  "underlying": "SNL",
   "issuer": "Backed"
  },
  {
@@ -4186,6 +4753,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SPX.GBx",
+  "name": "Spirax xStock",
+  "mint": "XsiMJ43LZ4dLS1G6SSdeW7aDQnoECuKBQkobnheRrdV",
+  "underlying": "SPXL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SPYx",
   "name": "SP500 xStock",
   "mint": "XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W",
@@ -4200,10 +4774,31 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SSEx",
+  "name": "SSE xStock",
+  "mint": "XshHCWPTRVkNuNc7bqfdw9PzBZzrted9u8YQwdkw49e",
+  "underlying": "SSEL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SSNCx",
   "name": "SS&C Technologies xStock",
   "mint": "Xsq4wQVyggsJXzrjQK51M8bxK3duFaRegcX5Vxdbfcx",
   "underlying": "SSNC",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "STANx",
+  "name": "Standard Chartered xStock",
+  "mint": "Xs48goZtbChFs5wZtcypPZQHh9WmTRqzkqante4qSB5",
+  "underlying": "STANL",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "STJ.GBx",
+  "name": "St. James's Place xStock",
+  "mint": "XsfTAA7bScmYWJS3eCJ7exrDqUNtD9TjtZkKXWWSyZK",
+  "underlying": "STJL",
   "issuer": "Backed"
  },
  {
@@ -4256,6 +4851,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "SVTx",
+  "name": "Severn Trent xStock",
+  "mint": "Xs1V7BHojsDUQiNhsSm8TKpEyYrmox2gCzFUJ7b4t4q",
+  "underlying": "SVTL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "SWKx",
   "name": "Stanley Black & Decker xStock",
   "mint": "XsNotS1p6BsTADzMaZVu14SJbuH9V4CYYyRZ8mn6WAQ",
@@ -4305,6 +4907,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "TCAPx",
+  "name": "TP Icap xStock",
+  "mint": "XsreDw9sQZQzvMUbgAkdGvk9JD1A4q8Sbfb1pq8Zxcr",
+  "underlying": "TCAPL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "TCENTx",
   "name": "Tencent xStock",
   "mint": "XsXb7KCxcxTi6hqWfYyEe1kpTwtiCeU5TJbEz8N7RWn",
@@ -4330,6 +4939,13 @@
   "name": "Atlassian xStock",
   "mint": "XsLhefHBtc8r9nStXgXtu9tHeEWYRXxSXrpbnfwTJ7v",
   "underlying": "TEAM",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "TEFx",
+  "name": "Telefonica xStock",
+  "mint": "XsUShG8vjDVvpduyiY3jDbVif8ivGeAu3dB6RtmXJZ3",
+  "underlying": "TEFE",
   "issuer": "Backed"
  },
  {
@@ -4508,6 +5124,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "TW.GBx",
+  "name": "Taylor Wimpey xStock",
+  "mint": "XsJAv8xheV7udiAeM8DNduVAe4bg1s1SLp3uzJsCCvG",
+  "underlying": "TWL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "TWLOx",
   "name": "Twilio xStock",
   "mint": "XsQVYwNXBY7UNaLonk5qTbr3RzFC87CECGXWWfJomt2",
@@ -4582,6 +5205,13 @@
   "name": "Ulta Beauty xStock",
   "mint": "Xse5GAs99zAj5bzMAbwjooLn4AHn1Ny6nUcN6vt5vrR",
   "underlying": "ULTA",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "ULVRx",
+  "name": "Unilever xStock",
+  "mint": "XsNrNxXBab5oRAUnN9u2YzJzhJjLCo6YeJVcCEttL7V",
+  "underlying": "ULVRL",
   "issuer": "Backed"
  },
  {
@@ -4662,6 +5292,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "UU.GBx",
+  "name": "United Utilities xStock",
+  "mint": "XsSZEaqC9B6ac1aAYnNSXWUS1moV2MCYQMTFo6Cv7s9",
+  "underlying": "UUL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "UUUUx",
   "name": "Energy Fuels Inc. xStock",
   "mint": "XsYHvpLWfTfqdLkPbCc4eUT21eH521BRTXBypgzpEDH",
@@ -4732,10 +5369,24 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "VODx",
+  "name": "Vodafone xStock",
+  "mint": "XsPfiLnSyYwDLytKxdp5N8PsEPV3jV6GCPuhacgz5it",
+  "underlying": "VODL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "VOOx",
   "name": "Vanguard S&P 500 xStock",
   "mint": "Xsd7TduTbjuYCFL7Uoujb8SbkZLmUsuYNLn7KdvX21x",
   "underlying": "VOO",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "VOW3x",
+  "name": "Volkswagen xStock",
+  "mint": "XsLuVRftATQL3DgdBDYLqTAym468XKgrn27KUQdjbwT",
+  "underlying": "VOW3D",
   "issuer": "Backed"
  },
  {
@@ -4872,6 +5523,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "WEIRx",
+  "name": "Weir xStock",
+  "mint": "XsGWxUfzgE1Qq7eXjpeQwHC2TsgKzTXo5tXcsg9KRRd",
+  "underlying": "WEIRL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "WELLx",
   "name": "Welltower xStock",
   "mint": "XsuKHFvcZLWvhk8XcprK4tiAZRefQ4nfTyNs6b9BArz",
@@ -4935,6 +5593,13 @@
   "issuer": "Backed"
  },
  {
+  "symbol": "WPPx",
+  "name": "WPP xStock",
+  "mint": "Xs2ZYqqYG6xgBsRBw8Rhn9rCVggLitQMnW8KFKgxAVB",
+  "underlying": "WPPL",
+  "issuer": "Backed"
+ },
+ {
   "symbol": "WRBx",
   "name": "W.R. Berkley xStock",
   "mint": "XsnARtma2bEi2x1JuKuznZa1QzQkLaedxHW6KeUCz8J",
@@ -4967,6 +5632,13 @@
   "name": "West Pharmaceutical Services xStock",
   "mint": "XsptQPquxvzKZ7pZTXNhvtXRxFP8vvC6BmS6QL1PALe",
   "underlying": "WST",
+  "issuer": "Backed"
+ },
+ {
+  "symbol": "WTBx",
+  "name": "Whitbread xStock",
+  "mint": "XsPrcE2hM5cZP97YfxxEbtwHSyFGNtA8QmDCoiYsBNL",
+  "underlying": "WTBL",
   "issuer": "Backed"
  },
  {
@@ -5328,6 +6000,14 @@
   "name": "Agnico Eagle Mines Limited",
   "mint": "AEMhGUmSAGagwWsy1cYMzVRN9hwNEh3Z19nP72TJMKfL",
   "underlying": "AEM",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "AEO.US",
+  "name": "AEO.US",
+  "mint": "AEk1M7ehtv5f26FwcgoDgTHDzfJsAaDnhogvQAtYAyQM",
+  "underlying": "AEO",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -6292,6 +6972,22 @@
   "cusip": null
  },
  {
+  "symbol": "BOOM.US",
+  "name": "BOOM.US",
+  "mint": "BfkVqEbFrsU5JNANWUj4uVCbqK5T5CaiCKo53StGW7RS",
+  "underlying": "BOOM",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "BOOT.US",
+  "name": "BOOT.US",
+  "mint": "BfkRyjQFGC6A1fFcEAu22YqVYnXgEBukbRHc7BZRC1Kj",
+  "underlying": "BOOT",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "BOT.US",
   "name": "BOT.US",
   "mint": "BoTx8y9ynfdxf5ZjWtCoBVkff52qKA82ysaLU8ZM6d8T",
@@ -6488,6 +7184,14 @@
   "name": "Cardinal Health, Inc.",
   "mint": "CAH9kC4D7YGf1tr6An9LKHEjCS1Tn637Buxon2GB821X",
   "underlying": "CAH",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "CAKE.US",
+  "name": "CAKE.US",
+  "mint": "CAKEcebDN4vqwAHBgj4ApzBvYCXsLWdsqCfFHNfW6Rui",
+  "underlying": "CAKE",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -7196,6 +7900,14 @@
   "cusip": null
  },
  {
+  "symbol": "CYPH.US",
+  "name": "Cypherpunk Technologies Inc.",
+  "mint": "CYPHuMmCL1GxJWa2tsPhLKykC7GrHJTCHwbXD4g5uawK",
+  "underlying": "CYPH",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "CYTK.US",
   "name": "Cytokinetics, Incorporated",
   "mint": "CYTKUmoi5WEHtorweCnLzK7tNaSuvu1aWT2oUfgkZeei",
@@ -7460,6 +8172,14 @@
   "cusip": null
  },
  {
+  "symbol": "DOG.US",
+  "name": "DOG.US",
+  "mint": "D3TQfoTr91VjB6odUxZaQ18fRd8CzbiytMbHhNZ6MqVA",
+  "underlying": "DOG",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "DOV.US",
   "name": "Dover Corporation",
   "mint": "DsGPWzQGqTEjABtF9zNtk6TUwbpJdi4ihGLfjj2ri69b",
@@ -7600,6 +8320,14 @@
   "name": "Electronic Arts Inc.",
   "mint": "EA92ozyieBnw2pqDKAFnJVSVn3JB1Lnv6NNFn9wzpK6q",
   "underlying": "EA",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "EAT.US",
+  "name": "EAT.US",
+  "mint": "EATV5QsaHYmjX81nhWaUAG5LFadnUizJ2BeqnipEhXvL",
+  "underlying": "EAT",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -8356,10 +9084,26 @@
   "cusip": null
  },
  {
+  "symbol": "FUN.US",
+  "name": "FUN.US",
+  "mint": "FUNawcDwaH2SqxkvNDjhSqkSYccjFw1xNZXXWgTCm3fF",
+  "underlying": "FUN",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "FUTU.US",
   "name": "Futu Holdings Limited",
   "mint": "FUTU84rY7YZqF7umWmEHqSRAQaLtntDsvx1QYGeexp7v",
   "underlying": "FUTU",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "FWDI.US",
+  "name": "Forward Industries Inc",
+  "mint": "FWDtiB5fXHdVAewPqvHPL2dh4aBC1C6GacQbePoQXKjz",
+  "underlying": "FWDI",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -8628,6 +9372,14 @@
   "cusip": null
  },
  {
+  "symbol": "GRRR.US",
+  "name": "GRRR.US",
+  "mint": "GRRRZQtuDuZH3wjtNSTiv6qfb2MDSnpu77FmjJbs2nx",
+  "underlying": "GRRR",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "GS.US",
   "name": "The Goldman Sachs Group, Inc.",
   "mint": "GSsLRfhxVypZx9GNxs9CaFpeGFrWEnzTdtLQm1ifCTW9",
@@ -8784,6 +9536,14 @@
   "name": "HNGE.US",
   "mint": "HNGEAp6FoRne5VSEXngdTLsjW4F36cYebCWGEcLQhUMQ",
   "underlying": "HNGE",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "HOG.US",
+  "name": "HOG.US",
+  "mint": "HaZYCMj6FahfY93gFgtt5y2L6HrHorLpJZrE7myCB5FM",
+  "underlying": "HOG",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -9732,6 +10492,14 @@
   "cusip": null
  },
  {
+  "symbol": "LOVE.US",
+  "name": "LOVE.US",
+  "mint": "LvAuTiqFf9qb2gHWTQeBdmTY3uqCAqtB2nsqBQq6jpJ",
+  "underlying": "LOVE",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "LOW.US",
   "name": "Lowe's Companies, Inc.",
   "mint": "L2PmVSsJoPNUyEu8jeTd9t3rpAAop3LLyfcGkEuDGy1",
@@ -10104,6 +10872,14 @@
   "name": "Molina Healthcare, Inc.",
   "mint": "M9U3Y1PjYEdxBwTfRj56EgzbNvsriCrpNhLPSjwPUGu",
   "underlying": "MOH",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "MOO.US",
+  "name": "MOO.US",
+  "mint": "M1oa3XAaVSnZFTXWWscgdiB3VWNgZ9tagqQMB4H9osK",
+  "underlying": "MOO",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -10764,6 +11540,14 @@
   "cusip": null
  },
  {
+  "symbol": "OPEN.US",
+  "name": "OPEN.US",
+  "mint": "PENc87HhnvgH49KPGRfRMsLsE364o3WXfqLB8niowwM",
+  "underlying": "OPEN",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "ORCL.US",
   "name": "Oracle Corporation",
   "mint": "RCLiduhSAkYT5xZAbsx4Bsc9dN46cCG2w1HAEjjA4XT",
@@ -11068,6 +11852,14 @@
   "cusip": null
  },
  {
+  "symbol": "PLAY.US",
+  "name": "PLAY.US",
+  "mint": "PLAY2vTCB5kmkgVF1AK481UGgyeJMP8MFLwhwxob4hA",
+  "underlying": "PLAY",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "PLD.US",
   "name": "Prologis, Inc.",
   "mint": "PLDQyGCzRmeh5XeCdGvg7viYNTvtPQFc5kJ6gEgQ1Hm",
@@ -11253,9 +12045,17 @@
  },
  {
   "symbol": "PTN.US",
-  "name": "PTN.US",
+  "name": "Palatin Technologies, Inc.",
   "mint": "PTNzAfFAB4LvoUQEUUGrFMyUoRLExMYjH6CcfyQfsVP",
   "underlying": "PTN",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "PUMP.US",
+  "name": "PUMP.US",
+  "mint": "PUMPPHYa9QQuYhDK1RjC2dmpvigT7LgtofHr6k3M4wt",
+  "underlying": "PUMP",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -11684,6 +12484,14 @@
   "cusip": "75513E101"
  },
  {
+  "symbol": "RUM.US",
+  "name": "RUM Group Inc.",
+  "mint": "RUMsPfFZFnN1ZmGANwP7FNMJMjKH4m9RiMePrtVtLe7",
+  "underlying": "RUM",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "RVMD.US",
   "name": "Revolution Medicines, Inc.",
   "mint": "RVMDctWuKJUuHXpvpdTwrGo3LQZmYgWGfQsamJH5JFb",
@@ -11960,6 +12768,14 @@
   "name": "Shoals Technologies Group, Inc.",
   "mint": "SHLSBFzVeGFSgKKxqnMNDkJDpuJNWnxMAmcWD9Qqzof",
   "underlying": "SHLS",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
+  "symbol": "SHOO.US",
+  "name": "SHOO.US",
+  "mint": "SHDTSTNSfZjZhoJzzHhw696YxvwGUrHPMx1VDHRHvbM",
+  "underlying": "SHOO",
   "issuer": "Backpack",
   "cusip": null
  },
@@ -13892,6 +14708,14 @@
   "cusip": null
  },
  {
+  "symbol": "WOOF.US",
+  "name": "WOOF.US",
+  "mint": "Wnc6J8RGukVANXAzJhdELrLbL2etgFrdWiZ6jHmB4MY",
+  "underlying": "WOOF",
+  "issuer": "Backpack",
+  "cusip": null
+ },
+ {
   "symbol": "WPM.US",
   "name": "Wheaton Precious Metals Corp.",
   "mint": "WPMYNqn9wJXBsCa9BXcN7Q51wtJrbMq27ci7Dp4vTCk",
@@ -14218,5 +15042,61 @@
   "underlying": "ZTS",
   "issuer": "Backpack",
   "cusip": null
+ },
+ {
+  "symbol": "ANDURIL",
+  "name": "Anduril PreStocks",
+  "mint": "PresTj4Yc2bAR197Er7wz4UUKSfqt6FryBEdAriBoQB",
+  "underlying": "ANDURIL",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "ANTHROPIC",
+  "name": "Anthropic PreStocks",
+  "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
+  "underlying": "ANTHROPIC",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "FIGUREAI",
+  "name": "Figure AI PreStocks",
+  "mint": "PreZad18qfPtbxNpMtMuAuX2zVpvkEU8DnJx56faCWd",
+  "underlying": "FIGUREAI",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "KALSHI",
+  "name": "Kalshi PreStocks",
+  "mint": "PreLWGkkeqG1s4HEfFZSy9moCrJ7btsHuUtfcCeoRua",
+  "underlying": "KALSHI",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "NEURALINK",
+  "name": "Neuralink PreStocks",
+  "mint": "PrekqLJvJ3qVdXmBGDiexvwUTF4rLFDa6HWS4HJbw9S",
+  "underlying": "NEURALINK",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "OPENAI",
+  "name": "OpenAI PreStocks",
+  "mint": "PreweJYECqtQwBtpxHL171nL2K6umo692gTm7Q3rpgF",
+  "underlying": "OPENAI",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "POLYMARKET",
+  "name": "Polymarket PreStocks",
+  "mint": "Pre8AREmFPtoJFT8mQSXQLh56cwJmM7CFDRuoGBZiUP",
+  "underlying": "POLYMARKET",
+  "issuer": "PreStocks"
+ },
+ {
+  "symbol": "SPACEX",
+  "name": "SpaceX PreStocks",
+  "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
+  "underlying": "SPACEX",
+  "issuer": "PreStocks"
  }
 ]

@@ -300,7 +300,7 @@ w("  liquidity tokens\"*. So the setting that admits this mint to Kamino at all 
 w("  puts %s in the path of every escrow. The two requirements are one field read from two" % m["issuer"])
 w("  sides, and satisfying either one forces the other.")
 w("")
-w("  Measured across the whole asset class by `./scripts/slot-scan.sh`: **1,869 of 1,869")
+w("  Measured across the whole asset class by `./scripts/slot-scan.sh`: **{n:,} of {n:,}".format(n=len(mints)))
 w("  tokenized-equity mints on Solana set it false. Zero auto-approve.** There is no mint on the")
 w("  ungated side, so this is not solved by choosing a different ticker, and **no engineering on")
 w("  Confide's side removes it** — the floor can be proved, the collateral locked and the default")

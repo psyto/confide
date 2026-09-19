@@ -168,7 +168,7 @@ proposed cap $0"*, never *"the issuer has not signed"*. Facts, issuer assertions
 attestations and our own inference kept visibly apart.
 
 **3. The decision page** — **first version live, 2026-09-16**:
-[`web/kamino.html`](../web/kamino.html). Pick any of the 1,869 mints, and the browser reads it from
+[`web/kamino.html`](../web/kamino.html). Pick any of the 1,992 mints, and the browser reads it from
 mainnet and applies Kamino's rules: the facts with their provenance and their expiry, the verdict,
 and the missing condition **stated as its economic consequence** — *proposed cap $0, at any LLTV,
 not because the asset is risky but because the position cannot enter*. Facts, Kamino's rules and
@@ -184,7 +184,7 @@ anyone, from live chain data, without asking anyone's permission.* `./scripts/ca
 Computed from Kamino's own caps, LTVs and prices. Nobody had to agree to anything. And sharper than
 expected in both directions:
 
-> **1,869 of 1,869** tokenized-equity mints could be held by a Kamino reserve today.
+> **1,992 of 1,992** tokenized-equity mints could be held by a Kamino reserve today.
 > **0** of them can be held while the position is confidential.
 >
 > And the admission question is not hypothetical: **19 tokenized-equity reserves are live on

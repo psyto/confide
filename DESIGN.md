@@ -9,7 +9,7 @@
 Every tokenized-equity mint on Solana has the `confidentialTransferMint` extension **enabled** and
 `auditorElgamalPubkey` **null** — `NVDAx`, `TSLAx`, `SPYx`, `AAPLx`, all of them, readable in one
 unauthenticated RPC call. The ZK ElGamal Proof Program was re-enabled at epoch 982 in June 2026, so
-the substrate works. What the scan measures is narrower and enough: **not one of the 1,869 mints
+the substrate works. What the scan measures is narrower and enough: **not one of the 1,992 mints
 has an auditor key set**, so no holder of any of them can demonstrate a balance to anyone.
 
 Shipped, configured, inert. Not because it is immature: because Token-2022 offers exactly one

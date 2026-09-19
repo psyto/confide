@@ -23,15 +23,15 @@ same field, read from two sides.**
 
 ## Which side is the market on
 
-**All of it. 1,869 of 1,869.**
+**All of it. 1,992 of 1,992.**
 
 ```
   THE APPROVAL GATE — the same field Kamino reads at constraints.rs:131
-    1869 of 1869 set autoApproveNewAccounts = false
+    1992 of 1992 set autoApproveNewAccounts = false
     0 auto-approve, so 0 can hold a confidential position without the issuer
 ```
 
-Both issuers, independently, on every mint they have ever shipped: Backed 732, Backpack 1,137.
+All three issuers, independently, on every mint they have ever shipped: Backed 828, Backpack 1,156, PreStocks 8.
 **There is no mint in the population that escapes the gate**, so there is no version of this that
 is solved by picking a different ticker.
 

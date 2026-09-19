@@ -28,7 +28,7 @@ def check(m):
                        "params": [m['mint'], {"encoding": "jsonParsed"}]}).encode()
     req = urllib.request.Request(rpc, body,
                                  {"Content-Type": "application/json", "User-Agent": "confide"})
-    # 1,869 mints is enough volume to get rate-limited; back off rather than reporting a limit as
+    # Two thousand mints is enough volume to get rate-limited; back off rather than reporting a limit as
     # a finding, which is what an unretried error looks like in the output.
     for attempt in range(6):
         try:
@@ -62,7 +62,10 @@ if odd:
     print('  the finding has changed — update the docs before citing it')
     raise SystemExit(1)
 print('\n  every one of them: confidential transfers on, no auditor key.')
-print('  Two issuers, independently, reaching the same dead end.')
+# Derived. It said "Two issuers" for as long as there were two, and PreStocks made it wrong
+# without making it fail — the exact shape of every other stale number in this repository.
+n_iss = len({m.get('issuer', '?') for m in mints})
+print('  %d issuers, independently, reaching the same dead end.' % n_iss)
 
 # The approval gate, which is the other half of the pincer.
 #

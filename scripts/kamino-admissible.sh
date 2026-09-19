@@ -3,7 +3,7 @@
 #
 #   ./scripts/kamino-admissible.sh
 #
-# The 1,869-mint scan says how many of these tokens have confidential transfers switched on. That
+# The whole-population scan says how many of these tokens have confidential transfers switched on. That
 # is incidence. It is not the number that matters to a lender, which is how many of them a Kamino
 # reserve could hold at all — a different question with a different answer, and until now they were
 # the same number in this repository.
