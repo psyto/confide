@@ -5,7 +5,7 @@ Confide は **2つの大会に出る**。窓も、判定の対象も、名乗り
 | | Stocklana | Crypto World's Fair |
 |---|---|---|
 | 主催 | hackathons.solana.com | Colosseum |
-| 締切 | ~~2026-09-18 16:00 ET~~ **提出済み 2026-09-15** | **2026-10-12 23:59 PT** |
+| 締切 | ~~2026-09-18 16:00 ET~~ **提出済み 2026-09-15**。**⚠ 2026-09-19 に食い違い**: founder は「あと7日」と言い、hackathons.solana.com は Stocklana を **LIVE / Happening Now** と表示。ページに正確な日付は無く、**agent には確認できない**。フォームを見られるのは founder だけ。**締切が未到来で編集可能なら、この行が嘘になる** | **2026-10-12 23:59 PT** |
 | 開始 | — | **2026-09-14 06:00 PT**（= 13:00 UTC / 22:00 JST、Official Rules §5） |
 | 賞金 | $100,000（Solana Foundation） | Solana トラック $100,000（10件 × $10,000）／全体 $840,000 + seed $2.5M |
 | 審査 | 10-02 まで。判定は一問 — *could this be a real app that people will actually use?* | 7基準（web）と6基準（Official Rules §8）の**2系統**。両方とも [`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md) に出典つきで pin。**ここに書き写さない** — 一度腐った。勝者発表 12-05 |
@@ -60,7 +60,21 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
    生きている（確認 2026-09-15）。CWF の Official Rules §8(e) は **Open-source 自体が審査基準**なので、
    これは要件であると同時に加点でもある。
 
-## Stocklana は提出済み（2026-09-15）
+## Stocklana は提出済み（2026-09-15）— ただし窓がまだ開いている可能性
+
+**2026-09-19 の未決。** 上の表の通り、締切が過ぎたかどうかが確定していない。**確定させるのは founder
+の仕事**（フォームを見られるのが founder だけなので）。どちらでも損をしないように、
+`_submission/full.md` は**今日の時点で真になるまで更新した** — 提出フォームが編集可能なら貼り直す
+価値があり、閉じていても repo のリンク経由で判事に届くので、どのみち真である必要がある。
+
+**09-15 以降に 96 commit 入っている。** 提出文に反映したのは2つ:
+
+- **挟み撃ち** — `autoApproveNewAccounts` は Kamino が要求する設定であり、同時に発行体を経路に置く
+  設定。**1,869 / 1,869 が門の側**で、銘柄を変えても逃げられない
+- **escrow の2つ目の出口** — 差し押さえだけでなく**保有者に戻る道**が devnet で通った
+  （loan `9yfKfFD5…` が `released`）。返済ではなく attested release であることも明記
+
+文字数は 5,000 ちょうど。`docs-consistency.sh` が上限を検査している。
 
 3リンクとも生存を確認して出した。`healthcheck.sh` は8項目 all clear、`cargo test` 29。
 **判定は 10-02 まで続き、devnet はその間にリセットされうる。** 週次で `./scripts/healthcheck.sh` を
