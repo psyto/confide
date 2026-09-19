@@ -26,6 +26,10 @@ PRINCIPAL="${PRINCIPAL:-5000000}"  # cents — a $50,000 loan
 RATIO_BPS="${RATIO_BPS:-20000}"    # 200 % collateralisation
 PRICE_OK="${PRICE_OK:-100}"        # cents per token: exactly covers it
 PRICE_BAD="${PRICE_BAD:-99}"       # one cent under, and the loan is in default
+# Which exit to demonstrate. Same loan, same setup, two endings: `seize` is the lender taking it on
+# default, `release` is the holder getting it back. One script, because the twenty steps before the
+# branch are the same twenty steps and a second copy of them would drift within a week.
+MODE="${MODE:-seize}"
 
 rpc() { curl -s "$R" -H 'Content-Type: application/json' -d "$1"; }
 bh() { rpc '{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"commitment":"confirmed"}]}' \
@@ -137,11 +141,77 @@ echo "    owner is now $OWNER"
 [ "$OWNER" = "$LOAN" ] || { echo "    the escrow did not change hands"; exit 1; }
 
 echo "  --- the loan ---"
+# The last argument is the release authority: who may hand the collateral back. Recorded here,
+# while both sides are present, because the borrower arms the destination later and must not also
+# be able to choose the trigger. It is the lender, and it is the same key that signs the oracle
+# price — a separate key would be more realistic and would demonstrate nothing extra.
 cargo run --quiet -p confide-ct --bin seizure-client -- originate "$W/borrower.json" "$PROGRAM" "$W/ctx.json" \
   "$ESCROW" "$DEST" "$MINT" "$(solana-keygen pubkey "$W/lender.json")" \
-  "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" "$(bh)" > "$W/orig.txt" 2>/dev/null
+  "$Q_MIN" "$PRINCIPAL" "$RATIO_BPS" "$(solana-keygen pubkey "$W/lender.json")" "$(bh)" > "$W/orig.txt" 2>/dev/null
 go "originate" "$(cat "$W/orig.txt")"
 echo "    proved floor $Q_MIN tokens against a \$$((PRINCIPAL/100)) loan at $((RATIO_BPS/100))%"
+
+if [ "$MODE" = release ]; then
+  # ── the way back ───────────────────────────────────────────────────────────────────────────────
+  # Everything above is the same loan. What differs is which exit fires. The escrow used to have
+  # one, and it was the one the holder does not want.
+  echo "  --- the borrower's return account, configured the way the lender's was ---"
+  spl-token -C "$W/borrower.yml" create-account "$MINT" >/dev/null
+  BACK=$(spl-token -C "$W/borrower.yml" address --token "$MINT" --verbose 2>&1 \
+    | grep -oE 'Associated token address: *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  prov configure "$W/borrower.json" "$BACK" 0 "$W/back-keys.json"
+  go "issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve "$W/borrower.json" "$BACK" "$MINT" "$(bh)")"
+  echo "    back      $BACK"
+
+  echo "  --- a second set of proofs, over the same escrow ciphertext, to a different recipient ---"
+  # The escrow's balance cannot change while the loan PDA owns it, so both exits can be proved
+  # against the same source state and exactly one of them will ever fire.
+  BACK_PK=$(python3 -c "import json;print(json.load(open('$W/back-keys.json'))['elgamal_pubkey_b64'])")
+  read -r DEC AVAIL PUB OWNER < <(ct "$ESCROW")
+  rctx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$W/borrower.json" "$W/escrow-keys.json" \
+    "$DEC" "$AVAIL" "$BACK_PK" "$AUDITOR_PK" all "$(bh)" "$W/rctx.json" "$LOAN" "$W/keys-release" "$1" \
+    "$FLOOR_BASE"; }
+  rctx none >/dev/null 2>"$W/rpass1.err"
+  RRANGE=$(python3 -c "import json;print(json.load(open('$W/rctx.json'))['range'])")
+  # A SECOND table, not an extension of the first. seizure-ctx compiles the v0 message against
+  # `[range_account, authority]` at indices 0 and 1, so extending the existing table put this
+  # range account at index 2 and the message resolved index 0 to the seizure set's range account —
+  # which is already initialised. The failure read as AccountAlreadyInitialized on a create, three
+  # steps away from the cause.
+  RALT=$(solana -u "$R" -k "$W/borrower.json" address-lookup-table create --authority "$(solana-keygen pubkey "$W/borrower.json")" \
+    | grep -oE 'Lookup Table Address: [1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  solana -u "$R" -k "$W/borrower.json" address-lookup-table extend "$RALT" --addresses "$RRANGE,$LOAN" >/dev/null
+  sleep 3
+  rctx "$RALT" > "$W/rtxs.txt" 2>"$W/rpass2.err"
+  n=0; while read -r TX; do n=$((n+1)); go "release context tx $n" "$TX" || exit 1; done < "$W/rtxs.txt"
+  echo "    $n context transactions confirmed"
+
+  echo "  --- the borrower arms the way back; the lender still has to sign ---"
+  go "arm-release" "$(cargo run --quiet -p confide-ct --bin seizure-client -- arm-release "$W/borrower.json" "$PROGRAM" "$W/rctx.json" \
+    "$ESCROW" "$BACK" "$(bh)")"
+
+  echo "  --- the borrower cannot release it themselves ---"
+  SIG=$(send "$(cargo run --quiet -p confide-ct --bin seizure-client -- release "$W/borrower.json" "$PROGRAM" "$W/rctx.json" \
+    "$ESCROW" "$BACK" "$MINT" "$W/borrower.json" "$(bh)")")
+  case "$SIG" in ERR*) echo "    the program refuses — the authority is the lender's, recorded at origination";;
+    *) echo "    the borrower released their own collateral, and should not have been able to"; exit 1;; esac
+
+  echo "  --- the lender signs, and it goes back ---"
+  go "release" "$(cargo run --quiet -p confide-ct --bin seizure-client -- release "$W/borrower.json" "$PROGRAM" "$W/rctx.json" \
+    "$ESCROW" "$BACK" "$MINT" "$W/lender.json" "$(bh)")"
+
+  echo "  --- where the position ended up ---"
+  read -r DEC AVAIL PUB OWNER < <(ct "$ESCROW")
+  printf '    escrow    '; cargo run --quiet -p confide-ct --bin read-balance -- "$W/escrow-keys.json" "$DEC" "$AVAIL" 2>/dev/null | sed -n '3p' | sed 's/^ *//'
+  prov apply "$W/borrower.json" "$BACK" "$UNITS" "$W/back-keys.json" >/dev/null
+  read -r DEC AVAIL PUB OWNER < <(ct "$BACK")
+  printf '    borrower  '; cargo run --quiet -p confide-ct --bin read-balance -- "$W/back-keys.json" "$DEC" "$AVAIL" 2>/dev/null | sed -n '3p' | sed 's/^ *//'
+  echo
+  echo "  The lender could not send it anywhere but the account the borrower armed, and could not"
+  echo "  make the borrower sign again. What they could have done is refuse to sign at all: this is"
+  echo "  an attested release, not a repayment, and no principal moves through this program."
+  exit 0
+fi
 
 echo "  --- a price that does not trigger it ---"
 SIG=$(send "$(cargo run --quiet -p confide-ct --bin seizure-client -- seize "$W/borrower.json" "$PROGRAM" "$W/ctx.json" \

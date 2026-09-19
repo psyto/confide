@@ -228,3 +228,48 @@ public — it is freezing an adversarial, stale framing.
 Yesterday's review led with a finding that was wrong, and it was rejected after checking. Today's
 led with three that are right, and they were accepted after checking. **The procedure is the same
 either way**, which is the only reason either outcome means anything.
+
+---
+
+## The spike landed — 2026-09-19
+
+**Kill criterion met, six days early.** `MODE=release ./scripts/seizure-e2e.sh`, on devnet:
+
+```
+  --- the borrower arms the way back; the lender still has to sign ---
+    arm-release            ok
+  --- the borrower cannot release it themselves ---
+    the program refuses — the authority is the lender's, recorded at origination
+  --- the lender signs, and it goes back ---
+    release                ok
+  --- where the position ended up ---
+    escrow    confidential       0 base units  = 0 units
+    borrower  confidential       17300000000000 base units  = 173000 units
+```
+
+Loan `9yfKfFD5ixUeoEGZxN3fxAwRW2rzWB74R5sexzsYiMJo` reads 740 bytes, `seized = 0`,
+`released = 1`, off the chain. **The one-way door has a second exit**, and the seizure path still
+works — `MODE=seize` was re-run on the same deployment and the collateral still goes to the lender
+on default.
+
+**The old evidence survived the upgrade**, which was the part most likely to break silently. The
+loan the published video points at is 415 bytes; `may_settle` checks against `LOAN_LEN_V1`, so it is
+still readable and still seizable by the program that grew past it.
+
+### What cost the most, and it was not the cryptography
+
+`seizure-ctx` compiles the range proof's v0 message against a lookup table it assumes holds
+`[range_account, authority]` at indices 0 and 1. Extending the *existing* table for the release
+proofs put the new range account at index 2, so the message resolved index 0 to the **seizure
+set's** range account — already initialised. The chain reported `AccountAlreadyInitialized` on a
+*create* instruction, three steps away from the cause. The fix is a second table.
+
+**That is a real hazard and it is now a comment in the script**, because the next person to add a
+third proof set will extend the table again.
+
+### What this does not become
+
+Not a lending venue, and the framing does not move: **a devnet executable specification for
+confidential collateral custody and settlement.** `REQUIRES INTEGRATION` stays as the conclusion
+about Kamino, and [the pincer](THE-PINCER.md) is why that conclusion does not depend on which asset
+anyone picks.
