@@ -12,6 +12,22 @@ of the score that get read before any of it**, and traction is zero.
 
 Twenty-seven days of more mechanism does not move that.
 
+> **Corrected 2026-09-19. The paragraph above is wrong and it is left standing because the whole
+> plan below was built on it.** Both criteria lists were finally read —
+> [`cwf-2026/CRITERIA.md`](cwf-2026/CRITERIA.md), with sources. **Traction is listed last of the
+> seven and does not appear in the Official Rules at all.** Of the four, only Founder + Market Fit
+> is listed above the engineering criteria; market size is fourth and viability sixth. Insight is
+> second, Product + Execution third, and §8 opens on functionality and code quality.
+>
+> Neither list carries weights or a stated reading order, so *"read first"* was never a fact in
+> either direction. What the page does say is that **the two-to-three-minute presentation video is
+> one of the first resources judges review.**
+>
+> **What survives:** traction is zero and will be reported as zero, and Founder + Market Fit is
+> listed first and is absent from every surface here. **What does not:** the premise that more
+> engineering cannot move the score. §8(d) asks about UX for downstream users and §8(e) about how
+> well the work composes with other primitives, and nothing here was built for either.
+
 The first version of this plan bet on a reply: get one named risk owner to write down "if this
 establishes X we would take that collateral at N% LLTV up to a cap of C." **That bet was retired on
 2026-09-16, by the founder, for the right reason** — a reply inside a fixed window cannot be

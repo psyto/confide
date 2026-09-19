@@ -8,7 +8,7 @@ Confide は **2つの大会に出る**。窓も、判定の対象も、名乗り
 | 締切 | ~~2026-09-18 16:00 ET~~ **提出済み 2026-09-15** | **2026-10-12 23:59 PT** |
 | 開始 | — | **2026-09-14 06:00 PT**（= 13:00 UTC / 22:00 JST、Official Rules §5） |
 | 賞金 | $100,000（Solana Foundation） | Solana トラック $100,000（10件 × $10,000）／全体 $840,000 + seed $2.5M |
-| 審査 | 10-02 まで。判定は一問 — *could this be a real app that people will actually use?* | 7基準（web）と6基準（Official Rules §8）の**2系統**。勝者発表 12-05 |
+| 審査 | 10-02 まで。判定は一問 — *could this be a real app that people will actually use?* | 7基準（web）と6基準（Official Rules §8）の**2系統**。両方とも [`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md) に出典つきで pin。**ここに書き写さない** — 一度腐った。勝者発表 12-05 |
 | **窓の扱い** | **EVENT_START = このリポジトリの initial commit**。Confide は全て会期内の新規作業 | **窓内のみが判定対象**。基準線は `cwf-2026-baseline` = `765b8bc`。判定されるのは `cwf-2026-baseline..HEAD` **だけ** |
 
 **この2行は同じことを言っていない。** Stocklana には「Confide は全部この大会のために書いた」と言える。
@@ -155,10 +155,13 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
-1. **traction がゼロ。** **9/18 の check-in が実質の締切になった**（02 が「conversation」を
-   求めるため）。 7基準のうち market size / viability / traction / founder + market fit の4つが
-   非エンジニアリングで、**先に読まれる**。うち traction は**何を書いても埋まらない** — 外部の誰かが
-   実際に使った事実しか埋められない。**これは Reckn を CWF から撤回させた行そのもので、Confide も
+1. **traction がゼロ。** ~~7基準のうち4つが非エンジニアリングで、先に読まれる~~ →
+   **2026-09-19 に訂正。** 両方の基準表を出典つきで読んだ結果、**traction は7つの最後**で、
+   **Official Rules §8 には traction の項目が無い**（[`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md)）。
+   4つのうち engineering より上に載っているのは **Founder + Market Fit だけ**。
+   どちらの表にも重みも読む順も書いていないので、「先に読まれる」は**どちら向きにも事実ではなかった**。
+   それでも traction は**何を書いても埋まらない** — 外部の誰かが実際に使った事実しか埋められない。
+   **個別接触は 2026-09-18 の founder 裁定で無し**、公開投稿のみ。**これは Reckn を CWF から撤回させた行そのもので、Confide も
    現状ゼロ。** リードタイムが不可逆なので、窓の序盤に founder が投げないと 10-12 に間に合わない。
    **2026-09-16 に相手が変わった。** 発行体は**適格性の門**であって最初の買い手ではない —
    発行して売ることが収益の事業に、開示モデルを採る理由が無い。**最初の買い手は貸し手側**で、
