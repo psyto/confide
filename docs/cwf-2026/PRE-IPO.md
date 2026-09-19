@@ -111,18 +111,24 @@ Ranked, and none of it is speculative:
    unlisted asset is *"no venue has admitted this; here is what admission would require"*, and that
    is a different shape from the fourteen that exist.
 
-## On the bounty
+## On the bounty — declined 2026-09-19
 
-PreStocks offers $10,000 across three places and names *lending/collateral* as a wanted use. The
-work above is worth doing on its own merits — it is the first asset class where the primitive fits
-the underwriting regime rather than fighting it.
+Two reasons, either of which is enough.
 
-**The eligibility clause is a real conflict and is not resolved here.** *"Projects that integrate any
-non-PreStocks pre-IPO tokens will be ineligible for this bounty"*, and Confide's page and packets
-cover Backed's `SPCXx` and Backpack's `SPCX.US`, both pre-IPO. **Dropping them to qualify is
-refused**: it is the Clawpump reasoning in [`../../STATUS.md`](../../STATUS.md) — retracting a
-written judgement for a prize, where a judge reading both notices the retraction more than the
-prize. Whether to enter anyway, and let the sponsor rule on it, is the founder's call.
+**The eligibility clause.** *"Projects that integrate any non-PreStocks pre-IPO tokens will be
+ineligible."* Confide's page and packets cover Backed's `SPCXx` and Backpack's `SPCX.US`, both
+pre-IPO. **Dropping them to qualify is refused** — the Clawpump reasoning in
+[`../../STATUS.md`](../../STATUS.md): retracting a written judgement for a prize, where a judge
+reading both notices the retraction more than the prize.
+
+**And the ask does not match what this is.** The bounty wants ideas that *"drive value for
+PreStocks"* and offers an ecosystem listing to projects that continue afterwards. A submission whose
+most interesting result is that a feature on their mints does not execute is not that, however
+carefully it is worded and however true it is. **Entering it would be asking a sponsor to fund a
+report on their own product.**
+
+The work was still worth doing. Step 1 is in and every analysis surface is honest across all 1,992
+mints — that is the return, and it does not need a prize attached.
 
 ---
 
@@ -239,16 +245,41 @@ Program log: Error: InvalidInstructionData
 **The reference tooling builds the fee-free instruction too.** Deposit, apply and configure all
 succeed; the transfer is where it stops, for everyone.
 
-### What that means for PreStocks, said carefully
+### Whose finding this is — corrected 2026-09-19, by the founder
 
-> **PreStocks switched a 50 bps transfer fee on — 0 bps at epoch 848, 50 from 1032 — on mints whose
-> confidential transfers cannot execute while it is on.** Not "cannot execute through Confide". The
-> standard client cannot either, and the proof the instruction requires does not fit in a Solana
-> transaction.
+The first version of this section led with *"PreStocks switched a 50 bps transfer fee on…"*, which
+reads as a defect report about a company. **That framing was wrong, and the founder caught it while
+reading the bounty they sponsor.** Two reasons, and the second matters more than the first:
 
-This is the repository's own finding one level deeper. The flagship result is that 1,992 mints ship
-a disclosure feature nobody can use because the only key on offer is the wrong shape. **Eight of
-them ship one that does not run at all.**
+1. It is not their defect. They enabled **two standard Token-2022 extensions**, each supported and
+   each individually fine. Nothing warns that the pair does not compose.
+2. **The finding is about the platform**, and stating it as a company's mistake is both less
+   accurate and worse behaviour.
+
+So, correctly:
+
+> **Token-2022's confidential transfers and its transfer fees do not compose on Solana today.** A
+> transfer on a fee-bearing mint requires `TransferWithFee`, whose range proof is
+> `BatchedRangeProofU256`, and that proof's verify transaction does not fit in a Solana
+> transaction — 1,269 bytes in its smallest form against a 1,232-byte limit. The official
+> `spl-token` CLI does not implement the with-fee path either.
+>
+> **Eight live mints are currently in that combination**, all from PreStocks. Their accounts
+> configure, deposit and apply correctly. Only the transfer stops, and it stops for every client.
+
+That is the same shape as the repository's flagship result and one level beneath it: 1,992 mints
+ship a disclosure feature nobody can use because the only key on offer is the wrong shape, and a
+subset ship a combination the platform cannot execute.
+
+### Before any of this is published
+
+**This is a live product's behaviour, found by someone with no relationship to them, during an event
+they are sponsoring.** Telling them before telling everyone is the ordinary courtesy, and it is a
+different act from the sales outreach retired on 2026-09-18 — it asks for nothing.
+
+**Founder's call, and nothing about these eight mints goes into the public post until it is made.**
+The post's finding is the Kamino pincer; this belongs in the repository and at most as a footnote
+there.
 
 **Stated with the hedge it deserves:** two measurements, not a proof. If someone has a working
 confidential transfer on a fee-bearing Token-2022 mint, that is worth more to this project than

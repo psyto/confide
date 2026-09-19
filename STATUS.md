@@ -90,7 +90,20 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
 **判定は 10-02 まで続き、devnet はその間にリセットされうる。** 週次で `./scripts/healthcheck.sh` を
 回すこと。復旧手順は [`docs/DURABILITY.md`](docs/DURABILITY.md)。**mainnet の核心発見はリセットされない。**
 
-**バウンティトラックは3枠とも使わなかった。** 記録しておく:
+**バウンティは5枠。全部見送る。** 記録しておく（**09-19 に PreStocks と Tessera を追加検討**。
+それまでこの節は Meteora と Clawpump の2つしか検討しておらず、「3枠とも」と書いていたのは
+**検討していないものを検討済みとして数えていた**）:
+
+- **PreStocks**（$10,000、3名）— *lending/collateral* を明記していて領域は最も近い。**それでも見送る。**
+  資格条件が *"projects that integrate any non-PreStocks pre-IPO tokens will be ineligible"* で、
+  Confide は Backed `SPCXx` と Backpack `SPCX.US`（どちらも pre-IPO）を扱っている。**外して資格を
+  取るのは Clawpump と同じ理由で拒否。** さらに要項は *"drive value for PreStocks"* を求めており、
+  こちらの最も興味深い結果は**彼らの mint 上で機能が実行できない**こと。**スポンサーに自社製品の
+  報告書を資金提供させに行く**形になる。→ [`docs/cwf-2026/PRE-IPO.md`](docs/cwf-2026/PRE-IPO.md)
+- **Tessera**（$6,000）— **技術的に当たらない。** T-SpaceX / T-OpenAI / T-Kalshi は Token-2022 だが
+  **秘匿転送の拡張が無い**。空にする枠も無く、Confide が言えることが一行も無い（mainnet で確認）
+- **Pyth**（非現金、Pyth Pro 3ヶ月）— price feed は 27-DAYS が理由つきで拒否済み。非現金の賞のために
+  記録済みの判断を覆さない
 
 - **Meteora DBC** — 領域が違うだけでなく**技術的に噛み合わない**。AMM / ボンディングカーブのプールは
   スワップ出力を計算するため**取引額を平文で読む必要がある**ので、Token-2022 の秘匿残高はカーブに

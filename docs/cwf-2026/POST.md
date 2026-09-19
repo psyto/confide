@@ -101,6 +101,19 @@ post quoting a number the page contradicts is worse than no post. Current readin
   not.
 - **No claim of traction.** Nothing here says anyone uses this, because nobody does.
 
+## What is deliberately not in it
+
+**The transfer-fee finding.** Eight live mints are in a Token-2022 combination the platform cannot
+execute ([`PRE-IPO.md`](PRE-IPO.md)), and it is **not** in this post and should not be added to it
+without a decision. Three reasons:
+
+- The post has one finding and it is the Kamino pincer. A second one halves both.
+- Those eight mints belong to a company **sponsoring the event this is being submitted to**. A
+  public note about their product's behaviour, from someone with no relationship to them, is a
+  different act from a note about a boundary in Kamino's source — and Kamino's is framed as
+  *correct underwriting*, which this one cannot be.
+- **They have not been told.** That comes first, and it is the founder's to do or not.
+
 ## What not to do afterwards
 
 - **Do not DM anyone the link.** That is individual outreach under another name, and it was ruled
