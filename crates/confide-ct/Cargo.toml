@@ -45,6 +45,18 @@ path = "src/build_deshield_proofs.rs"
 name = "seizure-client"
 path = "src/seizure_client.rs"
 
+[[bin]]
+name = "swap-size"
+path = "src/swap_size.rs"
+
+[[bin]]
+name = "swap-check"
+path = "src/swap_check.rs"
+
+[[bin]]
+name = "swap-tx"
+path = "src/swap_tx.rs"
+
 [dependencies]
 spl-token-2022-interface = "3"
 solana-zk-sdk = "7"
@@ -67,5 +79,6 @@ solana-transaction = { version = "3", features = ["bincode", "serde"] }
 solana-message = { version = "3", features = ["serde"] }
 solana-instruction = "3"
 bincode = "1"
+bytemuck = "1"
 base64 = "0.22"
 serde_json = "1"

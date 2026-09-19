@@ -82,7 +82,17 @@ fn main() {
     let alt = a.next().expect("address lookup table | none");
     // The floor the loan is written against, in base units. `originate` refuses without proofs of
     // it; before this argument existed the program required two accounts nothing produced.
-    let floor: u64 = a.next().expect("floor in base units").parse().expect("floor must be a number");
+    //
+    // `none` builds the three TRANSFER proofs and stops. An atomic swap needs no floor: each side
+    // reads the other's validity context and decrypts the amount itself, because the amount is
+    // encrypted to the recipient. A floor is what you prove to somebody who must lend against a
+    // balance they will never see — nobody in a swap is in that position.
+    let floor_arg = a.next().expect("floor in base units | none");
+    let floor: Option<u64> = if floor_arg == "none" {
+        None
+    } else {
+        Some(floor_arg.parse().expect("floor must be a number or `none`"))
+    };
 
     let payer = confide_ct_keypair(&payer_path);
     let zk = solana_zk_elgamal_proof_interface::id();
@@ -109,9 +119,9 @@ fn main() {
 
     // The floor is proved over the escrow's own ciphertext, the same one the transfer proofs are
     // about, so it is built from the same opened keys rather than from a second read.
-    let f = confide_ct::build_floor(&confide_ct::open_escrow(&keys, &dec, &avail), floor);
+    let f = floor.map(|q| confide_ct::build_floor(&confide_ct::open_escrow(&keys, &dec, &avail), q));
 
-    let verify = [
+    let mut verify = vec![
         ProofInstruction::VerifyCiphertextCommitmentEquality
             .encode_verify_proof::<CiphertextCommitmentEqualityProofData, CiphertextCommitmentEqualityProofContext>(
                 Some(ContextStateInfo { context_state_account: &accounts[0].pubkey(), context_state_authority: &authority }),
@@ -127,17 +137,23 @@ fn main() {
                 Some(ContextStateInfo { context_state_account: &accounts[2].pubkey(), context_state_authority: &authority }),
                 &s.range,
             ),
-        ProofInstruction::VerifyCiphertextCommitmentEquality
-            .encode_verify_proof::<CiphertextCommitmentEqualityProofData, CiphertextCommitmentEqualityProofContext>(
-                Some(ContextStateInfo { context_state_account: &accounts[3].pubkey(), context_state_authority: &authority }),
-                &f.equality,
-            ),
-        ProofInstruction::VerifyBatchedRangeProofU64
-            .encode_verify_proof::<BatchedRangeProofU64Data, BatchedRangeProofContext>(
-                Some(ContextStateInfo { context_state_account: &accounts[4].pubkey(), context_state_authority: &authority }),
-                &f.range,
-            ),
     ];
+    if let Some(f) = f.as_ref() {
+        verify.push(
+            ProofInstruction::VerifyCiphertextCommitmentEquality
+                .encode_verify_proof::<CiphertextCommitmentEqualityProofData, CiphertextCommitmentEqualityProofContext>(
+                    Some(ContextStateInfo { context_state_account: &accounts[3].pubkey(), context_state_authority: &authority }),
+                    &f.equality,
+                ),
+        );
+        verify.push(
+            ProofInstruction::VerifyBatchedRangeProofU64
+                .encode_verify_proof::<BatchedRangeProofU64Data, BatchedRangeProofContext>(
+                    Some(ContextStateInfo { context_state_account: &accounts[4].pubkey(), context_state_authority: &authority }),
+                    &f.range,
+                ),
+        );
+    }
 
     // Create and verify go in separate transactions. Together they do not fit: a U128 range proof
     // is 1,000 bytes of instruction data, and with a context authority distinct from the fee payer
@@ -191,8 +207,8 @@ fn main() {
             "equality":  accounts[0].pubkey().to_string(),
             "validity":  accounts[1].pubkey().to_string(),
             "range":     accounts[2].pubkey().to_string(),
-            "floor_equality": accounts[3].pubkey().to_string(),
-            "floor_range":    accounts[4].pubkey().to_string(),
+            "floor_equality": floor.map(|_| accounts[3].pubkey().to_string()),
+            "floor_range":    floor.map(|_| accounts[4].pubkey().to_string()),
             "floor":          floor,
             "authority": authority.to_string(),
             "amount":    s.amount,
@@ -207,9 +223,14 @@ fn main() {
     .unwrap();
 
     eprintln!("  transfer contexts  {} / {} / {}", accounts[0].pubkey(), accounts[1].pubkey(), accounts[2].pubkey());
-    eprintln!("  floor contexts     {} / {}", accounts[3].pubkey(), accounts[4].pubkey());
-    eprintln!("  floor              {floor} base units, proved over the escrow's own ciphertext");
-    eprintln!("  sizes              {} / {} / {} / {} / {} bytes", sizes[0], sizes[1], sizes[2], sizes[3], sizes[4]);
+    match floor {
+        Some(q) => {
+            eprintln!("  floor contexts     {} / {}", accounts[3].pubkey(), accounts[4].pubkey());
+            eprintln!("  floor              {q} base units, proved over the escrow's own ciphertext");
+        }
+        None => eprintln!("  floor              none — a swap proves no floor; each side decrypts the other's amount"),
+    }
+    eprintln!("  sizes              {} bytes", verify_sizes(&sizes, floor.is_some()));
     eprintln!("  authority          {authority}   <- the loan PDA; the borrower cannot close these");
     eprintln!("  lookup table       {alt}");
     eprintln!("  artifact           {out}");
@@ -236,4 +257,10 @@ fn load_or_create(dir: &str, name: &str) -> Keypair {
 fn confide_ct_keypair(path: &str) -> Keypair {
     let bytes: Vec<u8> = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
     Keypair::try_from(&bytes[..]).unwrap()
+}
+
+/// The context sizes actually used, so the line does not report two accounts a swap never creates.
+fn verify_sizes(sizes: &[usize], with_floor: bool) -> String {
+    let n = if with_floor { 5 } else { 3 };
+    sizes[..n].iter().map(|s| s.to_string()).collect::<Vec<_>>().join(" / ")
 }
