@@ -13,18 +13,29 @@
 #   go        send + confirm + a labelled line, non-zero if either step fails
 #   ct        a confidential token account: decryptable, available, public amount, owner
 
-# Retried, because the public devnet RPC intermittently answers with nothing at all and the
-# failure does not stay local: a `getAccountInfo` that comes back empty made `spl-token` fall back
-# to the legacy token program, and the run died four steps later on `IncorrectProgramId` with
-# nothing to connect it to. Retry here rather than debug that again. A response carrying a JSON
-# `error` is the endpoint answering and is passed through — only a non-answer is retried.
+# Retried, because the public devnet RPC intermittently fails in ways that do not stay local: a
+# `getAccountInfo` that came back empty made `spl-token` fall back to the legacy token program and
+# the run died four steps later on `IncorrectProgramId`, with nothing to connect it to. Retry here
+# rather than debug that again.
+#
+# Two kinds of non-answer, and both were seen. A body that is not JSON at all (a 429 page), and a
+# JSON-RPC error that is about the endpoint rather than the request — those are retried. An error
+# about the request itself, a failed simulation above all, is the endpoint answering correctly and
+# is passed straight through: retrying it would hide a real failure five times over.
+RPC_TRANSIENT='-32005 -32004 -32014 -32603 429'
 rpc() {
   local i=0 out
   while [ $i -lt 5 ]; do
     out=$(curl -s --max-time 30 "$R" -H 'Content-Type: application/json' -d "$1")
-    if printf '%s' "$out" | python3 -c "import sys,json;d=json.load(sys.stdin);sys.exit(0 if ('result' in d or 'error' in d) else 1)" 2>/dev/null; then
-      printf '%s' "$out"; return 0
-    fi
+    case "$(printf '%s' "$out" | python3 -c "
+import sys,json
+try: d=json.load(sys.stdin)
+except Exception: print('retry'); raise SystemExit
+if 'result' in d: print('ok')
+elif 'error' in d: print('retry' if str(d['error'].get('code')) in '$RPC_TRANSIENT'.split() else 'ok')
+else: print('retry')" 2>/dev/null)" in
+      ok) printf '%s' "$out"; return 0;;
+    esac
     i=$((i+1)); sleep $i
   done
   printf '%s' "$out"; return 1
