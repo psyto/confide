@@ -209,6 +209,34 @@ fn main() {
             };
             emit(&[cb, ix], &payer, &[&authority], &a[8]);
         }
+        // Settle a confidential credit into an escrow the loan PDA already owns, before any loan
+        // exists over it. This is the step that lets a holder whose position sits in an ATA take
+        // part: an ATA cannot be handed over, so they transfer into somebody else's escrow, and
+        // the credit lands in pending under an authority nobody but the program can sign for.
+        "apply-pending" => {
+            let payer = keypair(&a[1]);
+            let program = addr(&a[2]);
+            let (escrow, mint) = (addr(&a[3]), addr(&a[4]));
+            let counter: u64 = a[5].parse().expect("expected pending credit counter");
+            let (loan, _) = loan_pda(&program, &escrow);
+
+            let mut data = vec![5u8];
+            data.extend_from_slice(&counter.to_le_bytes());
+            data.extend_from_slice(&d64(&a[6]));   // new decryptable available balance, 36 bytes
+
+            let ix = Instruction {
+                program_id: program,
+                accounts: vec![
+                    AccountMeta::new_readonly(payer.pubkey(), true),
+                    AccountMeta::new(loan, false),
+                    AccountMeta::new(escrow, false),
+                    AccountMeta::new_readonly(mint, false),
+                    AccountMeta::new_readonly(addr(TOKEN_2022), false),
+                ],
+                data,
+            };
+            emit(&[ix], &payer, &[], &a[7]);
+        }
         other => panic!("unknown subcommand {other}"),
     }
 }

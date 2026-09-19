@@ -32,7 +32,7 @@ clnt_disc() { awk "/\"$1\" => \{/,/^        \}/" "$C" | grep -oE "vec!\[[0-9]+u8
 echo
 # Program handler, then the client arm that builds it. They are spelled differently on purpose:
 # Rust functions use underscores and the CLI subcommands use hyphens.
-for pair in originate:originate seize:seize arm_release:arm-release release:release; do
+for pair in originate:originate seize:seize arm_release:arm-release release:release apply_pending:apply-pending; do
   ix="${pair%%:*}"; arm="${pair##*:}"
   p=$(prog "$ix"); c=$(clnt "$arm")
   pd=$(prog_disc "$ix"); cd=$(clnt_disc "$arm")

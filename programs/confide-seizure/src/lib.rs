@@ -139,6 +139,7 @@ fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Progra
         2 => deshield(program_id, accounts, rest),
         3 => arm_release(program_id, accounts, rest),
         4 => release(program_id, accounts, rest),
+        5 => apply_pending(program_id, accounts, rest),
         _ => Err(ProgramError::InvalidInstructionData),
     }
 }
@@ -265,6 +266,94 @@ fn originate(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> Prog
     d[OFF_RELEASED] = 0;
 
     msg!("loan originated; seizure is armed and the borrower cannot disarm it");
+    Ok(())
+}
+
+/// `ApplyPending` — settle a confidential credit into the escrow's available balance, **before a
+/// loan exists over it**.
+///
+/// This is what lets a holder whose position sits in an **associated** token account take part at
+/// all. An ATA carries `ImmutableOwner` and cannot be handed over, so it can never become an
+/// escrow; what its holder *can* do is transfer the position, confidentially, into an escrow
+/// somebody else opened and handed to a loan PDA. A confidential transfer lands in the recipient's
+/// **pending** balance, and moving pending into available needs the account's authority — which is
+/// now a PDA, so nobody could sign it and the collateral would sit there unusable.
+///
+/// **Refused once a loan exists, and that is the point rather than a limitation.** The seizure and
+/// release proofs are built against the escrow's available ciphertext. Anything that changes that
+/// ciphertext afterwards makes both routes unexecutable, and since an escrow accepts confidential
+/// credits from anyone, an unrestricted version of this instruction would let a stranger break a
+/// live loan by sending one unit and applying it. Pending balances do not have that effect on
+/// their own; applying them does.
+///
+/// Accounts: payer(s), loan, escrow(w), mint, token_program
+///
+/// Data: expected_pending_credit_counter u64 | new_decryptable[36]
+fn apply_pending(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    let i = &mut accounts.iter();
+    let payer = next_account_info(i)?;
+    let loan = next_account_info(i)?;
+    let escrow = next_account_info(i)?;
+    let mint = next_account_info(i)?;
+    let token_program = next_account_info(i)?;
+
+    if !payer.is_signer {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+    if data.len() != 8 + 36 {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+
+    // The loan PDA for this escrow, derived rather than trusted. `loan` is passed so the program
+    // can see whether a record already lives there.
+    let (expected, bump) = loan_address(program_id, escrow.key);
+    if expected != *loan.key {
+        return Err(ProgramError::InvalidArgument);
+    }
+    // A loan exists the moment this program owns that address and has tagged it. After that the
+    // escrow's available balance is what two sets of proofs were built against.
+    if loan.owner == program_id {
+        may_apply(&loan.try_borrow_data()?)?;
+    }
+    // And the escrow must already belong to that PDA, or this is applying somebody else's balance.
+    {
+        let e = escrow.try_borrow_data()?;
+        if e.len() < ACCOUNT_OWNER + 32 {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        if e[ACCOUNT_OWNER..ACCOUNT_OWNER + 32] != expected.to_bytes() {
+            msg!("this escrow does not belong to the loan PDA derived from it");
+            return Err(ProgramError::IllegalOwner);
+        }
+    }
+
+    let counter = u64::from_le_bytes(data[..8].try_into().unwrap());
+    let ix = {
+        use spl_token_2022_interface::extension::confidential_transfer::instruction::inner_apply_pending_balance;
+        let a = |k: &Pubkey| solana_address::Address::from(k.to_bytes());
+        inner_apply_pending_balance(
+            &a(token_program.key),
+            &a(escrow.key),
+            counter,
+            bytemuck::from_bytes(&data[8..]),
+            &a(loan.key),
+            &[],
+        )
+        .map(|ix| solana_program::instruction::Instruction {
+            program_id: Pubkey::new_from_array(ix.program_id.to_bytes()),
+            accounts: ix.accounts.iter().map(|m| solana_program::instruction::AccountMeta {
+                pubkey: Pubkey::new_from_array(m.pubkey.to_bytes()),
+                is_signer: m.is_signer, is_writable: m.is_writable }).collect(),
+            data: ix.data,
+        })
+        .map_err(|_| ProgramError::InvalidInstructionData)?
+    };
+    invoke_signed(
+        &ix,
+        &[escrow.clone(), loan.clone(), token_program.clone(), mint.clone()],
+        &[&[b"loan", escrow.key.as_ref(), &[bump]]],
+    )?;
+    msg!("pending balance applied; the escrow's available balance is now what a floor is proved over");
     Ok(())
 }
 
@@ -747,6 +836,21 @@ pub fn may_release(d: &[u8], cited: Cited, authority_signed: bool) -> ProgramRes
     check(&d[OFF_RELEASE_CTX_EQUALITY..], cited.ctx_equality)?;
     check(&d[OFF_RELEASE_CTX_VALIDITY..], cited.ctx_validity)?;
     check(&d[OFF_RELEASE_CTX_RANGE..], cited.ctx_range)?;
+    Ok(())
+}
+
+/// Whether a pending balance may still be applied to an escrow, given whatever is at its loan
+/// address. Setup-phase only.
+///
+/// The escrow accepts confidential credits from anyone. Pending credits are harmless on their own —
+/// they do not touch the available ciphertext the seizure and release proofs are built over.
+/// **Applying them is what would break both routes**, so once a loan is recorded this refuses, and
+/// a stranger cannot strand a live loan by sending it one unit.
+pub fn may_apply(loan_data: &[u8]) -> ProgramResult {
+    if loan_data.len() >= LOAN_LEN_V1 && loan_data[0] == LOAN_TAG {
+        msg!("a loan already exists over this escrow; applying would invalidate its proofs");
+        return Err(ProgramError::InvalidAccountData);
+    }
     Ok(())
 }
 
@@ -1315,6 +1419,33 @@ mod protocol {
                     oracle: &self.oracle }
         }
         fn at(&self, price: u64) -> ProgramResult { may_seize(&self.d, self.cited(), true, price) }
+    }
+
+    // ── applying a pending balance ───────────────────────────────────────────────────────────────
+
+    /// **A1 — the setup phase is the only phase.** An escrow takes confidential credits from
+    /// anyone. A pending credit changes nothing the proofs depend on; applying it changes the
+    /// available ciphertext, and both the seizure and the release are built over that. Without
+    /// this, a stranger sends one unit to a live escrow, applies it, and neither route can execute
+    /// — the collateral is stranded and the lender is unsecured.
+    #[test]
+    fn a_pending_balance_cannot_be_applied_once_a_loan_exists() {
+        let l = loan();
+        assert_eq!(may_apply(&l.d), Err(ProgramError::InvalidAccountData));
+    }
+
+    /// **A2 — before there is a loan, it is allowed.** This is the whole reason the instruction
+    /// exists: a holder whose position sits in an ATA cannot hand that account over, so they
+    /// transfer into an escrow somebody else opened, and the credit lands in pending under an
+    /// authority that is a PDA. If this refused here too, the collateral would arrive and stay
+    /// unusable.
+    #[test]
+    fn a_pending_balance_can_be_applied_before_one_does() {
+        assert_eq!(may_apply(&[]), Ok(()));
+        assert_eq!(may_apply(&vec![0u8; LOAN_LEN]), Ok(()), "an untagged account is not a loan");
+        let mut nearly = vec![0u8; LOAN_LEN_V1 - 1];
+        nearly.iter_mut().next().map(|b| *b = LOAN_TAG);
+        assert_eq!(may_apply(&nearly), Ok(()), "too short to be a loan record");
     }
 
     // ── the release route ────────────────────────────────────────────────────────────────────────
