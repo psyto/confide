@@ -77,7 +77,14 @@ echo "    borrower  $(solana-keygen pubkey "$W/borrower.json")"
 echo "    lender    $(solana-keygen pubkey "$W/lender.json")"
 
 echo "  --- the mint, configured the way NVDAx is ---"
-MINT=$(spl-token -C "$W/borrower.yml" create-token --program-2022 --decimals "$DECIMALS" --enable-confidential-transfers auto 2>&1 \
+# FEE_BPS mirrors a PreStocks mint instead of an xStock one. PreStocks charges 50 bps on every
+# transfer, confidential ones included, and Confide builds the plain confidential `Transfer` rather
+# than `TransferWithFee`. Rather than assert what that does, run it: `FEE_BPS=50 ./scripts/seizure-e2e.sh`.
+FEE_BPS="${FEE_BPS:-0}"
+FEE_ARGS=()
+[ "$FEE_BPS" = 0 ] || FEE_ARGS=(--transfer-fee-basis-points "$FEE_BPS" --transfer-fee-maximum-fee 18446744073709551615)
+MINT=$(spl-token -C "$W/borrower.yml" create-token --program-2022 --decimals "$DECIMALS" \
+  "${FEE_ARGS[@]}" --enable-confidential-transfers auto 2>&1 \
   | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
 go "auditor slot filled" "$(cargo run --quiet -p confide-ct --bin set-auditor -- "$W/borrower.json" "$MINT" "$(bh)" "$W/auditor.json" 2>/dev/null)"
 echo "    mint      $MINT   (auditor set, autoApproveNewAccounts false — as on NVDAx)"
