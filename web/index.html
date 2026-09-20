@@ -1,19 +1,19 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Confide — hold tokenized stocks without publishing your position</title>
+<title>Confide — confidential delivery-versus-payment for tokenized stocks</title>
 <!-- Shared links rendered as bare URLs with no preview until 2026-09-15. The description is the
      finding, because that is what makes someone click. poster.jpg is the video's own frame. -->
-<meta name="description" content="1,992 tokenized stocks on Solana have confidential transfers switched on and the auditor key empty. Confide makes that slot usable: disclosure scoped by recipient, by granularity, and by schedule." />
+<meta name="description" content="Confidential delivery-versus-payment for tokenized stocks on Solana. Two parties settle stock against cash in one transaction and neither publishes what moved. Confide builds the proofs the chain will not assemble for you and lets each side check the other before signing." />
 <link rel="canonical" href="https://psyto.github.io/confide/" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/" />
-<meta property="og:title" content="Confide — the privacy on tokenized stocks that nobody can use" />
-<meta property="og:description" content="1,992 mints, three issuers, every auditor key empty. Read it from mainnet in your browser, then watch Solana's ZK program check a collateral proof." />
+<meta property="og:title" content="Confide — stock for cash in one transaction, neither side publishing" />
+<meta property="og:description" content="Stock for cash in one transaction, neither side publishing what moved. Three real devnet trades, decoded in your browser. Of 329,536 live accounts, zero are confidential." />
 <meta property="og:image" content="https://psyto.github.io/confide/poster.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Confide — the privacy on tokenized stocks that nobody can use" />
-<meta name="twitter:description" content="1,992 mints, three issuers, every auditor key empty. Read it from mainnet in your browser." />
+<meta name="twitter:title" content="Confide — stock for cash in one transaction, neither side publishing" />
+<meta name="twitter:description" content="Stock for cash in one transaction, neither side publishing what moved. Decoded in your browser." />
 <meta name="twitter:image" content="https://psyto.github.io/confide/poster.jpg" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090d'/%3E%3Cpath d='M11 10h10M11 16h6M11 22h10' stroke='%2363cf83' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
 <style>
@@ -72,9 +72,10 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 .muted{color:var(--dim)}
 </style></head><body>
 <div class="wrap">
-  <h1>Your tokenized stock positions<br>are public. All of them.</h1>
-  <div class="lede">Confide lets you <b>trade</b> them on Solana without publishing what moved —
-  and hold them without publishing what you hold.
+  <h1>Stock for cash, in one transaction.<br>Neither side publishes what moved.</h1>
+  <div class="lede"><b>Confidential delivery-versus-payment for tokenized stocks on Solana.</b>
+  Confide builds the zero-knowledge proofs the chain will not assemble for you, and lets each side
+  check the other's amount before signing &mdash; with nobody in the middle.
   <b>The chain readings on this page are live, made in your browser.</b> The mint list and the
   proof transactions are files served with the page; everything they are used to ask is asked of
   mainnet and devnet now.</div>
@@ -82,6 +83,27 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   <a href="kamino.html">can Kamino take this as collateral?</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
 
+
+  <section>
+    <h2>A trade that settles without publishing either side.</h2>
+    <div class="lede">Two parties exchange confidential positions <b>in one transaction</b>. Nothing
+    of ours runs <i>inside</i> the trade — two Token-2022 instructions, two signatures, and
+    Solana's atomicity where a clearing house would be. <b>What Confide does is everything around
+    it</b>: the zero-knowledge proofs the chain will not assemble for you, verified on chain and
+    citable by address, and the check that lets each side read the other's amount before signing.
+    <b>These are real devnet transactions, fetched and decoded here by your browser.</b></div>
+    <div id="swaps"><div class="muted">reading devnet…</div></div>
+    <div class="note"><b>Delivery versus payment is what a clearing house exists for</b> — neither
+    side will go first, so finance inserts a central counterparty, membership, margin and a day of
+    lag. A transaction that is all-or-nothing needs none of it, and the confidential version means
+    neither party publishes the size that clearing house would have been told anyway. Run it:
+    <span class="mono">MODE=dvp ./scripts/swap-e2e.sh</span>.
+    <br><br>The amounts are encrypted, so a party could be asked to sign a leg that underpays. Each
+    side answers that <b>before signing and alone</b>: a confidential transfer encrypts the amount
+    under the <i>recipient's</i> key too, so the recipient decrypts it straight out of the
+    already-verified proof context (<span class="mono">swap-check</span>). No trust, no third
+    party, nothing revealed to anyone else.</div>
+  </section>
   <!-- Nothing visible here references a YouTube domain. Verified on 2026-09-14: a content blocker
        removed the whole container from the DOM when it carried a youtu.be href - poster, caption and
        all - which is worse than no video block at all. So the clickable region is a plain figure with
@@ -100,10 +122,18 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
       </span>
     </span>
   </figure>
-  <div class="note">Walkthrough &mdash; click the frame, or
+  <div class="note"><b>The earlier walkthrough</b>, recorded before the swap existed &mdash; it is
+  about holding a position privately rather than trading one, and its mint count is out of date.
+  Click the frame, or
   <a href="https://youtu.be/p1aQuEnzhQk" target="_blank" rel="noopener">watch on YouTube</a>
   (youtu.be/p1aQuEnzhQk). Every terminal pane in it is the stdout of a command run
   moments before the recording; two of them reach mainnet and devnet.</div>
+
+  <section style="border:0;padding:0;margin:0">
+    <h2>Why anybody wants it</h2>
+    <div class="lede">Everything above is what runs. This is the market it runs into, read
+    from mainnet by your browser rather than asserted.</div>
+  </section>
 
   <section>
     <h2>The privacy is already shipped. Nobody can use it.</h2>
@@ -153,27 +183,6 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     this account could hold anything. On a real mint that signature is a conversation, not a
     transaction, which is the one thing here that cannot be done without them.</span></div>
     <div class="panel" id="confide"></div>
-  </section>
-
-  <section>
-    <h2>A trade that settles without publishing either side.</h2>
-    <div class="lede">Two parties exchange confidential positions <b>in one transaction</b>. Nothing
-    of ours runs <i>inside</i> the trade — two Token-2022 instructions, two signatures, and
-    Solana's atomicity where a clearing house would be. <b>What Confide does is everything around
-    it</b>: the zero-knowledge proofs the chain will not assemble for you, verified on chain and
-    citable by address, and the check that lets each side read the other's amount before signing.
-    <b>These are real devnet transactions, fetched and decoded here by your browser.</b></div>
-    <div id="swaps"><div class="muted">reading devnet…</div></div>
-    <div class="note"><b>Delivery versus payment is what a clearing house exists for</b> — neither
-    side will go first, so finance inserts a central counterparty, membership, margin and a day of
-    lag. A transaction that is all-or-nothing needs none of it, and the confidential version means
-    neither party publishes the size that clearing house would have been told anyway. Run it:
-    <span class="mono">MODE=dvp ./scripts/swap-e2e.sh</span>.
-    <br><br>The amounts are encrypted, so a party could be asked to sign a leg that underpays. Each
-    side answers that <b>before signing and alone</b>: a confidential transfer encrypts the amount
-    under the <i>recipient's</i> key too, so the recipient decrypts it straight out of the
-    already-verified proof context (<span class="mono">swap-check</span>). No trust, no third
-    party, nothing revealed to anyone else.</div>
   </section>
 
   <section>
