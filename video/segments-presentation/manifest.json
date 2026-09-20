@@ -16,43 +16,50 @@
  {
   "file": "03-already-shipped.mp4",
   "start": 30,
-  "end": 52,
-  "seconds": 22,
-  "line": "Solana already built this. Eighteen hundred and sixty-nine tokenized stocks have confidential transfers switched on, from two issuers with nothing to do with each other. And every one of them leaves the auditor key empty, because the only key on offer reads everyone's everything, forever."
- },
- {
-  "file": "04-whose-money.mp4",
-  "start": 52,
-  "end": 71,
-  "seconds": 19,
-  "line": "Which would be a curiosity, except that people are already lending against these. Twenty-one million dollars of tokenized stock is sitting in Kamino reserves right now, and the caps authorise eighty-one million of borrowing against it. Every one of those positions is public."
- },
- {
-  "file": "05-the-refusal.mp4",
-  "start": 71,
-  "end": 92,
+  "end": 51,
   "seconds": 21,
-  "line": "Kamino is not ignoring confidentiality. Its program names it, and requires it switched off before a deposit will land. That is not an oversight. A lender who cannot read a balance cannot price it, and refusing what you cannot value is how underwriting is supposed to work."
+  "line": "Solana already solved this. Nearly two thousand tokenized stocks ship confidential transfers today, from three issuers with nothing to do with each other. Every one of them leaves the auditor key empty, and every one needs the issuer's signature before you can open an account at all."
+ },
+ {
+  "file": "04-so-i-counted.mp4",
+  "start": 51,
+  "end": 67,
+  "seconds": 16,
+  "line": "So I stopped reading the settings and counted the accounts. Three hundred and twenty-nine thousand of them, across Apple, NVIDIA, SpaceX and Anthropic. Not one is confidential. Not few. Zero."
+ },
+ {
+  "file": "05-the-turn.mp4",
+  "start": 67,
+  "end": 89,
+  "seconds": 22,
+  "line": "Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months. A trade does not. A trade happens at one instant — and on Solana, an instant is all or nothing."
  },
  {
   "file": "06-what-runs.mp4",
-  "start": 92,
-  "end": 117,
-  "seconds": 25,
-  "line": "So prove what a lender needs without showing the balance. This NVIDIA account holds at least the collateral — checked by Solana's own zero-knowledge program, not by us. And if the loan defaults, the collateral moves, because the escrow belongs to a program rather than to the borrower. Both of those run on devnet today."
+  "start": 89,
+  "end": 109.1,
+  "seconds": 20.1,
+  "line": "So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million dollars, in one transaction. Both sides settle or neither does, with no clearing house in between. Afterwards, every account still reports a balance of zero to anyone watching."
  },
  {
-  "file": "07-what-does-not.mp4",
-  "start": 117,
-  "end": 147,
-  "seconds": 30,
-  "line": "Three things are missing, and I would rather say them than have you find them. A floor proved once is only true once — re-proving is not built. The seizure has to happen inside Kamino's liquidation, not beside it — not built. And the issuer has to approve each account, because these mints do not approve them automatically. That last one is nobody's decision but theirs."
+  "file": "07-the-hard-part.mp4",
+  "start": 109.1,
+  "end": 131.1,
+  "seconds": 22,
+  "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
  },
  {
-  "file": "08-what-you-can-run.mp4",
-  "start": 147,
-  "end": 166,
-  "seconds": 19,
-  "line": "One command builds the whole admission packet for any of those mints, from live chain data, with every unknown capped at zero instead of guessed. Nobody outside this repository has used any of it yet. You can check every number yourself."
+  "file": "08-not-only-equities.mp4",
+  "start": 131.1,
+  "end": 146.1,
+  "seconds": 15,
+  "line": "That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two different asset classes, the same dead end. This was never a story about tokenized stocks."
+ },
+ {
+  "file": "09-what-is-missing.mp4",
+  "start": 146.1,
+  "end": 173.1,
+  "seconds": 27,
+  "line": "Nobody outside this repository has used any of it, and I have asked no issuer for anything. But what is left is not unknown. Each obstacle is a condition you can check — and for the two that decide the market, the work on the far side is already running. Every figure here came off the chain. One command reproduces it."
  }
 ]

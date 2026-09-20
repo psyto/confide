@@ -1,4 +1,4 @@
-// Records presentation.mp4 — the CWF submission presentation, eight scenes, silent.
+// Records presentation.mp4 — the CWF submission presentation, nine scenes, silent.
 //
 // The rough cut. Its job is to find out whether the story in CWF-PRESENTATION.md holds before the
 // week the video has to exist, so it is deliberately cheap: no voice, no colour grade, the same
@@ -33,15 +33,21 @@ const ACCOUNT = process.env.CONFIDE_ACCOUNT || JSON.parse(readFileSync(KEYS, "ut
 // ── the holds, from the script ───────────────────────────────────────────────────────────────────
 const md = readFileSync(path.join(dir, "CWF-PRESENTATION.md"), "utf8");
 const rows = [...md.matchAll(/^\| (\d) \| [^|]+\| ([\d]+)(?: \+ ([\d.]+))? \|/gm)];
-if (rows.length !== 8) throw new Error(`CWF-PRESENTATION.md: expected 8 timing rows, found ${rows.length}`);
+if (rows.length !== 9) throw new Error(`CWF-PRESENTATION.md: expected 9 timing rows, found ${rows.length}`);
 const HOLD = rows.map((m) => parseInt(m[2], 10) + (m[3] ? parseFloat(m[3]) : 0));
 process.stderr.write(`• scene holds from CWF-PRESENTATION.md: ${HOLD.join(" / ")} s\n`);
 
-function run(cmd, args, label) {
+// Half these scripts read mainnet and half read devnet, and one RPC for all of them is not a
+// configuration — it is a bug that renders. Passing a mainnet endpoint through to
+// `read-balance.sh` had it look for a devnet account on mainnet and die inside a Python traceback
+// with no indication of which run it was.
+const MAINNET = process.env.MAINNET_RPC || process.env.RPC || "https://api.mainnet-beta.solana.com";
+const DEVNET = process.env.DEVNET_RPC || "https://api.devnet.solana.com";
+function run(cmd, args, label, rpc) {
   process.stderr.write(`• ${label} …\n`);
   return execFileSync(cmd, args, {
     cwd: repo, encoding: "utf8", maxBuffer: 8 * 1024 * 1024,
-    env: { ...process.env, FORCE_COLOR: "1" },
+    env: { ...process.env, FORCE_COLOR: "1", ...(rpc ? { RPC: rpc } : {}) },
   }).replace(/\s+$/, "");
 }
 const plain = (t) => t.replace(/\x1b\[[0-9;]*m/g, "");
@@ -55,15 +61,16 @@ function slice(text, from, to) {
 }
 
 // ── the real runs ────────────────────────────────────────────────────────────────────────────────
-const mints = run("bash", ["scripts/onchain-check.sh"], "reading the xStock mints on mainnet");
-const balance = run("bash", ["scripts/read-balance.sh", ACCOUNT, KEYS], "opening our own confidential balance");
-const reserves = run("bash", ["scripts/kamino-reserves.sh"], "reading every Kamino reserve on mainnet");
-// Reads someone else's source at a pinned commit and fails if any pinned line has moved. Scene 5
-// is a quotation; this is what keeps it one.
-const verdict = run("bash", ["scripts/kamino-verdict.sh"], "re-reading Kamino's pinned constraint lines");
-const collateral = run("bash", ["scripts/prove-collateral.sh", ACCOUNT, "100000", KEYS], "proving the account clears a threshold, on devnet");
-const seizure = run("bash", ["scripts/seizure-status.sh"], "reading the seizure back off devnet");
-const packet = run("bash", ["scripts/packet.sh", "NVDAx"], "building the admission packet for the control asset");
+const mints = run("bash", ["scripts/onchain-check.sh"], "reading the xStock mints on mainnet", MAINNET);
+const balance = run("bash", ["scripts/read-balance.sh", ACCOUNT, KEYS], "opening our own confidential balance", DEVNET);
+// The account scan takes minutes — it reads every token account of every mint — so the pane is
+// the stored result, which carries its own measurement timestamp and says so on screen. Every
+// other pane here is a command run moments ago; this one is a command that prints when it ran.
+const usage = run("bash", ["scripts/usage-scan.sh", "--last"], "reprinting the account scan");
+const swaps = run("bash", ["scripts/swap-status.sh", "plain"], "reading the swaps back off devnet", DEVNET);
+const feeSwap = run("bash", ["scripts/swap-status.sh", "fee"], "reading the with-fee swap back off devnet", DEVNET);
+const cash = run("bash", ["scripts/cash-scan.sh"], "reading the stablecoins on mainnet", MAINNET);
+const testbed = run("bash", ["scripts/testbed-up.sh", "--check"], "checking the standing devnet issuer", DEVNET);
 
 // ── guards ───────────────────────────────────────────────────────────────────────────────────────
 for (const [text, re, why] of [
@@ -71,50 +78,27 @@ for (const [text, re, why] of [
   [mints, /NVDA\.US.*Token-2022.*None/, "Backpack's NVDA.US no longer reads the same way"],
   [balance, /public balance\s+0/, "the account's public balance is no longer zero"],
   [balance, /173000 units/, "the confidential balance did not open to the expected position"],
-  [reserves, /19 of them are tokenized stocks/, "Kamino no longer has 19 tokenized-stock reserves — scene 4 says 19"],
-  [reserves, /SPCX\.US/, "SPCX.US has left the reserve list"],
-  [verdict, /allow_confidential_credits/, "the line that refuses a confidential-credit account has moved"],
-  [verdict, /check_only_supported_liquidity_token_extensions/, "the deposit-path check has moved"],
-  [verdict, /user_source_liquidity/, "the check no longer reads the depositor's own account — the finding has changed"],
-  [collateral, /VerifyCiphertextCommitmentEquality/, "the equality proof never ran"],
-  [collateral, /VerifyBatchedRangeProofU64/, "the range proof never ran"],
-  [collateral, /both accepted/, "the chain did not accept both proofs"],
-  [seizure, /seized: yes/, "the loan on devnet no longer reads as seized"],
-  [seizure, /still read zero/, "the seizure pane stopped saying both accounts read zero"],
-  [packet, /wrote docs\/packets\/NVDAx\.md/, "the packet was not written"],
+  // Scene 4 is the whole reveal, and it says zero. If anybody has opened a confidential account
+  // since the scan, the scene is wrong and the right response is to rescan, not to record.
+  [usage, /329,536 token accounts, .*0.* configured for confidential/, "the account scan no longer reads 329,536 / zero — rerun ./scripts/usage-scan.sh"],
+  [swaps, /confidentialTransfer, confidentialTransfer/, "the plain swap no longer carries two confidential transfers"],
+  [swaps, /public balance 0 on every one/, "a swap account's public balance is no longer zero"],
+  [feeSwap, /confidentialTransfer, confidentialTransferWithFee/, "the with-fee swap no longer carries both instruction kinds — scene 7 is about exactly that"],
+  [feeSwap, /every swap still reads as recorded/, "the with-fee swap did not read back clean"],
+  [cash, /PYUSD.*Token-2022/, "PYUSD is no longer Token-2022"],
+  [cash, /USDC.*Token \(legacy\)/, "USDC is no longer legacy SPL — scene 8 contrasts them"],
+  [cash, /the same key holds the confidential authority on both/, "PYUSD and USDG no longer share one authority, and scene 8 says they do"],
+  [testbed, /the testbed is as published/, "the standing devnet issuer has been changed — scene 9 points people at it"],
 ]) {
   if (!re.test(plain(text))) throw new Error(`refusing to record — ${why}`);
 }
-if ((plain(collateral).match(/err\s*:\s*None/g) || []).length < 2) {
-  throw new Error("refusing to record — a proof came back with an error");
-}
-// Scene 5 concedes that Kamino is right, and that concession is only worth anything while every
-// pinned line still reads the way the verdict says. kamino-verdict.sh exits non-zero if one moved,
-// so reaching here means all of them held — but say so out loud rather than trusting the exit code
-// silently, because a script that stops printing ✗ is indistinguishable from one that passes.
-if (plain(verdict).includes("✗")) throw new Error("refusing to record — a pinned Kamino line has moved");
-
-const cap = JSON.parse(readFileSync(path.join(repo, "web/capacity.json"), "utf8"));
-const usd = (n) => "$" + (n / 1e6).toFixed(1) + "m";
-
-// The reserve table, header plus its 19 rows. Counted rather than taken to the end of the block:
-// an earlier take of the check-in clipped the last three, which were the Backpack ones the
-// argument is partly about.
-const table = (() => {
-  const lines = reserves.split("\n");
-  const a = lines.findIndex((l) => /SYMBOL\s+ISSUER/.test(plain(l)));
-  if (a < 0) throw new Error("kamino-reserves.sh printed no table — the finding changed");
-  const rows = lines.slice(a + 1, a + 20);
-  if (rows.some((l) => !/^\s{4}\S/.test(plain(l)))) throw new Error("the reserve table is shorter than 19 rows");
-  return [lines[a], ...rows].join("\n");
-})();
 
 // ── the cut ──────────────────────────────────────────────────────────────────────────────────────
 // One entry per scene of CWF-PRESENTATION.md, in its order, with its hold. `line` is the narration,
 // carried into the manifest so LINES.md can pair each clip with what goes on it.
 const script = [...md.matchAll(/^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)/gm)]
   .map((m) => m[3].replace(/^> ?/gm, "").trim().replace(/\n+/g, " "));
-if (script.length !== 8) throw new Error(`CWF-PRESENTATION.md: expected 8 scripted scenes, found ${script.length}`);
+if (script.length !== 9) throw new Error(`CWF-PRESENTATION.md: expected 9 scripted scenes, found ${script.length}`);
 
 // The mint count and issuer count are read at render time, not written into the page. The slot
 // scene said "All 1,869" and "Two, independently" as literals until 2026-09-19, when a third
@@ -127,73 +111,70 @@ const scenes = [
   { file: "01-your-position.mp4", kind: "leak", total: HOLD[0] },
   {
     file: "02-this-account.mp4", kind: "evidence",
-    label: "A real account on Solana. Read just now.",
-    body: slice(balance, /account\s+/, /public balance/),
-    emphasis: ["public balance     0"],
-    // The whole scene is the gap. The public balance sits alone for five seconds, and the
-    // confidential line arrives into the same frame rather than onto a new one.
-    then: { at: 6.5, body: slice(balance, /account\s+/, /173000 units/),
-            emphasis: ["public balance     0", "173000 units"] },
+    label: "A real account on Solana, right now.",
+    body: slice(balance, /public balance/, /public balance/),
+    emphasis: ["0"],
+    then: {
+      at: 6,
+      body: slice(balance, /confidential\s+\d/, /confidential\s+\d/),
+      emphasis: ["173000 units"],
+      label: "The same account. This is what it holds.",
+    },
     total: HOLD[1],
   },
   { file: "03-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[2] },
   {
-    file: "04-whose-money.mp4", kind: "reserves",
-    label: "Kamino, read just now.",
-    body: table,
-    figures: [
-      [usd(cap.held_usd), "of tokenized stock deposited in Kamino reserves"],
-      [usd(cap.authorised_capacity_usd), "of borrowing their caps and LTVs already authorise"],
-    ],
-    figuresAt: 7, figuresStep: 2.4,
+    file: "04-so-i-counted.mp4", kind: "evidence",
+    label: "So I stopped reading the settings and counted the accounts.",
+    // Not "just now", and the badge says so. Every other pane in this cut is a command run
+    // moments before the recording; this scan reads every token account of every mint and takes
+    // minutes, so it is the stored measurement and the screen carries its date.
+    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
+    body: slice(usage, /AAPLx/, /token accounts,/),
+    emphasis: ["329,536", "0 configured for confidential transfers"],
     total: HOLD[3],
   },
   {
-    file: "05-the-refusal.mp4", kind: "evidence",
-    label: "Kamino Lend, release/v1.25.0 — read at a pinned commit.",
-    body: slice(verdict, /AND REQUIRES THEM TO BE INERT/, /closable\(\)\.is_err\(\)/),
-    emphasis: ["allow_confidential_credits", "auto_approve_new_accounts"],
-    then: {
-      at: 11,
-      label: "And on the depositor's own account — which is the whole finding.",
-      body: slice(verdict, /ON THE DEPOSITOR'S OWN ACCOUNT/, /user_source_liquidity/),
-      emphasis: ["user_source_liquidity"],
-    },
+    file: "05-the-turn.mp4", kind: "missing",
+    label: "Which told me I had been building the wrong shape.",
+    items: [
+      "A <b>loan</b> needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months.",
+      "A <b>trade</b> does not. It happens at one instant.",
+      "And on Solana, an instant is all or nothing — so the transaction <b>is</b> the escrow.",
+    ],
+    lead: 3.5, step: 5,
     total: HOLD[4],
   },
   {
     file: "06-what-runs.mp4", kind: "evidence",
-    label: "The lender's check, run by Solana's own ZK program.",
-    body: slice(collateral, /ciphertext-commitment equality/, /both accepted/),
-    emphasis: ["err   : None", "success", "both accepted"],
-    then: {
-      at: 13,
-      label: "And on default, the collateral moves.",
-      body: slice(seizure, /loan\s+/, /still read zero/),
-      emphasis: ["seized: yes", "public balance 0"],
-    },
+    label: "Fifty thousand shares, for eight and three quarter million dollars.",
+    body: slice(swaps, /stock for cash/, /the 4 accounts/),
+    emphasis: ["confidentialTransfer, confidentialTransfer", "public balance 0 on every one"],
     total: HOLD[5],
   },
   {
-    file: "07-what-does-not.mp4", kind: "missing",
-    label: "What is missing",
-    items: [
-      "A floor proved once is only true once. <em>Re-proving is not built.</em>",
-      "The seizure has to happen inside Kamino's liquidation, not beside it. <em>Not built.</em>",
-      "The issuer has to approve each account. <em>Nobody's decision but theirs.</em>",
-    ],
-    lead: 5, step: 8,
+    file: "07-the-hard-part.mp4", kind: "evidence",
+    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
+    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
+    emphasis: ["confidentialTransferWithFee"],
     total: HOLD[6],
   },
   {
-    file: "08-what-you-can-run.mp4", kind: "runnable",
-    label: "One command, live chain data, every unknown capped at zero.",
-    command: "./scripts/packet.sh NVDAx",
-    body: slice(packet, /wrote docs/, /LTV/),
-    emphasis: ["NVDAx"],
-    url: "psyto.github.io/confide/kamino.html",
-    note: "Nobody outside this repository has used any of it yet. Every number above is checkable.",
+    file: "08-not-only-equities.mp4", kind: "evidence",
+    label: "And it was never a story about tokenized stocks.",
+    body: slice(cash, /program\s+confidential/, /Four issuers/),
+    emphasis: ["PYUSD", "USDG", "EMPTY"],
     total: HOLD[7],
+  },
+  {
+    file: "09-what-is-missing.mp4", kind: "runnable",
+    label: "Nobody outside this repository has used any of it. What is left is not unknown.",
+    command: "./scripts/testbed-join.sh",
+    body: slice(testbed, /THE STANDING TESTBED/, /the testbed is as published/),
+    emphasis: ["autoApproveNewAccounts is still false", "the testbed is as published"],
+    url: "github.com/psyto/confide",
+    note: "The gate is shut, as it is on all " + MINT_COUNT + ". The key that opens it is published.",
+    total: HOLD[8],
   },
 ].map((s, i) => ({ ...s, line: script[i] }));
 

@@ -206,7 +206,7 @@ const term=(b,em)=>b.split("\n").map(l=>ansi(l,em)).join("\n");
 async function evidence(s){
   const t0=performance.now();
   const els=put('<div><div class="cap fade"><span id="cap">'+s.label+'</span>'
-   +'<span class="stamp">real output, just now</span></div>'
+   +'<span class="stamp">'+(s.stamp||'real output, just now')+'</span></div>'
    +'<pre class="fade" id="pane">'+term(s.body,s.emphasis)+'</pre></div>');
   await sleep(80); await reveal(els,220);
   if(!s.then){ await out(rest(s,t0)); return; }
@@ -222,7 +222,7 @@ async function evidence(s){
 // it is the evidence, not a reveal — and the figures land on the beats the narration takes them.
 async function reserves(s){
   const t0=performance.now();
-  put('<div><div class="cap fade">'+s.label+'<span class="stamp">real output, just now</span></div>'
+  put('<div><div class="cap fade">'+s.label+'<span class="stamp">'+(s.stamp||'real output, just now')+'</span></div>'
    +'<pre class="fade">'+term(s.body,s.emphasis)+'</pre>'
    +'<div class="figs" style="--cols:'+s.figures.length+'">'
    +s.figures.map(f=>'<div class="fig fade'+(f[2]?" "+f[2]:"")+'">'

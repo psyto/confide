@@ -22,6 +22,29 @@ R="${RPC:-https://api.mainnet-beta.solana.com}"
 T22=TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb
 OUT="${OUT:-web/usage.json}"
 
+# `--last` reprints the stored result instead of re-scanning. The scan reads every token account
+# of every mint and takes minutes, which is fine for a weekly measurement and wrong for a video
+# render that runs it eight times an evening. The stored file carries its own timestamp, so the
+# pane says when it was measured rather than implying it was measured now.
+if [ "${1:-}" = "--last" ]; then
+  [ -f "$OUT" ] || { echo "  $OUT is missing — run ./scripts/usage-scan.sh" >&2; exit 1; }
+  python3 - <<'PY'
+import json
+u = json.load(open("web/usage.json"))
+G, DIM, OFF, B = "\033[32m", "\033[2m", "\033[0m", "\033[1m"
+print(f"\n  {B}IS ANYBODY THROUGH THE GATE?{OFF}  {DIM}measured {u['generated_utc']}{OFF}\n")
+for m in u["mints"]:
+    if not m["accounts"]:
+        print(f"  {m['symbol']:10} {m['issuer']:10} {DIM}no token accounts — nothing was ever minted{OFF}")
+        continue
+    print(f"  {m['symbol']:10} {m['issuer']:10} {m['accounts']:>7,} accounts   "
+          f"{G}{m['confidential_accounts']}{OFF} confidential")
+print(f"\n  {u['total_accounts']:,} token accounts, "
+      f"{B}{u['total_confidential_accounts']}{OFF} configured for confidential transfers\n")
+PY
+  exit 0
+fi
+
 MINTS=("$@")
 if [ ${#MINTS[@]} -eq 0 ]; then
   # Two per issuer, chosen to have holders rather than alphabetically. The first sample took the
