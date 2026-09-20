@@ -256,7 +256,21 @@ u = json.load(open("web/usage.json"))
 total = u["total_accounts"]
 conf = u["total_confidential_accounts"]
 want = {"{:,}".format(total), str(total)}
-files = ["STATUS.md", "docs/cwf-2026/STORY.md", "docs/cwf-2026/COMPOSITION.md"]
+# Per-mint counts are legitimate figures in an account-count context, and README prints all six.
+# They are checked line-for-line against the scan by THE PASTED SCAN below, which is stricter
+# than this one; without them here, that check's own subject failed this one.
+for _m in u["mints"]:
+    want |= {"{:,}".format(_m["accounts"]), str(_m["accounts"])}
+# This list held three files while the figure was live on ten. README's headline table, the
+# page's hero panel and og:description, the submission and the YouTube description all carried it
+# and none was read — so a scan that moved the count by 730 failed on STORY.md alone and looked
+# like one stale sentence. The video, its script and its captions are deliberately absent: they
+# are a dated recording, the narration rounds, and re-rendering a delivered file to chase a number
+# that moves weekly is not a thing this repository can do.
+files = ["STATUS.md", "README.md", "web/index.html", "_submission/full.md",
+         "_submission/short-alternatives.txt", "_submission/youtube.md",
+         "_submission/youtube-paste.txt", "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md",
+         "docs/cwf-2026/COMPOSITION.md", "scripts/testbed-join.sh"]
 bad = []
 for f in files:
     t = pathlib.Path(f).read_text(encoding="utf-8")
@@ -270,9 +284,43 @@ for f in files:
     for m in re.finditer(r"(\d+) (?:of them )?configured for confidential", t):
         if int(m.group(1)) != conf:
             bad.append(f"{f}: says {m.group(1)} confidential, web/usage.json says {conf}")
+    # "Of 330,266 live accounts" — the page's og:description, which no fetch can reach because a
+    # crawler reads the source. The hero panel beside it is filled from usage.json; this is not.
+    for m in re.finditer(r"Of ([1-9][\d,]{4,}) live accounts", t):
+        if m.group(1) not in want:
+            bad.append(f"{f}: og:description says {m.group(1)}, web/usage.json says {total}")
 if bad:
     print("\n".join("      " + b for b in bad)); sys.exit(1)
 PY
+
+echo "  THE PASTED SCAN — README's transcript against what the scan would print"
+python3 - <<'PYB' && ok "README's usage-scan block is what usage-scan.sh prints" || bad "README's pasted scan output is not what the scan prints — rebuild it from web/usage.json"
+import json, pathlib, re, sys
+u = json.load(open("web/usage.json"))
+want = ["$ ./scripts/usage-scan.sh"]
+for m in u["mints"]:
+    want.append("  %-10s %-10s %7d accounts   %3d over 400 bytes   %d confidential"
+                % (m["symbol"], m["issuer"], m["accounts"], m["over_400_bytes"],
+                   m["confidential_accounts"]))
+want += ["", "  %d token accounts across %d mints, %d configured for confidential transfers"
+         % (u["total_accounts"], len(u["mints"]), u["total_confidential_accounts"])]
+t = pathlib.Path("README.md").read_text(encoding="utf-8")
+m = re.search(r"```\n(\$ \./scripts/usage-scan\.sh\n.*?)\n```", t, re.S)
+if not m:
+    print("      README no longer holds a usage-scan transcript"); sys.exit(1)
+got = m.group(1).splitlines()
+if got != want:
+    # Why this exists: the block held four rows and claimed six mints, because the two Backpack
+    # mints with no holders had been dropped from a paste. A reader running the command would
+    # have got a different screen, which is the one thing a transcript must not do.
+    for i in range(max(len(got), len(want))):
+        g = got[i] if i < len(got) else "(missing)"
+        w = want[i] if i < len(want) else "(not printed)"
+        if g != w:
+            print("      line %d: README %r" % (i + 1, g))
+            print("               scan   %r" % (w,))
+    sys.exit(1)
+PYB
 
 echo "  THE MINT COUNT — prose against web/mints.json"
 python3 - <<'PY' && ok "every quoted mint count matches web/mints.json" || bad "a quoted mint count has drifted — ./scripts/refresh-mints.sh, then fix the prose"

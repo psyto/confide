@@ -3,7 +3,7 @@
 #
 #   ./scripts/testbed-join.sh [your-keypair.json]
 #
-# This is the thing 329,536 live token accounts have never done — `./scripts/usage-scan.sh`. On
+# This is the thing 330,266 live token accounts have never done — `./scripts/usage-scan.sh`. On
 # mainnet it cannot be done, because a confidential account needs the issuer's signature and no
 # issuer has given one. Here the issuer has published the key that gives it, so the gate is shut
 # exactly as it is on all 1,992 real mints and **you can operate it yourself**.

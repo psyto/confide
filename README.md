@@ -35,7 +35,7 @@ the price it implies.
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
-| **329,536** | live token accounts across Apple, NVIDIA, SpaceX and Anthropic |
+| **330,266** | live token accounts across Apple, NVIDIA, SpaceX and Anthropic |
 | **0** | of them are confidential. **Nobody has ever opened one.** |
 
 Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
@@ -149,12 +149,14 @@ locked; it does not say whether anyone walked through. So count the accounts:
 
 ```
 $ ./scripts/usage-scan.sh
-  AAPLx      Backed       64381 accounts     7 over 400 bytes   0 confidential
-  NVDAx      Backed      176962 accounts    28 over 400 bytes   0 confidential
-  SPACEX     PreStocks    17909 accounts     6 over 400 bytes   0 confidential
-  ANTHROPIC  PreStocks    70284 accounts    30 over 400 bytes   0 confidential
+  AAPLx      Backed       65112 accounts     7 over 400 bytes   0 confidential
+  NVDAx      Backed      176920 accounts    28 over 400 bytes   0 confidential
+  AAPL.US    Backpack         0 accounts     0 over 400 bytes   0 confidential
+  TSLA.US    Backpack         0 accounts     0 over 400 bytes   0 confidential
+  SPACEX     PreStocks    17915 accounts     6 over 400 bytes   0 confidential
+  ANTHROPIC  PreStocks    70319 accounts    30 over 400 bytes   0 confidential
 
-  329536 token accounts across 6 mints, 0 configured for confidential transfers
+  330266 token accounts across 6 mints, 0 configured for confidential transfers
 ```
 
 Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and

@@ -61,7 +61,7 @@ for showing a balance to somebody who needs to see it, is empty on every one of 
 So the honest answer is: **today, nobody.** And the second measurement says that is not a
 disadvantage.
 
-> **329,536 token accounts across five mints that have holders — Apple and NVIDIA from Backed,
+> **330,266 token accounts across four mints that have holders — Apple and NVIDIA from Backed,
 > SpaceX and Anthropic from PreStocks. Zero are configured for confidential transfers.**
 > `./scripts/usage-scan.sh`, written for this question because no such count existed.
 
@@ -110,7 +110,7 @@ operations decision, not a roadmap item — and on the day it happens, "somebody
 confidential settlement for this" is six months away and "this already settles, here are the
 transaction signatures" is the same afternoon.
 
-**Because the measurement says the seat is empty.** 329,536 accounts, zero confidential. Building
+**Because the measurement says the seat is empty.** 330,266 accounts, zero confidential. Building
 after the gate opens means building against whoever built before it.
 
 **Because the hard part is the part that does not change.** What took the work was not the business
@@ -136,7 +136,7 @@ is done, measured, and will still be true when the conditions change.
 ## 6. What is not true, said here rather than found later
 
 - **Traction is zero.** Nobody outside this repository has used any of it. No pilot, no design
-  partner, no letter of intent. The 329,536-account scan measures a market, not a customer.
+  partner, no letter of intent. The 330,266-account scan measures a market, not a customer.
 - **No issuer has been asked.** The gate is described, not negotiated. Individual outreach was
   retired as a decision, with its cost written down where it was made.
 - **Price is off chain.** Nothing here says 50,000 shares are worth $8.75m. That is what the two

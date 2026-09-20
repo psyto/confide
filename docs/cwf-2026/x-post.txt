@@ -8,7 +8,7 @@ Zero.
 
 ━━━
 
-329,536 live token accounts across Apple, NVIDIA, SpaceX and Anthropic, and not one is configured for confidential transfers. Not few — zero.
+330,266 live token accounts across Apple, NVIDIA, SpaceX and Anthropic, and not one is configured for confidential transfers. Not few — zero.
 
 The reason is one field. `autoApproveNewAccounts` is false on 1,992 of 1,992, so a confidential account cannot exist until the issuer signs for it. None has. The feature is shipped, gated, and unused.
 
@@ -31,7 +31,7 @@ There is a standing issuer on devnet whose gate is shut exactly as all 1,992 are
 git clone https://github.com/psyto/confide
 ./scripts/testbed-join.sh
 
-329,536 live accounts have never done that.
+330,266 live accounts have never done that.
 
 ━━━
 

@@ -16,7 +16,7 @@ A stock-to-stablecoin swap that settles in one Solana transaction with neither s
 
 # A — leads on the measurement. The strongest single fact, but a judge scanning a list of 131
 # projects learns what is broken elsewhere rather than what this is.
-Of 329,536 live tokenized-stock accounts on Solana, zero are confidential. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
+Of 330,266 live tokenized-stock accounts on Solana, zero are confidential. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
 
 # B — shortest. Loses "delivery versus payment", which is the frame that makes a finance reader
 # understand immediately what institution is being removed.
