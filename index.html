@@ -157,10 +157,12 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 
   <section>
     <h2>A trade that settles without publishing either side.</h2>
-    <div class="lede">Two parties exchange confidential positions <b>in one transaction</b>. No
-    program is deployed and none is called — two Token-2022 instructions, two signatures, and
-    Solana's atomicity where a clearing house would be. <b>These are real devnet transactions,
-    fetched and decoded here by your browser.</b></div>
+    <div class="lede">Two parties exchange confidential positions <b>in one transaction</b>. Nothing
+    of ours runs <i>inside</i> the trade — two Token-2022 instructions, two signatures, and
+    Solana's atomicity where a clearing house would be. <b>What Confide does is everything around
+    it</b>: the zero-knowledge proofs the chain will not assemble for you, verified on chain and
+    citable by address, and the check that lets each side read the other's amount before signing.
+    <b>These are real devnet transactions, fetched and decoded here by your browser.</b></div>
     <div id="swaps"><div class="muted">reading devnet…</div></div>
     <div class="note"><b>Delivery versus payment is what a clearing house exists for</b> — neither
     side will go first, so finance inserts a central counterparty, membership, margin and a day of
