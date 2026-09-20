@@ -109,6 +109,20 @@ print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).grou
 [ "$have" = "$claimed" ] && [ "$have" -le 5000 ] \
   && ok "the YouTube description is $have characters and its heading agrees" \
   || bad "the YouTube description is $have characters; the heading claims $claimed"
+# And the chapters against the file they describe. The published Stocklana cut carried chapter
+# times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
+# from the recorder's plan. This reads them off the delivery.
+if [ -f video/Confide_Stocklana_20260920.mp4 ]; then
+  ./scripts/video-chapters.sh video/Confide_Stocklana_20260920.mp4 2>/dev/null \
+  | diff -q - <(python3 -c "
+import re
+s = open('_submission/youtube.md', encoding='utf-8').read()
+d = max(re.findall(r'\`\`\`\n(.*?)\n\`\`\`', s, re.S), key=len)
+print('\n'.join(re.findall(r'(?m)^\d+:\d\d .*\$', d)))") >/dev/null \
+    && ok "the YouTube chapters are the ones in the delivered file" \
+    || bad "the YouTube chapters do not match the file — ./scripts/video-chapters.sh"
+fi
+
 ./scripts/youtube-paste.sh 2>/dev/null | diff -q - _submission/youtube-paste.txt >/dev/null \
   && ok "youtube-paste.txt is what its generator produces" \
   || bad "youtube-paste.txt has drifted from youtube.md"

@@ -1,66 +1,71 @@
 TITLE
 =====
-Confide — Every Tokenized Stock on Solana Has Privacy Nobody Can Use
+Confide — 50,000 shares for $8.75m in one transaction, and the chain shows zero
 
 
 DESCRIPTION
 ===========
-1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers switched ON — and every single one leaves the auditor key EMPTY. Two issuers, arriving there independently. The feature is shipped, configured, and unusable. Confide is what makes that slot usable.
+Two parties settled 50,000 tokenized shares against $8,750,000 of stablecoin in ONE Solana transaction. Neither side published the size, the price, or that they held anything at all. Every account involved still reports a balance of zero.
 
-▶ Try it live (no wallet, no API key, no install): https://psyto.github.io/confide/
-▶ Code (Apache-2.0): https://github.com/psyto/confide
+Delivery versus payment is what a clearing house exists for: neither side will go first, so finance inserts a central counterparty, membership, margin and a day of settlement lag. A transaction that cannot half-happen needs none of it — and the confidential version means neither party publishes the size a clearing house would have been told anyway.
+
+▶ Decode the trades in your own browser: https://psyto.github.io/confide/
+▶ Code, Apache-2.0: https://github.com/psyto/confide
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
 CHAPTERS
 
-0:00 Your position is public, and nobody attacked anything
-0:18 1,869 mints, two issuers, every auditor key empty
-0:38 The same position, seen four ways
-0:52 What you actually get
-1:10 A live account, and the lender's check
-1:33 On default, the lender takes it
+0:00 What this is
+0:08 The trade
+0:28 Why anyone would bother
+0:40 This account
+0:50 Already solved, already switched off
+1:02 So I counted
+1:15 And it is not only equities
+1:29 Why not just use an exchange
+1:49 So what Confide actually is
+2:07 What is missing
 
-TWO ISSUERS, NOT ONE
+━━━━━━━━━━━━━━━━━━━━━━
 
-Backed Finance issues xStocks — Swiss, with their own ISIN, a third-party product. Backpack Securities issues CUSIP-identified tokens the company calls bona fide security entitlements, which is the closer thing to the underlying share. They have nothing to do with each other.
+WHAT CONFIDE IS
 
-Both run Token-2022 with confidential transfers on. Both gate who may open a confidential account. Both leave the auditor key null. 732 mints and 1,137 mints, checked rather than sampled.
+Not a venue. It holds nobody's assets and stands between nobody — the trade itself is two Token-2022 instructions and two signatures, with Solana's atomicity where a clearing house would be.
 
-One issuer leaving the slot empty is caution you could explain away. Two, independently — and the one with the stronger instrument arriving there too — is a missing piece.
+What Confide does is everything around that. A confidential transfer needs zero-knowledge proofs that do not fit in a transaction, so they are verified into context accounts first and cited by address. On a mint that charges a transfer fee — PayPal's PYUSD charges 0 bps and still counts — that leg needs a different instruction, five proofs instead of three, and one proof too large to fit a transaction at all, staged through a record account. And before either side signs, each decrypts the other's amount straight out of the verified proof context, because the amount is encrypted to the recipient too. A leg that underpays cannot be signed by mistake.
 
-WHY THE SLOT IS EMPTY
+THE MEASUREMENT NOBODY HAD MADE
 
-Token-2022 offers exactly one disclosure model: a single global auditor key that decrypts everyone's everything, forever. Fill it and every holder is permanently readable by one party. Leave it null and no holder can demonstrate anything to anyone.
+Every tokenized-equity mint on Solana — all 1,992, from three issuers with nothing to do with each other — runs Token-2022 with confidential transfers switched ON and the auditor key EMPTY.
 
-So no setting of that key is correct — and a fund holding NVDAx broadcasts its position to the whole market instead. Not a choice about publicity. The only option under which it can still answer a question.
+That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 329,536 live token accounts across Apple, NVIDIA, SpaceX and Anthropic. ZERO are configured for confidential transfers.
 
-WHAT CONFIDE DOES
+Not few. Zero. Every mint needs the issuer's signature to open one and no issuer has given one — so there is no incumbent here and nothing to be late to.
 
-Disclosure scoped by recipient, by granularity, and — the part nothing else has — by schedule. The market sees nothing. A lender learns one bit: the collateral covers the loan. Your auditor sees the position. You choose who, how much, and when.
+IT IS NOT AN EQUITIES STORY
 
-WHAT RUNS, ALL OF IT ON CHAIN
+USDC, USDT and USDS cannot move confidentially at all — legacy SPL, no extensions. PYUSD and USDG can, and they land on the identical configuration: gate closed, auditor slot empty, the same key holding confidential authority, permanent delegate and freeze authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door. Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.
 
-• A confidential position on devnet: spl-token balance returns 0, the account holds 173,000
-• "This account holds at least X" proved over the account's OWN ciphertext — two proofs accepted by Solana's live ZK ElGamal Proof Program (VerifyCiphertextCommitmentEquality 6,400 CU, VerifyBatchedRangeProofU64 111,000 CU)
-• The auditor slot filled by one UpdateMint on a mirror that gates new accounts exactly as NVDAx does — autoApproveNewAccounts false, so the issuer has to sign for the account before it can hold anything, and the demo does that rather than describing it
-• A disclosure bound to a date: 147 bytes anchored over that account's OWN ciphertext, so a figure restated later does not open it
-• Opening on schedule without the holder — five separate processes, and what they publish is checked against the commitment sealed that day before anyone reads it
-• Restatement across a stock split that refuses rather than guessing
-• Taking that collateral on default — a transfer the borrower authorises at origination and cannot later refuse. Three proofs (equality over the remaining balance, 3-handle validity so source, lender and auditor can each read the amount, a u128 batched range proof) parked on chain under an authority they cannot close, then fired by a program that owns the escrow. No key reconstructed, nobody asked, neither account ever shows what moved. The floor is proved on chain against the escrow's own ciphertext; the price is the loan's to establish, not the chain's. Program on devnet: Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN
+WHY NOT JUST USE AN EXCHANGE
 
-Every terminal pane in this video is the stdout of a command run moments before recording. Two of them reach mainnet and devnet. The recorder throws instead of recording when a command stops producing the line that carries its claim.
+You cannot. A pool's reserves are public state and a trade moves them by exactly the amount traded, so anything settled against a pool publishes the size, whatever the token can do. Confidentially, it has to be two parties, directly. That is not a gap in this — it is why it is shaped the way it is.
+
+GO AND DO IT YOURSELF
+
+There is a standing issuer on devnet whose gate is shut exactly as all 1,992 are, and whose approval key is published in the repository. So you can open a confidential position and hold something the chain reports as zero:
+
+  git clone https://github.com/psyto/confide
+  ./scripts/testbed-join.sh
+
+Needs the Solana CLI, Rust and a little devnet SOL. The key can approve accounts and cannot mint, which is checked rather than claimed.
 
 WHAT IS NOT BUILT
 
-• Lending. Seizure runs; origination, interest, a liquidation engine and an oracle do not. Confide takes collateral on a default someone else defines. The escrow is frozen while the loan lives, because the proofs bind to a ciphertext that must not move.
-• On the live mints: opening a confidential account on NVDAx needs Backed to sign for it. On a real mint that approval is a conversation, not a transaction. They built the feature, configured it, gated it, and left the key slot empty — a company that means to enable this and has no disclosure model to enable it with.
-• No claim to discharge any filing. Whether CUSIP-identified entitlements change that is a question for counsel, not for me.
+Nobody outside the repository has used any of it, and no issuer has been asked for anything. Matching is unsolved — settlement is done, finding the counterparty is not. Price is agreed off chain. And anything settled against a pool stays impossible, permanently, for the reason above.
+
+Every figure here came off the chain and one command reproduces each. Devnet resets; ./scripts/healthcheck.sh re-checks every claim and exits with the number that died.
 
 BUILT ON
 
-Original work except where declared: aperture-core and aperture-receipts (Apache-2.0, my own pre-existing disclosure engine — https://github.com/psyto/aperture) and spl-token-2022-interface.
-
-Built for Stocklana 2026.
-
-#Solana #TokenizedStocks #RWA #ZeroKnowledge #Token2022 #DeFi #xStocks
+Original work except where declared: aperture-core and aperture-receipts (Apache-2.0, my own pre-existing engine) and spl-token-2022-interface. The swap, the seizure program, the proofs, the equity layer and the demo are new.
