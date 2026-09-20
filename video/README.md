@@ -1,5 +1,31 @@
 # video
 
+## `Confide_Stocklana_20260920.mp4` — the narrated presentation, not yet uploaded
+
+**2:22, 1920x1080, AAC stereo, with a caption track.** The founder generated the voice and
+recomposited to it, so the file is 142.3s against the silent master's 175.1s — the two clocks
+disagree by design and the delivered file is the authority.
+
+Checked against the delivered file rather than assumed:
+
+| | |
+|---|---|
+| every line present | 69 cues, all ten scenes, in order |
+| **the pause survives** | the picture flips from `public balance 0` to `173,000` between 46s and 48s, and the voice says *"holds nothing"* before it and *"it holds a hundred and seventy-three thousand"* after. That gap is the strongest ten seconds in the film and recompositing could have eaten it |
+| no dropouts | `silencedetect` at -45dB/0.8s finds nothing |
+| every claim still live | `swap-status.sh`, `testbed-up.sh --check`, `usage-scan.sh --last`, `healthcheck.sh` — all clear the day it was cut |
+
+**The caption track is ASR and had six errors**, corrected into
+[`captions-20260920.srt`](captions-20260920.srt) by `./scripts/fix-captions.sh`. Upload that as the
+caption track; YouTube's own transcript is worse. The one worth naming: *"Everyone leaves the
+auditor key empty"* is a sentence about people, and the line is about **mints** — every one of
+them. The transcript changed the subject of the finding.
+
+**Still to do, and founder-only:** upload, then the new video id replaces `p1aQuEnzhQk` in
+`_submission/full.md`, `web/index.html`, `README.md` and `scripts/healthcheck.sh` —
+`docs-consistency.sh` enforces that every surface names the same one.
+
+
 **Published: https://youtu.be/p1aQuEnzhQk** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
 the current render at 1920x1080, the recorded narration, and the subtitle track. It says 1,869 mints
 across two issuers and shows the confidential account the page and the README point at.

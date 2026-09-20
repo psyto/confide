@@ -27,6 +27,25 @@ fixes = [
     (r'zero\\s+knowledge', 'zero-knowledge'),
     (r'confidential(\\s+)transfer(\\s+)switched', r'confidential\\1transfers\\2switched'),
     (r'Nvidia', 'NVIDIA'),
+    # 2026-09-20, from the presentation's own track. Each was read off the delivered file and
+    # checked against video/CWF-PRESENTATION.md, which is what the voice was given.
+    #
+    # NOTE ON QUOTING: this whole block lives inside a double-quoted shell string, so a pattern
+    # containing an apostrophe must use escaped double quotes. Writing it the obvious way ended
+    # the shell string mid-rule and the file would not parse.
+    (r'stable\s+coin', 'stablecoin'),
+    # \"Everyone leaves the auditor key empty\" is a sentence about people. The line is about MINTS
+    # -- every one of them -- and the transcript quietly changed the subject of the finding.
+    (r'Everyone(\s+)leaves', r'Every one\1leaves'),
+    # This phrase straddles a cue boundary -- \"and everyone\" ends one cue and \"needs the issuer\"
+    # opens the next -- so a pattern spanning the two never matches: an SRT index and a timestamp
+    # sit between them. Anchored to the end of a line instead, which is where it actually is.
+    (r'(?m)and(\s+)everyone$', r'and\1every one'),
+    (r'issuer(\s+)signature', r\"issuer's\1signature\"),
+    (r'others(\s+)amount', r\"the other's\1amount\"),
+    # The screen says 329,536 and the voice rounds, which is right for speech. A caption writing a
+    # DIFFERENT numeral beside that screen reads as an error, so it spells the rounding out.
+    (r'\b329,000\b', 'three hundred and twenty-nine thousand'),
 ]
 for bad, good in fixes:
     s = re.sub(bad, good, s)

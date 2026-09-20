@@ -1,0 +1,276 @@
+1
+00:00:00,000 --> 00:00:02,639
+Confide  settles  tokenized  stock
+
+2
+00:00:02,639 --> 00:00:04,440
+against  a  stablecoin  in  a  single
+
+3
+00:00:04,440 --> 00:00:06,399
+transaction  and  neither  side
+
+4
+00:00:06,399 --> 00:00:07,840
+publishes  what  moved.
+
+5
+00:00:08,000 --> 00:00:10,520
+Delivery  and  payment  in  one
+
+6
+00:00:10,520 --> 00:00:12,640
+transaction  and  the  only  people
+
+7
+00:00:12,640 --> 00:00:14,319
+who  can  read  either  number  are
+
+8
+00:00:14,319 --> 00:00:16,280
+the  two  making  the  trade.
+
+9
+00:00:16,280 --> 00:00:17,719
+Neither  side  could  have  happened
+
+10
+00:00:17,719 --> 00:00:19,360
+without  the  other,  which  is  the
+
+11
+00:00:19,360 --> 00:00:20,840
+only  thing  a  clearing  house  is
+
+12
+00:00:20,840 --> 00:00:23,559
+for  and  there  isn't  one.
+
+13
+00:00:23,559 --> 00:00:26,160
+Confide  holds  nobody's  assets  and
+
+14
+00:00:26,160 --> 00:00:28,200
+stands  between  nobody.
+
+15
+00:00:28,201 --> 00:00:30,801
+So,  why  hide  it?  If  you  hold
+
+16
+00:00:30,801 --> 00:00:32,881
+tokenized  stocks  on  Solana,
+
+17
+00:00:32,881 --> 00:00:34,881
+everyone  can  see  what  you  hold.
+
+18
+00:00:34,881 --> 00:00:37,161
+Nobody  attacked  anything.  The  chain
+
+19
+00:00:37,161 --> 00:00:39,161
+simply  publishes  it,  the  moment
+
+20
+00:00:39,161 --> 00:00:40,681
+each  purchase  settles.
+
+21
+00:00:40,962 --> 00:00:43,601
+This  is  a  real  account  on  Solana.
+
+22
+00:00:43,601 --> 00:00:45,642
+Right  now,  the  chain  says  it
+
+23
+00:00:45,642 --> 00:00:49,762
+holds  nothing.  It  holds  173,000
+
+24
+00:00:49,762 --> 00:00:50,682
+shares.
+
+25
+00:00:50,683 --> 00:00:53,523
+Nearly  2,000  of  them,  from  three
+
+26
+00:00:53,523 --> 00:00:55,203
+issuers  with  nothing  to  do  with
+
+27
+00:00:55,203 --> 00:00:57,363
+each  other.  Every one  leaves  the
+
+28
+00:00:57,363 --> 00:00:59,603
+auditor  key  empty,  and  every one
+
+29
+00:00:59,603 --> 00:01:01,483
+needs  the  issuer's  signature  to  open
+
+30
+00:01:01,483 --> 00:01:02,403
+an  account.
+
+31
+00:01:02,404 --> 00:01:04,844
+So,  I  stopped  reading  the  settings
+
+32
+00:01:04,844 --> 00:01:06,244
+and  counted.
+
+33
+00:01:06,244 --> 00:01:08,763
+three hundred and twenty-nine thousand
+
+34
+00:01:08,763 --> 00:01:11,444
+accounts  across  Apple,  NVIDIA,
+
+35
+00:01:11,444 --> 00:01:14,163
+SpaceX  and  Anthropic.
+
+36
+00:01:14,163 --> 00:01:15,444
+Not  one.
+
+37
+00:01:15,685 --> 00:01:17,965
+That  dollar  has  the  same  empty
+
+38
+00:01:17,965 --> 00:01:20,325
+auditor  slot  and  the  same  locked
+
+39
+00:01:20,325 --> 00:01:23,125
+door.  Two  regulated  issuers,  two
+
+40
+00:01:23,125 --> 00:01:25,525
+different  asset  classes,  the  same
+
+41
+00:01:25,525 --> 00:01:28,084
+dead  end.  This  was  never  a  story
+
+42
+00:01:28,084 --> 00:01:29,685
+about  tokenized  stocks.
+
+43
+00:01:29,686 --> 00:01:32,286
+You  cannot  do  this  on  one.  A
+
+44
+00:01:32,286 --> 00:01:34,326
+pool's  reserves  are  public  and  a
+
+45
+00:01:34,326 --> 00:01:36,286
+trade  moves  them  by  exactly  the
+
+46
+00:01:36,286 --> 00:01:38,486
+amount  traded.  So  anything  settled
+
+47
+00:01:38,486 --> 00:01:40,926
+against  a  pool  publishes  the  size,
+
+48
+00:01:40,926 --> 00:01:42,806
+whatever  the  token  can  do.
+
+49
+00:01:42,806 --> 00:01:44,766
+It  has  to  be  two  parties
+
+50
+00:01:44,766 --> 00:01:46,006
+directly.
+
+51
+00:01:46,006 --> 00:01:47,766
+That  is  not  a  gap  here.  It  is
+
+52
+00:01:47,766 --> 00:01:49,846
+why  this  is  shaped  as  it  is.
+
+53
+00:01:49,847 --> 00:01:51,927
+The  chain  will  not  assemble  that
+
+54
+00:01:51,927 --> 00:01:54,007
+trade  for  you.  The  proofs  do  not
+
+55
+00:01:54,007 --> 00:01:55,767
+fit  in  a  transaction  and  on  a
+
+56
+00:01:55,767 --> 00:01:57,567
+mint  that  charges  a  fee,  one  of
+
+57
+00:01:57,567 --> 00:01:59,647
+them  does  not  fit  at  all.
+
+58
+00:01:59,647 --> 00:02:01,687
+Confide  builds  them,  puts  them  on
+
+59
+00:02:01,687 --> 00:02:03,606
+chain  and  hands  each  side  the
+
+60
+00:02:03,606 --> 00:02:05,287
+the other's  amount  to  decrypt  before
+
+61
+00:02:05,287 --> 00:02:06,287
+signing.
+
+62
+00:02:06,287 --> 00:02:07,647
+That  is  the  product.
+
+63
+00:02:07,648 --> 00:02:10,248
+Nobody  outside  this  repository  has
+
+64
+00:02:10,248 --> 00:02:11,848
+used  any  of  it.
+
+65
+00:02:11,848 --> 00:02:14,608
+But  what  is  left  is  not  unknown.
+
+66
+00:02:14,608 --> 00:02:16,408
+Each  obstacle  is  a  condition  you
+
+67
+00:02:16,408 --> 00:02:18,207
+can  check.  And  for  the  two  that
+
+68
+00:02:18,207 --> 00:02:20,088
+decide  the  market,  the  work  on
+
+69
+00:02:20,088 --> 00:02:22,288
+the  far  side  is  already  running.
+
