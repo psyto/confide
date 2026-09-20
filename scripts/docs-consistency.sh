@@ -163,6 +163,31 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+echo "  THE ACCOUNT SCAN — prose against web/usage.json"
+python3 - <<'PY' && ok "the account-scan figures match web/usage.json" || bad "an account-scan figure has drifted — ./scripts/usage-scan.sh, then fix the prose"
+import json, re, sys, pathlib
+u = json.load(open("web/usage.json"))
+total = u["total_accounts"]
+conf = u["total_confidential_accounts"]
+want = {"{:,}".format(total), str(total)}
+files = ["STATUS.md", "docs/cwf-2026/STORY.md", "docs/cwf-2026/COMPOSITION.md"]
+bad = []
+for f in files:
+    t = pathlib.Path(f).read_text(encoding="utf-8")
+    # Only figures in an account-count context: a bare six-digit number elsewhere is a balance or
+    # a compute figure, and flagging those would teach the check to cry wolf the way the mint
+    # count already had to learn not to.
+    for m in re.finditer(r"([1-9][\d,]{4,}) (?:token )?accounts", t):
+        if m.group(1) not in want:
+            bad.append(f"{f}: {m.group(1)} accounts, web/usage.json says {total}")
+    # And the headline: the whole claim is that the number of confidential accounts is this one.
+    for m in re.finditer(r"(\d+) (?:of them )?configured for confidential", t):
+        if int(m.group(1)) != conf:
+            bad.append(f"{f}: says {m.group(1)} confidential, web/usage.json says {conf}")
+if bad:
+    print("\n".join("      " + b for b in bad)); sys.exit(1)
+PY
+
 echo "  THE MINT COUNT — prose against web/mints.json"
 python3 - <<'PY' && ok "every quoted mint count matches web/mints.json" || bad "a quoted mint count has drifted — ./scripts/refresh-mints.sh, then fix the prose"
 import json, re, sys, pathlib
