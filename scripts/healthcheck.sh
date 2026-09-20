@@ -186,10 +186,26 @@ else
   bad "https://youtu.be/$VIDEO  — private, deleted, or no longer embeddable"
 fi
 
-for u in "$PAGE/" "$PAGE/mints.json" "$PAGE/proofs.json"; do
+# Every file the page fetches, because a 200 on the page says nothing about them. `loans.json` was
+# 404 on the live site while `index.html` returned 200, so the panel promising to read two loans
+# off the chain showed a missing-file message to anybody who scrolled that far.
+for f in "" mints.json proofs.json loans.json usage.json slots.json swaps.json capacity.json; do
+  u="$PAGE/$f"
   c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$u")
   [ "$c" = "200" ] && ok "$u" || bad "$u  (http $c)"
 done
+
+# And whether what is published is what this repository has. gh-pages is a separate branch and
+# nothing moves files to it automatically; on 2026-09-20 the live page was 391 lines to the
+# repository's 543, said "1,869 mints" in five places, and had no loans panel at all. It had been
+# stale for days and every check passed, because they all read the files here.
+live=$(curl -s --max-time 30 "$PAGE/index.html" | shasum | cut -d" " -f1)
+here=$(shasum web/index.html | cut -d" " -f1)
+if [ "$live" = "$here" ]; then
+  ok "the published page is the one in web/"
+else
+  bad "the published page is NOT web/index.html — run ./scripts/publish-site.sh --push"
+fi
 
 echo
 if [ "$fail" -eq 0 ]; then

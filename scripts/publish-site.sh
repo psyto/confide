@@ -19,7 +19,7 @@ git worktree add -q --detach "$WORK" origin/gh-pages
 
 # Everything the site needs, named rather than globbed: a stray file in web/ should not silently
 # become public.
-FILES="index.html kamino.html mints.json proofs.json kamino-summary.json kamino-reserves.json capacity.json poster.jpg"
+FILES="index.html kamino.html mints.json proofs.json kamino-summary.json kamino-reserves.json capacity.json loans.json usage.json slots.json swaps.json poster.jpg"
 # kamino.json is 822K and the page reads two numbers out of it; the summary carries those.
 for f in $FILES; do
   [ -f "web/$f" ] || { echo "  web/$f is missing — run the script that generates it" >&2; exit 1; }

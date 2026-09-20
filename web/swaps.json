@@ -1,0 +1,43 @@
+{
+ "generated_utc": "2026-09-20 01:56:34 UTC",
+ "note": "Which devnet swaps the page reads. The page decodes each from the chain itself; this file does not decide the outcome.",
+ "confirmed_when_written": 3,
+ "swaps": [
+  {
+   "label": "stock for stock",
+   "signature": "2RksP5AMcdvucLvPeXteVZm8SXL8xn6B9j4wtWJEw6kY2tfRfesQcuMP8bjugcdTKVdr6LdPK8XkG6QkEPk82Uk9",
+   "claim": "two holders exchange positions; no program, no escrow",
+   "accounts": [
+    "3SssY73ryeThZqCrTaU1A1r4wBZjhW4baFPnJH1nhAvy",
+    "811gaATgkHRnAjTSg1NwyDBX8tn1KSfR5RVCxaUcQqAM",
+    "EXUjDC8LUwQFnbBKyC7K7CnKGEtpKTEyRargSsgUjq19",
+    "Gaa5chxjVWhRbCbjR45YhaS2J1tpq6jJct95TSs4SNA5"
+   ],
+   "confirmed_when_written": true
+  },
+  {
+   "label": "stock for cash",
+   "signature": "4gzku3FWoRzhNr24gUTBquxEPwq9L5nqZrmtrCHWjzMBjaDyiapTj6zrBtGLTcRvzPzhexuJfdgxdqafu5Jhhovs",
+   "claim": "50,000 shares for $8,750,000 \u2014 delivery versus payment, one transaction",
+   "accounts": [
+    "6sGtxuaRrBhnph9Y8CyX428HstztBwJBX62wacHBsNwq",
+    "BbqCriFfNGgy966GYpecUPfajKp6Hq7oMN4n1H5BqETm",
+    "4Bu93JSs17wTrX6xFWzcNPrxq4rdLB7VYpCfFtJiekHR",
+    "Bz9HdL72NyFjn2sdvPqrgxfuP7wk4EfMV7ZbocqPFJ9u"
+   ],
+   "confirmed_when_written": true
+  },
+  {
+   "label": "stock for cash, on a mint shaped like PYUSD",
+   "signature": "5ZrJPGRLHKzzR1us4KF3kf9z5hSgvQLabHKQbkMmCSkGEGXAkC8QA7JtnMhsVBsCJzrW5a75s9LJsxaaKsqesZug",
+   "claim": "one transaction carrying confidentialTransfer AND confidentialTransferWithFee",
+   "accounts": [
+    "44kL6AZYDksPKpUT3rcYWXhZP6evsmDrwe6XjkBEHeXt",
+    "DPUAa1hnN7Z3A8ZsYdKGaxPGS8RdVXgdyoWrDfW52wyK",
+    "APwvSMw9AwybqnnCJw9BSFbNUadsZxteWQDgNu45WQGQ",
+    "7cdR88gdEetn9sYSGbAZhpUqMsKjUFW2z39jujbyxaeV"
+   ],
+   "confirmed_when_written": true
+  }
+ ]
+}
