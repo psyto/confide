@@ -65,6 +65,31 @@
     color:var(--cyn)}
   .fig.warn .n{color:var(--red)}
   .fig .k{color:var(--dim);font-size:13.5px;margin-top:8px;line-height:1.45}
+  /* The exchange, as a picture. The terminal pane that used to carry this scene showed that two
+     transfers happened; what makes it a TRADE is that the two sides mirror each other, and a
+     mirror is a shape rather than a list. The empty middle is doing as much work as the arrows —
+     it is where a clearing house would be, and the caption names what is not there. */
+  /* Narrow on purpose. At full width the before and the after sat at opposite ends of the box and
+     "173,000 → 123,000" stopped reading as one movement. */
+  .dvp{display:grid;grid-template-columns:minmax(0,1fr) 260px minmax(0,1fr);align-items:center;
+   gap:0;margin-top:10px;max-width:1180px;margin-inline:auto}
+  .dvp .party{border:1px solid var(--line);border-radius:12px;background:#0b0e15;padding:18px 22px}
+  .dvp .party h3{font-size:15px;font-weight:600;margin-bottom:12px;color:var(--dim)}
+  .dvp .party .ln{display:grid;grid-template-columns:52px 1fr 20px 1fr;align-items:baseline;
+   font-family:ui-monospace,Menlo,monospace;font-size:17px;line-height:2}
+  .dvp .party .ln .lbl{color:var(--dim)}
+  .dvp .party .ln .was{color:var(--dim);text-align:right}
+  .dvp .party .ln .to{color:var(--line);text-align:center}
+  .dvp .party .ln .now{text-align:right}
+  .dvp .mid{text-align:center}
+  .dvp .arrow{font-family:ui-monospace,Menlo,monospace;font-size:14.5px;color:var(--yel);
+   white-space:nowrap;margin:7px 0}
+  .dvp .arrow .bar{color:var(--line)}
+  .dvp .brace{margin-top:20px;color:var(--dim);font-size:14px}
+  .dvp .absent{margin-top:26px;text-align:center;color:var(--dim);font-size:15px}
+  .dvp .absent b{color:var(--fg)}
+  .seen{margin-top:26px;text-align:center;font-size:15px;color:var(--dim)}
+  .seen .z{color:var(--grn);font-family:ui-monospace,Menlo,monospace;font-size:19px;margin:0 9px}
   .miss{display:flex;flex-direction:column;gap:22px;margin-top:4px}
   .miss .row{display:flex;gap:18px;align-items:baseline}
   .miss .num{color:var(--red);font-family:ui-monospace,Menlo,monospace;font-size:19px;flex:0 0 18px}
@@ -235,6 +260,37 @@ async function reserves(s){
   for(const e of all.slice(2)){ e.classList.add("on"); await sleep(step*1000) }
   await out(rest(s,t0));
 }
+// The exchange as a shape. See the note beside `.dvp` in the stylesheet.
+async function dvp(s){
+  const t0=performance.now();
+  const n=v=>v.toLocaleString("en-US");
+  const money=v=>"$"+v.toLocaleString("en-US");
+  const party=(title,rows)=>'<div class="party fade"><h3>'+title+'</h3>'
+   +rows.map(r=>'<div class="ln"><span class="lbl">'+r[0]+'</span><span class="was">'+r[1]+'</span>'
+     +'<span class="to">&rarr;</span><span class="now y">'+r[2]+'</span></div>').join("")
+   +'</div>';
+  put('<div><div class="cap fade">'+s.label+'</div><div class="dvp">'
+   +party("THE SELLER",[["stock",n(s.seller.stock_before),n(s.seller.stock_after)],
+                        ["cash",money(s.seller.cash_before),money(s.seller.cash_after)]])
+   +'<div class="mid">'
+     +'<div class="arrow fade"><span class="bar">━━━</span> '+n(s.delivered)+' shares <span class="bar">━━▶</span></div>'
+     +'<div class="arrow fade"><span class="bar">◀━━</span> '+money(s.paid)+' <span class="bar">━━━</span></div>'
+     +'<div class="brace fade">one transaction &mdash; or neither</div>'
+   +'</div>'
+   +party("THE BUYER",[["stock",n(s.buyer.stock_before),n(s.buyer.stock_after)],
+                       ["cash",money(s.buyer.cash_before),money(s.buyer.cash_after)]])
+   +'</div>'
+   +'<div class="absent fade">Nothing stands between them. <b>No venue, no custodian, no clearing house '
+   +'&mdash; and no program of ours.</b></div>'
+   +'<div class="seen fade">what anyone watching sees'
+   +'<span class="z">0</span><span class="z">0</span><span class="z">0</span><span class="z">0</span></div></div>');
+  const all=[...stage.querySelectorAll(".fade")];
+  // Sides first, then the arrows one at a time, then what is missing. The order is the argument.
+  all[0].classList.add("on"); all[1].classList.add("on"); all[5].classList.add("on");
+  await sleep(1400);
+  for(const e of [all[2],all[3],all[4],all[6],all[7]]){ e.classList.add("on"); await sleep(1500) }
+  await out(rest(s,t0));
+}
 // Numbered gaps, one per beat. Slower than a bullet list on purpose: this is the scene a viewer
 // is most likely to think was hidden, so each line gets long enough to be read and disbelieved.
 async function missing(s){
@@ -275,6 +331,7 @@ window.__play=async()=>{
     else if(s.kind==="benefits")await benefits(s);
     else if(s.kind==="close")await close(s);
     else if(s.kind==="reserves")await reserves(s);
+    else if(s.kind==="dvp")await dvp(s);
     else if(s.kind==="missing")await missing(s);
     else if(s.kind==="runnable")await runnable(s);
     else await evidence(s);

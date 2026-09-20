@@ -73,7 +73,7 @@ never reads the screen.
 | 4 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
 | 5 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
 | 6 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
-| 7 | what runs | 23 | 51 | 137 | the public view, and the two columns only the parties can read |
+| 7 | what runs | 23 | 51 | 137 | the exchange as a diagram: two parties, two arrows, an empty middle |
 | 8 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
 | 9 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
 | 10 | what is missing | 22 | 48 | 135 | the conditions table, then a command and the page URL |
@@ -137,16 +137,21 @@ and admitting it is what earns the next scene.
 
 ### 7 — what runs
 
-> There is no escrow here, and no program. Neither of those columns could have happened without the
-> other, and that is the only thing a clearing house is for. There isn't one — just a transaction
-> that cannot half-happen. The line in the middle is what everybody else gets to see.
+> Neither side of that could have happened without the other, and that is the only thing a clearing
+> house is for. There isn't one. Confide is not a venue and holds nobody's assets — it is what the
+> two of them use to settle, and there is nothing in the middle.
 
-*Shows:* the public view read live, and beside it the two columns the parties wrote down at the
-time. **This scene used to be a list of instruction names**, which shows that two transfers
-happened and not that a trade did — the founder asked whether the cut conveyed delivery versus
-payment and it did not. **The narration does not read the numbers**, because the screen now
-carries them; the voice carries the part the picture cannot, which is that neither column could
-exist alone.
+*Shows:* the exchange as a diagram — two parties, stock crossing one way and cash the other, and
+**an empty middle**. Drawn from figures the parties wrote down at the time; the four zeroes
+underneath are what anybody watching gets.
+
+**Twice corrected, and the second correction is the one that matters.** This scene was first a list
+of instruction names, which shows that two transfers happened and not that a trade did. Then it was
+a table, which showed the trade but still read as output. **The founder asked what Confide actually
+is, and the honest answer turned out to be a shape**: the empty middle is the product. So the
+picture says where a clearing house would be and that nothing is there, and the voice names it —
+*not a venue, holds nobody's assets, nothing in the middle*. It is the only place in the film that
+positions the project, and it had none.
 
 ### 8 — the part that was hard
 

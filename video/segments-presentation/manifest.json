@@ -37,22 +37,22 @@
  {
   "file": "06-the-turn.mp4",
   "start": 67.5,
-  "end": 89.6,
-  "seconds": 22.1,
+  "end": 89.5,
+  "seconds": 22,
   "line": "Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months. A trade does not. A trade happens at one instant — and on Solana, an instant is all or nothing."
  },
  {
   "file": "07-what-runs.mp4",
-  "start": 89.6,
-  "end": 112.6,
+  "start": 89.5,
+  "end": 112.5,
   "seconds": 23,
-  "line": "There is no escrow here, and no program. Neither of those columns could have happened without the other, and that is the only thing a clearing house is for. There isn't one — just a transaction that cannot half-happen. The line in the middle is what everybody else gets to see."
+  "line": "Neither side of that could have happened without the other, and that is the only thing a clearing house is for. There isn't one. Confide is not a venue and holds nobody's assets — it is what the two of them use to settle, and there is nothing in the middle."
  },
  {
   "file": "08-the-hard-part.mp4",
-  "start": 112.6,
+  "start": 112.5,
   "end": 134.6,
-  "seconds": 22,
+  "seconds": 22.1,
   "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
  },
  {

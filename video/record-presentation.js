@@ -80,6 +80,10 @@ const feeSwap = run("bash", ["scripts/swap-status.sh", "fee"], "reading the with
 const cash = run("bash", ["scripts/cash-scan.sh"], "reading the stablecoins on mainnet", MAINNET);
 const testbed = run("bash", ["scripts/testbed-up.sh", "--check"], "checking the standing devnet issuer", DEVNET);
 
+// The private half of the trade, written by the parties at the moment it settled — the only
+// moment those figures exist, because nothing on chain can recover them afterwards.
+const DVP = JSON.parse(readFileSync(path.join(repo, "web/dvp.json"), "utf8"));
+
 // ── guards ───────────────────────────────────────────────────────────────────────────────────────
 for (const [text, re, why] of [
   [mints, /NVDAx.*Token-2022.*None/, "NVDAx no longer reads as Token-2022 with an empty auditor slot"],
@@ -93,6 +97,9 @@ for (const [text, re, why] of [
   [swaps, /public balance 0 on every one/, "a swap account's public balance is no longer zero"],
   [dvp, /4 of 4 accounts/, "one of the four accounts in the recorded trade has gone, or stopped reading zero"],
   [dvp, /50,000 shares.*\$8,750,000/, "the recorded trade is no longer 50,000 shares against $8,750,000"],
+  // The picture is drawn from web/dvp.json and the guard above reads the chain, so the two have to
+  // agree or the scene is drawing a trade that did not happen.
+  [String(DVP.delivered_units), /^50000$/, "web/dvp.json no longer describes the trade this scene draws"],
   [feeSwap, /confidentialTransfer, confidentialTransferWithFee/, "the with-fee swap no longer carries both instruction kinds — scene 7 is about exactly that"],
   [feeSwap, /every swap still reads as recorded/, "the with-fee swap did not read back clean"],
   [cash, /PYUSD.*Token-2022/, "PYUSD is no longer Token-2022"],
@@ -166,10 +173,12 @@ const scenes = [
     total: HOLD[5],
   },
   {
-    file: "07-what-runs.mp4", kind: "evidence",
+    // A picture, not a pane. The terminal version showed that two transfers happened; the shape
+    // is what shows that a TRADE did, and the empty middle is where a clearing house would be.
+    file: "07-what-runs.mp4", kind: "dvp",
     label: "Delivery, and payment, in the same transaction.",
-    body: slice(dvp, /what anyone watching sees/, /a share$/),
-    emphasis: ["50,000 shares", "$8,750,000", "public balance 0"],
+    seller: DVP.seller, buyer: DVP.buyer,
+    delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[6],
   },
   {
