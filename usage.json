@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-09-20 01:00:34 UTC",
+ "generated_utc": "2026-09-20 11:40:47 UTC",
  "note": "Accounts, not mints. Counts token accounts per mint and how many carry the ConfidentialTransferAccount extension. Size is the cheap filter; the extension list is what decides.",
  "rpc": "https://api.mainnet-beta.solana.com",
- "total_accounts": 329536,
+ "total_accounts": 330266,
  "total_confidential_accounts": 0,
  "mints": [
   {
    "mint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
    "symbol": "AAPLx",
    "issuer": "Backed",
-   "accounts": 64381,
+   "accounts": 65112,
    "over_400_bytes": 7,
    "confidential_accounts": 0,
    "confidential": []
@@ -18,7 +18,7 @@
    "mint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
    "symbol": "NVDAx",
    "issuer": "Backed",
-   "accounts": 176962,
+   "accounts": 176920,
    "over_400_bytes": 28,
    "confidential_accounts": 0,
    "confidential": []
@@ -45,7 +45,7 @@
    "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
    "symbol": "SPACEX",
    "issuer": "PreStocks",
-   "accounts": 17909,
+   "accounts": 17915,
    "over_400_bytes": 6,
    "confidential_accounts": 0,
    "confidential": []
@@ -54,7 +54,7 @@
    "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
    "symbol": "ANTHROPIC",
    "issuer": "PreStocks",
-   "accounts": 70284,
+   "accounts": 70319,
    "over_400_bytes": 30,
    "confidential_accounts": 0,
    "confidential": []

@@ -1,17 +1,16 @@
 {
  "generated_from": "scripts/capacity.sh",
- "generated_at": "2026-09-19 10:14:30 UTC",
- "held_usd": 21988522,
- "stock_borrowed_out_usd": 154995,
- "authorised_capacity_usd": 82966330,
+ "generated_at": "2026-09-20 11:50:46 UTC",
+ "held_usd": 23154490,
+ "stock_borrowed_out_usd": 155597,
+ "authorised_capacity_usd": 84024772,
  "reachable_confidentially_usd": 0,
- "reserves_priced": 14,
+ "reserves_priced": 15,
  "reserves_total": 19,
  "unpriced": [
   "MU.US",
   "QQQx",
   "SKHY.US",
-  "SPCX.US",
-  "SPYx"
+  "SPCX.US"
  ]
 }
