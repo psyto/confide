@@ -45,9 +45,14 @@ readable by one party. Leave it null and no holder can demonstrate anything to a
 empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
 whole market instead.
 
-**Confide is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
-part nothing else has — **by schedule**. The auditor reads now. The counterparty learns one bit. The
-public reads at `T`, and the holder can move neither date.
+**Confide is what makes that slot usable**, and the first thing it makes possible is a **trade**:
+two parties settle a position against cash in one transaction, and neither publishes what moved.
+No program, no escrow, no clearing house — see the next section, which is the whole of the pitch.
+
+The underlying capability is broader — disclosure scoped **by recipient, by granularity and by
+schedule** — and [the last section](#the-other-half--disclosure-by-schedule) demonstrates the other
+two, because *a primitive with a second working use is a different claim from a trick with one*.
+It is the last section rather than this one deliberately: one wedge, made excellent.
 
 ```
 day      LANE A · a public wallet       LANE B · Confide
@@ -221,51 +226,6 @@ interview, no design partner, nobody outside this repository has used any of it.
 mechanism that runs and a finding you can check in one RPC call. Everything below is the second
 kind of evidence, and none of it is the first.
 
-## What a usable auditor slot is worth
-
-Split by whether it runs, not by which repository it came from — a reader of this gets the whole
-stack, and the reuse declaration below is for eligibility, not for discounting what works.
-
-**Demonstrated here. Every line of this runs; the on-chain ones reach Solana.**
-
-| | |
-|---|---|
-| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P?cluster=devnet) |
-| **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
-| **Fill the auditor slot.** The mirror gates new accounts exactly as NVDAx does — `autoApproveNewAccounts: false` — so the issuer has to sign for the confidential account before it can hold anything, and the demo does that rather than describing it. One field then separates the two mints, and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
-| **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
-| **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
-| **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
-| **Open on schedule without the holder.** Five separate processes; the holder exited in September. What they publish is checked against the commitment sealed that day before it is read out. | `./scripts/committee.sh` |
-| **Take that collateral on default.** A transfer the borrower authorises at origination and cannot later refuse: the proofs are parked on chain under an authority they cannot close, and fired by a program that owns the escrow. No key is reconstructed, no committee is asked, and neither account ever shows what moved. **The floor is proved on chain against the escrow's own ciphertext; the price is the loan's to establish, not the chain's** — [SEIZURE.md §4](docs/SEIZURE.md). | `./scripts/seizure-e2e.sh` — on devnet; `./scripts/seizure-status.sh` reads it back |
-| **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
-
-**The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
-
-- **Borrowing against stock without publishing the collateral.** Kamino takes SPYx, QQQx, NVDAx and
-  sixteen more as collateral today — verified from its own reserves, `./scripts/kamino-reserves.sh` —
-  and every position securing those loans is public. Both halves a lender needs now run on devnet:
-  the check, and the seizure (above). What is missing is the lending itself: origination, interest,
-  and a liquidation engine. Confide takes collateral on a default someone else defines, and is not a
-  lending protocol.
-- **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
-  moved, and the program evaluates it — from a floor it records rather than verifies and a price one
-  named oracle asserts. Both are the loan's to get right; the chain only enforces the consequence.
-- **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
-  we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call, which is the
-  point: see *What it does not do*.
-- **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
-  product surface on top of it here.
-
-Details and the full mint readings: [docs/ONCHAIN.md](docs/ONCHAIN.md).
-
-**On devnet outliving the judging window:** the finding above is on mainnet and does not reset; the
-account, the program and the mirrored mint are on devnet and can. `./scripts/healthcheck.sh` checks
-every live claim, and [docs/DURABILITY.md](docs/DURABILITY.md) has the recovery steps and the
-recorded evidence. The collateral proofs are self-contained and would keep verifying after a reset
-wiped the account they are about — so the page compares the live ciphertext before treating a pass
-as meaningful, rather than showing a green that means nothing.
-
 ## Run it
 
 The live page reads the mints from mainnet in your browser, pulls real wallets out of recent NVDAx
@@ -431,11 +391,18 @@ Stated because a reader should find the limits here rather than discover them:
 - **Not built, deliberately:** no ATS, no order matching, no MEV protection, no mainnet deployment,
   and no claim to discharge any regulatory filing.
 
-## Why this and not MEV protection
+## Why this and not MEV protection — and why not a pool, ever
 
 Jupiter already ships Ultra / MEV Protect / JupiterZ RFQ, and they are good. They protect the
 transaction **in flight**. Confide is about the **settled balance** — the permanent public record of
 what you hold, which no relay touches. Different axis. See [DESIGN.md §2](DESIGN.md).
+
+**And the sharper contrast, because it is a limit rather than a comparison.** Confidentiality and
+pooled liquidity are mutually exclusive: a pool's reserves are public state and a trade moves them
+by exactly the traded amount, so the size is recoverable by subtracting two consecutive public
+states. An order book publishes fills; a lending reserve publishes its totals. **Confidential
+composition works where the counterparty is a party, not a pool** — which is why this is a
+bilateral settlement primitive and not a venue, and why it will never be one.
 
 In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
 days after quarter end**. That lag is legislated, for exactly the harm that real-time position
@@ -451,7 +418,62 @@ the quarterly report a GP owes its LPs. 13F is the design this borrows and the r
 arrives with instruments like the tokenized-form trading the SEC approved for Nasdaq on 2026-03-18. [DESIGN.md §3a](DESIGN.md) says all of
 this in full rather than leaving it implied.
 
-## The split problem
+## The other half — disclosure by schedule
+
+Everything above is one wedge: **settlement**. This section is the rest of the capability, and it
+is here rather than in the pitch on purpose — [`docs/cwf-2026/GTM.md`](docs/cwf-2026/GTM.md) makes
+that a decision. It appears at all for one reason: **the same primitive has a second use that
+runs**, which is a different claim from a trick with one. The three parts below are unchanged from
+where they used to sit higher up the page.
+
+---
+
+### What a usable auditor slot is worth
+
+Split by whether it runs, not by which repository it came from — a reader of this gets the whole
+stack, and the reuse declaration below is for eligibility, not for discounting what works.
+
+**Demonstrated here. Every line of this runs; the on-chain ones reach Solana.**
+
+| | |
+|---|---|
+| **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P?cluster=devnet) |
+| **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
+| **Fill the auditor slot.** The mirror gates new accounts exactly as NVDAx does — `autoApproveNewAccounts: false` — so the issuer has to sign for the confidential account before it can hold anything, and the demo does that rather than describing it. One field then separates the two mints, and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
+| **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
+| **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
+| **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |
+| **Open on schedule without the holder.** Five separate processes; the holder exited in September. What they publish is checked against the commitment sealed that day before it is read out. | `./scripts/committee.sh` |
+| **Take that collateral on default.** A transfer the borrower authorises at origination and cannot later refuse: the proofs are parked on chain under an authority they cannot close, and fired by a program that owns the escrow. No key is reconstructed, no committee is asked, and neither account ever shows what moved. **The floor is proved on chain against the escrow's own ciphertext; the price is the loan's to establish, not the chain's** — [SEIZURE.md §4](docs/SEIZURE.md). | `./scripts/seizure-e2e.sh` — on devnet; `./scripts/seizure-status.sh` reads it back |
+| **Survive a stock split.** A number sealed in September is quoted in September's units. Eleven actions are queued on the live schedule: eight restate exactly, three have no whole ratio and are reported, not guessed. | `cargo test -p confide-equity` |
+
+**The same primitive, pointed elsewhere. Not built here, and not claimed as working.**
+
+- **Borrowing against stock without publishing the collateral.** Kamino takes SPYx, QQQx, NVDAx and
+  sixteen more as collateral today — verified from its own reserves, `./scripts/kamino-reserves.sh` —
+  and every position securing those loans is public. Both halves a lender needs now run on devnet:
+  the check, and the seizure (above). What is missing is the lending itself: origination, interest,
+  and a liquidation engine. Confide takes collateral on a default someone else defines, and is not a
+  lending protocol.
+- **Liquidation as a predicate.** *Is this account underwater* is the same claim with the threshold
+  moved, and the program evaluates it — from a floor it records rather than verifies and a price one
+  named oracle asserts. Both are the loan's to get right; the chain only enforces the consequence.
+- **An issuer filling the slot on the live mints.** `./scripts/set-auditor.sh` fills it on a mint
+  we control — one `UpdateMint`, readable on devnet. On `NVDAx` it is Backed's call, which is the
+  point: see *What it does not do*.
+- **Standing grants per counterparty, revocable.** The policy layer expresses it; there is no
+  product surface on top of it here.
+
+Details and the full mint readings: [docs/ONCHAIN.md](docs/ONCHAIN.md).
+
+**On devnet outliving the judging window:** the finding above is on mainnet and does not reset; the
+account, the program and the mirrored mint are on devnet and can. `./scripts/healthcheck.sh` checks
+every live claim, and [docs/DURABILITY.md](docs/DURABILITY.md) has the recovery steps and the
+recorded evidence. The collateral proofs are self-contained and would keep verifying after a reset
+wiped the account they are about — so the page compares the live ciphertext before treating a pass
+as meaningful, rather than showing a green that means nothing.
+
+### The split problem
 
 A quarterly report states holdings **as of the reporting date**. Confide seals at quarter end and opens 45 days
 later. If a split lands in between, the number that opens is quoted in units that no longer exist —
@@ -470,7 +492,7 @@ at read time. Restatement reads the issuer's published schedule — one source t
 it and everyone gets the same answer. `confide-open` prints both numbers, separates *nothing
 happened* from *something happened I cannot compute*, and refuses rather than rounding.
 
-## And the other half of a quarterly report
+### And the other half of a quarterly report
 
 An LPA does not only ask *what do you hold*; it carries covenants of the form *"the fund is at or
 above X"*, which must be answerable before the position itself is disclosable. `confide-equity` proves
@@ -482,6 +504,7 @@ mainnet and by `./scripts/healthcheck.sh` on the four mints this repo pins. The 
 `every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` guards those four constants and
 would stay green if Backed filled a key on any mint outside those four. Its own doc comment says so; this
 sentence used to claim the opposite.
+
 
 ## Built on
 
