@@ -35,23 +35,38 @@ What the draft had that the published cut does not, and which stays: conceding t
 refusal is correct, and saying out loud what is missing. Those are worth more here than they were
 there, because **viability and traction are judged at this hackathon and were not at the last one.**
 
-## The shape
+## The shape — rewritten 2026-09-20
 
-Four of the seven judging criteria are non-engineering and get read first, so the order is: **the
-market before the mechanism, the citation before the claim, and the gaps out loud before anyone
-has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
+The script this replaces argued that a lender should be able to price a balance it cannot read. It
+was true and it ended on what was missing. **What changed is that the thing being demonstrated
+changed**: a loan needs a third party to hold collateral, and that third party is what ran into
+every wall. A trade needs no third party, because a Solana transaction is all-or-nothing, and the
+swap runs today where the loan could not.
+
+And one measurement arrived that the old script could not have had: **nobody has ever opened a
+confidential account on any of these mints.** That moves the strongest statistic from "the feature
+is switched off" to "nobody is ahead of you", which is a different and better thing to tell a judge.
+
+So the order is: **the viewer's problem, the moment, the market, the reveal, the turn, what runs,
+what it cost to build, what is missing.** The mechanism is still late — scene 6 of 9 — because four
+of the seven judging criteria are non-engineering and get read first.
+
+**The craft rules from the published cut still hold, and are the reason this reads the way it does:**
+speak to the viewer; reframe in seven words; show before you count; leave one gap; and the narration
+never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
 | 2 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 3 | already shipped | 22 + 2 | 49 | 137 | the mint scan finishing, the auditor slot empty |
-| 4 | whose money | 19 | 43 | 140 | the 19 Kamino reserves, live |
-| 5 | the refusal | 21 | 47 | 138 | `constraints.rs` on screen |
-| 6 | what runs | 25 | 55 | 135 | the proofs accepted by Solana's ZK program; the seizure on devnet |
-| 7 | what does not | 30 | 66 | 135 | the three missing pieces, as text |
-| 8 | what you can run | 19 | 41 | 134 | `./scripts/packet.sh NVDAx`, then the page URL |
-| | | **168 s** | **350** | | |
+| 3 | already solved, already switched off | 21 | 47 | 138 | the mint scan finishing, the auditor slot empty |
+| 4 | so I counted | 14 + 2 | 30 | 134 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
+| 5 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
+| 6 | what runs | 20 | 45 | 139 | the swap landing; four accounts, public 0 and confidential real |
+| 7 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
+| 8 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
+| 9 | what is missing | 27 | 61 | 139 | the conditions table, then a command and the page URL |
+| | | **173 s** | **362** | | |
 
 ## The script
 
@@ -61,7 +76,8 @@ has to find them.** Confide's mechanism is scene 5 of 8, not scene 1.
 > The chain simply publishes it, the moment each purchase settles.
 
 *Shows:* a position climbing across a quarter, watched. **Second person, and the second sentence is
-the one that has to land** — this is the default behaviour, not an incident.
+the one that has to land** — this is the default behaviour, not an incident. Unchanged from the
+previous script, because it is the best opening the project has.
 
 ### 2 — this account · +5 s silence
 
@@ -69,70 +85,88 @@ the one that has to land** — this is the default behaviour, not an incident.
 >
 > It holds a hundred and seventy-three thousand shares.
 
-*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** This
-is the strongest ten seconds available and it is borrowed from the published cut on purpose.
+*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
+strongest ten seconds available, and still is.
 
-### 3 — already shipped · +2 s silence
+### 3 — already solved, already switched off
 
-> Solana already built this. Nearly two thousand tokenized stocks have confidential transfers
-> switched on, from three issuers with nothing to do with each other — listed equity and pre-IPO
-> alike. Every one of them leaves the auditor key empty, because the only key on offer reads
-> everyone's everything, forever.
+> Solana already solved this. Nearly two thousand tokenized stocks ship confidential transfers
+> today, from three issuers with nothing to do with each other. Every one of them leaves the auditor
+> key empty, and every one needs the issuer's signature before you can open an account at all.
 
-*Shows:* the scan finishing, the slot empty. **Three issuers arriving independently at the same dead
-end is the line** — one company being careful is a story about that company, and the third arrived
-after the script was written. **"Nearly two thousand" rather than the exact count on purpose**: the
-issuers keep minting, the number moved twice in four days, and a narration track cannot be
-re-recorded every time it does. The figure on screen comes off the chain at render time.
+*Shows:* the mint scan finishing; the auditor slot empty. **Three independent issuers reaching the
+same dead end is the line** — one company being careful is a story about that company.
 
-### 4 — whose money
+### 4 — so I counted · +2 s silence
 
-> Which would be a curiosity, except that people are already lending against these. Twenty-one
-> million dollars of tokenized stock is sitting in Kamino reserves right now, and the caps
-> authorise eighty-one million of borrowing against it. Every one of those positions is public.
+> So I stopped reading the settings and counted the accounts. Three hundred and twenty-nine thousand
+> of them, across Apple, NVIDIA, SpaceX and Anthropic.
+>
+> Not one is confidential. Not few. Zero.
 
-*Shows:* the reserve table, live, with the two totals. **Two numbers and the last sentence** — the
-table carries the rest. Confide is not in this scene, and the figures are Kamino's own caps, LTVs
-and prices, computed by `./scripts/capacity.sh`.
+*Shows:* `./scripts/usage-scan.sh` running to its total. **The reveal, and it is new** — every other
+measurement in this project is about how the mints are configured. This one is about whether anybody
+got through, and the answer is that the door has never been opened.
 
-### 5 — the refusal
+### 5 — the turn
 
-> Kamino is not ignoring confidentiality. Its program names it, and requires it switched off before
-> a deposit will land. That is not an oversight. A lender who cannot read a balance cannot price it,
-> and refusing what you cannot value is how underwriting is supposed to work.
+> Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral,
+> because it has to survive one side refusing to cooperate for months. A trade does not. A trade
+> happens at one instant — and on Solana, an instant is all or nothing.
 
-*Shows:* `constraints.rs` on screen. **Conceding the refusal is correct is what makes everything
-after it credible.**
+*Shows:* the escrow diagram, then it disappearing. **"The wrong shape" is the seven-word reframe**,
+and admitting it is what earns the next scene.
 
 ### 6 — what runs
 
-> So prove what a lender needs without showing the balance. This NVIDIA account holds at least the
-> collateral — checked by Solana's own zero-knowledge program, not by us. And if the loan defaults,
-> the collateral moves, because the escrow belongs to a program rather than to the borrower. Both of
-> those run on devnet today.
+> So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million
+> dollars, in one transaction. Both sides settle or neither does, with no clearing house in between.
+> Afterwards, every account still reports a balance of zero to anyone watching.
 
-*Shows:* the proofs accepted, then the seizure and its explorer link. **"Checked by Solana's own"
-is the point** — everything before it is setup.
+*Shows:* the transaction landing, then the four balances — public `0`, confidential real.
+**Delivery versus payment is what a clearing house exists for**, and the line does not say so,
+because scene 7 is where a judge will place it themselves.
 
-### 7 — what does not
+### 7 — the part that was hard
 
-> Three things are missing, and I would rather say them than have you find them. A floor proved once
-> is only true once — re-proving is not built. The seizure has to happen inside Kamino's liquidation,
-> not beside it — not built. And the issuer has to approve each account, because these mints do not
-> approve them automatically. That last one is nobody's decision but theirs.
+> The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs
+> a different instruction, five zero-knowledge proofs instead of three, and one proof too large to
+> fit in a Solana transaction at all. One transaction carries both sets of rules.
 
-*Shows:* three lines of text. **The scene most likely to be cut for time by someone who has
-forgotten why it is here.**
+*Shows:* the two instruction names side by side in the same transaction, then the record account the
+oversized proof had to be staged through. **This is the scene for the engineering criterion**, and
+it is the only place the video is allowed to sound technical.
 
-### 8 — what you can run
+### 8 — and it is not only equities
 
-> One command builds the whole admission packet for any of those mints, from live chain data, with
-> every unknown capped at zero instead of guessed. Nobody outside this repository has used any of
-> it yet. You can check every number yourself.
+> That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two
+> different asset classes, the same dead end. This was never a story about tokenized stocks.
 
-*Shows:* `./scripts/packet.sh NVDAx` — the control, where every figure is real — then the page URL. **Traction is stated as part of the
-close rather than as its own scene** — it is honest either way, and a scene of its own made the
-ending apologetic.
+*Shows:* PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit.
+**Market size, argued by evidence rather than asserted.**
+
+### 9 — what is missing
+
+> Nobody outside this repository has used any of it, and I have asked no issuer for anything. But
+> what is left is not unknown. Each obstacle is a condition you can check — and for the two that
+> decide the market, the work on the far side is already running. Every figure here came off the
+> chain. One command reproduces it.
+
+*Shows:* the conditions table, then a command and the page URL. **Traction is stated inside the
+close rather than given a scene** — honest either way, and a scene of its own made the ending
+apologetic.
+
+**Two words were corrected here before this was ever spoken.** The draft said *"every obstacle has
+a number on it"*, and the issuer gate does not — it is an operations decision, not a threshold. And
+it said the work on the far side of *each* obstacle is done, which is true of the issuer gate and
+of the venue and **not** of matching or of proving a floor for an ordinary holder. A line a judge
+can push over is worse than a weaker line that holds.
+
+## The sections below describe the SUPERSEDED cut
+
+Kept rather than deleted: the rough cut they report on was rendered from the eight-scene script that
+ended on the loan, and the defect one of them found is still the most useful thing in this file.
+**None of the scene numbers below refer to the script above.**
 
 ## What this needs to become a cut
 
