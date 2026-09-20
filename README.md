@@ -2,8 +2,8 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/p1aQuEnzhQk) · no wallet, no API key, no install
 
-**Confidential delivery-versus-payment for tokenized stocks on Solana.** Two parties settle stock
-against cash **in one transaction**, and neither publishes what moved. Confide builds the
+**Confidential delivery-versus-payment for tokenized stocks on Solana** — a **stock-to-stablecoin
+swap in one transaction**, with neither side publishing what moved. Confide builds the
 zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
 before signing — **with nobody in the middle**.
 
