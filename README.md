@@ -7,18 +7,10 @@ against cash **in one transaction**, and neither publishes what moved. Confide b
 zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
 before signing — **with nobody in the middle**.
 
-*Reordered 2026-09-20. This file used to open on the market and say what Confide is on line 48,
-which assumes a reader reaches line 48. The order now is the one the presentation uses: what it is,
-then it working, then why anybody wants it — so that stopping early still leaves you with the
-product rather than with a gap in somebody else's.*
-
 ## What runs today — a trade that settles without publishing either side
 
-**Two parties exchange confidential positions in one transaction.** Nothing of ours runs *inside*
-the trade: two Token-2022 instructions, two signatures, and Solana's atomicity where a clearing
-house would be. **What Confide does is everything around it** — the zero-knowledge proofs the chain
-will not assemble for you, verified on chain and citable by address, and the check that lets each
-side read the other's amount before it signs.
+**Two parties exchange confidential positions in one transaction.** Run it yourself with
+`MODE=dvp ./scripts/swap-e2e.sh`; these three are on devnet now.
 
 ```
 $ MODE=dvp ./scripts/swap-e2e.sh
@@ -37,6 +29,48 @@ the price it implies.
 | stock for stock | [`2RksP5AM…`](https://explorer.solana.com/tx/2RksP5AMcdvucLvPeXteVZm8SXL8xn6B9j4wtWJEw6kY2tfRfesQcuMP8bjugcdTKVdr6LdPK8XkG6QkEPk82Uk9?cluster=devnet) — 29,417 CU, 1,006 bytes |
 | stock for cash | [`4gzku3FW…`](https://explorer.solana.com/tx/4gzku3FWoRzhNr24gUTBquxEPwq9L5nqZrmtrCHWjzMBjaDyiapTj6zrBtGLTcRvzPzhexuJfdgxdqafu5Jhhovs?cluster=devnet) — 29,849 CU |
 | stock for cash, on a mint shaped like **PYUSD** | [`5ZrJPGRL…`](https://explorer.solana.com/tx/5ZrJPGRLHKzzR1us4KF3kf9z5hSgvQLabHKQbkMmCSkGEGXAkC8QA7JtnMhsVBsCJzrW5a75s9LJsxaaKsqesZug?cluster=devnet) — carries `confidentialTransfer` **and** `confidentialTransferWithFee` in one transaction |
+
+## The three numbers
+
+| | |
+|---|---|
+| **1,992** | tokenized stocks ship confidential balances — every one of them |
+| **329,536** | live token accounts across Apple, NVIDIA, SpaceX and Anthropic |
+| **0** | of them are confidential. **Nobody has ever opened one.** |
+
+Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
+on every mint, and no issuer has signed for an account yet — **so there is no incumbent here and
+nothing to be late to.**
+
+## Go and do it yourself — two minutes, devnet, nobody's permission
+
+There is a standing issuer on devnet whose gate is shut exactly as all 1,992 are, and whose
+approval key is **published in this repository**. So you can open a confidential position and hold
+something the chain reports as zero:
+
+```bash
+git clone https://github.com/psyto/confide
+./scripts/testbed-join.sh
+```
+
+Needs the Solana CLI, Rust and a little devnet SOL. The key can approve accounts and **cannot
+mint**, which is checked rather than claimed — [docs/TESTBED.md](docs/TESTBED.md).
+
+---
+
+*Everything below is the evidence. Nothing above depends on you reading it.*
+
+*This file was 4,850 words opening on the market, with what Confide is on line 48 and the trade at
+102 seconds of reading. Measured 2026-09-20 and folded: the first two minutes are now the product,
+the trade, the count and one command, and the argument is everything under this line. A reader who
+stops early leaves with the product rather than with a gap in somebody else's.*
+
+## Why there is nothing in the middle
+
+Nothing of ours runs *inside* the trade: two Token-2022 instructions, two signatures, and Solana's
+atomicity where a clearing house would be. **What Confide does is everything around it** — the
+zero-knowledge proofs the chain will not assemble for you, verified on chain and citable by
+address, and the check that lets each side read the other's amount before it signs.
 
 **Delivery versus payment is what a clearing house exists for.** Neither side will go first, so
 finance inserts a central counterparty, membership, margin and a day of lag. A Solana transaction
@@ -488,38 +522,23 @@ recorded evidence. The collateral proofs are self-contained and would keep verif
 wiped the account they are about — so the page compares the live ciphertext before treating a pass
 as meaningful, rather than showing a green that means nothing.
 
-### The split problem
+### Two things it has to get right, and does
 
-A quarterly report states holdings **as of the reporting date**. Confide seals at quarter end and opens 45 days
-later. If a split lands in between, the number that opens is quoted in units that no longer exist —
-the disclosure is correct and unreadable at the same time.
+**A split between sealing and opening.** A number sealed in September is quoted in September's
+units, and the commitment must not move — that is the point. So restatement happens at read time,
+deterministically, from the issuer's published schedule. The live xStocks calendar has **eleven
+actions queued**: eight restate exactly, three have no whole-number ratio and are **reported rather
+than guessed** ([fixtures](crates/confide-equity/fixtures/corporate-actions.json),
+`scripts/refresh-actions.sh`). `confide-open` prints both numbers and refuses rather than rounding.
 
-This is not hypothetical. The live xStocks schedule has **eleven actions queued** that move what a
-holder holds — including `PPLTx` 1→10 and a `HONx` 2→1 reverse sharing its date with a spin-off.
-**Eight of them restate exactly. Three have no whole-number ratio** — the spin-off and two
-fractional stock dividends — **and are reported rather than guessed**
-([`fixtures/corporate-actions.json`](crates/confide-equity/fixtures/corporate-actions.json),
-refreshable with `scripts/refresh-actions.sh`).
+**A covenant, before the position is disclosable.** An LPA asks *"is the fund at or above X"* as
+well as *"what do you hold"*. `confide-equity` proves that as a predicate — the LP learns one bit
+and no position — and the proof goes to the live ZK program.
 
-The fix is not to re-seal — the commitment must not move, that is the whole point. It is to restate
-at read time. Restatement reads the issuer's published schedule — one source today — and is
-**deterministic**, so the holder gains nothing by staying quiet about a split: anyone can recompute
-it and everyone gets the same answer. `confide-open` prints both numbers, separates *nothing
-happened* from *something happened I cannot compute*, and refuses rather than rounding.
-
-### And the other half of a quarterly report
-
-An LPA does not only ask *what do you hold*; it carries covenants of the form *"the fund is at or
-above X"*, which must be answerable before the position itself is disclosable. `confide-equity` proves
-that as a predicate: the LP learns one bit and no position, and the proof goes to the live ZK
-program.
-
-The premise itself — every auditor slot still empty — is checked by `./scripts/slot-scan.sh` against
-mainnet and by `./scripts/healthcheck.sh` on the four mints this repo pins. The unit test named
-`every_xstock_has_confidential_transfers_and_an_empty_auditor_slot` guards those four constants and
-would stay green if Backed filled a key on any mint outside those four. Its own doc comment says so; this
-sentence used to claim the opposite.
-
+*The premise under all of it, that every auditor slot is still empty, is checked by
+`./scripts/slot-scan.sh` against mainnet. The unit test guarding it covers the four mints this repo
+pins and would stay green if an issuer filled a key elsewhere; its own doc comment says so, and
+this sentence used to claim the opposite.*
 
 ## Built on
 
