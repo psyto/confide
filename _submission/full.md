@@ -1,22 +1,14 @@
-## Your position is public. Solana shipped the fix. Nobody has ever used it.
-
-Read any tokenized stock on Solana right now, no wallet: Token-2022, confidential transfers **ON**,
-auditor key **empty**. **1,992 of them**, three unrelated issuers. Every mint checked, not sampled.
-
-So I stopped reading settings and counted accounts. **329,536 token accounts across Apple, NVIDIA,
-SpaceX and Anthropic. Zero are configured for confidential transfers** (`./scripts/usage-scan.sh`).
-
-Not "few". Zero — every mint needs the issuer's signature to open one, and nobody has asked.
-**There is no incumbent here and nothing to be late to.**
+# Stock for cash, in one transaction, and neither side publishes what moved.
 
 ## What Confide does
 
-**Settles a trade between two parties without publishing either side of it.**
+**Two parties settle tokenized stock against cash in one transaction, and neither publishes what
+moved.** Confide builds the zero-knowledge proofs the chain will not assemble for you, and lets
+each side check the other's amount before signing — **with nobody in the middle**.
 
-Delivery versus payment is what a clearing house exists for: neither side will go first, so finance
+Delivery versus payment is what a clearing house exists for: neither side goes first, so finance
 inserts a central counterparty, membership, margin and a day of lag. A Solana transaction is
-all-or-nothing, so **the transaction is the clearing house** — and the confidential version means
-neither party publishes the size that clearing house would have been told anyway.
+all-or-nothing, so **the transaction is the clearing house**.
 
 ## Working end-to-end, devnet, today — `./scripts/swap-e2e.sh`
 
@@ -26,10 +18,21 @@ neither party publishes the size that clearing house would have been told anyway
 | **Against a mint shaped like PayPal's PYUSD** | it charges a fee, so that leg needs a *different instruction*, five proofs not three, and one proof too large to fit a transaction at all — staged through a record account. `5ZrJPGRL…` carries `confidentialTransfer` **and** `confidentialTransferWithFee` in one transaction |
 | **Neither size published** | all four accounts are ordinary ATAs — what a wallet makes — and all four still read `0` |
 | **Nobody is trusted** | before signing, each side decrypts the other's amount straight out of the verified proof context. The amount is encrypted to the *recipient* too, so a leg that underpays cannot be signed by mistake |
-| **Nobody in the middle — which is not the same as nothing built** | the trade is two Token-2022 instructions and two signatures: no escrow, no custodian, no oracle. **Confide is the machinery around it** — the proofs the chain will not assemble for you, one of which does not fit in a transaction at all |
+| **Nobody in the middle** | two Token-2022 instructions, two signatures: no escrow, no custodian, no oracle. The hard part is the proofs — one does not fit in a transaction at all |
 
 104 tests, 44 over the seizure program. `./scripts/healthcheck.sh` re-checks every claim against the
 chain and exits with the number that died — judging runs weeks and devnet resets.
+
+## Why anybody wants it
+
+Read any tokenized stock on Solana right now, no wallet: Token-2022, confidential transfers **ON**,
+auditor key **empty**. **1,992 of them**, three unrelated issuers. Every mint checked, not sampled.
+
+So I stopped reading settings and counted accounts. **329,536 token accounts across Apple, NVIDIA,
+SpaceX and Anthropic. Zero are configured for confidential transfers** (`./scripts/usage-scan.sh`).
+
+Not "few". Zero — every mint needs the issuer's signature to open one, and nobody has asked.
+**There is no incumbent here and nothing to be late to.**
 
 ## It is not only equities
 
