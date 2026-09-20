@@ -86,10 +86,22 @@
    white-space:nowrap;margin:7px 0}
   .dvp .arrow .bar{color:var(--line)}
   .dvp .brace{margin-top:20px;color:var(--dim);font-size:14px}
-  .dvp .absent{margin-top:26px;text-align:center;color:var(--dim);font-size:15px}
+  /* The first version of this scene drew a trade that looked entirely public: every figure in
+     plain sight, and confidentiality reduced to one small line underneath. The numbers on screen
+     are the ones nobody outside is supposed to have, so the picture has to SHOW that they are
+     enclosed. Hence a sealed container with the exchange inside it, and the public view outside. */
+  .sealed{border:1px solid rgba(99,207,131,.30);border-radius:14px;padding:30px 26px 24px;
+   background:rgba(99,207,131,.035);position:relative;margin-top:30px}
+  .sealed .seal{position:absolute;top:-11px;left:26px;background:var(--bg);padding:0 12px;
+   color:var(--grn);font-size:13.5px;letter-spacing:.02em}
+  .dvp .absent{margin-top:24px;text-align:center;color:var(--dim);font-size:15px}
   .dvp .absent b{color:var(--fg)}
-  .seen{margin-top:26px;text-align:center;font-size:15px;color:var(--dim)}
-  .seen .z{color:var(--grn);font-family:ui-monospace,Menlo,monospace;font-size:19px;margin:0 9px}
+  .seen{margin-top:30px;display:flex;justify-content:center;align-items:center;gap:14px}
+  .seen .lbl{color:var(--dim);font-size:15px;margin-right:10px}
+  /* `flex` drops the track width a grid was giving these, and they collapsed to slivers. */
+  .seen .z{flex:0 0 88px;border:1px solid var(--line);border-radius:9px;background:#0b0e15;
+   text-align:center;padding:12px 0;color:var(--grn);font-family:ui-monospace,Menlo,monospace;
+   font-size:21px}
   .miss{display:flex;flex-direction:column;gap:22px;margin-top:4px}
   .miss .row{display:flex;gap:18px;align-items:baseline}
   .miss .num{color:var(--red);font-family:ui-monospace,Menlo,monospace;font-size:19px;flex:0 0 18px}
@@ -269,7 +281,9 @@ async function dvp(s){
    +rows.map(r=>'<div class="ln"><span class="lbl">'+r[0]+'</span><span class="was">'+r[1]+'</span>'
      +'<span class="to">&rarr;</span><span class="now y">'+r[2]+'</span></div>').join("")
    +'</div>';
-  put('<div><div class="cap fade">'+s.label+'</div><div class="dvp">'
+  put('<div><div class="cap fade">'+s.label+'</div>'
+   +'<div class="sealed fade"><span class="seal">encrypted &mdash; only these two can read any of it</span>'
+   +'<div class="dvp">'
    +party("THE SELLER",[["stock",n(s.seller.stock_before),n(s.seller.stock_after)],
                         ["cash",money(s.seller.cash_before),money(s.seller.cash_after)]])
    +'<div class="mid">'
@@ -280,15 +294,17 @@ async function dvp(s){
    +party("THE BUYER",[["stock",n(s.buyer.stock_before),n(s.buyer.stock_after)],
                        ["cash",money(s.buyer.cash_before),money(s.buyer.cash_after)]])
    +'</div>'
-   +'<div class="absent fade">Nothing stands between them. <b>No venue, no custodian, no clearing house '
-   +'&mdash; and no program of ours.</b></div>'
-   +'<div class="seen fade">what anyone watching sees'
+   +'<div class="absent fade">Nothing stands between them. <b>No venue, no custodian, no clearing '
+   +'house.</b></div>'
+   +'</div>'
+   +'<div class="seen fade"><span class="lbl">what the chain shows everyone else</span>'
    +'<span class="z">0</span><span class="z">0</span><span class="z">0</span><span class="z">0</span></div></div>');
   const all=[...stage.querySelectorAll(".fade")];
-  // Sides first, then the arrows one at a time, then what is missing. The order is the argument.
-  all[0].classList.add("on"); all[1].classList.add("on"); all[5].classList.add("on");
+  // caption, seal, seller, buyer first — the container before what is in it — then the arrows one
+  // at a time, then what is absent, and last what everybody else gets. The order is the argument.
+  for(const i of [0,1,2,6]) all[i].classList.add("on");
   await sleep(1400);
-  for(const e of [all[2],all[3],all[4],all[6],all[7]]){ e.classList.add("on"); await sleep(1500) }
+  for(const i of [3,4,5,7,8]){ all[i].classList.add("on"); await sleep(1400) }
   await out(rest(s,t0));
 }
 // Numbered gaps, one per beat. Slower than a bullet list on purpose: this is the scene a viewer

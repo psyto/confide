@@ -90,13 +90,18 @@ away a fact about somebody else rather than a thing that exists.
 
 ### 2 — the trade
 
-> Delivery, and payment, in one transaction. Neither could have happened without the other, which
-> is the only thing a clearing house is for — and there isn't one. Confide holds nobody's assets
-> and stands between nobody. It is what the two of them run to build the trade and to check it.
+> Delivery, and payment, in one transaction — and the only people who can read either number are
+> the two making the trade. Neither side could have happened without the other, which is the only
+> thing a clearing house is for, and there isn't one. Confide holds nobody's assets and stands
+> between nobody.
 
-*Shows:* the exchange as a diagram — two parties, stock crossing one way and cash the other, and
-**an empty middle**. Drawn from figures the parties wrote down at the time; the four zeroes
-underneath are what anybody watching gets.
+*Shows:* the exchange **inside a sealed container** — two parties, stock crossing one way and cash
+the other, an empty middle, and the four zeroes the chain shows everybody else **outside** it.
+
+**The first version of this scene drew a trade that looked entirely public.** Every figure was in
+plain sight and confidentiality was one small line underneath, which is backwards: those numbers
+are exactly what nobody outside is supposed to have. The picture has to show them **enclosed**, so
+it does — and the narration now says it too, because it did not.
 
 **This scene used to be ninety seconds in.** It was first a list of instruction names, which shows
 that two transfers happened and not that a trade did; then a table, which showed the trade but read

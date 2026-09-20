@@ -11,7 +11,7 @@
   "start": 8,
   "end": 31,
   "seconds": 23,
-  "line": "Delivery, and payment, in one transaction. Neither could have happened without the other, which is the only thing a clearing house is for — and there isn't one. Confide holds nobody's assets and stands between nobody. It is what the two of them run to build the trade and to check it."
+  "line": "Delivery, and payment, in one transaction — and the only people who can read either number are the two making the trade. Neither side could have happened without the other, which is the only thing a clearing house is for, and there isn't one. Confide holds nobody's assets and stands between nobody."
  },
  {
   "file": "03-why-bother.mp4",
@@ -58,15 +58,15 @@
  {
   "file": "09-what-confide-is.mp4",
   "start": 131,
-  "end": 156.1,
-  "seconds": 25.1,
+  "end": 156,
+  "seconds": 25,
   "line": "The chain will not assemble that trade for you. The proofs do not fit in a transaction, and on a mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing. That is the product."
  },
  {
   "file": "10-what-is-missing.mp4",
-  "start": 156.1,
+  "start": 156,
   "end": 175.1,
-  "seconds": 19,
+  "seconds": 19.1,
   "line": "Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle is a condition you can check, and for the two that decide the market, the work on the far side is already running."
  }
 ]
