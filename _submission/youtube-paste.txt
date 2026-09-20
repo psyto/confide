@@ -43,13 +43,17 @@ That much has been written about. The other half had not: has anybody used it? S
 
 Not few. Zero. Every mint needs the issuer's signature to open one and no issuer has given one — so there is no incumbent here and nothing to be late to.
 
+The narration says "three hundred and twenty-nine thousand" — that is what it was when the video was cut. The figure above is the 20 September re-run. It moves: ./scripts/usage-scan.sh, and the page carries the current reading.
+
 IT IS NOT AN EQUITIES STORY
 
-USDC, USDT and USDS cannot move confidentially at all — legacy SPL, no extensions. PYUSD and USDG can, and they land on the identical configuration: gate closed, auditor slot empty, the same key holding confidential authority, permanent delegate and freeze authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door. Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.
+USDC, USDT and USDS cannot move confidentially at all — legacy SPL, no extensions. PYUSD and USDG can, and they land on the identical configuration: gate closed, auditor slot empty, permanent delegate and freeze authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door. Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.
 
 WHY NOT JUST USE AN EXCHANGE
 
 You cannot. A pool's reserves are public state and a trade moves them by exactly the amount traded, so anything settled against a pool publishes the size, whatever the token can do. Confidentially, it has to be two parties, directly. That is not a gap in this — it is why it is shaped the way it is.
+
+On 17 September the SEC exempted tokenized-stock venues for five years and wrote the same thing down: the relief covers AMM-executed trading only, a venue must publish every fill's price, size, time and direction within ten minutes, and a Tier 1 name is capped at 0.25% of daily volume. Size cannot go there.
 
 GO AND DO IT YOURSELF
 
@@ -64,7 +68,7 @@ WHAT IS NOT BUILT
 
 Nobody outside the repository has used any of it, and no issuer has been asked for anything. Matching is unsolved — settlement is done, finding the counterparty is not. Price is agreed off chain. And anything settled against a pool stays impossible, permanently, for the reason above.
 
-Every figure here came off the chain and one command reproduces each. Devnet resets; ./scripts/healthcheck.sh re-checks every claim and exits with the number that died.
+Every figure here came off the chain and one command reproduces each. Devnet resets; ./scripts/healthcheck.sh re-checks every claim.
 
 BUILT ON
 
