@@ -9,58 +9,58 @@
  {
   "file": "02-the-trade.mp4",
   "start": 8,
-  "end": 32,
-  "seconds": 24,
-  "line": "Delivery, and payment, in one transaction. Neither could have happened without the other, which is the only thing a clearing house is for — and there isn't one. Confide is not a venue and holds nobody's assets. It is what the two of them use to settle, and there is nothing in the middle."
+  "end": 31,
+  "seconds": 23,
+  "line": "Delivery, and payment, in one transaction. Neither could have happened without the other, which is the only thing a clearing house is for — and there isn't one. Confide holds nobody's assets and stands between nobody. It is what the two of them run to build the trade and to check it."
  },
  {
   "file": "03-why-bother.mp4",
-  "start": 32,
-  "end": 48,
+  "start": 31,
+  "end": 47,
   "seconds": 16,
   "line": "So why hide it. If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything — the chain simply publishes it, the moment each purchase settles."
  },
  {
   "file": "04-this-account.mp4",
-  "start": 48,
-  "end": 64,
+  "start": 47,
+  "end": 63,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
   "file": "05-already-shipped.mp4",
-  "start": 64,
-  "end": 81,
-  "seconds": 17,
-  "line": "Nearly two thousand of them, from three issuers with nothing to do with each other. Every one leaves the auditor key empty, and every one needs the issuer's signature before you can open an account at all."
+  "start": 63,
+  "end": 78,
+  "seconds": 15,
+  "line": "Nearly two thousand of them, from three issuers with nothing to do with each other. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account."
  },
  {
   "file": "06-so-i-counted.mp4",
-  "start": 81,
-  "end": 93,
+  "start": 78,
+  "end": 90,
   "seconds": 12,
   "line": "So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
   "file": "07-not-only-equities.mp4",
-  "start": 93,
-  "end": 108,
+  "start": 90,
+  "end": 105,
   "seconds": 15,
   "line": "That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two different asset classes, the same dead end. This was never a story about tokenized stocks."
  },
  {
-  "file": "08-a-trade-not-a-loan.mp4",
-  "start": 108,
-  "end": 134.1,
-  "seconds": 26.1,
-  "line": "I did not start here. I spent a month on a loan against those positions and hit the same wall: a loan needs somebody to hold the collateral, and that somebody needs an account the issuer will not approve. A trade needs nobody — it happens at one instant, and on Solana an instant is all or nothing."
+  "file": "08-why-not-an-exchange.mp4",
+  "start": 105,
+  "end": 131,
+  "seconds": 26,
+  "line": "You cannot do this on one. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against a pool publishes the size, whatever the token can do. It has to be two parties, directly. That is not a gap here; it is why this is shaped as it is."
  },
  {
-  "file": "09-the-hard-part.mp4",
-  "start": 134.1,
+  "file": "09-what-confide-is.mp4",
+  "start": 131,
   "end": 156.1,
-  "seconds": 22,
-  "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
+  "seconds": 25.1,
+  "line": "The chain will not assemble that trade for you. The proofs do not fit in a transaction, and on a mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing. That is the product."
  },
  {
   "file": "10-what-is-missing.mp4",

@@ -47,7 +47,9 @@ whole market instead.
 
 **Confide is what makes that slot usable**, and the first thing it makes possible is a **trade**:
 two parties settle a position against cash in one transaction, and neither publishes what moved.
-No program, no escrow, no clearing house — see the next section, which is the whole of the pitch.
+Nobody stands in the middle — no escrow, no custodian, no clearing house. **What Confide *is*** is
+the part the chain leaves to you: the zero-knowledge proofs it will not assemble, and the check
+each side runs on the other before signing. The next section is the whole of the pitch.
 
 The underlying capability is broader — disclosure scoped **by recipient, by granularity and by
 schedule** — and [the last section](#the-other-half--disclosure-by-schedule) demonstrates the other
@@ -97,9 +99,11 @@ logs  :
 
 ## What runs today — a trade that settles without publishing either side
 
-**Two parties exchange confidential positions in one transaction.** No program is deployed and none
-is called: two Token-2022 instructions, two signatures, and Solana's atomicity in place of a
-clearing house.
+**Two parties exchange confidential positions in one transaction.** Nothing of ours runs *inside*
+the trade: two Token-2022 instructions, two signatures, and Solana's atomicity where a clearing
+house would be. **What Confide does is everything around it** — the zero-knowledge proofs the chain
+will not assemble for you, verified on chain and citable by address, and the check that lets each
+side read the other's amount before it signs.
 
 ```
 $ MODE=dvp ./scripts/swap-e2e.sh

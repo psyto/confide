@@ -66,16 +66,16 @@ never reads the screen.
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | what this is | 8 | 17 | 138 | the title card — Confide, and what it does |
-| 2 | the trade | 24 | 54 | 138 | the exchange as a diagram: two parties, two arrows, an empty middle |
+| 2 | the trade | 23 | 52 | 139 | the exchange as a diagram: two parties, two arrows, an empty middle |
 | 3 | why anyone would bother | 14 + 2 | 31 | 139 | a position climbing across a quarter, watched |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 5 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
+| 5 | already solved, already switched off | 15 | 33 | 138 | the mint scan finishing, the auditor slot empty |
 | 6 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
 | 7 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
-| 8 | why a trade and not a loan | 26 | 58 | 137 | the escrow in the diagram, then gone |
-| 9 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
+| 8 | why not just use an exchange | 26 | 58 | 137 | three steps: public state, moved by the amount, subtracted |
+| 9 | so what Confide actually is | 25 | 55 | 135 | both instruction names in one transaction; the record account |
 | 10 | what is missing | 19 | 41 | 134 | the conditions table, then a command and the page URL |
-| | | **175 s** | **363** | | |
+| | | **175 s** | **364** | | |
 
 ## The script
 
@@ -91,8 +91,8 @@ away a fact about somebody else rather than a thing that exists.
 ### 2 — the trade
 
 > Delivery, and payment, in one transaction. Neither could have happened without the other, which
-> is the only thing a clearing house is for — and there isn't one. Confide is not a venue and holds
-> nobody's assets. It is what the two of them use to settle, and there is nothing in the middle.
+> is the only thing a clearing house is for — and there isn't one. Confide holds nobody's assets
+> and stands between nobody. It is what the two of them run to build the trade and to check it.
 
 *Shows:* the exchange as a diagram — two parties, stock crossing one way and cash the other, and
 **an empty middle**. Drawn from figures the parties wrote down at the time; the four zeroes
@@ -100,8 +100,12 @@ underneath are what anybody watching gets.
 
 **This scene used to be ninety seconds in.** It was first a list of instruction names, which shows
 that two transfers happened and not that a trade did; then a table, which showed the trade but read
-as output; and now a picture, at the front, because **the empty middle is the product** and it is
-the only place in the film that says what Confide is.
+as output; and now a picture, at the front.
+
+**And the line under it said the wrong thing.** It read *"no venue, no custodian, no clearing house
+— and no program of ours"*, which was meant as *nobody stands in the middle* and reads as *we built
+nothing.* A judge could close the tab there and be right to. The empty middle is what Confide
+**removes**; scene 9 is what it **is**.
 
 ### 3 — why anyone would bother · +2 s silence
 
@@ -123,8 +127,7 @@ strongest ten seconds available, and still is.
 ### 5 — already solved, already switched off
 
 > Nearly two thousand of them, from three issuers with nothing to do with each other. Every one
-> leaves the auditor key empty, and every one needs the issuer's signature before you can open an
-> account at all.
+> leaves the auditor key empty, and every one needs the issuer's signature to open an account.
 
 *Shows:* the mint scan finishing; the auditor slot empty. **Three independent issuers reaching the
 same dead end is the line** — one company being careful is a story about that company.
@@ -148,26 +151,35 @@ the answer is that the door has never been opened.
 *Shows:* PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit.
 **Market size, argued by evidence rather than asserted.**
 
-### 8 — why a trade and not a loan
+### 8 — why not just use an exchange
 
-> I did not start here. I spent a month on a loan against those positions and hit the same wall: a
-> loan needs somebody to hold the collateral, and that somebody needs an account the issuer will
-> not approve. A trade needs nobody — it happens at one instant, and on Solana an instant is all or
-> nothing.
+> You cannot do this on one. A pool's reserves are public, and a trade moves them by exactly the
+> amount traded — so anything settled against a pool publishes the size, whatever the token can do.
+> It has to be two parties, directly. That is not a gap here; it is why this is shaped as it is.
 
-*Shows:* the escrow in the diagram, then gone. **Admitting the month is what earns the sentence
-after it**, and with the trade already shown this scene is insight rather than setup.
+*Shows:* the argument in three steps — public state, moved by exactly the traded amount,
+subtracted. **No numbers, because none are needed and inventing a pool to illustrate it would be
+the one thing this repository does not do.**
 
-### 9 — the part that was hard
+**The question a Solana judge asks first, and the film did not answer it.** This slot used to hold
+the project's own history — a month spent on a loan before the trade — which is insight about the
+builder and not about the product. A structural limit that explains the shape is worth more than a
+confession, and [`../docs/cwf-2026/COMPOSITION.md`](../docs/cwf-2026/COMPOSITION.md) is where it
+is derived.
 
-> The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs
-> a different instruction, five zero-knowledge proofs instead of three, and one proof too large to
-> fit in a Solana transaction at all. One transaction carries both sets of rules.
+### 9 — so what Confide actually is
 
-*Shows:* the two instruction names side by side in the same transaction, then the record account the
-oversized proof had to be staged through. **This is the scene for §8(a) and §8(e)** — functionality,
-and how the work composes with other primitives — and it is the only place the video is allowed to
-sound technical.
+> The chain will not assemble that trade for you. The proofs do not fit in a transaction, and on a
+> mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain,
+> and hands each side the other's amount to decrypt before signing. That is the product.
+
+*Shows:* the two instruction names in one transaction, then the record account the oversized proof
+had to be staged through.
+
+**The founder asked what Confide does, what it makes possible and why it is needed, and the film
+answered only the middle one.** This scene used to present the engineering as a curiosity — *look
+how awkward this was* — when it is the answer to the first question. It is also the scene for
+§8(a), functionality, and §8(e), how the work composes with other primitives.
 
 ### 10 — what is missing
 

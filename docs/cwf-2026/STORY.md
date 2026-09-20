@@ -14,8 +14,8 @@ opportunity.
 
 ## 1. What runs today
 
-**Two parties exchange confidential positions in one transaction.** No program is deployed and none
-is called — two Token-2022 instructions, two signatures.
+**Two parties exchange confidential positions in one transaction.** Nothing of ours runs *inside*
+the trade — two Token-2022 instructions and two signatures. **What Confide does is everything around it**: the zero-knowledge proofs the chain will not assemble for you, verified on chain and citable by address, and the check that lets each side read the other's amount before signing.
 
 ```
 stock for stock   2RksP5AM…   29,417 compute units   1,006 bytes

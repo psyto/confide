@@ -22,11 +22,11 @@ neither party publishes the size that clearing house would have been told anyway
 
 | | |
 |---|---|
-| **Stock for cash, one transaction** | 50,000 shares ↔ **$8,750,000** — $175/share, agreed off chain. `4gzku3FW…`: 2 signatures, 29,849 compute units, 1,006 bytes |
+| **Stock for cash, one transaction** | 50,000 shares ↔ **$8,750,000** — $175/share, agreed off chain. `4gzku3FW…`, 2 signatures, 29,849 compute units |
 | **Against a mint shaped like PayPal's PYUSD** | it charges a fee, so that leg needs a *different instruction*, five proofs not three, and one proof too large to fit a transaction at all — staged through a record account. `5ZrJPGRL…` carries `confidentialTransfer` **and** `confidentialTransferWithFee` in one transaction |
-| **Neither size published** | all four accounts are ordinary ATAs — what a wallet makes — and all four still read public balance `0` |
+| **Neither size published** | all four accounts are ordinary ATAs — what a wallet makes — and all four still read `0` |
 | **Nobody is trusted** | before signing, each side decrypts the other's amount straight out of the verified proof context. The amount is encrypted to the *recipient* too, so a leg that underpays cannot be signed by mistake |
-| **No program, no escrow, no oracle** | two Token-2022 instructions. Nothing is deployed and nothing needs permission beyond the accounts themselves |
+| **Nobody in the middle — which is not the same as nothing built** | the trade is two Token-2022 instructions and two signatures: no escrow, no custodian, no oracle. **Confide is the machinery around it** — the proofs the chain will not assemble for you, one of which does not fit in a transaction at all |
 
 104 tests, 44 over the seizure program. `./scripts/healthcheck.sh` re-checks every claim against the
 chain and exits with the number that died — judging runs weeks and devnet resets.

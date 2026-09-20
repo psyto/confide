@@ -176,19 +176,22 @@ const scenes = [
     total: HOLD[6],
   },
   {
-    file: "08-a-trade-not-a-loan.mp4", kind: "missing",
-    label: "I did not start here.",
+    // Why not an exchange — the question a Solana judge asks first, and the film had no answer.
+    // Three steps and no numbers: inventing a pool to illustrate it would be the one thing this
+    // repository does not do.
+    file: "08-why-not-an-exchange.mp4", kind: "missing",
+    label: "So why not just trade it on an exchange?",
     items: [
-      "A <b>loan</b> needs somebody to hold the collateral — and that somebody needs an account the issuer will not approve.",
-      "A <b>trade</b> needs nobody. It happens at one instant.",
-      "And on Solana, an instant is all or nothing — so the transaction <b>is</b> the escrow.",
+      "A pool's reserves are <b>public state</b>.",
+      "A trade moves them by <b>exactly the amount traded</b>.",
+      "Subtract two consecutive states and you have the size. <b>Every time, whatever the token can do.</b>",
     ],
     lead: 3.5, step: 6,
     total: HOLD[7],
   },
   {
-    file: "09-the-hard-part.mp4", kind: "evidence",
-    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
+    file: "09-what-confide-is.mp4", kind: "evidence",
+    label: "The chain will not assemble that trade for you.",
     body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
     emphasis: ["confidentialTransferWithFee"],
     total: HOLD[8],
