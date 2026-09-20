@@ -1,4 +1,4 @@
-# Stock for cash, in one transaction, and neither side publishes what moved.
+# Stock-to-stablecoin swaps, in one transaction, with neither side publishing what moved.
 
 ## What Confide does
 
@@ -7,8 +7,8 @@ moved.** Confide builds the zero-knowledge proofs the chain will not assemble fo
 each side check the other's amount before signing — **with nobody in the middle**.
 
 Delivery versus payment is what a clearing house exists for: neither side goes first, so finance
-inserts a central counterparty, membership, margin and a day of lag. A Solana transaction is
-all-or-nothing, so **the transaction is the clearing house**.
+inserts a central counterparty, margin and a day of lag. A Solana transaction is all-or-nothing,
+so **the transaction is the clearing house**.
 
 ## Working end-to-end, devnet, today — `./scripts/swap-e2e.sh`
 
@@ -18,7 +18,7 @@ all-or-nothing, so **the transaction is the clearing house**.
 | **Against a mint shaped like PayPal's PYUSD** | it charges a fee, so that leg takes a *different instruction*, five proofs not three, and one proof too large to fit a transaction at all — staged through a record account. `5ZrJPGRL…` carries `confidentialTransfer` **and** `confidentialTransferWithFee` together |
 | **Neither size published** | all four accounts are ordinary ATAs, and all four still read `0` |
 | **Nobody is trusted** | before signing, each side decrypts the other's amount out of the verified proof context — the amount is encrypted to the *recipient* too, so an underpaying leg cannot be signed by mistake |
-| **Nobody in the middle** | two Token-2022 instructions, two signatures: no escrow, no custodian, no oracle. The hard part is the proofs — one does not fit in a transaction at all |
+| **Nobody in the middle** | two Token-2022 instructions, two signatures: no escrow, no custodian, no oracle. The hard part is the proofs — one does not fit in a transaction |
 
 104 tests, 44 over the seizure program. `./scripts/healthcheck.sh` re-checks every claim against the
 chain and exits with the number that died — judging runs weeks and devnet resets.

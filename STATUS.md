@@ -69,9 +69,12 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
 | 締切 | **Friday 25 September, 4:00pm ET**（= 09-26 05:00 JST）。ページのカウントダウンは 7 days |
 | 判定 | **through 2 October**、勝者はサイトで発表 |
 | **編集** | ***"Edits are allowed until submissions close"*** — **提出文を差し替えられる** |
-| 規模 | 登録 690、**提出済み 121**、賞金プール $126,000（メイン $100,000 は Solana Foundation） |
+| 規模 | **登録 743、提出済み 131**（2026-09-20 にページから再読。09-19 は 690 / 121 だった — 一日で提出が10件増えている） |
 | 判定の一問 | *could this be a real app that people will actually use?* — 判事が見るのは **real user and problem / working end-to-end demo / a reason it belongs on Solana / quality of execution** |
 | リンク要件 | *"at least one link: GitHub, live demo, or video"* — 3種類とも生きている |
+| **動画の尺** | **制限なし。** ページ全文を読んで確認（2026-09-20）。**「2〜3分」は CWF の数字**で、Stocklana のものとして確認されたことは一度も無かった。`Confide_Stocklana_20260920.mp4` は 2:22 で、そのまま出せる |
+| **「何を作るか」の一覧** | ページが列挙している最初の項目が ***"Trading: 24/7 venues, order books, **stock-to-stablecoin swaps**"*** — **この大会が募集している題目そのもの**。提出文はこの語を使うべき。続く *"Credit and yield: borrowing against stocks"* が担保側、*"Infrastructure: ... corporate actions ..."* が `confide-equity` |
+| 両大会への提出 | ページ自身が *"Taking it further after Stocklana? Colosseum's World's Fair is the next stop"* と書いている。**主催者が明示的に勧めている** |
 
 **なぜ間違えたか記録しておく。** `2026-09-18 16:00 ET` は出典なしで書かれていた。実際は 09-25 で、
 **丸1週間の余裕を「過ぎた」と扱っていた。** 出典の無い日付は、出典の無い判定基準
