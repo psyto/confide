@@ -1,4 +1,4 @@
-// Records presentation.mp4 — the CWF submission presentation, nine scenes, silent.
+// Records presentation.mp4 — the CWF submission presentation, ten scenes, silent.
 //
 // The rough cut. Its job is to find out whether the story in CWF-PRESENTATION.md holds before the
 // week the video has to exist, so it is deliberately cheap: no voice, no colour grade, the same
@@ -32,8 +32,10 @@ const ACCOUNT = process.env.CONFIDE_ACCOUNT || JSON.parse(readFileSync(KEYS, "ut
 
 // ── the holds, from the script ───────────────────────────────────────────────────────────────────
 const md = readFileSync(path.join(dir, "CWF-PRESENTATION.md"), "utf8");
-const rows = [...md.matchAll(/^\| (\d) \| [^|]+\| ([\d]+)(?: \+ ([\d.]+))? \|/gm)];
-if (rows.length !== 9) throw new Error(`CWF-PRESENTATION.md: expected 9 timing rows, found ${rows.length}`);
+// `(\d+)` and not `(\d)`. A single digit read nine of the ten rows and the tenth scene silently
+// had no hold — which the count check caught, and only because the count is checked.
+const rows = [...md.matchAll(/^\| (\d+) \| [^|]+\| ([\d]+)(?: \+ ([\d.]+))? \|/gm)];
+if (rows.length !== 10) throw new Error(`CWF-PRESENTATION.md: expected 10 timing rows, found ${rows.length}`);
 const HOLD = rows.map((m) => parseInt(m[2], 10) + (m[3] ? parseFloat(m[3]) : 0));
 process.stderr.write(`• scene holds from CWF-PRESENTATION.md: ${HOLD.join(" / ")} s\n`);
 
@@ -98,7 +100,7 @@ for (const [text, re, why] of [
 // carried into the manifest so LINES.md can pair each clip with what goes on it.
 const script = [...md.matchAll(/^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)/gm)]
   .map((m) => m[3].replace(/^> ?/gm, "").trim().replace(/\n+/g, " "));
-if (script.length !== 9) throw new Error(`CWF-PRESENTATION.md: expected 9 scripted scenes, found ${script.length}`);
+if (script.length !== 10) throw new Error(`CWF-PRESENTATION.md: expected 10 scripted scenes, found ${script.length}`);
 
 // The mint count and issuer count are read at render time, not written into the page. The slot
 // scene said "All 1,869" and "Two, independently" as literals until 2026-09-19, when a third
@@ -108,9 +110,19 @@ const MINT_COUNT = MINTS.length.toLocaleString("en-US");
 const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
 
 const scenes = [
-  { file: "01-your-position.mp4", kind: "leak", total: HOLD[0] },
+  // The card. Added after the founder said the entry was abrupt against the published cut, which
+  // spends nine seconds here before it shows anything — and the nine seconds buy the claim landing
+  // before the picture that illustrates it. The screen carries the numbers; the voice does not
+  // read them.
   {
-    file: "02-this-account.mp4", kind: "evidence",
+    file: "01-the-claim.mp4", kind: "hero",
+    sub: "settle a position without publishing what moved",
+    lede: "Nearly two thousand tokenized stocks can hide a balance.<br><b>Zero accounts do.</b>",
+    total: HOLD[0],
+  },
+  { file: "02-your-position.mp4", kind: "leak", total: HOLD[1] },
+  {
+    file: "03-this-account.mp4", kind: "evidence",
     label: "A real account on Solana, right now.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
@@ -120,11 +132,11 @@ const scenes = [
       emphasis: ["173000 units"],
       label: "The same account. This is what it holds.",
     },
-    total: HOLD[1],
+    total: HOLD[2],
   },
-  { file: "03-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[2] },
+  { file: "04-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[3] },
   {
-    file: "04-so-i-counted.mp4", kind: "evidence",
+    file: "05-so-i-counted.mp4", kind: "evidence",
     label: "So I stopped reading the settings and counted the accounts.",
     // Not "just now", and the badge says so. Every other pane in this cut is a command run
     // moments before the recording; this scan reads every token account of every mint and takes
@@ -132,10 +144,10 @@ const scenes = [
     stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
     body: slice(usage, /AAPLx/, /token accounts,/),
     emphasis: ["329,536", "0 configured for confidential transfers"],
-    total: HOLD[3],
+    total: HOLD[4],
   },
   {
-    file: "05-the-turn.mp4", kind: "missing",
+    file: "06-the-turn.mp4", kind: "missing",
     label: "Which told me I had been building the wrong shape.",
     items: [
       "A <b>loan</b> needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months.",
@@ -143,38 +155,38 @@ const scenes = [
       "And on Solana, an instant is all or nothing — so the transaction <b>is</b> the escrow.",
     ],
     lead: 3.5, step: 5,
-    total: HOLD[4],
-  },
-  {
-    file: "06-what-runs.mp4", kind: "evidence",
-    label: "Fifty thousand shares, for eight and three quarter million dollars.",
-    body: slice(swaps, /stock for cash/, /the 4 accounts/),
-    emphasis: ["confidentialTransfer, confidentialTransfer", "public balance 0 on every one"],
     total: HOLD[5],
   },
   {
-    file: "07-the-hard-part.mp4", kind: "evidence",
-    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
-    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
-    emphasis: ["confidentialTransferWithFee"],
+    file: "07-what-runs.mp4", kind: "evidence",
+    label: "Fifty thousand shares, for eight and three quarter million dollars.",
+    body: slice(swaps, /stock for cash/, /the 4 accounts/),
+    emphasis: ["confidentialTransfer, confidentialTransfer", "public balance 0 on every one"],
     total: HOLD[6],
   },
   {
-    file: "08-not-only-equities.mp4", kind: "evidence",
-    label: "And it was never a story about tokenized stocks.",
-    body: slice(cash, /program\s+confidential/, /Four issuers/),
-    emphasis: ["PYUSD", "USDG", "EMPTY"],
+    file: "08-the-hard-part.mp4", kind: "evidence",
+    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
+    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
+    emphasis: ["confidentialTransferWithFee"],
     total: HOLD[7],
   },
   {
-    file: "09-what-is-missing.mp4", kind: "runnable",
+    file: "09-not-only-equities.mp4", kind: "evidence",
+    label: "And it was never a story about tokenized stocks.",
+    body: slice(cash, /program\s+confidential/, /Four issuers/),
+    emphasis: ["PYUSD", "USDG", "EMPTY"],
+    total: HOLD[8],
+  },
+  {
+    file: "10-what-is-missing.mp4", kind: "runnable",
     label: "Nobody outside this repository has used any of it. What is left is not unknown.",
     command: "./scripts/testbed-join.sh",
     body: slice(testbed, /THE STANDING TESTBED/, /the testbed is as published/),
     emphasis: ["autoApproveNewAccounts is still false", "the testbed is as published"],
     url: "github.com/psyto/confide",
     note: "The gate is shut, as it is on all " + MINT_COUNT + ". The key that opens it is published.",
-    total: HOLD[8],
+    total: HOLD[9],
   },
 ].map((s, i) => ({ ...s, line: script[i] }));
 

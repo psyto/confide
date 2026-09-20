@@ -51,26 +51,44 @@ So the order is: **the viewer's problem, the moment, the market, the reveal, the
 what it cost to build, what is missing.** The mechanism is still late — scene 6 of 9 — because four
 of the seven judging criteria are non-engineering and get read first.
 
+**A title card, restored 2026-09-20.** The first draft of this cut opened straight into the
+position climbing, and the founder said the entry was abrupt against the published Stocklana video.
+They were right, and the diff says why: that cut spends nine seconds on a hero card before it shows
+anything. What the card buys is not decoration — it is **the claim landing before the picture that
+illustrates it**, and a viewer who has been told what they are about to see reads the next scene
+instead of decoding it.
+
+So scene 1 states the finding and scene 5 earns it. That costs ten seconds, and ten seconds come
+back out of scenes 4, 5 and 10, which were each saying something the card now says once.
+
 **The craft rules from the published cut still hold, and are the reason this reads the way it does:**
 speak to the viewer; reframe in seven words; show before you count; leave one gap; and the narration
 never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
-| 2 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 3 | already solved, already switched off | 21 | 47 | 138 | the mint scan finishing, the auditor slot empty |
-| 4 | so I counted | 14 + 2 | 30 | 134 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
-| 5 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
-| 6 | what runs | 20 | 45 | 139 | the swap landing; four accounts, public 0 and confidential real |
-| 7 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
-| 8 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
-| 9 | what is missing | 27 | 61 | 139 | the conditions table, then a command and the page URL |
-| | | **173 s** | **362** | | |
+| 1 | the claim | 7 + 1.5 | 15 | 130 | the title card — Confide, and the claim |
+| 2 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
+| 3 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
+| 4 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
+| 5 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
+| 6 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
+| 7 | what runs | 20 | 45 | 139 | the swap landing; four accounts, public 0 and confidential real |
+| 8 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
+| 9 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
+| 10 | what is missing | 22 | 48 | 135 | the conditions table, then a command and the page URL |
+| | | **169 s** | **346** | | |
 
 ## The script
 
-### 1 — your position · +2 s silence
+### 1 — the claim · +1.5 s silence
+
+> Every tokenized stock on Solana can hold a confidential balance. Not one holder ever has.
+
+*Shows:* the title card. **No gap after it** — the one gap in this film belongs to scene 3, and a
+second one here would spend it twice. The card states the finding; scene 5 is where it is earned.
+
+### 2 — your position · +2 s silence
 
 > If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything.
 > The chain simply publishes it, the moment each purchase settles.
@@ -79,7 +97,7 @@ never reads the screen.
 the one that has to land** — this is the default behaviour, not an incident. Unchanged from the
 previous script, because it is the best opening the project has.
 
-### 2 — this account · +5 s silence
+### 3 — this account · +5 s silence
 
 > This is a real account on Solana, right now. The chain says it holds nothing.
 >
@@ -88,27 +106,27 @@ previous script, because it is the best opening the project has.
 *Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
 strongest ten seconds available, and still is.
 
-### 3 — already solved, already switched off
+### 4 — already solved, already switched off
 
-> Solana already solved this. Nearly two thousand tokenized stocks ship confidential transfers
-> today, from three issuers with nothing to do with each other. Every one of them leaves the auditor
-> key empty, and every one needs the issuer's signature before you can open an account at all.
+> Nearly two thousand of them, from three issuers with nothing to do with each other. Every one
+> leaves the auditor key empty, and every one needs the issuer's signature before you can open an
+> account at all.
 
 *Shows:* the mint scan finishing; the auditor slot empty. **Three independent issuers reaching the
 same dead end is the line** — one company being careful is a story about that company.
 
-### 4 — so I counted · +2 s silence
+### 5 — so I counted · +2 s silence
 
-> So I stopped reading the settings and counted the accounts. Three hundred and twenty-nine thousand
-> of them, across Apple, NVIDIA, SpaceX and Anthropic.
+> So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts,
+> across Apple, NVIDIA, SpaceX and Anthropic.
 >
-> Not one is confidential. Not few. Zero.
+> Not one.
 
 *Shows:* `./scripts/usage-scan.sh` running to its total. **The reveal, and it is new** — every other
 measurement in this project is about how the mints are configured. This one is about whether anybody
 got through, and the answer is that the door has never been opened.
 
-### 5 — the turn
+### 6 — the turn
 
 > Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral,
 > because it has to survive one side refusing to cooperate for months. A trade does not. A trade
@@ -117,7 +135,7 @@ got through, and the answer is that the door has never been opened.
 *Shows:* the escrow diagram, then it disappearing. **"The wrong shape" is the seven-word reframe**,
 and admitting it is what earns the next scene.
 
-### 6 — what runs
+### 7 — what runs
 
 > So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million
 > dollars, in one transaction. Both sides settle or neither does, with no clearing house in between.
@@ -127,7 +145,7 @@ and admitting it is what earns the next scene.
 **Delivery versus payment is what a clearing house exists for**, and the line does not say so,
 because scene 7 is where a judge will place it themselves.
 
-### 7 — the part that was hard
+### 8 — the part that was hard
 
 > The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs
 > a different instruction, five zero-knowledge proofs instead of three, and one proof too large to
@@ -137,7 +155,7 @@ because scene 7 is where a judge will place it themselves.
 oversized proof had to be staged through. **This is the scene for the engineering criterion**, and
 it is the only place the video is allowed to sound technical.
 
-### 8 — and it is not only equities
+### 9 — and it is not only equities
 
 > That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two
 > different asset classes, the same dead end. This was never a story about tokenized stocks.
@@ -145,12 +163,11 @@ it is the only place the video is allowed to sound technical.
 *Shows:* PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit.
 **Market size, argued by evidence rather than asserted.**
 
-### 9 — what is missing
+### 10 — what is missing
 
-> Nobody outside this repository has used any of it, and I have asked no issuer for anything. But
-> what is left is not unknown. Each obstacle is a condition you can check — and for the two that
-> decide the market, the work on the far side is already running. Every figure here came off the
-> chain. One command reproduces it.
+> Nobody outside this repository has used any of it. But what is left is not unknown: each
+> obstacle is a condition you can check, and for the two that decide the market, the work on the far
+> side is already running. Every figure here came off the chain.
 
 *Shows:* the conditions table, then a command and the page URL. **Traction is stated inside the
 close rather than given a scene** — honest either way, and a scene of its own made the ending

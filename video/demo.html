@@ -140,7 +140,7 @@ const rest=(s,t0)=>s.total==null?s.hold:Math.max(0,s.total-(performance.now()-t0
 async function hero(s){
   const t0=performance.now();
   const els=put('<div><h1 class="fade">Confide</h1>'
-   +'<div class="sub fade">hold tokenized stocks without publishing your position</div>'
+   +'<div class="sub fade">'+(s.sub||'hold tokenized stocks without publishing your position')+'</div>'
    +'<div class="lede fade">'+s.lede+'</div></div>');
   await sleep(80); await reveal(els,320); await out(rest(s,t0));
 }

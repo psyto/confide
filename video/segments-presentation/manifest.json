@@ -1,65 +1,72 @@
 [
  {
-  "file": "01-your-position.mp4",
+  "file": "01-the-claim.mp4",
   "start": 0,
-  "end": 14,
+  "end": 8.5,
+  "seconds": 8.5,
+  "line": "Every tokenized stock on Solana can hold a confidential balance. Not one holder ever has."
+ },
+ {
+  "file": "02-your-position.mp4",
+  "start": 8.5,
+  "end": 22.5,
   "seconds": 14,
   "line": "If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything. The chain simply publishes it, the moment each purchase settles."
  },
  {
-  "file": "02-this-account.mp4",
-  "start": 14,
-  "end": 30,
+  "file": "03-this-account.mp4",
+  "start": 22.5,
+  "end": 38.5,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
-  "file": "03-already-shipped.mp4",
-  "start": 30,
-  "end": 51,
-  "seconds": 21,
-  "line": "Solana already solved this. Nearly two thousand tokenized stocks ship confidential transfers today, from three issuers with nothing to do with each other. Every one of them leaves the auditor key empty, and every one needs the issuer's signature before you can open an account at all."
+  "file": "04-already-shipped.mp4",
+  "start": 38.5,
+  "end": 55.5,
+  "seconds": 17,
+  "line": "Nearly two thousand of them, from three issuers with nothing to do with each other. Every one leaves the auditor key empty, and every one needs the issuer's signature before you can open an account at all."
  },
  {
-  "file": "04-so-i-counted.mp4",
-  "start": 51,
-  "end": 67,
-  "seconds": 16,
-  "line": "So I stopped reading the settings and counted the accounts. Three hundred and twenty-nine thousand of them, across Apple, NVIDIA, SpaceX and Anthropic. Not one is confidential. Not few. Zero."
+  "file": "05-so-i-counted.mp4",
+  "start": 55.5,
+  "end": 67.5,
+  "seconds": 12,
+  "line": "So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
-  "file": "05-the-turn.mp4",
-  "start": 67,
-  "end": 89,
+  "file": "06-the-turn.mp4",
+  "start": 67.5,
+  "end": 89.5,
   "seconds": 22,
   "line": "Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months. A trade does not. A trade happens at one instant — and on Solana, an instant is all or nothing."
  },
  {
-  "file": "06-what-runs.mp4",
-  "start": 89,
-  "end": 109.1,
-  "seconds": 20.1,
+  "file": "07-what-runs.mp4",
+  "start": 89.5,
+  "end": 109.5,
+  "seconds": 20,
   "line": "So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million dollars, in one transaction. Both sides settle or neither does, with no clearing house in between. Afterwards, every account still reports a balance of zero to anyone watching."
  },
  {
-  "file": "07-the-hard-part.mp4",
-  "start": 109.1,
-  "end": 131.1,
+  "file": "08-the-hard-part.mp4",
+  "start": 109.5,
+  "end": 131.5,
   "seconds": 22,
   "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
  },
  {
-  "file": "08-not-only-equities.mp4",
-  "start": 131.1,
-  "end": 146.1,
+  "file": "09-not-only-equities.mp4",
+  "start": 131.5,
+  "end": 146.5,
   "seconds": 15,
   "line": "That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two different asset classes, the same dead end. This was never a story about tokenized stocks."
  },
  {
-  "file": "09-what-is-missing.mp4",
-  "start": 146.1,
-  "end": 173.1,
-  "seconds": 27,
-  "line": "Nobody outside this repository has used any of it, and I have asked no issuer for anything. But what is left is not unknown. Each obstacle is a condition you can check — and for the two that decide the market, the work on the far side is already running. Every figure here came off the chain. One command reproduces it."
+  "file": "10-what-is-missing.mp4",
+  "start": 146.5,
+  "end": 168.6,
+  "seconds": 22.1,
+  "line": "Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle is a condition you can check, and for the two that decide the market, the work on the far side is already running. Every figure here came off the chain."
  }
 ]
