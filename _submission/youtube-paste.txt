@@ -1,6 +1,6 @@
 TITLE
 =====
-Confide — 50,000 shares for $8.75m in one transaction, and the chain shows zero
+Confide — a stock-for-stablecoin swap on Solana, and nobody can see either amount
 
 
 DESCRIPTION

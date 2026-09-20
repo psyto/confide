@@ -10,10 +10,10 @@ Stocklana cut once carried chapter times belonging to a different edit for exact
 **Upload `video/captions-20260920.srt` as the caption track.** The embedded one is ASR and had six
 errors; `./scripts/fix-captions.sh` corrects them against the script the voice was given.
 
-## Title — 79 / 100 characters
+## Title — 81 / 100 characters
 
 ```
-Confide — 50,000 shares for $8.75m in one transaction, and the chain shows zero
+Confide — a stock-for-stablecoin swap on Solana, and nobody can see either amount
 ```
 
 ## Description — 4504 / 5000 characters
@@ -86,6 +86,11 @@ Original work except where declared: aperture-core and aperture-receipts (Apache
 ```
 
 ## Notes
+
+- **The first title was the punchline without the setup.** It read *"50,000 shares for $8.75m in
+  one transaction, and the chain shows zero"* — zero *what*, to somebody who has not seen the
+  video? And nothing in it said the subject was tokenized stock, or Solana, or privacy. A title
+  has to survive being read by a stranger scanning a list.
 
 - The description says **zero** about traction because there is none, and says so twice.
 - It names what cannot be done as plainly as what can: matching, price, and pools.
