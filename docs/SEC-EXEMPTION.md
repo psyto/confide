@@ -101,3 +101,51 @@ proof context before signing. **What is confidential is the position, not the me
 Audited venues and confidential block trades have coexisted in every equity market for decades.
 The order builds the first. It does not prohibit the second; it is silent, and it placed the
 second outside its own scope by covering AMMs only.
+
+## "Confide is bilateral, so it is outside the SEC's purview" — do not write this
+
+Asked by the founder, 2026-09-20. **Half of it is right and the other half would be a gift to a
+judge who knows the subject.**
+
+**Right:** Confide is not covered by this exemption, and does not need it. The relief covers
+trading *executed by an AMM* on a TSV, and relieves two **intermediary** registrations — venues of
+"exchange", liquidity providers of "dealer". Two holders trading their own accounts are neither.
+Being outside the relief is not a licence this project lacks.
+
+**Wrong, and load-bearing:** *outside the exemption* is not *outside regulation*. **An exemption is
+relief from a rule that otherwise binds you.** Falling outside it means the baseline applies in
+full, not that nothing applies. Tokenized stock is a security, and a securities transaction is
+regulated with or without a venue:
+
+- **Rule 10b-5** reaches any purchase or sale of a security. No venue is an element of it.
+- Insider dealing and manipulation, likewise.
+- **Securities Act §5** still asks under what exemption a sale happens. Ordinary secondary trading
+  between holders usually rests on §4(a)(1) — but that is an analysis, not a given.
+
+### The live one is matching
+
+`_submission/full.md` lists **Matching** under *what is not built*: "Settlement is done; finding the
+other side is not." That line is now doing more work than it was written to do. **Bringing multiple
+buyers and sellers together by established, non-discretionary methods is the exchange definition at
+Rule 3b-16, and doing it for others is the broker registration at §15(a).** What keeps this project
+clear of both today is that it does not do it.
+
+So the roadmap entry stays where it is, and now has a second reason under the engineering one.
+
+### What is accurate to say today
+
+- Confide is **not a venue**. It settles a trade two parties have already agreed between
+  themselves.
+- The devnet testbed's tokens **represent nothing**. There is no security in it, so there is no
+  securities activity in it.
+- The 1,992 live mints are issued by Backed, Backpack and PreStocks **outside the US** and are not
+  tokenized **NMS** stock, which is what this order is about.
+
+**Say "this is not a venue, so the venue exemption neither covers it nor is needed." Never say
+"outside the SEC's purview."** The first is a statement about what the software does. The second is
+a legal conclusion, it is wrong as stated, and one line from a judge with a finance background
+disposes of it — taking the account scan down with it, which is exactly the failure mode
+`docs/cwf-2026/POST.md` already refuses for a second finding.
+
+**And none of this is legal advice.** Nobody in this repository is a lawyer. If a legal conclusion
+is going into a submission with the founder's name on it, that is the item to put in front of one.
