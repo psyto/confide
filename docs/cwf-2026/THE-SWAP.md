@@ -204,3 +204,77 @@ generation crate ships `transfer_with_fee_split_proof_data` and produces all fiv
 **Stated plainly so the result is not read as more than it is:** delivery-versus-payment runs, in
 one transaction, against a mint that matches PYUSD in every respect but one. The one is a zero-rate
 fee extension, and clearing it is a known, measured piece of work rather than an open question.
+
+> **Cleared the same day. The section below is the fee-bearing run.**
+
+---
+
+# The fee-bearing mirror — the whole of PYUSD's configuration, 2026-09-20
+
+`MODE=dvp ./scripts/swap-e2e.sh` with the transfer fee config left in. The cash mint now carries
+everything PYUSD carries: 6 decimals, the gate, an empty auditor slot, a permanent delegate, a
+freeze authority, a mint close authority, **and the zero-rate `transferFeeConfig` with its
+`confidentialTransferFeeConfig`.**
+
+```
+5ZrJPGRLHKzzR1us4KF3kf9z5hSgvQLabHKQbkMmCSkGEGXAkC8QA7JtnMhsVBsCJzrW5a75s9LJsxaaKsqesZug
+
+  signatures    2
+  instructions  2 — confidentialTransfer  +  confidentialTransferWithFee
+  compute used  59,804
+  size          1,074 bytes against 1,232
+
+  cash mint  CBDqHhHCACZC21aCs8PnX5dGwMzPszgeSHLZYDn9mTT5
+             mintCloseAuthority, permanentDelegate, transferFeeConfig,
+             confidentialTransferMint, confidentialTransferFeeConfig
+```
+
+**The two legs are different instructions in the same transaction.** The stock has no fee config
+and takes the plain `Transfer`; the cash has one and takes `TransferWithFee`. Atomicity does not
+care that they differ, which is the point — one transaction can compose two assets whose rules do
+not match.
+
+All four accounts are still ATAs with a public balance of 0, and the two cash accounts now carry
+the `ConfidentialTransferFeeAmount` extension that a fee-bearing mint requires.
+
+## What it took
+
+Five proofs on the cash leg instead of three, and **fourteen setup transactions instead of six**:
+
+```
+create ctx 0 … verify ctx 3        8 transactions   equality, validity3, percentage+cap, validity2
+create record                      1                1,097 bytes, owned by spl-record
+init record                        1
+write proof 1/2, 2/2               2                1,064 bytes of range proof, in 800-byte chunks
+create ctx 4                       1
+verify ctx 4 from account          1                215 bytes of transaction, 5 of instruction data
+```
+
+The last line is the whole trick. The U256 range proof cannot be verified from instruction data —
+1,269 bytes at best against 1,232 — so it goes into an `spl-record` account and the verify
+instruction cites it by offset. **Five bytes of instruction data: a discriminant and a `u32`.**
+
+## Three things that only appear when you run it
+
+**A blockhash does not live long enough for fourteen transactions.** The thirteenth came back
+`BlockhashNotFound`. Regenerating with a fresh one would produce *different* proofs for the same
+context accounts, so the proof set is now generated once, cached as bytes, and re-signed — the
+builder takes a `skip` count and the script sends in batches.
+
+**The U256 verification does not fit the compute budget.** `ComputationalBudgetExceeded` at the
+200,000-unit default. It needs a `SetComputeUnitLimit`, which costs 40 bytes on a 215-byte
+transaction.
+
+**A swallowed error cost a run.** The script sent `go`'s output to `/dev/null`, so a rejection
+surfaced as `exit 1` with the reason already discarded. Fixed before the cause was found, which is
+the order it should have been in.
+
+## What is left
+
+The mirror still lacks PYUSD's `metadataPointer` and `tokenMetadata`, which do not touch a
+transfer, and its `transferHook` slot — which PYUSD leaves unset. **Nothing in the settlement path
+now differs.**
+
+The remaining gap is not technical: a confidential position in either asset needs its issuer's
+approval, so a real trade needs the equity issuer and Paxos. That is the gate this repository has
+been measuring since the beginning, and it is unchanged.

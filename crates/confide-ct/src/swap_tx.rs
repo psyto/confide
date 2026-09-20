@@ -24,7 +24,9 @@ use solana_keypair::Keypair;
 use solana_message::Message;
 use solana_signer::Signer;
 use solana_transaction::Transaction;
-use spl_token_2022_interface::extension::confidential_transfer::instruction::inner_transfer;
+use spl_token_2022_interface::extension::confidential_transfer::instruction::{
+    inner_transfer, inner_transfer_with_fee,
+};
 use spl_token_confidential_transfer_proof_extraction::instruction::ProofLocation;
 use std::str::FromStr;
 
@@ -78,6 +80,9 @@ fn leg(a: &[String]) -> Leg {
     }
 }
 
+/// A leg is built from whatever its `ctx.json` says it is. A mint that charges a transfer fee —
+/// PYUSD charges 0 bps and still has the extension — refuses the plain `Transfer` outright with
+/// `InvalidInstructionData`, so the two are not interchangeable and the artifact decides.
 fn instruction(l: &Leg) -> solana_instruction::Instruction {
     let g = |k: &str| d64(l.ctx[k].as_str().unwrap_or_else(|| panic!("{k} missing from ctx.json")));
     let (dec, lo, hi) = (
@@ -86,22 +91,42 @@ fn instruction(l: &Leg) -> solana_instruction::Instruction {
         g("auditor_hi_b64"),
     );
     let ctx = |k: &str| addr(l.ctx[k].as_str().unwrap_or_else(|| panic!("{k} missing from ctx.json")));
-    let ix = inner_transfer(
-        &addr(TOKEN_2022),
-        &l.source,
-        &l.mint,
-        &l.destination,
-        bytemuck::from_bytes(&dec),
-        bytemuck::from_bytes(&lo),
-        bytemuck::from_bytes(&hi),
-        &l.owner.pubkey(),
-        &[],
-        ProofLocation::ContextStateAccount(&ctx("equality")),
-        ProofLocation::ContextStateAccount(&ctx("validity")),
-        ProofLocation::ContextStateAccount(&ctx("range")),
-    )
-    .expect("inner_transfer");
-    ix
+    let token = addr(TOKEN_2022);
+    if l.ctx["with_fee"].as_bool().unwrap_or(false) {
+        inner_transfer_with_fee(
+            &token,
+            &l.source,
+            &l.mint,
+            &l.destination,
+            bytemuck::from_bytes(&dec),
+            bytemuck::from_bytes(&lo),
+            bytemuck::from_bytes(&hi),
+            &l.owner.pubkey(),
+            &[],
+            ProofLocation::ContextStateAccount(&ctx("equality")),
+            ProofLocation::ContextStateAccount(&ctx("validity")),
+            ProofLocation::ContextStateAccount(&ctx("percentage")),
+            ProofLocation::ContextStateAccount(&ctx("fee_validity")),
+            ProofLocation::ContextStateAccount(&ctx("range")),
+        )
+        .expect("inner_transfer_with_fee")
+    } else {
+        inner_transfer(
+            &token,
+            &l.source,
+            &l.mint,
+            &l.destination,
+            bytemuck::from_bytes(&dec),
+            bytemuck::from_bytes(&lo),
+            bytemuck::from_bytes(&hi),
+            &l.owner.pubkey(),
+            &[],
+            ProofLocation::ContextStateAccount(&ctx("equality")),
+            ProofLocation::ContextStateAccount(&ctx("validity")),
+            ProofLocation::ContextStateAccount(&ctx("range")),
+        )
+        .expect("inner_transfer")
+    }
 }
 
 /// The payer is usually one of the two owners, and signing the same key twice is an error.

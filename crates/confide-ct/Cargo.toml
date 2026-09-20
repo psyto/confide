@@ -57,6 +57,10 @@ path = "src/swap_check.rs"
 name = "swap-tx"
 path = "src/swap_tx.rs"
 
+[[bin]]
+name = "swap-ctx-fee"
+path = "src/swap_ctx_fee.rs"
+
 [dependencies]
 spl-token-2022-interface = "3"
 solana-zk-sdk = "7"

@@ -4,6 +4,8 @@
 //! proofs. `build-seizure-proofs` shows the ZK program accepts them; `seizure-ctx` puts them on
 //! chain in context state accounts. Same bytes, same code path.
 
+pub mod staging;
+
 use base64::Engine;
 use solana_zk_sdk::encryption::auth_encryption::{AeCiphertext, AeKey};
 use solana_zk_sdk::encryption::elgamal::{
