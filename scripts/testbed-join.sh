@@ -13,6 +13,10 @@
 # docs/TESTBED.md says how two of you do it against each other.
 #
 # It is devnet. The tokens represent nothing and are worth nothing.
+#
+# WHAT YOU NEED FIRST: the Solana CLI (`solana`, `spl-token`), a Rust toolchain, and about 0.3
+# devnet SOL in the keypair you point this at. The script tries the airdrop and tells you what to
+# do when it is throttled, which it usually is.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 R="${RPC:-https://api.devnet.solana.com}"
@@ -30,11 +34,28 @@ FAUCETKEY=$(python3 -c "import json;print(json.load(open('$T'))['faucet_secret']
 
 W="${WORK:-$(mktemp -d)}"; mkdir -p "$W"
 KP="${1:-$W/you.json}"
+# You need a devnet keypair with some SOL. The airdrop is tried and is frequently throttled, and
+# when it is, this says so instead of quietly reaching for a keypair only the author has — which is
+# what the first version did, so "one command" was true for exactly one person.
 [ -f "$KP" ] || { solana-keygen new --no-bip39-passphrase --silent --force -o "$KP" >/dev/null
-                  solana -u "$R" airdrop 1 "$(solana-keygen pubkey "$KP")" >/dev/null 2>&1 \
-                  || solana -u "$R" -k "${FUNDER:-$HOME/.config/solana/id.json}" transfer \
-                       --allow-unfunded-recipient "$(solana-keygen pubkey "$KP")" 0.4 >/dev/null; }
+                  solana -u "$R" airdrop 1 "$(solana-keygen pubkey "$KP")" >/dev/null 2>&1 || true; }
 YOU=$(solana-keygen pubkey "$KP")
+LAM=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getBalance\",\"params\":[\"$YOU\"]}" \
+      | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value'])")
+if [ "$LAM" -lt 100000000 ]; then
+  cat >&2 <<EOF
+
+  This needs about 0.3 devnet SOL and $YOU has $LAM lamports.
+
+  The devnet airdrop is rate limited and just refused. Either:
+      solana airdrop 1 $YOU -u devnet     # try again in a minute
+      https://faucet.solana.com                              # or a web faucet
+  then re-run with the same keypair:
+      ./scripts/testbed-join.sh $KP
+
+EOF
+  exit 1
+fi
 printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confirmed\n' "$R" "$KP" > "$W/you.yml"
 
 echo

@@ -1,119 +1,176 @@
 # The public post — ready to publish, founder posts
 
-Drafted 2026-09-19. **No individual outreach** (founder ruling, 2026-09-18): this is written once,
-has no addressee, and asks for nothing.
+Rewritten 2026-09-20. **No individual outreach** (founder ruling, 2026-09-18): this is written
+once, has no addressee, and asks for no meeting, no reply and no favour.
+
+**What changed from the 09-19 draft, so the change is a decision rather than a drift:**
+
+- The headline is no longer the Kamino pincer. It is a measurement nobody had made — **329,536
+  token accounts, and not one of them confidential.** The pincer is why, and is now support.
+- The draft said *"it does not make the pincer go away"* and that was true of a **loan**. A loan
+  needs a third party to hold collateral, and that third party is what the gate bites. **A trade
+  does not**, so the swap runs where the loan could not.
+- **It now asks for one thing**, and the previous draft asked for nothing. See the reasoning below,
+  because that is the substantive change and it deserves an argument rather than a shrug.
 
 **Run `./scripts/reach.sh` before posting.** It establishes the baseline; without one, whatever
 arrives afterwards cannot be told apart from what was already there.
 
-**Every number below is timestamped and recomputable.** Re-run `./scripts/capacity.sh` and
-`./scripts/slot-scan.sh` before posting and update the figures from their output — they move, and a
-post quoting a number the page contradicts is worse than no post. Current reading:
-**$22.0 m / $83.0 m, 2026-09-19 02:01:46 UTC.**
+**Every number below is recomputable, and they move.** Re-run `./scripts/usage-scan.sh`,
+`./scripts/capacity.sh` and `./scripts/slot-scan.sh` before posting and update from their output —
+a post quoting a figure the page contradicts is worse than no post. Current readings:
+**329,536 accounts / 0 confidential**, and
+**$22.0 m / $83.0 m**.
 
 ---
 
 ## Long form
 
-> **Every tokenized stock on Solana ships a privacy feature nobody can use. Here is exactly what it
-> costs, in someone else's numbers.**
+> **Solana shipped confidential balances for tokenized stocks. I counted the accounts. Nobody has
+> ever opened one.**
 >
-> All 1,992 tokenized-equity mints on Solana have Token-2022 confidential transfers switched on, and
-> **every single one leaves the auditor key empty.** Backed 828, Backpack 1,156, PreStocks 8 —
-> **three issuers with nothing to do with each other**, and not even the same product: Backed and
-> Backpack tokenize listed equity, PreStocks tokenizes companies with no public market at all
-> (SpaceX, OpenAI, Anthropic, Neuralink). Three of them arriving independently at the same
-> configuration, across two different asset classes, makes it a property of the substrate rather
-> than a choice by any of them. The reason is that the only disclosure model on offer is a global
-> key that reads everyone's everything, forever: fill it and every holder is readable by one party
-> for good, leave it null and no holder can prove anything to anyone.
+> Every tokenized-equity mint on Solana — **all 1,992**, from three issuers with nothing to do with
+> each other — runs Token-2022 with confidential transfers switched **on** and the auditor key
+> **empty**. That much has been written about. What I could not find anywhere was the other half:
+> has anyone actually used it?
 >
-> (Not every issuer even gets that far. Tessera's T-SpaceX, T-OpenAI and T-Kalshi are Token-2022
-> with **no confidential-transfer extension at all** — there is nothing to leave empty, and no way
-> to hold them privately in the first place.)
+> So I counted. **329,536 token accounts across Apple, NVIDIA, SpaceX and Anthropic.
+> 0 are configured for confidential transfers.** Not few. Zero.
+> (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
+> one of which was large for an unrelated extension, so the check reads the extension list rather
+> than the size.)
 >
-> That would be a curiosity, except people are already lending against these tokens. Kamino has 19
-> tokenized-equity reserves live right now. **$22.0 m deposited, $83.0 m of borrowing that their own
-> caps and LTVs already authorise** (read 2026-09-19 02:01 UTC; recompute with
-> `./scripts/capacity.sh`). **$0 of it is reachable if you would rather your position were not
-> public.**
+> The reason is one field. `autoApproveNewAccounts` is **false on 1,992 of 1,992**, so a
+> confidential account cannot exist until the issuer signs for it, and no issuer has. And the only
+> disclosure model on offer is a single global auditor key that reads everyone's everything
+> forever — fill it and every holder is permanently readable by one party, leave it null and no
+> holder can prove anything to anyone. So it sits null, on every mint, at every issuer.
+>
+> **It is not an equities story.** USDC and USDT cannot move confidentially at all — legacy SPL, no
+> extensions. **PYUSD and USDG can**, and they land on the *identical* configuration: gate closed,
+> auditor slot empty, the same key holding confidential authority, permanent delegate and freeze
+> authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door.
+> Four issuers, two asset classes, one dead end — **a property of the substrate, not a choice any of
+> them made.**
+>
+> This matters because people already lend against these tokens. Kamino runs 19 tokenized-equity
+> reserves: **$22.0 m deposited, $83.0 m of borrowing their own caps authorise, and $0 of it
+> reachable if you would rather your position were not public.**
 >
 > **Kamino's refusal is correct underwriting, not an oversight.** A lender who cannot read a balance
-> cannot price it, and refusing what you cannot value is how this is supposed to work. Their program
-> names the confidential-transfer extensions explicitly and requires them switched off — on the
-> depositor's own account, at deposit. `constraints.rs:187`, `:194`, `:201`, and
-> `lending_checks.rs:186`, at release/v1.25.0.
+> cannot price it. Their program names the confidential-transfer extensions and requires them
+> switched off, on the depositor's own account, at deposit — `constraints.rs:187`, `:194`, `:201`,
+> `lending_checks.rs:186`, at release/v1.25.0. And `constraints.rs:131` refuses a mint whose
+> `autoApproveNewAccounts` is *true*, so **the setting Kamino requires is the setting that puts the
+> issuer in the path.** Same field, read from two sides.
 >
-> What I did not expect is that the last of those lines is a pincer. `constraints.rs:131` refuses a
-> mint whose `autoApproveNewAccounts` is *true* — a mint anyone could open a confidential account on
-> without asking the issuer. So the setting Kamino requires is the setting that puts the issuer in
-> the path of every escrow. **They are the same field read from two sides**, and satisfying either
-> forces the other.
+> I spent a month building for that and hit the gate every time, because **a loan needs a third
+> party to hold the collateral** and a third party needs an account. Then the obvious thing: a
+> **trade** needs no third party at all. Both legs go in one transaction, so either both settle or
+> neither does — Solana's atomicity is the escrow.
 >
-> Which side is the market on? **1,992 of 1,992.** Zero auto-approve. There is no mint on the
-> ungated side, so this is not solved by picking a different ticker, and no amount of engineering
-> outside Kamino or the issuers removes it.
+> So it runs. **50,000 shares for $8,750,000 in a single transaction**, delivery against payment,
+> and neither side publishes the size or the price it implies. Both accounts are ordinary
+> associated token accounts and both still read a public balance of `0`. A second one carries a
+> plain confidential transfer *and* a with-fee confidential transfer together, because the cash leg
+> is shaped like PYUSD and PYUSD charges a fee — two assets whose rules do not match, settled
+> atomically.
 >
-> I have been building the part that does not need anyone's permission: proving a balance clears a
-> floor without revealing it — checked by Solana's own ZK program, not by me — and settling
-> collateral on default, and back to the holder, without the holder signing again. It runs end to
-> end on devnet. **It is a reference implementation, not a product, and it does not make the pincer
-> go away.**
+> Delivery versus payment is what a clearing house is *for*: neither side will go first, so finance
+> inserts a central counterparty, membership, margin and a day of lag. **None of that is needed when
+> the transaction cannot half-happen** — and the confidential version means neither party publishes
+> the size a clearing house would have been told anyway.
 >
-> Everything above is checkable without taking my word for it. The decision page reads any of the
-> 1,992 from mainnet in your browser: https://psyto.github.io/confide/kamino.html
-> Code, scripts and the fourteen generated admission packets: https://github.com/psyto/confide
+> **What this does not do:** it does not make a real xStock pledgeable, it does not open Kamino's
+> $83 m, and nobody outside my own repository has used any of it. The `$0` stands.
 >
-> **If I have read Kamino's source wrong, I would rather find out from you than from a judge.**
+> **One thing you can do, and it is the point of this post.** I stood up an issuer on devnet whose
+> gate is shut exactly as all 1,992 are — `autoApproveNewAccounts: false`, auditor slot empty — and
+> then published the key that opens it. So you can open a confidential position yourself, in one
+> command, and hold something the chain reports as zero:
+>
+> ```
+> git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh
+> ```
+>
+> It is devnet and the tokens represent nothing. You will need the Solana CLI, a Rust toolchain and
+> a little devnet SOL — the script tries the airdrop and tells you what to do when it is throttled,
+> which it usually is. **It is the thing 329,536 live accounts have never done.** Mint
+> `7MEQEiy1…`; the approval key is in `keys/` and cannot mint, which is checked rather than claimed.
+>
+> Everything above is checkable without taking my word for it:
+> https://psyto.github.io/confide/ reads the mints from mainnet in your browser and decodes the
+> devnet trades. Code: https://github.com/psyto/confide
+>
+> **And if I have read Kamino's source wrong, or the account scan is wrong, I would much rather
+> hear it from you than from a judge.**
 
 ---
 
 ## Short form
 
-> Every tokenized stock on Solana — all 1,992, from three unrelated issuers, listed equity and
-> pre-IPO alike — ships confidential transfers with the auditor key empty.
+> Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
+> empty on every one.
 >
-> Kamino lends against them: $22.0 m deposited, $83.0 m authorised (19/09 02:01 UTC).
-> $0 of it is reachable if you want your position private.
+> I counted the accounts. **329,536 of them across Apple, NVIDIA, SpaceX, Anthropic.
+> 0 are confidential.** Nobody has ever opened one — the issuer has
+> to sign, and none has.
 >
-> Their refusal is correct underwriting. But the line that enforces it —
-> `constraints.rs:131`, auto-approve must be false — is the same line that makes the issuer
-> approve every escrow. Same field, two sides.
+> Same story outside equities: PYUSD and USDG, same gate, same empty slot.
 >
-> 1,992 of 1,992 are on the gated side. Not solvable by picking another ticker.
+> So a loan is out — collateral needs a third party, a third party needs an account. A **trade**
+> does not: 50,000 shares for $8.75 m in one transaction, neither size published, no clearing house.
 >
-> Check it yourself: psyto.github.io/confide/kamino.html
+> You can open one yourself on devnet — the issuer's gate is shut there too, and I published the
+> key that opens it: github.com/psyto/confide → `./scripts/testbed-join.sh`
 
 ---
 
 ## Why it is written this way
 
-- **It leads with the finding, not the project.** The first paragraph is about the market; Confide
-  appears in the second half and is described as a reference implementation that *does not solve
-  the problem it found.*
-- **Kamino is conceded as correct, twice, before anything is said about the gap.** A post that reads
-  as an attack on a protocol with $22 m in it gets answered as an attack, and the framing freezes
-  before anyone looks at the evidence.
-- **Nobody is asked for anything.** No meeting, no reply, no LLTV. The only invitation is to prove
-  me wrong, which costs the reader nothing and is the one response worth more than silence.
-- **Every number carries a timestamp and the command that produces it.** The chain moved $21.1 m →
-  $22.0 m in three days while this was being written; a post is a fixed artifact and the market is
-  not.
+- **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
+  until somebody counts; the count is the contribution, and it is cheap for a reader to repeat.
+- **Kamino is conceded as correct before anything is said about the gap.** A post that reads as an
+  attack on a protocol with $22 m in it gets answered as an attack, and the framing freezes before
+  anyone looks at the evidence.
+- **The failure is told as a failure.** A month of building the wrong shape, said plainly, is what
+  earns the sentence after it.
+- **Every number carries the command that produces it.** The chain moved $21.1 m → $22.0 m in three
+  days while the previous draft was being written.
 - **No claim of traction.** Nothing here says anyone uses this, because nobody does.
+
+### The ask, which the previous draft did not have
+
+The 09-19 draft asked for nothing, on the grounds that the only invitation worth making is *prove
+me wrong* — which costs the reader nothing and is worth more than silence. **That is still in the
+last line.** What changed is that there is now something a reader can *do* that is equally costless
+and strictly more informative:
+
+- It is **not a request for a meeting, a reply, or a favour**, so it does not cross the outreach
+  ruling. It has no addressee.
+- It **demonstrates the finding rather than repeating it.** A reader who runs it feels the gate
+  open, on a mint configured exactly like the ones where it never has.
+- It is the **only measurable response available.** A new account on that mint is a fact with a
+  timestamp. Silence is also a fact, and a clearer one than a post nobody could act on.
+- It costs the reader nothing at risk — devnet, no wallet connection, no value. It is **not**
+  frictionless, and the post says so: it needs the Solana CLI, Rust, and devnet SOL from a faucet
+  that is usually throttled. The first version of the script hid that by falling back to a keypair
+  only the author has, so "one command" was true for exactly one person.
+
+**It is still not traction until somebody does it.** See [`REACH.md`](REACH.md).
 
 ## What is deliberately not in it
 
-**The transfer-fee material**, and the reason is now stronger than when this section was written:
-**there is no finding.** Confidential transfer with a fee works — the range proof goes into a record
-account first, which is documented in the proof program's own instruction docs and implemented in
-the reference client. What this repository briefly had was a wrong conclusion drawn from a real
-measurement ([`PRE-IPO.md`](PRE-IPO.md)).
+**The transfer-fee material.** The previous draft excluded it because there was no finding — the
+with-fee path works, it just routes the oversized range proof through a record account. That is now
+**implemented and running**, which makes it even less of a finding and more of an implementation
+note. It appears in the post only as the one clause about two rule sets in one transaction.
 
-Two things follow, and they outlive the mistake:
+Two reasons outlive the change:
 
-- The post has one finding and it is the Kamino pincer. A second one halves both, and a second one
-  that turns out to be an error destroys the first.
-- Those eight mints belong to a company **sponsoring the event this is being submitted to**. Even
+- The post has one finding. A second halves both, and a second that turns out to be wrong destroys
+  the first.
+- Those eight pre-IPO mints belong to a company **sponsoring the event this is submitted to**. Even
   a correct note about a live product, from a stranger, during their event, is a different act from
   a note about a boundary in Kamino's source — and Kamino's is framed as *correct underwriting*.
 
@@ -123,5 +180,6 @@ Two things follow, and they outlive the mistake:
   out on 2026-09-18.
 - **Do not argue with a refusal.** Record it exactly as received, reasons included. A reason is
   information about the market; a won argument is not.
-- **Do not report arrivals as traction**, in the submission or in a check-in. See
-  [`REACH.md`](REACH.md).
+- **Do not report arrivals as traction**, in the submission or in a check-in. An account opened on
+  the devnet testbed is the first thing that would count, and it is counted as what it is: somebody
+  exercised the mechanism on a token representing nothing.
