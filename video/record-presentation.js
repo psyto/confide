@@ -125,19 +125,26 @@ const MINT_COUNT = MINTS.length.toLocaleString("en-US");
 const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
 
 const scenes = [
-  // The card. Added after the founder said the entry was abrupt against the published cut, which
-  // spends nine seconds here before it shows anything — and the nine seconds buy the claim landing
-  // before the picture that illustrates it. The screen carries the numbers; the voice does not
-  // read them.
+  // The product, then the product working, inside the first thirty seconds. The order this
+  // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
+  // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
+  // and §8(e) asks how the work composes with other primitives — which was the buried scene.
   {
-    file: "01-the-claim.mp4", kind: "hero",
-    sub: "settle a position without publishing what moved",
-    lede: "Nearly two thousand tokenized stocks can hide a balance.<br><b>Zero accounts do.</b>",
+    file: "01-what-this-is.mp4", kind: "hero",
+    sub: "delivery versus payment, confidentially",
+    lede: "Tokenized stock. Stablecoin cash.<br><b>One transaction, or neither.</b>",
     total: HOLD[0],
   },
-  { file: "02-your-position.mp4", kind: "leak", total: HOLD[1] },
   {
-    file: "03-this-account.mp4", kind: "evidence",
+    file: "02-the-trade.mp4", kind: "dvp",
+    label: "Delivery, and payment, in the same transaction.",
+    seller: DVP.seller, buyer: DVP.buyer,
+    delivered: DVP.delivered_units, paid: DVP.paid_units,
+    total: HOLD[1],
+  },
+  { file: "03-why-bother.mp4", kind: "leak", total: HOLD[2] },
+  {
+    file: "04-this-account.mp4", kind: "evidence",
     label: "A real account on Solana, right now.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
@@ -147,11 +154,11 @@ const scenes = [
       emphasis: ["173000 units"],
       label: "The same account. This is what it holds.",
     },
-    total: HOLD[2],
+    total: HOLD[3],
   },
-  { file: "04-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[3] },
+  { file: "05-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
   {
-    file: "05-so-i-counted.mp4", kind: "evidence",
+    file: "06-so-i-counted.mp4", kind: "evidence",
     label: "So I stopped reading the settings and counted the accounts.",
     // Not "just now", and the badge says so. Every other pane in this cut is a command run
     // moments before the recording; this scan reads every token account of every mint and takes
@@ -159,40 +166,31 @@ const scenes = [
     stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
     body: slice(usage, /AAPLx/, /token accounts,/),
     emphasis: ["329,536", "0 configured for confidential transfers"],
-    total: HOLD[4],
-  },
-  {
-    file: "06-the-turn.mp4", kind: "missing",
-    label: "Which told me I had been building the wrong shape.",
-    items: [
-      "A <b>loan</b> needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months.",
-      "A <b>trade</b> does not. It happens at one instant.",
-      "And on Solana, an instant is all or nothing — so the transaction <b>is</b> the escrow.",
-    ],
-    lead: 3.5, step: 5,
     total: HOLD[5],
   },
   {
-    // A picture, not a pane. The terminal version showed that two transfers happened; the shape
-    // is what shows that a TRADE did, and the empty middle is where a clearing house would be.
-    file: "07-what-runs.mp4", kind: "dvp",
-    label: "Delivery, and payment, in the same transaction.",
-    seller: DVP.seller, buyer: DVP.buyer,
-    delivered: DVP.delivered_units, paid: DVP.paid_units,
-    total: HOLD[6],
-  },
-  {
-    file: "08-the-hard-part.mp4", kind: "evidence",
-    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
-    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
-    emphasis: ["confidentialTransferWithFee"],
-    total: HOLD[7],
-  },
-  {
-    file: "09-not-only-equities.mp4", kind: "evidence",
+    file: "07-not-only-equities.mp4", kind: "evidence",
     label: "And it was never a story about tokenized stocks.",
     body: slice(cash, /program\s+confidential/, /Four issuers/),
     emphasis: ["PYUSD", "USDG", "EMPTY"],
+    total: HOLD[6],
+  },
+  {
+    file: "08-a-trade-not-a-loan.mp4", kind: "missing",
+    label: "I did not start here.",
+    items: [
+      "A <b>loan</b> needs somebody to hold the collateral — and that somebody needs an account the issuer will not approve.",
+      "A <b>trade</b> needs nobody. It happens at one instant.",
+      "And on Solana, an instant is all or nothing — so the transaction <b>is</b> the escrow.",
+    ],
+    lead: 3.5, step: 6,
+    total: HOLD[7],
+  },
+  {
+    file: "09-the-hard-part.mp4", kind: "evidence",
+    label: "The cash is shaped like PayPal's dollar, and PayPal's dollar charges a fee.",
+    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
+    emphasis: ["confidentialTransferWithFee"],
     total: HOLD[8],
   },
   {

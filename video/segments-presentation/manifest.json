@@ -1,72 +1,72 @@
 [
  {
-  "file": "01-the-claim.mp4",
+  "file": "01-what-this-is.mp4",
   "start": 0,
-  "end": 8.5,
-  "seconds": 8.5,
-  "line": "Every tokenized stock on Solana can hold a confidential balance. Not one holder ever has."
+  "end": 8,
+  "seconds": 8,
+  "line": "Confide settles tokenized stock against a stablecoin in a single transaction, and neither side publishes what moved."
  },
  {
-  "file": "02-your-position.mp4",
-  "start": 8.5,
-  "end": 22.5,
-  "seconds": 14,
-  "line": "If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything. The chain simply publishes it, the moment each purchase settles."
+  "file": "02-the-trade.mp4",
+  "start": 8,
+  "end": 32,
+  "seconds": 24,
+  "line": "Delivery, and payment, in one transaction. Neither could have happened without the other, which is the only thing a clearing house is for — and there isn't one. Confide is not a venue and holds nobody's assets. It is what the two of them use to settle, and there is nothing in the middle."
  },
  {
-  "file": "03-this-account.mp4",
-  "start": 22.5,
-  "end": 38.5,
+  "file": "03-why-bother.mp4",
+  "start": 32,
+  "end": 48,
+  "seconds": 16,
+  "line": "So why hide it. If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything — the chain simply publishes it, the moment each purchase settles."
+ },
+ {
+  "file": "04-this-account.mp4",
+  "start": 48,
+  "end": 64,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
-  "file": "04-already-shipped.mp4",
-  "start": 38.5,
-  "end": 55.5,
+  "file": "05-already-shipped.mp4",
+  "start": 64,
+  "end": 81,
   "seconds": 17,
   "line": "Nearly two thousand of them, from three issuers with nothing to do with each other. Every one leaves the auditor key empty, and every one needs the issuer's signature before you can open an account at all."
  },
  {
-  "file": "05-so-i-counted.mp4",
-  "start": 55.5,
-  "end": 67.5,
+  "file": "06-so-i-counted.mp4",
+  "start": 81,
+  "end": 93,
   "seconds": 12,
   "line": "So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
-  "file": "06-the-turn.mp4",
-  "start": 67.5,
-  "end": 89.5,
-  "seconds": 22,
-  "line": "Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months. A trade does not. A trade happens at one instant — and on Solana, an instant is all or nothing."
- },
- {
-  "file": "07-what-runs.mp4",
-  "start": 89.5,
-  "end": 112.5,
-  "seconds": 23,
-  "line": "Neither side of that could have happened without the other, and that is the only thing a clearing house is for. There isn't one. Confide is not a venue and holds nobody's assets — it is what the two of them use to settle, and there is nothing in the middle."
- },
- {
-  "file": "08-the-hard-part.mp4",
-  "start": 112.5,
-  "end": 134.6,
-  "seconds": 22.1,
-  "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
- },
- {
-  "file": "09-not-only-equities.mp4",
-  "start": 134.6,
-  "end": 149.6,
+  "file": "07-not-only-equities.mp4",
+  "start": 93,
+  "end": 108,
   "seconds": 15,
   "line": "That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two different asset classes, the same dead end. This was never a story about tokenized stocks."
  },
  {
-  "file": "10-what-is-missing.mp4",
-  "start": 149.6,
-  "end": 171.6,
+  "file": "08-a-trade-not-a-loan.mp4",
+  "start": 108,
+  "end": 134.1,
+  "seconds": 26.1,
+  "line": "I did not start here. I spent a month on a loan against those positions and hit the same wall: a loan needs somebody to hold the collateral, and that somebody needs an account the issuer will not approve. A trade needs nobody — it happens at one instant, and on Solana an instant is all or nothing."
+ },
+ {
+  "file": "09-the-hard-part.mp4",
+  "start": 134.1,
+  "end": 156.1,
   "seconds": 22,
-  "line": "Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle is a condition you can check, and for the two that decide the market, the work on the far side is already running. Every figure here came off the chain."
+  "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
+ },
+ {
+  "file": "10-what-is-missing.mp4",
+  "start": 156.1,
+  "end": 175.1,
+  "seconds": 19,
+  "line": "Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle is a condition you can check, and for the two that decide the market, the work on the far side is already running."
  }
 ]

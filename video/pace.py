@@ -49,15 +49,15 @@ def build(sc):
 
 SHOWS_BY_DOC = {
  "video/CWF-PRESENTATION.md": {
- 1: "the title card — Confide, and the claim",
- 2: "a position climbing across a quarter, watched",
- 3: "`spl-token balance` says 0; the confidential balance says 173,000",
- 4: "the mint scan finishing, the auditor slot empty",
- 5: "`./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0",
- 6: "the escrow in the diagram, then gone",
- 7: "the exchange as a diagram: two parties, two arrows, an empty middle",
- 8: "both instruction names in one transaction; the record account",
- 9: "PYUSD and USDG beside a tokenized stock, the matching fields lit",
+ 1: "the title card — Confide, and what it does",
+ 2: "the exchange as a diagram: two parties, two arrows, an empty middle",
+ 3: "a position climbing across a quarter, watched",
+ 4: "`spl-token balance` says 0; the confidential balance says 173,000",
+ 5: "the mint scan finishing, the auditor slot empty",
+ 6: "`./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0",
+ 7: "PYUSD and USDG beside a tokenized stock, the matching fields lit",
+ 8: "the escrow in the diagram, then gone",
+ 9: "both instruction names in one transaction; the record account",
  10: "the conditions table, then a command and the page URL",
  },
  "video/CHECKIN-1.md": {

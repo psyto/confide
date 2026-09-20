@@ -35,31 +35,29 @@ What the draft had that the published cut does not, and which stays: conceding t
 refusal is correct, and saying out loud what is missing. Those are worth more here than they were
 there, because **viability and traction are judged at this hackathon and were not at the last one.**
 
-## The shape — rewritten 2026-09-20
+## The shape — reordered 2026-09-20, and this is the second restructure today
 
-The script this replaces argued that a lender should be able to price a balance it cannot read. It
-was true and it ended on what was missing. **What changed is that the thing being demonstrated
-changed**: a loan needs a third party to hold collateral, and that third party is what ran into
-every wall. A trade needs no third party, because a Solana transaction is all-or-nothing, and the
-swap runs today where the loan could not.
+The founder asked why the product does not appear until halfway, and whether a judge should be
+assumed to reach it. **They should not**, and the order this replaces was resting on a premise this
+repository had already retracted.
 
-And one measurement arrived that the old script could not have had: **nobody has ever opened a
-confidential account on any of these mints.** That moves the strongest statistic from "the feature
-is switched off" to "nobody is ahead of you", which is a different and better thing to tell a judge.
+That order came from *"four of the seven judging criteria are non-engineering and get read first,
+so: the market before the mechanism."* [`CRITERIA.md`](CRITERIA.md) took that apart on 2026-09-19:
+**traction is last of the seven and does not appear in the Official Rules at all**, §8 opens on
+**Functionality — how well does it work?**, and **§8(e) asks how well the work composes with other
+primitives**, which is the one scene that was buried deepest. The script never followed its own
+correction.
 
-So the order is: **the viewer's problem, the moment, the market, the reveal, the turn, what runs,
-what it cost to build, what is missing.** The mechanism is still late — scene 6 of 9 — because four
-of the seven judging criteria are non-engineering and get read first.
+So: **what it is, then it working, and only then why anyone needs it.** The product lands inside
+the first thirty seconds and everything after it is depth a judge can stop watching at any point
+without losing the claim.
 
-**A title card, restored 2026-09-20.** The first draft of this cut opened straight into the
-position climbing, and the founder said the entry was abrupt against the published Stocklana video.
-They were right, and the diff says why: that cut spends nine seconds on a hero card before it shows
-anything. What the card buys is not decoration — it is **the claim landing before the picture that
-illustrates it**, and a viewer who has been told what they are about to see reads the next scene
-instead of decoding it.
-
-So scene 1 states the finding and scene 5 earns it. That costs ten seconds, and ten seconds come
-back out of scenes 4, 5 and 10, which were each saying something the card now says once.
+| | |
+|---|---|
+| 0:00 – 0:32 | what this is, and the trade itself |
+| 0:32 – 1:23 | why anybody wants it — the leak, the moment, the gate, the count |
+| 1:23 – 2:22 | why it is not only equities, why a trade and not a loan, and what it cost to build |
+| 2:22 – 2:52 | what is missing, and the one thing a viewer can go and do |
 
 **The craft rules from the published cut still hold, and are the reason this reads the way it does:**
 speak to the viewer; reframe in seven words; show before you count; leave one gap; and the narration
@@ -67,37 +65,53 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | the claim | 7 + 1.5 | 15 | 130 | the title card — Confide, and the claim |
-| 2 | your position | 12 + 2 | 26 | 137 | a position climbing across a quarter, watched |
-| 3 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 4 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
-| 5 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
-| 6 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
-| 7 | what runs | 23 | 51 | 137 | the exchange as a diagram: two parties, two arrows, an empty middle |
-| 8 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
-| 9 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
-| 10 | what is missing | 22 | 48 | 135 | the conditions table, then a command and the page URL |
-| | | **172 s** | **352** | | |
+| 1 | what this is | 8 | 17 | 138 | the title card — Confide, and what it does |
+| 2 | the trade | 24 | 54 | 138 | the exchange as a diagram: two parties, two arrows, an empty middle |
+| 3 | why anyone would bother | 14 + 2 | 31 | 139 | a position climbing across a quarter, watched |
+| 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
+| 5 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
+| 6 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
+| 7 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
+| 8 | why a trade and not a loan | 26 | 58 | 137 | the escrow in the diagram, then gone |
+| 9 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
+| 10 | what is missing | 19 | 41 | 134 | the conditions table, then a command and the page URL |
+| | | **175 s** | **363** | | |
 
 ## The script
 
-### 1 — the claim · +1.5 s silence
+### 1 — what this is
 
-> Every tokenized stock on Solana can hold a confidential balance. Not one holder ever has.
+> Confide settles tokenized stock against a stablecoin in a single transaction, and neither side
+> publishes what moved.
 
-*Shows:* the title card. **No gap after it** — the one gap in this film belongs to scene 3, and a
-second one here would spend it twice. The card states the finding; scene 5 is where it is earned.
+*Shows:* the title card. **The product, not the problem.** The card this replaces stated a finding —
+that nobody has ever opened one of these accounts — and a viewer who stops after ten seconds took
+away a fact about somebody else rather than a thing that exists.
 
-### 2 — your position · +2 s silence
+### 2 — the trade
 
-> If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody attacked anything.
-> The chain simply publishes it, the moment each purchase settles.
+> Delivery, and payment, in one transaction. Neither could have happened without the other, which
+> is the only thing a clearing house is for — and there isn't one. Confide is not a venue and holds
+> nobody's assets. It is what the two of them use to settle, and there is nothing in the middle.
+
+*Shows:* the exchange as a diagram — two parties, stock crossing one way and cash the other, and
+**an empty middle**. Drawn from figures the parties wrote down at the time; the four zeroes
+underneath are what anybody watching gets.
+
+**This scene used to be ninety seconds in.** It was first a list of instruction names, which shows
+that two transfers happened and not that a trade did; then a table, which showed the trade but read
+as output; and now a picture, at the front, because **the empty middle is the product** and it is
+the only place in the film that says what Confide is.
+
+### 3 — why anyone would bother · +2 s silence
+
+> So why hide it. If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody
+> attacked anything — the chain simply publishes it, the moment each purchase settles.
 
 *Shows:* a position climbing across a quarter, watched. **Second person, and the second sentence is
-the one that has to land** — this is the default behaviour, not an incident. Unchanged from the
-previous script, because it is the best opening the project has.
+the one that has to land** — this is the default behaviour, not an incident.
 
-### 3 — this account · +5 s silence
+### 4 — this account · +5 s silence
 
 > This is a real account on Solana, right now. The chain says it holds nothing.
 >
@@ -106,7 +120,7 @@ previous script, because it is the best opening the project has.
 *Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
 strongest ten seconds available, and still is.
 
-### 4 — already solved, already switched off
+### 5 — already solved, already switched off
 
 > Nearly two thousand of them, from three issuers with nothing to do with each other. Every one
 > leaves the auditor key empty, and every one needs the issuer's signature before you can open an
@@ -115,55 +129,18 @@ strongest ten seconds available, and still is.
 *Shows:* the mint scan finishing; the auditor slot empty. **Three independent issuers reaching the
 same dead end is the line** — one company being careful is a story about that company.
 
-### 5 — so I counted · +2 s silence
+### 6 — so I counted · +2 s silence
 
 > So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts,
 > across Apple, NVIDIA, SpaceX and Anthropic.
 >
 > Not one.
 
-*Shows:* `./scripts/usage-scan.sh` running to its total. **The reveal, and it is new** — every other
-measurement in this project is about how the mints are configured. This one is about whether anybody
-got through, and the answer is that the door has never been opened.
+*Shows:* the account scan running to its total. **The reveal** — every other measurement in this
+project is about how the mints are configured. This one is about whether anybody got through, and
+the answer is that the door has never been opened.
 
-### 6 — the turn
-
-> Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral,
-> because it has to survive one side refusing to cooperate for months. A trade does not. A trade
-> happens at one instant — and on Solana, an instant is all or nothing.
-
-*Shows:* the escrow diagram, then it disappearing. **"The wrong shape" is the seven-word reframe**,
-and admitting it is what earns the next scene.
-
-### 7 — what runs
-
-> Neither side of that could have happened without the other, and that is the only thing a clearing
-> house is for. There isn't one. Confide is not a venue and holds nobody's assets — it is what the
-> two of them use to settle, and there is nothing in the middle.
-
-*Shows:* the exchange as a diagram — two parties, stock crossing one way and cash the other, and
-**an empty middle**. Drawn from figures the parties wrote down at the time; the four zeroes
-underneath are what anybody watching gets.
-
-**Twice corrected, and the second correction is the one that matters.** This scene was first a list
-of instruction names, which shows that two transfers happened and not that a trade did. Then it was
-a table, which showed the trade but still read as output. **The founder asked what Confide actually
-is, and the honest answer turned out to be a shape**: the empty middle is the product. So the
-picture says where a clearing house would be and that nothing is there, and the voice names it —
-*not a venue, holds nobody's assets, nothing in the middle*. It is the only place in the film that
-positions the project, and it had none.
-
-### 8 — the part that was hard
-
-> The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs
-> a different instruction, five zero-knowledge proofs instead of three, and one proof too large to
-> fit in a Solana transaction at all. One transaction carries both sets of rules.
-
-*Shows:* the two instruction names side by side in the same transaction, then the record account the
-oversized proof had to be staged through. **This is the scene for the engineering criterion**, and
-it is the only place the video is allowed to sound technical.
-
-### 9 — and it is not only equities
+### 7 — and it is not only equities
 
 > That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two
 > different asset classes, the same dead end. This was never a story about tokenized stocks.
@@ -171,11 +148,32 @@ it is the only place the video is allowed to sound technical.
 *Shows:* PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit.
 **Market size, argued by evidence rather than asserted.**
 
+### 8 — why a trade and not a loan
+
+> I did not start here. I spent a month on a loan against those positions and hit the same wall: a
+> loan needs somebody to hold the collateral, and that somebody needs an account the issuer will
+> not approve. A trade needs nobody — it happens at one instant, and on Solana an instant is all or
+> nothing.
+
+*Shows:* the escrow in the diagram, then gone. **Admitting the month is what earns the sentence
+after it**, and with the trade already shown this scene is insight rather than setup.
+
+### 9 — the part that was hard
+
+> The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs
+> a different instruction, five zero-knowledge proofs instead of three, and one proof too large to
+> fit in a Solana transaction at all. One transaction carries both sets of rules.
+
+*Shows:* the two instruction names side by side in the same transaction, then the record account the
+oversized proof had to be staged through. **This is the scene for §8(a) and §8(e)** — functionality,
+and how the work composes with other primitives — and it is the only place the video is allowed to
+sound technical.
+
 ### 10 — what is missing
 
-> Nobody outside this repository has used any of it. But what is left is not unknown: each
-> obstacle is a condition you can check, and for the two that decide the market, the work on the far
-> side is already running. Every figure here came off the chain.
+> Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle
+> is a condition you can check, and for the two that decide the market, the work on the far side is
+> already running.
 
 *Shows:* the conditions table, then a command and the page URL. **Traction is stated inside the
 close rather than given a scene** — honest either way, and a scene of its own made the ending
