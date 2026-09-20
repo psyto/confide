@@ -175,6 +175,18 @@ else
 fi
 
 echo
+# The standing testbed's whole claim is that the gate is shut and operated. A published approval
+# key can also open the gate, so it is watched rather than trusted.
+if [ -f web/testbed.json ]; then
+  echo "  THE STANDING TESTBED"
+  if ./scripts/testbed-up.sh --check >/dev/null 2>&1; then
+    ok "the devnet testbed is as published (gate shut, auditor empty, approval key ours)"
+  else
+    bad "the devnet testbed has been changed — ./scripts/testbed-up.sh --check"
+  fi
+  echo
+fi
+
 echo "  LINKS"
 # The walkthrough is one of the three links the submission gives judges, and it is the one that
 # lives outside this repository. oEmbed answers 404 for a video that is private, deleted or made

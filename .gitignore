@@ -11,3 +11,9 @@ dist/
 # They were untracked only by luck until 2026-09-15.
 account-keys.json
 auditor-key.json
+
+# The issuer's mint authority never belongs in the tree. It is written to
+# $CONFIDE_PRIVATE_KEYS (default ~/.config/confide) by scripts/testbed-up.sh; this is a second
+# line of defence in case it is ever put back here by mistake.
+keys/issuer-mint-authority.json
+keys/issuer.yml

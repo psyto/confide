@@ -1,0 +1,22 @@
+{
+ "generated_utc": "2026-09-20 02:23:05 UTC",
+ "cluster": "devnet",
+ "note": "A standing issuer whose gate is shut and operated, so a stranger can use the mechanism without asking anybody. The tokens represent nothing. Standing this up is not traction; somebody else opening an account on it would be.",
+ "approval_authority": "78cT71Ph1Hy9zPPj6LusUfa5LQDexd1AAXpXS4DHvEU2",
+ "approval_secret": "keys/devnet-approval-authority.json",
+ "faucet_secret": "keys/devnet-faucet.json",
+ "mints": {
+  "equity": {
+   "mint": "7MEQEiy11TY4j8wMsFkbgTkvSeAmVQeePU46M9qhZJ7z",
+   "decimals": 8,
+   "shape": "NVDAx",
+   "faucet_account": "eU3LPLVVGVvuMCZ8dSUKYLUKoAeT6bqdLQgUqabUXXY"
+  },
+  "cash": {
+   "mint": "AkwGFZj16C9RR1WFCwBQhUaMmzjkbrBsLkfMGxHSVDhS",
+   "decimals": 6,
+   "shape": "PYUSD",
+   "faucet_account": "ke3BZnzRt5hY9r4iwQswHFsU7MMQ4PyxDrmTYmvz6FV"
+  }
+ }
+}

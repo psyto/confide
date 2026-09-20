@@ -49,6 +49,25 @@ fn main() {
             .expect("approve_account");
             emit(&[ix], &authority, &[], &a[4]);
         }
+        // Hand the approval role to another key. `ApproveAccount` is signed by the
+        // confidential-transfer mint authority, which is a DIFFERENT authority from the one that
+        // mints — so this separates "may let accounts in" from "may print tokens", and the
+        // devnet testbed publishes the first while keeping the second.
+        "set-ct-authority" => {
+            let authority = keypair(&a[1]);
+            let mint = addr(&a[2]);
+            let new_authority = addr(&a[3]);
+            let ix = spl_token_2022_interface::instruction::set_authority(
+                &addr(TOKEN_2022),
+                &mint,
+                Some(&new_authority),
+                spl_token_2022_interface::instruction::AuthorityType::ConfidentialTransferMint,
+                &authority.pubkey(),
+                &[],
+            )
+            .expect("set_authority");
+            emit(&[ix], &authority, &[], &a[4]);
+        }
         "handover" => {
             let owner = keypair(&a[1]);
             let escrow = addr(&a[2]);
