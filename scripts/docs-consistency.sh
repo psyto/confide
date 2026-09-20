@@ -163,6 +163,36 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+echo "  THE SLOT SCAN — the per-issuer table against web/slots.json"
+python3 - <<'PY' && ok "every issuer's mint count matches web/slots.json" || bad "an issuer's mint count has drifted — RPC=<endpoint> ./scripts/slot-scan.sh, then fix the prose"
+import json, re, sys, pathlib
+d = json.load(open("web/slots.json"))
+want = {r["issuer"]: r["mints"] for r in d["by_issuer"]}
+files = ["README.md", "STATUS.md", "docs/cwf-2026/THE-PINCER.md", "docs/cwf-2026/GTM.md",
+         "_submission/full.md", "docs/ONCHAIN.md", "DESIGN.md"]
+bad = []
+for f in files:
+    t = pathlib.Path(f).read_text(encoding="utf-8")
+    # `Backed 828`, `Backed     EMPTY   828`, `Backed 828,` — the issuer's name and the next number
+    # on the same line. This existed because README carried `Backed EMPTY 732` and `Backpack EMPTY
+    # 1137` for weeks: the two did not add up to the 1,992 in the sentence above them, a whole
+    # third issuer was missing, and nothing failed.
+    for line in t.splitlines():
+        for iss, n in want.items():
+            m = re.search(re.escape(iss) + r"\D{0,24}?(\d[\d,]*)", line)
+            if m and int(m.group(1).replace(",", "")) != n:
+                got = m.group(1)
+                # A year, a dollar figure, an LTV, or a line from the ACCOUNT scan — which names
+                # the same issuers beside a count of token accounts and is checked against
+                # web/usage.json instead. Narrowing this was needed: without it the account table
+                # in README read as four drifted mint counts.
+                if re.search(r"(20\d\d|\$|LTV|\baccounts\b)", line):
+                    continue
+                bad.append("%s: %s %s, web/slots.json says %d" % (f, iss, got, n))
+if bad:
+    print("\n".join("      " + b for b in sorted(set(bad)))); sys.exit(1)
+PY
+
 echo "  THE ACCOUNT SCAN — prose against web/usage.json"
 python3 - <<'PY' && ok "the account-scan figures match web/usage.json" || bad "an account-scan figure has drifted — ./scripts/usage-scan.sh, then fix the prose"
 import json, re, sys, pathlib

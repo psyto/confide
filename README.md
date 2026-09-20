@@ -2,22 +2,41 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/p1aQuEnzhQk) · no wallet, no API key, no install
 
-**1,992 tokenized stocks on Solana have confidential transfers switched on. Not one of them can be
-used.** Two independent issuers, every mint they publish checked rather than sampled —
-`./scripts/slot-scan.sh`:
+**1,992 tokenized stocks on Solana have confidential transfers switched on. Nobody has ever used
+one.** Three unrelated issuers, every mint they publish checked rather than sampled —
+`./scripts/slot-scan.sh`, re-run 2026-09-20:
 
 ```
 checked  1992 tokenized-equity mints on Solana
-  Backed     EMPTY   732      Swiss-issued, own ISIN (xStocks)
-  Backpack   EMPTY   1137     US CUSIP, a security entitlement by the issuer's own description
+  Backed     EMPTY   828      Swiss-issued, own ISIN (xStocks)
+  Backpack   EMPTY   1156     US CUSIP, a security entitlement by the issuer's own description
+  PreStocks  EMPTY   8        pre-IPO companies with no public market
 ```
 
 *The list comes from each issuer's own asset API (`scripts/refresh-mints.sh`), so the scan is
-exhaustive over what Backed and Backpack publish and is not an issuer census of Solana.*
+exhaustive over what these three publish and is not an issuer census of Solana. The table is
+written to [`web/slots.json`](web/slots.json) and prose is checked against it — a hand-typed copy
+of it sat here saying `732` and `1137` and no third issuer, for weeks, without failing anything.*
 
-One issuer would be a quirk. Two, arriving independently at the same dead end, is the shape of the
-problem. Four of them mint by mint, with no key and no account: `./scripts/onchain-check.sh`, and
-[docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
+One issuer would be a quirk. **Three, arriving independently at the same dead end, is the shape of
+the problem.** Four of them mint by mint, with no key and no account:
+`./scripts/onchain-check.sh`, and [docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
+
+**And the second half of that sentence is measured, not assumed.** Configuration says the door is
+locked; it does not say whether anyone walked through. So count the accounts:
+
+```
+$ ./scripts/usage-scan.sh
+  AAPLx      Backed       64381 accounts     7 over 400 bytes   0 confidential
+  NVDAx      Backed      176962 accounts    28 over 400 bytes   0 confidential
+  SPACEX     PreStocks    17909 accounts     6 over 400 bytes   0 confidential
+  ANTHROPIC  PreStocks    70284 accounts    30 over 400 bytes   0 confidential
+
+  329536 token accounts across 6 mints, 0 configured for confidential transfers
+```
+
+Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
+nobody has asked. There is no incumbent here and nothing to be late to.
 
 The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
 a single global auditor key that decrypts **everything, for everyone, forever** — and for a
@@ -71,6 +90,78 @@ logs  :
     Program ZkE1Gama1Proof11111111111111111111111111111 success
 ```
 
+## What runs today — a trade that settles without publishing either side
+
+**Two parties exchange confidential positions in one transaction.** No program is deployed and none
+is called: two Token-2022 instructions, two signatures, and Solana's atomicity in place of a
+clearing house.
+
+```
+$ MODE=dvp ./scripts/swap-e2e.sh
+  50,000 shares  ↔  $8,750,000        $175/share, agreed off chain
+  one transaction   2 signatures   59,804 compute units   1,074 bytes
+  alice, stock (delivered)  123,000 units      bob, stock (received)   50,000 units
+  bob,   cash  (paid)       250,000 units      alice, cash (received)  8,750,000 units
+```
+
+All four accounts are **ordinary associated token accounts** — what a wallet creates — and all four
+still report a **public balance of `0`**. Nobody watching the chain learns the size of the trade or
+the price it implies.
+
+| | devnet |
+|---|---|
+| stock for stock | [`2RksP5AM…`](https://explorer.solana.com/tx/2RksP5AMcdvucLvPeXteVZm8SXL8xn6B9j4wtWJEw6kY2tfRfesQcuMP8bjugcdTKVdr6LdPK8XkG6QkEPk82Uk9?cluster=devnet) — 29,417 CU, 1,006 bytes |
+| stock for cash | [`4gzku3FW…`](https://explorer.solana.com/tx/4gzku3FWoRzhNr24gUTBquxEPwq9L5nqZrmtrCHWjzMBjaDyiapTj6zrBtGLTcRvzPzhexuJfdgxdqafu5Jhhovs?cluster=devnet) — 29,849 CU |
+| stock for cash, on a mint shaped like **PYUSD** | [`5ZrJPGRL…`](https://explorer.solana.com/tx/5ZrJPGRLHKzzR1us4KF3kf9z5hSgvQLabHKQbkMmCSkGEGXAkC8QA7JtnMhsVBsCJzrW5a75s9LJsxaaKsqesZug?cluster=devnet) — carries `confidentialTransfer` **and** `confidentialTransferWithFee` in one transaction |
+
+**Delivery versus payment is what a clearing house exists for.** Neither side will go first, so
+finance inserts a central counterparty, membership, margin and a day of lag. A Solana transaction
+is all-or-nothing, so the transaction *is* the clearing house — and the confidential version means
+neither party publishes the size that clearing house would have been told anyway.
+
+### The one danger a confidential trade has, and how it is answered
+
+The amounts are encrypted, so a party could sign a transaction whose *other* leg sends far less
+than was agreed. It is answerable **before signing, by the recipient alone**: a confidential
+transfer encrypts the amount under the recipient's key too, so each side decrypts the other's leg
+straight out of the already-verified proof context.
+
+```
+$ cargo run -p confide-ct --bin swap-check -- my-keys.json <the validity context>
+  ✓ it is addressed to your key
+  ✓ it will move 8750000000000 base units to you
+      decrypted from the verified context, by you, without anyone's cooperation
+
+  If that is not the amount you agreed, do not sign. Nothing has happened yet.
+```
+
+No trust, no third party, no floor proof, and nothing revealed to anybody else.
+
+### It is not an equities story
+
+A stock-for-cash trade needs cash that can move confidentially. **USDC, USDT and USDS cannot** —
+legacy SPL, no extensions at all. **PYUSD and USDG can**, and land on the *identical* configuration
+as every tokenized stock: gate closed, auditor slot empty, and one key as confidential authority,
+permanent delegate and freeze authority on both.
+
+> PayPal's dollar ships the same unusable privacy feature behind the same door. **Four issuers, two
+> asset classes, one dead end** — the substrate, not somebody's choice.
+> [`docs/cwf-2026/COMPOSITION.md`](docs/cwf-2026/COMPOSITION.md)
+
+### And what it cost to build, because that is the interesting part
+
+The cash leg's mint carries a transfer fee config — PYUSD's is **0 bps** and Token-2022 still
+refuses the plain confidential transfer. So that leg needs `TransferWithFee`: **five** proofs
+instead of three, and a `BatchedRangeProofU256` that **cannot be verified from instruction data at
+all** (1,269 bytes against a 1,232-byte limit). It is written into an `spl-record` account in
+800-byte chunks and cited by offset through the ZK program's fourth instruction layout — five bytes
+of instruction data, a discriminant and a `u32`.
+
+Three things that only appeared by running it: a blockhash does not live long enough for fourteen
+transactions; the U256 verification does not fit the 200,000-unit compute default; and the script
+was sending its own rejection to `/dev/null`. All three are in
+[`docs/cwf-2026/THE-SWAP.md`](docs/cwf-2026/THE-SWAP.md).
+
 ## Who uses this first
 
 **The issuer.** Backed and Backpack each switched confidential transfers on, gated who may open an
@@ -110,6 +201,20 @@ lender needs now run on devnet — the check, and the seizure.
 >
 > *Jupiter Lend was named here as the lender example. It was never checked from chain in this
 > repository, and the Kamino numbers above were — so it is not repeated as a claim.*
+
+> **Corrected again, 2026-09-20, and this one moves the product rather than the buyer.** The
+> section above is about a **loan**, and a loan needs a third party to hold the collateral — which
+> is what ran into the issuer's gate, and into `ImmutableOwner` on the associated token account
+> every wallet creates. **A trade needs no third party**, because a Solana transaction is
+> all-or-nothing, so the swap above runs today where the loan could not.
+>
+> So the first user is **neither the issuer nor the lender. It is a desk moving size** — every
+> purchase settles on chain, so a position is assembled in public and the price moves against it
+> the whole way, and selling on a book publishes the size a second time. Then securities lending,
+> where lending your book is how you publish your book.
+>
+> The lender paragraph is kept because the collateral half still runs and the `$0` is still the
+> measurement it always was. It simply waits on a venue, and **the swap waits on nobody**.
 
 **Traction is zero, and the sentence has no second half.** No issuer approval, no pilot, no customer
 interview, no design partner, nobody outside this repository has used any of it. What exists is a
@@ -314,6 +419,15 @@ Stated because a reader should find the limits here rather than discover them:
   but the seizure escrow is a token account a program owns, and while a loan is open the borrower
   cannot move what is in it. The same custody every lending protocol takes, named here rather than
   left inside a word used elsewhere to mean something else.
+- **Matching.** Settlement is done; finding the party who wants the other side is not. It is the
+  same two-sided problem as finding a lender, and no amount of cryptography answers it.
+- **Anything settled against a pool, permanently.** A pool's reserves are public and a trade moves
+  them by exactly the traded amount, so the size is recoverable by subtracting two consecutive
+  public states. Confidential composition works where the counterparty is a *party*, not a pool.
+  **This one never clears**, and it is in the list beside the solvable ones on purpose.
+- **A confidential flash loan.** A program cannot read a confidential balance, so repayment would
+  have to be proved inline — and the proof does not fit in the transaction. Blocked by transaction
+  size, not by cryptography, and the distinction is the honest way to say it.
 - **Not built, deliberately:** no ATS, no order matching, no MEV protection, no mainnet deployment,
   and no claim to discharge any regulatory filing.
 

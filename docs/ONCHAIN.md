@@ -9,19 +9,24 @@
 all 1,992 of them, across three issuers that have nothing to do with each other:**
 
 *Scope, because the number invites a bigger reading than it earns:* `scripts/refresh-mints.sh`
-builds the mint list from **Backed's and Backpack's own asset APIs**. The scan is exhaustive over
-what those three issuers publish and checked rather than sampled. It is not a census of every equity
-token on Solana, and a third issuer would not appear in it.
-
+builds the mint list from **each issuer's own asset API**. The scan is exhaustive over what those
+three publish and checked rather than sampled. It is not a census of every equity token on Solana,
+and a fourth issuer would not appear in it until the list learns about them.
 
 ```
-Backed     EMPTY   732      xStocks — Swiss-issued, own ISIN, a third-party product
-Backpack   EMPTY   1137     US CUSIP, "a bona fide security entitlement" by the issuer's own words
+Backed     EMPTY   828      xStocks — Swiss-issued, own ISIN, a third-party product
+Backpack   EMPTY   1156     US CUSIP, "a bona fide security entitlement" by the issuer's own words
+PreStocks  EMPTY   8        pre-IPO companies with no public market at all
 ```
 
-One issuer leaving the slot empty is a quirk. **Two, independently, is the shape of the problem** —
-and Backpack's are the closer thing to the underlying security, so it is not that the weaker
-instrument cut a corner. `./scripts/slot-scan.sh` checks all of them and exits non-zero the day that
+One issuer leaving the slot empty is a quirk. **Three, independently, is the shape of the
+problem** — and Backpack's are the closer thing to the underlying security, so it is not that the
+weaker instrument cut a corner.
+
+*This block said `732` and `1137` and named two issuers, for as long as there were two. The counts
+moved and a third issuer arrived, and nothing failed — the table is generated into
+[`../web/slots.json`](../web/slots.json) now, and `scripts/docs-consistency.sh` checks every
+restatement of it against that file.* `./scripts/slot-scan.sh` checks all of them and exits non-zero the day that
 stops being true. Four in detail:
 
 ```

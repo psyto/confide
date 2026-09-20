@@ -87,4 +87,29 @@ if auto:
 print()
 print('  Every mint Kamino would accept is a mint whose issuer must approve each escrow.')
 print('  No amount of engineering on this side removes that.')
+
+# Written down, because the README carried a COPY of the table above and the copy went stale: it
+# said 732 Backed and 1,137 Backpack long after the real counts were 828 and 1,156, it never
+# learned that a third issuer existed, and its two numbers did not even add up to the 1,992 in the
+# sentence beside them. The script had already been fixed to derive the issuer count. The paste
+# had not, and nothing checked it. So the table is an artifact now and prose is checked against it.
+import json as _json, time as _time, os as _os
+_os.makedirs('web', exist_ok=True)
+_json.dump({
+    'generated_utc': _time.strftime('%Y-%m-%d %H:%M:%S UTC', _time.gmtime()),
+    # NOT the endpoint. This file is committed and published to the site, and the founder's
+    # private RPC carries its key in the URL — writing it here would leak it, which this wrote on
+    # its first run. Only whether it was the private one, which is all a reader needs to know.
+    'endpoint': 'private' if 'api.mainnet-beta' not in rpc and 'publicnode' not in rpc else 'public',
+    'note': 'Every tokenized-equity mint on Solana, read one at a time. Not a sample.',
+    'mints': len(res),
+    'issuers': sorted({m.get('issuer', '?') for m in mints}),
+    'by_issuer': [{'issuer': i, 'auditor': st, 'mints': v}
+                  for (i, st), v in sorted(by_issuer.items())],
+    'auditor_empty': sum(1 for r in res if r[1] == 'EMPTY'),
+    'gated': len(gated),
+    'auto_approve': len(auto),
+}, open('web/slots.json', 'w'), indent=1)
+print()
+print('  written to web/slots.json')
 PY

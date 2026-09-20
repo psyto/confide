@@ -1,0 +1,31 @@
+{
+ "generated_utc": "2026-09-20 01:27:41 UTC",
+ "endpoint": "private",
+ "note": "Every tokenized-equity mint on Solana, read one at a time. Not a sample.",
+ "mints": 1992,
+ "issuers": [
+  "Backed",
+  "Backpack",
+  "PreStocks"
+ ],
+ "by_issuer": [
+  {
+   "issuer": "Backed",
+   "auditor": "EMPTY",
+   "mints": 828
+  },
+  {
+   "issuer": "Backpack",
+   "auditor": "EMPTY",
+   "mints": 1156
+  },
+  {
+   "issuer": "PreStocks",
+   "auditor": "EMPTY",
+   "mints": 8
+  }
+ ],
+ "auditor_empty": 1992,
+ "gated": 1992,
+ "auto_approve": 0
+}
