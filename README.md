@@ -2,100 +2,15 @@
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/p1aQuEnzhQk) · no wallet, no API key, no install
 
-**1,992 tokenized stocks on Solana have confidential transfers switched on. Nobody has ever used
-one.** Three unrelated issuers, every mint they publish checked rather than sampled —
-`./scripts/slot-scan.sh`, re-run 2026-09-20:
+**Confidential delivery-versus-payment for tokenized stocks on Solana.** Two parties settle stock
+against cash **in one transaction**, and neither publishes what moved. Confide builds the
+zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
+before signing — **with nobody in the middle**.
 
-```
-checked  1992 tokenized-equity mints on Solana
-  Backed     EMPTY   828      Swiss-issued, own ISIN (xStocks)
-  Backpack   EMPTY   1156     US CUSIP, a security entitlement by the issuer's own description
-  PreStocks  EMPTY   8        pre-IPO companies with no public market
-```
-
-*The list comes from each issuer's own asset API (`scripts/refresh-mints.sh`), so the scan is
-exhaustive over what these three publish and is not an issuer census of Solana. The table is
-written to [`web/slots.json`](web/slots.json) and prose is checked against it — a hand-typed copy
-of it sat here saying `732` and `1137` and no third issuer, for weeks, without failing anything.*
-
-One issuer would be a quirk. **Three, arriving independently at the same dead end, is the shape of
-the problem.** Four of them mint by mint, with no key and no account:
-`./scripts/onchain-check.sh`, and [docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
-
-**And the second half of that sentence is measured, not assumed.** Configuration says the door is
-locked; it does not say whether anyone walked through. So count the accounts:
-
-```
-$ ./scripts/usage-scan.sh
-  AAPLx      Backed       64381 accounts     7 over 400 bytes   0 confidential
-  NVDAx      Backed      176962 accounts    28 over 400 bytes   0 confidential
-  SPACEX     PreStocks    17909 accounts     6 over 400 bytes   0 confidential
-  ANTHROPIC  PreStocks    70284 accounts    30 over 400 bytes   0 confidential
-
-  329536 token accounts across 6 mints, 0 configured for confidential transfers
-```
-
-Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
-nobody has asked. There is no incumbent here and nothing to be late to.
-
-The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
-a single global auditor key that decrypts **everything, for everyone, forever** — and for a
-regulated equity issuer no setting of that key is correct. Fill it and every holder is permanently
-readable by one party. Leave it null and no holder can demonstrate anything to anyone. So it sits
-empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
-whole market instead.
-
-**Confide is what makes that slot usable**, and the first thing it makes possible is a **trade**:
-two parties settle a position against cash in one transaction, and neither publishes what moved.
-Nobody stands in the middle — no escrow, no custodian, no clearing house. **What Confide *is*** is
-the part the chain leaves to you: the zero-knowledge proofs it will not assemble, and the check
-each side runs on the other before signing. The next section is the whole of the pitch.
-
-The underlying capability is broader — disclosure scoped **by recipient, by granularity and by
-schedule** — and [the last section](#the-other-half--disclosure-by-schedule) demonstrates the other
-two, because *a primitive with a second working use is a different claim from a trick with one*.
-It is the last section rather than this one deliberately: one wedge, made excellent.
-
-```
-day      LANE A · a public wallet       LANE B · Confide
-         what anyone can see            what anyone can see   the auditor
-────────────────────────────────────────────────────────────────────────────
-  3        42,000 NVDAx · +42,000        —                   42,000 NVDAx
- 11        96,000 NVDAx · +54,000        —                   96,000 NVDAx
- ...
- 58       173,000 NVDAx · +7,000         —                  173,000 NVDAx
-
-Lane A leaked the position continuously, from day 3, mid-accumulation.
-Nobody attacked anything. The chain simply published it.
-```
-
-```
- 1 Oct · the LP asks
-
-auditor reads the position    173,000 NVDAx   44 days before the public can
-is the fund above its floor?  YES   floor $100M — and that is all this reveals
-(the portfolio is $106M across NVDAx/TSLAx/SPYx — the LP is not told that)
-
-14 Nov · the obligation comes due
-
-agents 1, 2, 3 publish their shares  · the fund is not asked, and cannot object
-reconstructed  ✓   commitment matches slot 340112045  ✓
-
-LANE B is now public: 173,000 NVDAx, held by Fund A as of 30 Sep.
-```
-
-And that predicate is not only checkable off-chain. The same proof bytes out of the same sealed
-package go to Solana's live ZK ElGamal Proof Program:
-
-```
-$ ./scripts/devnet-verify.sh
-err   : None
-units : 111000
-logs  :
-    Program ZkE1Gama1Proof11111111111111111111111111111 invoke [1]
-    VerifyBatchedRangeProofU64
-    Program ZkE1Gama1Proof11111111111111111111111111111 success
-```
+*Reordered 2026-09-20. This file used to open on the market and say what Confide is on line 48,
+which assumes a reader reaches line 48. The order now is the one the presentation uses: what it is,
+then it working, then why anybody wants it — so that stopping early still leaves you with the
+product rather than with a gap in somebody else's.*
 
 ## What runs today — a trade that settles without publishing either side
 
@@ -170,6 +85,102 @@ Three things that only appeared by running it: a blockhash does not live long en
 transactions; the U256 verification does not fit the 200,000-unit compute default; and the script
 was sending its own rejection to `/dev/null`. All three are in
 [`docs/cwf-2026/THE-SWAP.md`](docs/cwf-2026/THE-SWAP.md).
+
+## Why anybody wants it
+
+Everything above is what runs. This is the market it runs into, measured rather than asserted.
+
+**1,992 tokenized stocks on Solana have confidential transfers switched on. Nobody has ever used
+one.** Three unrelated issuers, every mint they publish checked rather than sampled —
+`./scripts/slot-scan.sh`, re-run 2026-09-20:
+
+```
+checked  1992 tokenized-equity mints on Solana
+  Backed     EMPTY   828      Swiss-issued, own ISIN (xStocks)
+  Backpack   EMPTY   1156     US CUSIP, a security entitlement by the issuer's own description
+  PreStocks  EMPTY   8        pre-IPO companies with no public market
+```
+
+*The list comes from each issuer's own asset API (`scripts/refresh-mints.sh`), so the scan is
+exhaustive over what these three publish and is not an issuer census of Solana. The table is
+written to [`web/slots.json`](web/slots.json) and prose is checked against it — a hand-typed copy
+of it sat here saying `732` and `1137` and no third issuer, for weeks, without failing anything.*
+
+One issuer would be a quirk. **Three, arriving independently at the same dead end, is the shape of
+the problem.** Four of them mint by mint, with no key and no account:
+`./scripts/onchain-check.sh`, and [docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
+
+**And the second half of that sentence is measured, not assumed.** Configuration says the door is
+locked; it does not say whether anyone walked through. So count the accounts:
+
+```
+$ ./scripts/usage-scan.sh
+  AAPLx      Backed       64381 accounts     7 over 400 bytes   0 confidential
+  NVDAx      Backed      176962 accounts    28 over 400 bytes   0 confidential
+  SPACEX     PreStocks    17909 accounts     6 over 400 bytes   0 confidential
+  ANTHROPIC  PreStocks    70284 accounts    30 over 400 bytes   0 confidential
+
+  329536 token accounts across 6 mints, 0 configured for confidential transfers
+```
+
+Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
+nobody has asked. There is no incumbent here and nothing to be late to.
+
+The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
+a single global auditor key that decrypts **everything, for everyone, forever** — and for a
+regulated equity issuer no setting of that key is correct. Fill it and every holder is permanently
+readable by one party. Leave it null and no holder can demonstrate anything to anyone. So it sits
+empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
+whole market instead.
+
+**Confide is what makes that slot usable**, and
+[the trade above](#what-runs-today--a-trade-that-settles-without-publishing-either-side) is the
+first thing it makes possible. The underlying capability is broader — disclosure scoped **by
+recipient, by granularity and by schedule** — and
+[the last section](#the-other-half--disclosure-by-schedule) demonstrates the other two, because
+*a primitive with a second working use is a different claim from a trick with one*. It is the last
+section rather than this one deliberately: one wedge, made excellent.
+
+```
+day      LANE A · a public wallet       LANE B · Confide
+         what anyone can see            what anyone can see   the auditor
+────────────────────────────────────────────────────────────────────────────
+  3        42,000 NVDAx · +42,000        —                   42,000 NVDAx
+ 11        96,000 NVDAx · +54,000        —                   96,000 NVDAx
+ ...
+ 58       173,000 NVDAx · +7,000         —                  173,000 NVDAx
+
+Lane A leaked the position continuously, from day 3, mid-accumulation.
+Nobody attacked anything. The chain simply published it.
+```
+
+```
+ 1 Oct · the LP asks
+
+auditor reads the position    173,000 NVDAx   44 days before the public can
+is the fund above its floor?  YES   floor $100M — and that is all this reveals
+(the portfolio is $106M across NVDAx/TSLAx/SPYx — the LP is not told that)
+
+14 Nov · the obligation comes due
+
+agents 1, 2, 3 publish their shares  · the fund is not asked, and cannot object
+reconstructed  ✓   commitment matches slot 340112045  ✓
+
+LANE B is now public: 173,000 NVDAx, held by Fund A as of 30 Sep.
+```
+
+And that predicate is not only checkable off-chain. The same proof bytes out of the same sealed
+package go to Solana's live ZK ElGamal Proof Program:
+
+```
+$ ./scripts/devnet-verify.sh
+err   : None
+units : 111000
+logs  :
+    Program ZkE1Gama1Proof11111111111111111111111111111 invoke [1]
+    VerifyBatchedRangeProofU64
+    Program ZkE1Gama1Proof11111111111111111111111111111 success
+```
 
 ## Who uses this first
 
