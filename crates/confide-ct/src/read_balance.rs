@@ -1,4 +1,4 @@
-//! `read-balance <keys.json> <decryptable_b64> <available_b64>`
+//! `read-balance <keys.json> <decryptable_b64> <available_b64> [decimals]`
 //!
 //! Decrypts an account's confidential balance with the key we generated for it. The public balance
 //! on that account reads `0`; this is what the holder sees, and nobody else.
@@ -16,6 +16,13 @@ fn main() {
     let keys_path = a.next().expect("usage: read-balance <keys.json> <decryptable_b64> <available_b64>");
     let decryptable = d64(&a.next().expect("decryptable"));
     let available = d64(&a.next().expect("available"));
+    // The mint's, not a constant. This printed a cash balance of $8,750,000 as "87500 units" for
+    // exactly one run, because 8 was written into the line below — the same hardcoded-decimals bug
+    // `provision` had, in the one place whose whole job is reporting a number to a human.
+    let decimals: u32 = a
+        .next()
+        .map(|d| d.parse().expect("decimals must be a number"))
+        .unwrap_or(8);
 
     let keys: serde_json::Value = serde_json::from_slice(&std::fs::read(&keys_path).unwrap()).unwrap();
     let ae = AeKey::try_from(&d64(keys["ae_key_b64"].as_str().unwrap())[..]).expect("ae key");
@@ -27,7 +34,13 @@ fn main() {
 
     println!("  account            {}", keys["account"].as_str().unwrap_or("?"));
     println!("  public balance     0            <- what the chain shows anyone");
-    println!("  confidential       {} base units  = {} units", base, base / 100_000_000);
+    let whole = 10u64.pow(decimals);
+    println!(
+        "  confidential       {} base units  = {} units  ({} decimals)",
+        base,
+        base / whole,
+        decimals
+    );
     println!();
 
     // The ElGamal side is the one a disclosure must be about. Full u64 balances are held as a

@@ -39,6 +39,10 @@ use std::num::NonZeroI8;
 use std::str::FromStr;
 
 const TOKEN_2022: &str = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
+/// Only the fallback for a caller that predates the argument. `Deposit` carries the decimals and
+/// Token-2022 checks them against the mint, so a wrong value fails loudly — but it fails four
+/// instructions away from anything that mentions decimals, which is the shape of bug this
+/// repository keeps paying for. The caller has the mint; let it say.
 const DECIMALS: u8 = 8;
 
 /// Grow the account, then configure it — in that order, and with the proof where the instruction
@@ -119,8 +123,15 @@ fn main() {
                          transferFeeConfig and say which"),
     };
 
+    // The mint's decimals. A cash mint has 6 and an equity wrapper has 8, and until this was an
+    // argument the 8 was written into the binary.
+    let decimals: u8 = a
+        .next()
+        .map(|d| d.parse().expect("decimals must be a number"))
+        .unwrap_or(DECIMALS);
+
     let program = Address::from_str(TOKEN_2022).unwrap();
-    let base = amount * 10u64.pow(DECIMALS as u32);
+    let base = amount * 10u64.pow(decimals as u32);
 
     // Not a transaction — a value. `ApplyPendingBalance` carries the account's new available
     // balance encrypted under its AE key, and on an escrow owned by a PDA the only party who can
@@ -165,7 +176,7 @@ fn main() {
         // confidential extension stays unapproved and every later instruction fails without it.
         "approve" => vec![approve_account(&program, &account, &mint, &owner.pubkey(), &[])
             .expect("approve_account")],
-        "deposit" => vec![deposit(&program, &account, &mint, base, DECIMALS, &owner.pubkey(), &[])
+        "deposit" => vec![deposit(&program, &account, &mint, base, decimals, &owner.pubkey(), &[])
             .expect("deposit")],
         "apply" => {
             let keys: serde_json::Value =

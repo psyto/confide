@@ -31,13 +31,26 @@ const TOKEN_2022: &str = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 /// created with and leaves the mirror differing from NVDAx in two fields while every document says
 /// one. It did exactly that until 2026-09-15.
 pub fn fill_auditor_slot(mint: &Address, authority: &Address, auditor: PodElGamalPubkey) -> Instruction {
+    close_the_gate(mint, authority, Some(auditor))
+}
+
+/// The gate, with the auditor slot left as the caller wants it.
+///
+/// `None` is not a degenerate case — it is what PayPal's PYUSD and Paxos's USDG actually ship on
+/// mainnet, measured 2026-09-20: `autoApproveNewAccounts: false` with an EMPTY auditor key, the
+/// same pair every tokenized-equity mint ships. A mirror of one of those has to be able to say so.
+pub fn close_the_gate(
+    mint: &Address,
+    authority: &Address,
+    auditor: Option<PodElGamalPubkey>,
+) -> Instruction {
     update_mint(
         &Address::from_str(TOKEN_2022).unwrap(),
         mint,
         authority,
         &[],
         AUTO_APPROVE_NEW_ACCOUNTS,
-        Some(auditor),
+        auditor,
     )
     .expect("update_mint")
 }
@@ -52,24 +65,28 @@ fn main() {
     let mint = a.next().expect("mint");
     let blockhash = a.next().expect("blockhash");
     let out = a.next().unwrap_or_else(|| "auditor-key.json".into());
+    // `none` mirrors PYUSD and USDG: the gate closed and the auditor slot left empty.
+    let want_auditor = a.next().as_deref() != Some("none");
 
     let authority = read_keypair(&kp_path);
 
-    // The auditor key. Generated here and written out, so the demo can read the books with it.
-    let auditor = ElGamalKeypair::new_rand();
-    let pod = PodElGamalPubkey::from(*auditor.pubkey());
-    std::fs::write(
-        &out,
-        serde_json::to_vec(&serde_json::json!({
-            "elgamal_pubkey_b64": b64(&auditor.pubkey().to_bytes()),
-            "elgamal_secret_b64": b64(auditor.secret().as_bytes()),
-            "mint": mint,
-        }))
-        .unwrap(),
-    )
-    .unwrap();
+    let pod = want_auditor.then(|| {
+        // The auditor key. Generated here and written out, so the demo can read the books with it.
+        let auditor = ElGamalKeypair::new_rand();
+        std::fs::write(
+            &out,
+            serde_json::to_vec(&serde_json::json!({
+                "elgamal_pubkey_b64": b64(&auditor.pubkey().to_bytes()),
+                "elgamal_secret_b64": b64(auditor.secret().as_bytes()),
+                "mint": mint,
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        PodElGamalPubkey::from(*auditor.pubkey())
+    });
 
-    let ix = fill_auditor_slot(&Address::from_str(&mint).unwrap(), &authority.pubkey(), pod);
+    let ix = close_the_gate(&Address::from_str(&mint).unwrap(), &authority.pubkey(), pod);
 
     let tx = Transaction::new(
         &[&authority],
@@ -78,8 +95,13 @@ fn main() {
     );
 
     eprintln!("  mint            {mint}");
-    eprintln!("  auditor pubkey  {}", b64(&auditor.pubkey().to_bytes()));
-    eprintln!("  secret written  {out}");
+    match pod {
+        Some(k) => {
+            eprintln!("  auditor pubkey  {k}");
+            eprintln!("  secret written  {out}");
+        }
+        None => eprintln!("  auditor pubkey  EMPTY — as PYUSD and USDG ship it"),
+    }
     println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&tx).unwrap()));
 }
 

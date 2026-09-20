@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Two holders exchange confidential positions in ONE transaction. No program, no escrow, no lender.
 #
-#   ./scripts/swap-e2e.sh
-#   RPC=<endpoint> ./scripts/swap-e2e.sh
+#   ./scripts/swap-e2e.sh            two equity wrappers, stock for stock
+#   MODE=dvp ./scripts/swap-e2e.sh   stock for CASH — delivery versus payment, neither size public
 #
 # Everything else here is a loan, and a loan needs a third thing holding the collateral because it
 # has to survive one party refusing to cooperate. That third thing is what ran into both walls:
@@ -26,17 +26,39 @@ R="${RPC:-https://api.devnet.solana.com}"
 . "$(dirname "$0")/lib/chain.sh"
 W="${WORK:-$(mktemp -d)}"; mkdir -p "$W"
 
-DECIMALS="${DECIMALS:-8}"
+# MODE=dvp makes the second mint a mirror of PYUSD instead of a second equity wrapper, so the
+# demonstration is a block trade settling delivery-versus-payment rather than a stock-for-stock
+# exchange. Stock-for-stock is rare; stock-for-cash is every block trade ever done, and settling it
+# atomically is the thing TradFi needs a clearing house and a day for.
+#
+# The mirror is exact, measured off mainnet 2026-09-20 (docs/cwf-2026/COMPOSITION.md): 6 decimals,
+# autoApproveNewAccounts false, auditor slot EMPTY, a zero-rate transfer fee config, a permanent
+# delegate and a freeze authority — the last two mean the cash issuer can seize or freeze any
+# account, which is what settling in PYUSD costs and is mirrored rather than quietly dropped.
+MODE="${MODE:-swap}"
+DECIMALS="${DECIMALS:-8}"      # the equity wrapper's
+CASH_DECIMALS=6                # PYUSD's and USDG's
 A_UNITS="${A_UNITS:-173000}"   # whole tokens Alice holds of X
-B_UNITS="${B_UNITS:-91000}"    # whole tokens Bob holds of Y
 A_SEND="${A_SEND:-50000}"      # what Alice sends
-B_SEND="${B_SEND:-40000}"      # what Bob sends
+if [ "$MODE" = dvp ]; then
+  B_UNITS="${B_UNITS:-9000000}"  # dollars Bob holds
+  B_SEND="${B_SEND:-8750000}"    # $8.75m for 50,000 shares — $175 a share, agreed off chain
+  DEC_Y=$CASH_DECIMALS
+else
+  B_UNITS="${B_UNITS:-91000}"
+  B_SEND="${B_SEND:-40000}"
+  DEC_Y="$DECIMALS"
+fi
+DEC_X="$DECIMALS"
 bold=$'\033[1m'; dim=$'\033[2m'; grn=$'\033[32m'; off=$'\033[0m'
 
-base() { python3 -c "print($1 * 10**$DECIMALS)"; }
+base() { python3 -c "print($1 * 10**$2)"; }
 elgamal() { python3 -c "import json;print(json.load(open('$1'))['elgamal_pubkey_b64'])"; }
 # provision <step> <payer.json> <mint> <account> <amount> <keys.json>
-prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$2" "$3" "$4" "$5" "$(bh)" "$6" nofee 2>/dev/null)"; }
+# The fee flag is read off the mint rather than passed in: the cash mirror carries a zero-rate
+# transferFeeConfig exactly as PYUSD does, and a confidential account on a fee-bearing mint needs
+# room for ConfidentialTransferFeeAmount whether the rate is zero or not.
+prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$2" "$3" "$4" "$5" "$(bh)" "$6" "$(mint_charges_fee "$3")" "$7" 2>/dev/null)"; }
 ata()  { spl-token -C "$1" address --token "$2" --verbose 2>&1 \
          | grep -oE 'Associated token address: *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}'; }
 
@@ -54,55 +76,91 @@ echo "    alice     $(solana-keygen pubkey "$W/alice.json")"
 echo "    bob       $(solana-keygen pubkey "$W/bob.json")"
 
 echo
-echo "  ${bold}--- two mints, both configured the way NVDAx is ---${off}"
-for m in X Y; do
-  MINT=$(spl-token -C "$W/issuer.yml" create-token --program-2022 --decimals "$DECIMALS" \
-    --enable-confidential-transfers auto 2>&1 \
+if [ "$MODE" = dvp ]; then
+  echo "  ${bold}--- the stock, and a mirror of PYUSD for the cash ---${off}"
+else
+  echo "  ${bold}--- two mints, both configured the way NVDAx is ---${off}"
+fi
+mk() { # mk <letter> <decimals> <auditor|none> [extra create-token flags...]
+  local ml="$1" dec="$2" aud="$3"; shift 3
+  local mint
+  mint=$(spl-token -C "$W/issuer.yml" create-token --program-2022 --decimals "$dec" \
+    --enable-confidential-transfers auto "$@" 2>&1 \
     | grep -oE 'Address:  *[1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $2}')
-  go "mint $m: auditor slot filled" "$(cargo run --quiet -p confide-ct --bin set-auditor -- \
-    "$W/issuer.json" "$MINT" "$(bh)" "$W/auditor-$m.json" 2>/dev/null)"
-  eval "MINT_$m=$MINT"
-  echo "    mint $m    $MINT   ${dim}(auditor set, autoApproveNewAccounts false)${off}"
-done
+  go "mint $ml: gate closed" "$(cargo run --quiet -p confide-ct --bin set-auditor -- \
+    "$W/issuer.json" "$mint" "$(bh)" "$W/auditor-$ml.json" "$aud" 2>/dev/null)"
+  eval "MINT_$ml=$mint"
+  printf '    mint %s    %s   %s(%s decimals, autoApproveNewAccounts false, auditor %s, %s)%s\n' \
+    "$ml" "$mint" "$dim" "$dec" "$([ "$aud" = none ] && echo EMPTY || echo set)" \
+    "$(mint_charges_fee "$mint")" "$off"
+}
+mk X "$DEC_X" set
+if [ "$MODE" = dvp ]; then
+  # Every flag here is something PYUSD actually has on mainnet. The permanent delegate and the
+  # freeze authority are the uncomfortable ones and are mirrored deliberately: whoever settles in
+  # this cash is trusting an issuer who can take it back.
+  # CASH_FEE and CASH_AUDITOR exist to split the mirror apart when it fails. PYUSD has both a
+  # zero-rate fee config and an empty auditor slot, and if a plain confidential Transfer is
+  # refused, one of those two is why. Guessing which would be the mistake this repository keeps
+  # making; running it with one changed at a time is not.
+  CASH_FEE="${CASH_FEE:-1}"; CASH_AUDITOR="${CASH_AUDITOR:-none}"
+  # --enable-freeze because PYUSD names a freeze authority. It changes nothing about a transfer
+  # between unfrozen accounts, and leaving it off would have made the mirror flattering.
+  CASH_ARGS=(--enable-permanent-delegate --enable-close --enable-freeze)
+  [ "$CASH_FEE" = 0 ] || CASH_ARGS+=(--transfer-fee-basis-points 0 --transfer-fee-maximum-fee 0)
+  mk Y "$DEC_Y" "$CASH_AUDITOR" ${CASH_ARGS[@]+"${CASH_ARGS[@]}"}
+else
+  mk Y "$DEC_Y" set
+fi
 
 echo
-echo "  ${bold}--- four ASSOCIATED token accounts. The loan could never use these ---${off}"
+if [ "$MODE" = dvp ]; then
+  echo "  ${bold}--- four ASSOCIATED token accounts: Alice holds stock, Bob holds cash ---${off}"
+else
+  echo "  ${bold}--- four ASSOCIATED token accounts. The loan could never use these ---${off}"
+fi
 # The whole reason this path exists. An ATA carries ImmutableOwner, so it can never be handed to a
 # loan PDA — docs/cwf-2026/THE-PINCER.md. A swap never hands anything over, so the extension is
 # simply irrelevant here.
-setup() { # setup <who> <mint-letter> <mint> <units>
-  local who="$1" ml="$2" mint="$3" units="$4" acct
+setup() { # setup <who> <mint-letter> <mint> <units> <decimals>
+  local who="$1" ml="$2" mint="$3" units="$4" dec_n="$5" acct
   spl-token -C "$W/$who.yml" create-account "$mint" >/dev/null 2>&1 || true
   acct=$(ata "$W/$who.yml" "$mint")
   [ "$units" = 0 ] || spl-token -C "$W/issuer.yml" mint "$mint" "$units" "$acct" >/dev/null
-  prov configure "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json"
+  prov configure "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json" "$dec_n"
   go "issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve \
     "$W/issuer.json" "$acct" "$mint" "$(bh)")"
   if [ "$units" != 0 ]; then
-    prov deposit "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json"
-    prov apply   "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json"
+    prov deposit "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json" "$dec_n"
+    prov apply   "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json" "$dec_n"
   fi
   eval "${who}_${ml}=$acct"
   echo "    $who's $ml   $acct   ${dim}(ATA, holding $units)${off}"
 }
-setup alice X "$MINT_X" "$A_UNITS"
-setup bob   X "$MINT_X" 0
-setup bob   Y "$MINT_Y" "$B_UNITS"
-setup alice Y "$MINT_Y" 0
+setup alice X "$MINT_X" "$A_UNITS" "$DEC_X"
+setup bob   X "$MINT_X" 0 "$DEC_X"
+setup bob   Y "$MINT_Y" "$B_UNITS" "$DEC_Y"
+setup alice Y "$MINT_Y" 0 "$DEC_Y"
 
 echo
 echo "  ${bold}--- each side builds the proofs for their own leg ---${off}"
 # Three proofs per leg, verified into context state accounts. This is the expensive, multi-
 # transaction part, and it happens BEFORE the swap — which is exactly why the exchange itself is
 # small enough to be one transaction.
-build() { # build <who> <mint-letter> <mint> <source> <dest> <dest-keys> <send-units>
-  local who="$1" ml="$2" mint="$3" src="$4" dst="$5" dkeys="$6" send="$7"
+build() { # build <who> <mint-letter> <mint> <source> <dest> <dest-keys> <send-units> <decimals>
+  local who="$1" ml="$2" mint="$3" src="$4" dst="$5" dkeys="$6" send="$7" dec_n="$8"
   local dec avail pub owner aud alt range
   read -r dec avail pub owner < <(ct "$src")
-  aud=$(python3 -c "import json;print(json.load(open('$W/auditor-$ml.json'))['elgamal_pubkey_b64'])")
+  # An empty auditor slot is what PYUSD ships, so there is no key file to read. `none` is what
+  # seizure-ctx has always taken for a mint that names no auditor.
+  if [ -f "$W/auditor-$ml.json" ]; then
+    aud=$(python3 -c "import json;print(json.load(open('$W/auditor-$ml.json'))['elgamal_pubkey_b64'])")
+  else
+    aud=none
+  fi
   local ctxf="$W/$who-ctx.json"
   cx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$W/$who.json" "$W/$who-$ml-keys.json" \
-    "$dec" "$avail" "$(elgamal "$dkeys")" "$aud" "$(base "$send")" "$(bh)" "$ctxf" \
+    "$dec" "$avail" "$(elgamal "$dkeys")" "$aud" "$(base "$send" "$dec_n")" "$(bh)" "$ctxf" \
     "$(solana-keygen pubkey "$W/$who.json")" "$W/$who-keys" "$1" none; }
   cx none >/dev/null 2>"$W/$who-pass1.err" || { cat "$W/$who-pass1.err" >&2; exit 1; }
   range=$(python3 -c "import json;print(json.load(open('$ctxf'))['range'])")
@@ -116,8 +174,8 @@ build() { # build <who> <mint-letter> <mint> <source> <dest> <dest-keys> <send-u
   local n=0; while read -r TX; do n=$((n+1)); go "$who proof tx $n" "$TX" >/dev/null || exit 1; done < "$W/$who-txs.txt"
   echo "    $who  $n transactions, three contexts, authority is $who themselves"
 }
-build alice X "$MINT_X" "$alice_X" "$bob_X"   "$W/bob-X-keys.json"   "$A_SEND"
-build bob   Y "$MINT_Y" "$bob_Y"   "$alice_Y" "$W/alice-Y-keys.json" "$B_SEND"
+build alice X "$MINT_X" "$alice_X" "$bob_X"   "$W/bob-X-keys.json"   "$A_SEND" "$DEC_X"
+build bob   Y "$MINT_Y" "$bob_Y"   "$alice_Y" "$W/alice-Y-keys.json" "$B_SEND" "$DEC_Y"
 
 echo
 echo "  ${bold}--- BEFORE SIGNING: each side decrypts what the other will actually send ---${off}"
@@ -145,17 +203,24 @@ go "the swap" "$(cat "$W/swap.b64")"
 echo
 echo "  ${bold}--- what each of them holds now ---${off}"
 # Confidential transfers land in the PENDING balance; the owner applies it with their own key.
-prov apply "$W/bob.json"   "$MINT_X" "$bob_X"   "$A_SEND" "$W/bob-X-keys.json"   >/dev/null
-prov apply "$W/alice.json" "$MINT_Y" "$alice_Y" "$B_SEND" "$W/alice-Y-keys.json" >/dev/null
-show() { local d a p o; read -r d a p o < <(ct "$2"); printf '    %-22s ' "$1"
-  cargo run --quiet -p confide-ct --bin read-balance -- "$3" "$d" "$a" 2>/dev/null | sed -n '3p' | sed 's/^ *//'; }
-show "alice, mint X (sent)"     "$alice_X" "$W/alice-X-keys.json"
-show "bob, mint X (received)"   "$bob_X"   "$W/bob-X-keys.json"
-show "bob, mint Y (sent)"       "$bob_Y"   "$W/bob-Y-keys.json"
-show "alice, mint Y (received)" "$alice_Y" "$W/alice-Y-keys.json"
+prov apply "$W/bob.json"   "$MINT_X" "$bob_X"   "$A_SEND" "$W/bob-X-keys.json"   "$DEC_X" >/dev/null
+prov apply "$W/alice.json" "$MINT_Y" "$alice_Y" "$B_SEND" "$W/alice-Y-keys.json" "$DEC_Y" >/dev/null
+show() { local d a p o; read -r d a p o < <(ct "$2"); printf '    %-24s ' "$1"
+  cargo run --quiet -p confide-ct --bin read-balance -- "$3" "$d" "$a" "$4" 2>/dev/null | sed -n '3p' | sed 's/^ *//'; }
+if [ "$MODE" = dvp ]; then LX="stock"; LY="cash"; else LX="mint X"; LY="mint Y"; fi
+show "alice, $LX (delivered)"  "$alice_X" "$W/alice-X-keys.json" "$DEC_X"
+show "bob, $LX (received)"     "$bob_X"   "$W/bob-X-keys.json"   "$DEC_X"
+show "bob, $LY (paid)"         "$bob_Y"   "$W/bob-Y-keys.json"   "$DEC_Y"
+show "alice, $LY (received)"   "$alice_Y" "$W/alice-Y-keys.json" "$DEC_Y"
 
 echo
-printf '  %sBoth positions moved, in one transaction, and the public balance of every one of those\n' "$grn"
-printf '  four accounts is still 0. Nobody watching the chain learns either amount.%s\n\n' "$off"
+if [ "$MODE" = dvp ]; then
+  printf '  %sDelivery and payment happened in the same transaction — neither could occur without the\n' "$grn"
+  printf '  other, and no clearing house stood between them. The public balance of all four accounts\n'
+  printf '  is still 0: nobody watching learns the size of the trade or the price it implies.%s\n\n' "$off"
+else
+  printf '  %sBoth positions moved, in one transaction, and the public balance of every one of those\n' "$grn"
+  printf '  four accounts is still 0. Nobody watching the chain learns either amount.%s\n\n' "$off"
+fi
 echo "    work dir  $W"
 echo

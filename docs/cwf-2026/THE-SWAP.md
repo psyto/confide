@@ -112,3 +112,95 @@ nothing here should — that is what the two parties are for.
   size. This publishes nothing.
 - **Moving between issuers without selling.** Backed's NVDAx for Backpack's NVDAx, directly,
   without paying a round trip of spread or showing anyone how much moved.
+
+---
+
+# Delivery versus payment — stock for cash, 2026-09-20
+
+`MODE=dvp ./scripts/swap-e2e.sh`. The same transaction as above with a different mint on one side,
+and it is the trade that actually exists: stock-for-stock is rare, **stock-for-cash is every block
+trade ever done.**
+
+Delivery versus payment is what a clearing house is *for*. TradFi solves "neither side wants to go
+first" with a central counterparty, membership, margin and a day of settlement lag. Here it is a
+property of the transaction, and there is nothing in the middle.
+
+## The run
+
+```
+stock mint  4MhK9tTL3zfMgGi1xMxE7R7VBc89JsNqWCu4wiJEw6os   8 decimals, gated, auditor set
+cash  mint  FwKTA33WPwqtJK2c6vPSLYNmT4zortKxwmFgFMmA8wGb   6 decimals, gated, auditor EMPTY,
+                                                           permanent delegate + freeze authority
+
+alice  6sGtxuaRrBhnph9Y8CyX428HstztBwJBX62wacHBsNwq   173,000 → 123,000 shares   delivered 50,000
+bob    BbqCriFfNGgy966GYpecUPfajKp6Hq7oMN4n1H5BqETm         0 →  50,000 shares
+bob    4Bu93JSs17wTrX6xFWzcNPrxq4rdLB7VYpCfFtJiekHR   $9,000,000 → $250,000     paid $8,750,000
+alice  Bz9HdL72NyFjn2sdvPqrgxfuP7wk4EfMV7ZbocqPFJ9u           $0 → $8,750,000
+```
+
+$8.75m for 50,000 shares is **$175 a share**, agreed off chain. All four accounts are ATAs
+(`immutableOwner: true`) and all four still read a **public balance of 0** — so the chain does not
+publish the size, the price, or the fact that $175 was the level.
+
+```
+4gzku3FWoRzhNr24gUTBquxEPwq9L5nqZrmtrCHWjzMBjaDyiapTj6zrBtGLTcRvzPzhexuJfdgxdqafu5Jhhovs
+
+  signatures    2
+  instructions  2, both Token-2022 confidentialTransfer
+  compute used  29,849
+  size          1,006 bytes
+```
+
+Each side still checked the other before signing: Alice decrypted $8,750,000 out of Bob's verified
+proof context, Bob decrypted 50,000 shares out of Alice's.
+
+## The cash mint is a mirror of PYUSD, and one thing is missing from it
+
+The mirror is built from the mainnet reading in [`COMPOSITION.md`](COMPOSITION.md): 6 decimals,
+`autoApproveNewAccounts: false`, an **empty** auditor slot, a permanent delegate and a freeze
+authority — the last two mirrored deliberately, because they mean the cash issuer can seize or
+freeze any account and that is what settling in PYUSD costs.
+
+**What is missing is PYUSD's zero-rate `transferFeeConfig`, and it is the remaining blocker.**
+
+A mint carrying a transfer fee config rejects the plain confidential `Transfer` outright, at **0
+bps**, with `InvalidInstructionData`. That was isolated by running the variants rather than by
+reading the processor:
+
+| run | auditor | transfer fee config | result |
+|---|---|---|---|
+| stock↔stock | set | absent | **swap ok** |
+| dvp | EMPTY | present, 0 bps | `InvalidInstructionData` on the cash leg |
+| dvp | **set** | present, 0 bps | **the same failure** — so the empty auditor is not the cause |
+| dvp | EMPTY | absent | **swap ok** — the run above |
+
+So the fee config is the cause and the empty auditor slot is fine.
+
+## What the fee-bearing path costs, measured before it is attempted
+
+Token-2022 has a separate instruction, `TransferWithFee`, taking **five** proofs instead of three —
+the extra two are a percentage-with-cap sigma proof and a 2-handle fee validity proof, and the
+range proof widens from `U128` to `U256`.
+
+`crates/confide-ct/tests/fee_tx_size.rs` already measured how those have to be submitted, and four
+of the five are ordinary:
+
+```
+equality     legacy   557   v0+ALT   531   FITS
+validity3    legacy   781   v0+ALT   755   FITS
+pct+cap      legacy   597   v0+ALT   571   FITS
+validity2    legacy   653   v0+ALT   627   FITS
+range256     legacy  1301   v0+ALT  1275   OVER the 1,232-byte limit
+```
+
+**The U256 range proof cannot be verified with its proof in instruction data at all** — 1,269 bytes
+at the very best, and there is nothing left to move into a lookup table. It has to go through the
+ZK program's fourth instruction layout, which reads the proof **from an account**: written into an
+`spl-record` account in chunks first, then cited by offset.
+
+That is the work the cash leg still needs, and it is routing rather than cryptography — the proof
+generation crate ships `transfer_with_fee_split_proof_data` and produces all five in one call.
+
+**Stated plainly so the result is not read as more than it is:** delivery-versus-payment runs, in
+one transaction, against a mint that matches PYUSD in every respect but one. The one is a zero-rate
+fee extension, and clearing it is a known, measured piece of work rather than an open question.
