@@ -4,16 +4,16 @@
 <title>Confide — hold tokenized stocks without publishing your position</title>
 <!-- Shared links rendered as bare URLs with no preview until 2026-09-15. The description is the
      finding, because that is what makes someone click. poster.jpg is the video's own frame. -->
-<meta name="description" content="1,869 tokenized stocks on Solana have confidential transfers switched on and the auditor key empty. Confide makes that slot usable: disclosure scoped by recipient, by granularity, and by schedule." />
+<meta name="description" content="1,992 tokenized stocks on Solana have confidential transfers switched on and the auditor key empty. Confide makes that slot usable: disclosure scoped by recipient, by granularity, and by schedule." />
 <link rel="canonical" href="https://psyto.github.io/confide/" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/" />
 <meta property="og:title" content="Confide — the privacy on tokenized stocks that nobody can use" />
-<meta property="og:description" content="1,869 mints, two issuers, every auditor key empty. Read it from mainnet in your browser, then watch Solana's ZK program check a collateral proof." />
+<meta property="og:description" content="1,992 mints, three issuers, every auditor key empty. Read it from mainnet in your browser, then watch Solana's ZK program check a collateral proof." />
 <meta property="og:image" content="https://psyto.github.io/confide/poster.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Confide — the privacy on tokenized stocks that nobody can use" />
-<meta name="twitter:description" content="1,869 mints, two issuers, every auditor key empty. Read it from mainnet in your browser." />
+<meta name="twitter:description" content="1,992 mints, three issuers, every auditor key empty. Read it from mainnet in your browser." />
 <meta name="twitter:image" content="https://psyto.github.io/confide/poster.jpg" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090d'/%3E%3Cpath d='M11 10h10M11 16h6M11 22h10' stroke='%2363cf83' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
 <style>
@@ -35,6 +35,11 @@ section{margin-top:60px;padding-top:34px;border-top:1px solid var(--line)}
 .card{border:1px solid var(--line);border-radius:10px;padding:16px 14px;background:var(--panel)}
 .card .sym{font-size:18px;color:var(--bold);font-weight:600;margin-bottom:12px}
 .card .row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+/* A `.row` inside a panel had no layout at all — only `.card .row` did — so every label ran into
+   its value: "stock for stock2Rks…2Uk9". Found by looking at the rendered page, which is the only
+   thing that finds this class of fault. */
+.panel .row{display:flex;gap:16px;align-items:baseline;font-size:13px;margin-bottom:7px}
+.panel .row>.k{flex:0 0 152px}
 .k{color:var(--dim)}.ok{color:var(--grn)}
 .slot{margin-top:12px;padding:8px;border-radius:7px;background:rgba(240,192,90,.10);
  border:1px dashed rgba(240,192,90,.45);text-align:center;font-size:12.5px;color:var(--yel)}
@@ -68,8 +73,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 </style></head><body>
 <div class="wrap">
   <h1>Your tokenized stock positions<br>are public. All of them.</h1>
-  <div class="lede">Confide lets you hold them on Solana without publishing what you hold —
-  and still prove what you must, to whom you choose, when you choose.
+  <div class="lede">Confide lets you <b>trade</b> them on Solana without publishing what moved —
+  and hold them without publishing what you hold.
   <b>The chain readings on this page are live, made in your browser.</b> The mint list and the
   proof transactions are files served with the page; everything they are used to ask is asked of
   mainnet and devnet now.</div>
@@ -102,15 +107,28 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 
   <section>
     <h2>The privacy is already shipped. Nobody can use it.</h2>
-    <div class="lede">1,869 tokenized stocks on Solana run on Token-2022 with confidential transfers
+    <div class="lede">1,992 tokenized stocks on Solana run on Token-2022 with confidential transfers
     <b>switched on</b>. Every one of them leaves the auditor key <b>empty</b> — because the only key
     on offer reads everyone's everything, forever, and no setting of that is correct for a regulated
     issuer.</div>
     <div class="cards" id="slots"></div>
     <div class="note">Read from mainnet, just now, by your browser. <b>NVDAx</b> and <b>TSLAx</b> are
-    Backed's; <b>NVDA.US</b> and <b>AAPL.US</b> are Backpack Securities'. Two issuers, arriving
-    independently at the same empty slot — that is the finding, and all 1,869 mints check the same
+    Backed's; <b>NVDA.US</b> and <b>AAPL.US</b> are Backpack Securities'. Three issuers, arriving
+    independently at the same empty slot — that is the finding, and all 1,992 mints check the same
     way (<span class="mono">scripts/slot-scan.sh</span>).</div>
+  </section>
+
+  <section>
+    <h2>And nobody ever has.</h2>
+    <div class="lede">The settings say the door is locked. They do not say whether anyone walked
+    through it — so this counts the <b>accounts</b>. Every token account on each of these mints,
+    and how many carry the extension that makes a balance confidential.</div>
+    <div class="panel" id="usage"><div class="muted">reading usage.json…</div></div>
+    <div class="note">Counted by <span class="mono">scripts/usage-scan.sh</span> against mainnet,
+    not by this page — a scan of a third of a million accounts is not something to run in a
+    browser tab. Size is only the cheap filter: the first pass found seven large accounts on Apple
+    xStock and <b>every one was large for an unrelated extension</b>, so the check reads the
+    extension list. <b>There is no incumbent here and nothing to be late to.</b></div>
   </section>
 
   <section>
@@ -138,6 +156,25 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </section>
 
   <section>
+    <h2>A trade that settles without publishing either side.</h2>
+    <div class="lede">Two parties exchange confidential positions <b>in one transaction</b>. No
+    program is deployed and none is called — two Token-2022 instructions, two signatures, and
+    Solana's atomicity where a clearing house would be. <b>These are real devnet transactions,
+    fetched and decoded here by your browser.</b></div>
+    <div id="swaps"><div class="muted">reading devnet…</div></div>
+    <div class="note"><b>Delivery versus payment is what a clearing house exists for</b> — neither
+    side will go first, so finance inserts a central counterparty, membership, margin and a day of
+    lag. A transaction that is all-or-nothing needs none of it, and the confidential version means
+    neither party publishes the size that clearing house would have been told anyway. Run it:
+    <span class="mono">MODE=dvp ./scripts/swap-e2e.sh</span>.
+    <br><br>The amounts are encrypted, so a party could be asked to sign a leg that underpays. Each
+    side answers that <b>before signing and alone</b>: a confidential transfer encrypts the amount
+    under the <i>recipient's</i> key too, so the recipient decrypts it straight out of the
+    already-verified proof context (<span class="mono">swap-check</span>). No trust, no third
+    party, nothing revealed to anyone else.</div>
+  </section>
+
+  <section>
     <h2>A lender can check your collateral without seeing it.</h2>
     <div class="lede">A lender needs one bit: <b>does the collateral cover the loan?</b> Two proofs
     answer it over the account's own on-chain ciphertext — equality binds a commitment we can open
@@ -154,6 +191,16 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     <div id="proofs"></div>
     <div class="note">The proofs were generated by <span class="mono">scripts/prove-collateral.sh</span>
     over the account above; the verification you just triggered is live.</div>
+
+    <h3>Both endings, read off the chain by your browser</h3>
+    <div class="lede">An escrow has two exits and a loan can only take one. <b>These are two real
+    loans on devnet</b>, decoded here from their own account data — the flags below are read from
+    the chain, not from anything this site stores.</div>
+    <div id="loans"><div class="muted">reading devnet…</div></div>
+    <div class="note">Run either one yourself: <span class="mono">./scripts/seizure-e2e.sh</span>
+    for the default, <span class="mono">MODE=release ./scripts/seizure-e2e.sh</span> for the
+    return. The borrower signs nothing after the handover in either case, and neither account ever
+    shows what moved.</div>
   </section>
 
   <section>
@@ -181,7 +228,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 // on every free endpoint, which is why holdings are read out of recent transactions instead.
 const MAINNET="https://solana-rpc.publicnode.com", DEVNET="https://api.devnet.solana.com";
 const T22="TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
-const WATCH=["NVDAx","TSLAx","NVDA.US","AAPL.US"];  // two issuers, same empty slot
+const WATCH=["NVDAx","TSLAx","NVDA.US","AAPL.US"];  // three issuers, same empty slot
 let MINTS=[], PROOFS=null, BOUND=null; // BOUND: does the live account still match the proofs?
 
 const rpc=async(url,method,params)=>{
@@ -197,6 +244,121 @@ const short=a=>a.slice(0,4)+"…"+a.slice(-4);
 async function loadMints(){
   MINTS=await (await fetch("mints.json")).json();
   PROOFS=await (await fetch("proofs.json")).json();
+}
+
+// The loan lifecycle, decoded in the browser.
+//
+// loans.json says WHICH accounts to read and what each was meant to show. It does not say how they
+// ended: that comes out of the account data below, so a devnet reset or a re-run shows through
+// instead of leaving the page asserting an outcome the chain no longer has.
+const EXPLORER=a=>"https://explorer.solana.com/address/"+a+"?cluster=devnet";
+const b58=b=>{const A="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+  let n=0n; for(const x of b) n=n*256n+BigInt(x);
+  let s=""; while(n>0n){ s=A[Number(n%58n)]+s; n/=58n; }
+  let z=0; while(z<b.length&&b[z]===0) z++;
+  return "1".repeat(z)+s;};
+// The account scan, and the swaps, both read the way the rest of this page reads: the counts come
+// from a file because a third of a million accounts is not a browser's job, and the transactions
+// come from devnet because a transaction is exactly a browser's job.
+async function readUsage(){
+  const box=el("usage");
+  let u; try{ u=await (await fetch("usage.json")).json(); }
+  catch(e){ box.innerHTML='<div class="muted">usage.json is missing — run ./scripts/usage-scan.sh</div>'; return; }
+  let h="";
+  for(const m of u.mints){
+    // A mint with no holders cannot answer a question about holders. Saying so beats a row of
+    // zeroes that reads like broken data.
+    const empty = m.accounts===0;
+    h+='<div class="row"><span class="k">'+m.symbol+' <span class="muted">'+m.issuer+'</span></span>'
+      +'<span>'+(empty
+        ? '<span class="muted">no token accounts at all — nothing was ever minted on this one</span>'
+        : m.accounts.toLocaleString()+' accounts · <b>'+m.confidential_accounts+'</b> confidential')
+      +'</span></div>';
+  }
+  h+='<div class="row"><span class="k"><b>total</b></span><span><b>'+u.total_accounts.toLocaleString()
+    +'</b> token accounts · <b>'+u.total_confidential_accounts+'</b> configured for confidential transfers</span></div>';
+  box.innerHTML=h;
+}
+
+async function readSwaps(){
+  const box=el("swaps");
+  let cfg; try{ cfg=await (await fetch("swaps.json")).json(); }
+  catch(e){ box.innerHTML='<div class="muted">swaps.json is missing — run ./scripts/refresh-swaps.sh</div>'; return; }
+  box.innerHTML="";
+  for(const w of cfg.swaps){
+    const d=document.createElement("div"); d.className="panel";
+    d.innerHTML='<div class="muted">reading '+short(w.signature)+'…</div>';
+    box.appendChild(d);
+    try{
+      const t=await rpc(DEVNET,"getTransaction",[w.signature,{encoding:"jsonParsed",maxSupportedTransactionVersion:0}]);
+      if(!t){ d.innerHTML='<div class="muted">'+w.label+': '+short(w.signature)
+        +' is gone — devnet resets, and this page says so rather than showing a stale result.</div>'; continue; }
+      const ix=t.transaction.message.instructions;
+      const kinds=ix.map(i=>(i.parsed&&i.parsed.type)||"unknown");
+      const progs=[...new Set(ix.map(i=>i.programId))];
+      // Read every account the trade touched, and show the public balance. This is the claim that
+      // is hardest to believe and the cheapest to check.
+      let pub=[], allZero=true, allAta=true;
+      for(const a of w.accounts){
+        const info=await rpc(DEVNET,"getAccountInfo",[a,{encoding:"jsonParsed"}]);
+        if(!info.value){ allZero=false; continue; }
+        const i=info.value.data.parsed.info;
+        const amt=i.tokenAmount.uiAmountString;
+        if(amt!=="0") allZero=false;
+        if(!(i.extensions||[]).some(e=>e.extension==="immutableOwner")) allAta=false;
+        pub.push(amt);
+      }
+      d.innerHTML='<div class="row"><span class="k">'+w.label+'</span>'
+        +'<span><a href="https://explorer.solana.com/tx/'+w.signature+'?cluster=devnet" target="_blank" class="mono">'
+        +short(w.signature)+'</a></span></div>'
+        +'<div class="row"><span class="k">claim</span><span class="muted">'+w.claim+'</span></div>'
+        +'<div class="row"><span class="k">instructions</span><span>'+ix.length+' — <b>'+kinds.join("</b>, <b>")+'</b></span></div>'
+        +'<div class="row"><span class="k">programs</span><span class="mono">'+progs.map(short).join(", ")
+        +'</span></div>'
+        +'<div class="row"><span class="k">signatures</span><span>'+t.transaction.signatures.length
+        +' · '+t.meta.computeUnitsConsumed.toLocaleString()+' compute units · '
+        +(t.meta.err?'<b class="mono">'+JSON.stringify(t.meta.err)+'</b>':'no error')+'</span></div>'
+        +'<div class="row"><span class="k">the four accounts</span><span>'
+        +(allAta?'all associated token accounts':'<span class="muted">not all associated</span>')
+        +' · public balance '+(allZero?'<b>0</b> on every one':'<span class="muted">'+pub.join(", ")+'</span>')
+        +'</span></div>';
+    }catch(e){ d.innerHTML='<div class="muted">'+w.label+': '+e.message+'</div>'; }
+  }
+}
+
+async function readLoans(){
+  const box=el("loans");
+  let cfg;
+  try{ cfg=await (await fetch("loans.json")).json(); }
+  catch(e){ box.innerHTML='<div class="muted">loans.json is missing — run ./scripts/refresh-loans.sh</div>'; return; }
+  const O=cfg.offsets;
+  box.innerHTML="";
+  for(const want of cfg.loans){
+    const d=document.createElement("div"); d.className="panel";
+    d.innerHTML='<div class="muted">reading '+short(want.loan)+'…</div>';
+    box.appendChild(d);
+    try{
+      const info=await rpc(DEVNET,"getAccountInfo",[want.loan,{encoding:"base64"}]);
+      if(!info.value){ d.innerHTML='<div class="muted">'+short(want.loan)+' is gone — devnet resets, and this page says so rather than showing a stale result. Recovery: docs/DURABILITY.md</div>'; continue; }
+      const raw=Uint8Array.from(atob(info.value.data[0]),c=>c.charCodeAt(0));
+      const at=o=>b58(raw.slice(o,o+32));
+      const u64=o=>{let n=0n; for(let i=7;i>=0;i--) n=n*256n+BigInt(raw[o+i]); return n;};
+      const seized=raw[O.seized]!==0;
+      const released=raw.length>=cfg.len_v2 && raw[O.released]!==0;
+      const outcome=seized?"seized":released?"released":"open";
+      const dest=seized?at(O.destination):released?at(O.release_destination):null;
+      const who=seized?"the lender":released?"the holder":"nobody yet";
+      d.innerHTML='<div class="row"><span class="k">loan</span>'
+        +'<span><a href="'+EXPLORER(want.loan)+'" target="_blank" class="mono">'+short(want.loan)+'</a>'
+        +' <span class="muted">'+raw.length+' bytes</span></span></div>'
+        +'<div class="row"><span class="k">outcome</span><span><b>'+outcome+'</b>'
+        +(outcome===want.outcome?"":' <span class="muted">(this page expected '+want.outcome+' — the chain wins)</span>')+'</span></div>'
+        +'<div class="row"><span class="k">escrow</span><span><a href="'+EXPLORER(at(O.escrow))+'" target="_blank" class="mono">'+short(at(O.escrow))+'</a></span></div>'
+        +(dest?'<div class="row"><span class="k">went to</span><span>'+who+' · <a href="'+EXPLORER(dest)+'" target="_blank" class="mono">'+short(dest)+'</a></span></div>':"")
+        +'<div class="row"><span class="k">floor proved</span><span>'+u64(O.q_min).toLocaleString()+' units</span></div>'
+        +'<div class="row"><span class="k">against</span><span>$'+(Number(u64(O.principal))/100).toLocaleString()+' at '+(Number(u64(O.ratio_bps))/100)+'%</span></div>';
+    }catch(e){ d.innerHTML='<div class="muted">'+short(want.loan)+': '+e.message+'</div>'; }
+  }
 }
 
 // 1 — the empty slot, read live
@@ -383,7 +545,7 @@ document.getElementById("vid").addEventListener("click", e => {
 
 (async()=>{
   await loadMints();
-  checkSlots(); scanRecent(); readReceipt(); await readConfide();
+  checkSlots(); readUsage(); scanRecent(); readReceipt(); readSwaps(); readLoans(); await readConfide();
   el("go").onclick=()=>readHoldings(el("addr").value.trim());
   el("addr").addEventListener("keydown",e=>{if(e.key==="Enter")el("go").click()});
   el("proofBtn").onclick=runProofs;

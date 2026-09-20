@@ -1,0 +1,55 @@
+{
+ "program": "Gn3rzw8ULVo676ebnxX6qK3YEQP9T8NHtFVetXW8QduN",
+ "generated_utc": "2026-09-19 10:33:58 UTC",
+ "offsets": {
+  "escrow": 1,
+  "destination": 33,
+  "mint": 65,
+  "oracle": 193,
+  "q_min": 225,
+  "principal": 233,
+  "ratio_bps": 241,
+  "seized": 414,
+  "release_destination": 447,
+  "released": 739,
+  "floor_mode": 740
+ },
+ "len_v1": 415,
+ "len_v2": 740,
+ "len_current": 741,
+ "note": "Which devnet loans the page reads. The page decodes the flags off the chain itself; this file does not decide the outcome.",
+ "loans": [
+  {
+   "loan": "26QJWCRwvPd1dLwvgH4Drb8D5F4ga2RPMdS8PrbRw4Hj",
+   "bytes": 415,
+   "version": 1,
+   "escrow": "HfdcgCmfMaWEu9ycjGEu12Mm9cAuxM8RxHQnELMimNx5",
+   "mint": "BbNErtYoCdZepKWk3tnm1CePCszWzpqDv9tpq5nfbaD6",
+   "lender_destination": "Kzv6RiLoENQaEgHuVpmV6UubJmtBRgzprbv7YgnYq4X",
+   "holder_destination": null,
+   "q_min": 100000,
+   "principal_cents": 5000000,
+   "ratio_bps": 20000,
+   "seized": true,
+   "released": false,
+   "floor": "proved",
+   "outcome": "seized"
+  },
+  {
+   "loan": "9yfKfFD5ixUeoEGZxN3fxAwRW2rzWB74R5sexzsYiMJo",
+   "bytes": 740,
+   "version": 2,
+   "escrow": "4vHnW6b4cDHoAhZSZvwries5uJUg7Cnye2GbXmK9rAw5",
+   "mint": "E1huey8CcR8bvnW7KJZwhtCWJ6JtqSC31ccPDoHoZ1ox",
+   "lender_destination": "Cmi2L5kACTdCsnsxp52PqktdEPSd5K3wto237chG3ZDG",
+   "holder_destination": "CM7mxvV5QZRcdsoXMj3nU2HsFXCYia8ds3m9fzMLNhnH",
+   "q_min": 100000,
+   "principal_cents": 5000000,
+   "ratio_bps": 20000,
+   "seized": false,
+   "released": true,
+   "floor": "proved",
+   "outcome": "released"
+  }
+ ]
+}
