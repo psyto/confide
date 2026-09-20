@@ -12,7 +12,9 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 FFPROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
 FFMPEG="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
-PUB="${PUB:-video/Confide_Stocklana_20260915.mp4}"
+# The file that is actually published. It moved on 2026-09-20 and the check kept passing against
+# the old one, because it verifies that a claim matches A file rather than THE file.
+PUB="${PUB:-video/Confide_Stocklana_20260920.mp4}"
 
 fail=0
 ok()  { printf '  \033[32m✓\033[0m %s\n' "$1"; }
@@ -37,10 +39,21 @@ if [ -f "$PUB" ]; then
 import re, sys
 t = open('/tmp/.dc.srt', encoding='utf-8').read()
 t = ' '.join(l.strip() for l in t.split(chr(10)) if l.strip() and '-->' not in l and not l.strip().isdigit())
-sys.exit(0 if re.search(r'lender\\s+takes\\s+it', re.sub(r'\\s+', ' ', t)) else 1)
-" \
-    && ok "the seizure line is in the captions" \
-    || bad "the seizure line is missing from the captions — sound-off viewers lose the strongest claim"
+t = re.sub(r'\\s+', ' ', t)
+# The lines a sound-off viewer cannot lose. Written for the 09-20 cut: the one that was here
+# guarded a seizure line, and that scene does not exist in this film — it kept passing on the old
+# file and failed the moment the check was pointed at the one that is published.
+missing = [n for n, p in [
+    ('the moment', r'173,000\\s+shares'),
+    ('what Confide is', r'That\\s+is\\s+the\\s+product'),
+    ('the count', r'accounts\\s+across\\s+Apple'),
+    ('the empty middle', r'stands\\s+between\\s+nobody'),
+] if not re.search(p, t, re.I)]
+print(', '.join(missing))
+sys.exit(1 if missing else 0)
+" > /tmp/.dc.missing \
+    && ok "every line a sound-off viewer needs is in the captions" \
+    || bad "missing from the captions: $(cat /tmp/.dc.missing) — sound-off viewers lose it"
 
   # Silence is a property of the audio. Reading caption gaps is how this was got wrong.
   sil=$("$FFMPEG" -nostdin -hide_banner -i "$PUB" -af silencedetect=noise=-40dB:d=1 -f null - 2>&1 \
@@ -51,10 +64,15 @@ else
   bad "$PUB is missing"
 fi
 
-if [ -f video/captions.srt ]; then
-  for w in Salana Nvidia; do grep -q "$w" video/captions.srt && bad "captions.srt still says $w"; done
-  ./scripts/fix-captions.sh 2>/dev/null | diff -q - video/captions.srt >/dev/null \
-    && ok "captions.srt is what fix-captions.sh produces" \
+# The caption file for the CURRENT video, not whichever one was published first. This guarded
+# video/captions.srt — the 09-15 cut's track — and went on passing after the upload changed.
+CAPS="${CAPS:-video/captions-20260920.srt}"
+if [ -f "$CAPS" ]; then
+  for w in Salana Nvidia "stable coin" "Everyone leaves"; do
+    grep -q "$w" "$CAPS" && bad "$CAPS still says $w"
+  done
+  ./scripts/fix-captions.sh "$PUB" 2>/dev/null | diff -q - "$CAPS" >/dev/null \
+    && ok "$CAPS is what fix-captions.sh produces from the published file" \
     || bad "captions.srt has drifted from its generator"
 fi
 

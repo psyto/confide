@@ -1,6 +1,6 @@
 # video
 
-## `Confide_Stocklana_20260920.mp4` — the narrated presentation, not yet uploaded
+## `Confide_Stocklana_20260920.mp4` — **published: https://youtu.be/gilIzns5joM**
 
 **2:22, 1920x1080, AAC stereo, with a caption track.** The founder generated the voice and
 recomposited to it, so the file is 142.3s against the silent master's 175.1s — the two clocks
@@ -21,12 +21,17 @@ caption track; YouTube's own transcript is worse. The one worth naming: *"Everyo
 auditor key empty"* is a sentence about people, and the line is about **mints** — every one of
 them. The transcript changed the subject of the finding.
 
-**Still to do, and founder-only:** upload, then the new video id replaces `p1aQuEnzhQk` in
-`_submission/full.md`, `web/index.html`, `README.md` and `scripts/healthcheck.sh` —
-`docs-consistency.sh` enforces that every surface names the same one.
+**Uploaded 2026-09-20 as `gilIzns5joM`**, and every surface that names the current video was moved
+to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck.sh` and `STATUS.md`.
+`web/poster.jpg` is a frame from this file rather than from the old one, and the caption under it
+stopped calling it "the earlier walkthrough".
+
+**`p1aQuEnzhQk` is superseded.** The occurrences left in this file are its history and belong here;
+the one left in `STATUS.md` says so explicitly. Unlist it rather than leaving two answers to one
+question — that is the note the next section already makes about the two before it.
 
 
-**Published: https://youtu.be/p1aQuEnzhQk** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
+**Superseded 2026-09-20: https://youtu.be/p1aQuEnzhQk** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
 the current render at 1920x1080, the recorded narration, and the subtitle track. It says 1,869 mints
 across two issuers and shows the confidential account the page and the README point at.
 
@@ -35,7 +40,7 @@ exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the
 links to either; unlist them rather than leaving three answers to one question.
 
 **Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
-**2:07**; the published cut is **1:54**, because the voice is generated externally and paces
+**2:07**; the published cut is **2:22**, because the voice is generated externally and paces
 differently, and the clips were recomposited to it. The published file is the authority for
 anything a viewer sees — chapters especially, which come from its own subtitle track and not from
 `record.js` holds.

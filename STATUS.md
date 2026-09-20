@@ -56,7 +56,7 @@ Confide は Solana 単独。Reckn とコードも物語も共有しない。
    `v0.5.1`）。Confide は path 依存をやめ、arm's-length の `{ git = "...", tag = "v0.5.1" }` で消費して
    いる。**Confide は単独でビルドできる。**
 2. ~~Confide 自体をいつ公開するか~~ → **解決済み。** `github.com/psyto/confide` は **PUBLIC**、
-   `psyto.github.io/confide/` は 200、動画 `youtu.be/p1aQuEnzhQk` も 200。提出に必要なリンクは3種類とも
+   `psyto.github.io/confide/` は 200、動画も 200。提出に必要なリンクは3種類とも
    生きている（確認 2026-09-15）。CWF の Official Rules §8(e) は **Open-source 自体が審査基準**なので、
    これは要件であると同時に加点でもある。
 
@@ -229,7 +229,7 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
    抜けではなく、提出時に出てくる欄。出たときに使うもの:
    - リンク3本、いずれも生存確認済み（2026-09-15、全て HTTP 200）:
      `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
-     `https://youtu.be/p1aQuEnzhQk`。**動画は `p1aQuEnzhQk` が現行**（`94fccfd`）で、
+     `https://youtu.be/gilIzns5joM`。**動画は `gilIzns5joM` が現行**（2026-09-20 差し替え、`p1aQuEnzhQk` は旧）で、
      `KQsRwP8HTs0` と `ZuhLvH5MFgE` は旧版。**旧 URL も 200 を返すので、貼り間違えても壊れて見えない**
      ——現行の判定は `scripts/healthcheck.sh` の `VIDEO` を正とすること。ここに ID を書き写すたびに
      腐る（09-15 に一度腐った）。
