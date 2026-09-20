@@ -89,7 +89,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   proof transactions are files served with the page; everything they are used to ask is asked of
   mainnet and devnet now.</div>
   <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
-  <a href="kamino.html">can Kamino take this as collateral?</a> ·
+  <a href="#do-it">run it yourself on devnet</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
 
 
@@ -119,7 +119,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </section>
 
   <section>
-    <h2>Go and do it yourself. Two minutes, devnet, nobody's permission.</h2>
+    <h2 id="do-it">Go and do it yourself. Two minutes, devnet, nobody's permission.</h2>
     <div class="lede">There is a standing issuer on devnet whose gate is shut exactly as all 1,992
     are &mdash; and whose approval key is <b>published in the repository</b>. So you can open a
     confidential position and hold something the chain reports as zero:</div>
@@ -232,6 +232,11 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
 
   <section>
     <h2>A lender can check your collateral without seeing it.</h2>
+    <div class="note" style="margin:0 0 18px"><b>The half that waits on a venue.</b> Everything
+    above needs nobody's permission; this needs a lending market that can price a balance it cannot
+    read. <a href="kamino.html">Ask the decision page</a> whether Kamino can take any of the 1,992
+    as collateral today — it reads the mint from mainnet in your browser and answers against
+    Kamino's own pinned rules.</div>
     <div class="lede">A lender needs one bit: <b>does the collateral cover the loan?</b> Two proofs
     answer it over the account's own on-chain ciphertext — equality binds a commitment we can open
     to the account, then the range proof runs on the surplus. Press the button and Solana's ZK
