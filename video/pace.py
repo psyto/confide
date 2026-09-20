@@ -55,7 +55,7 @@ SHOWS_BY_DOC = {
  4: "the mint scan finishing, the auditor slot empty",
  5: "`./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0",
  6: "the escrow in the diagram, then gone",
- 7: "the swap landing; four accounts, public 0 and confidential real",
+ 7: "the public view, and the two columns only the parties can read",
  8: "both instruction names in one transaction; the record account",
  9: "PYUSD and USDG beside a tokenized stock, the matching fields lit",
  10: "the conditions table, then a command and the page URL",

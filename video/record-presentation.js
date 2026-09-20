@@ -27,6 +27,7 @@ const repo = path.join(dir, "..");
 const outFile = path.join(dir, "presentation.mp4");
 const segDir = path.join(dir, "segments-presentation");
 const FFMPEG = process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg";
+const FFPROBE = process.env.FFPROBE_PATH || FFMPEG.replace(/ffmpeg$/, "ffprobe");
 const KEYS = process.env.CONFIDE_KEYS || path.join(repo, "account-keys.json");
 const ACCOUNT = process.env.CONFIDE_ACCOUNT || JSON.parse(readFileSync(KEYS, "utf8")).account;
 
@@ -70,6 +71,11 @@ const balance = run("bash", ["scripts/read-balance.sh", ACCOUNT, KEYS], "opening
 // other pane here is a command run moments ago; this one is a command that prints when it ran.
 const usage = run("bash", ["scripts/usage-scan.sh", "--last"], "reprinting the account scan");
 const swaps = run("bash", ["scripts/swap-status.sh", "plain"], "reading the swaps back off devnet", DEVNET);
+// Scene 7 is the whole claim, and it used to be a list of instruction names — which shows that two
+// transfers happened and not that a trade did. This pane carries the exchange: the public view
+// read live, and beside it the two columns the parties wrote down at the time, because the amounts
+// are confidential and nothing on chain can recover them afterwards.
+const dvp = run("bash", ["scripts/dvp-show.sh"], "reading the delivery-versus-payment", DEVNET);
 const feeSwap = run("bash", ["scripts/swap-status.sh", "fee"], "reading the with-fee swap back off devnet", DEVNET);
 const cash = run("bash", ["scripts/cash-scan.sh"], "reading the stablecoins on mainnet", MAINNET);
 const testbed = run("bash", ["scripts/testbed-up.sh", "--check"], "checking the standing devnet issuer", DEVNET);
@@ -85,6 +91,8 @@ for (const [text, re, why] of [
   [usage, /329,536 token accounts, .*0.* configured for confidential/, "the account scan no longer reads 329,536 / zero — rerun ./scripts/usage-scan.sh"],
   [swaps, /confidentialTransfer, confidentialTransfer/, "the plain swap no longer carries two confidential transfers"],
   [swaps, /public balance 0 on every one/, "a swap account's public balance is no longer zero"],
+  [dvp, /4 of 4 accounts/, "one of the four accounts in the recorded trade has gone, or stopped reading zero"],
+  [dvp, /50,000 shares.*\$8,750,000/, "the recorded trade is no longer 50,000 shares against $8,750,000"],
   [feeSwap, /confidentialTransfer, confidentialTransferWithFee/, "the with-fee swap no longer carries both instruction kinds — scene 7 is about exactly that"],
   [feeSwap, /every swap still reads as recorded/, "the with-fee swap did not read back clean"],
   [cash, /PYUSD.*Token-2022/, "PYUSD is no longer Token-2022"],
@@ -159,9 +167,9 @@ const scenes = [
   },
   {
     file: "07-what-runs.mp4", kind: "evidence",
-    label: "Fifty thousand shares, for eight and three quarter million dollars.",
-    body: slice(swaps, /stock for cash/, /the 4 accounts/),
-    emphasis: ["confidentialTransfer, confidentialTransfer", "public balance 0 on every one"],
+    label: "Delivery, and payment, in the same transaction.",
+    body: slice(dvp, /what anyone watching sees/, /a share$/),
+    emphasis: ["50,000 shares", "$8,750,000", "public balance 0"],
     total: HOLD[6],
   },
   {
@@ -231,6 +239,25 @@ execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
 
 if (marks.length !== scenes.length + 1) {
   throw new Error(`expected ${scenes.length + 1} scene marks, got ${marks.length}`);
+}
+
+// The marks are the PAGE's clock and the cuts are made against the FILE's. They agree only while
+// the recorder keeps up, and on a loaded machine it does not: one render came out 296s for 171.6s
+// of page time, so every boundary in the manifest pointed at the wrong scene and split.sh
+// cheerfully produced ten clips paired with ten wrong lines. Nothing noticed, because nothing was
+// comparing the two clocks.
+const probed = parseFloat(
+  execFileSync(FFPROBE, ["-v", "error", "-show_entries", "format=duration",
+                         "-of", "csv=p=0", outFile], { encoding: "utf8" }).trim(),
+);
+const drift = Math.abs(probed - seconds);
+process.stderr.write(`• page clock ${seconds.toFixed(1)}s, file ${probed.toFixed(1)}s\n`);
+if (drift > 2) {
+  throw new Error(
+    `refusing to write a manifest — the file is ${probed.toFixed(1)}s and the page took ` +
+    `${seconds.toFixed(1)}s. The recorder could not keep up, so every cut would land in the ` +
+    `wrong scene. Close what else is running and record again.`,
+  );
 }
 // Where the scenes actually landed, not where they were asked to. split.sh reads this.
 const manifest = scenes.map((sc, i) => ({

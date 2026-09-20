@@ -73,11 +73,11 @@ never reads the screen.
 | 4 | already solved, already switched off | 17 | 37 | 135 | the mint scan finishing, the auditor slot empty |
 | 5 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
 | 6 | the turn | 22 | 50 | 140 | the escrow in the diagram, then gone |
-| 7 | what runs | 20 | 45 | 139 | the swap landing; four accounts, public 0 and confidential real |
+| 7 | what runs | 23 | 51 | 137 | the public view, and the two columns only the parties can read |
 | 8 | the part that was hard | 22 | 48 | 135 | both instruction names in one transaction; the record account |
 | 9 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
 | 10 | what is missing | 22 | 48 | 135 | the conditions table, then a command and the page URL |
-| | | **169 s** | **346** | | |
+| | | **172 s** | **352** | | |
 
 ## The script
 
@@ -137,13 +137,16 @@ and admitting it is what earns the next scene.
 
 ### 7 — what runs
 
-> So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million
-> dollars, in one transaction. Both sides settle or neither does, with no clearing house in between.
-> Afterwards, every account still reports a balance of zero to anyone watching.
+> There is no escrow here, and no program. Neither of those columns could have happened without the
+> other, and that is the only thing a clearing house is for. There isn't one — just a transaction
+> that cannot half-happen. The line in the middle is what everybody else gets to see.
 
-*Shows:* the transaction landing, then the four balances — public `0`, confidential real.
-**Delivery versus payment is what a clearing house exists for**, and the line does not say so,
-because scene 7 is where a judge will place it themselves.
+*Shows:* the public view read live, and beside it the two columns the parties wrote down at the
+time. **This scene used to be a list of instruction names**, which shows that two transfers
+happened and not that a trade did — the founder asked whether the cut conveyed delivery versus
+payment and it did not. **The narration does not read the numbers**, because the screen now
+carries them; the voice carries the part the picture cannot, which is that neither column could
+exist alone.
 
 ### 8 — the part that was hard
 

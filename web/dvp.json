@@ -1,0 +1,30 @@
+{
+ "generated_utc": "2026-09-20 07:49:45 UTC",
+ "cluster": "devnet",
+ "note": "What each side of one delivery-versus-payment could read. Written by the parties at the time, because the amounts are confidential and nobody \u2014 this repository included \u2014 can recover them from the chain afterwards.",
+ "stock_mint": "9CQyp2mEDQLqPKJtese359nRd3sVRQr8594LTQYiMHYW",
+ "cash_mint": "53rf2YqLwEmgCXWma7xPxiG8b18HKjttz28DRQvLqqBa",
+ "delivered_units": 50000,
+ "paid_units": 8750000,
+ "price_per_share": 175.0,
+ "seller": {
+  "stock_before": 173000,
+  "stock_after": 123000,
+  "cash_before": 0,
+  "cash_after": 8750000,
+  "accounts": [
+   "2NAVmRrq35EzKm3aHrUFw732k6vpfCnGdKyFydomrwpg",
+   "9CTFSeBmLF25fTdxzJE9TnxPBX6uf93tq2Kh3G3oi63q"
+  ]
+ },
+ "buyer": {
+  "stock_before": 0,
+  "stock_after": 50000,
+  "cash_before": 9000000,
+  "cash_after": 250000,
+  "accounts": [
+   "5u8t2vzSFYWGaLd6nL6BFFNoUtKX2aYZKiDWfkfYLyf6",
+   "CKTh37X7nh8xKpczSX7jDi1BypvsFC8HdcwXesc9nrTt"
+  ]
+ }
+}

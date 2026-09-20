@@ -37,36 +37,36 @@
  {
   "file": "06-the-turn.mp4",
   "start": 67.5,
-  "end": 89.5,
-  "seconds": 22,
+  "end": 89.6,
+  "seconds": 22.1,
   "line": "Which told me I had been building the wrong shape. A loan needs somebody to hold the collateral, because it has to survive one side refusing to cooperate for months. A trade does not. A trade happens at one instant — and on Solana, an instant is all or nothing."
  },
  {
   "file": "07-what-runs.mp4",
-  "start": 89.5,
-  "end": 109.5,
-  "seconds": 20,
-  "line": "So there is no escrow, and no program. Fifty thousand shares, for eight and three quarter million dollars, in one transaction. Both sides settle or neither does, with no clearing house in between. Afterwards, every account still reports a balance of zero to anyone watching."
+  "start": 89.6,
+  "end": 112.6,
+  "seconds": 23,
+  "line": "There is no escrow here, and no program. Neither of those columns could have happened without the other, and that is the only thing a clearing house is for. There isn't one — just a transaction that cannot half-happen. The line in the middle is what everybody else gets to see."
  },
  {
   "file": "08-the-hard-part.mp4",
-  "start": 109.5,
-  "end": 131.5,
+  "start": 112.6,
+  "end": 134.6,
   "seconds": 22,
   "line": "The cash in that trade is shaped like PayPal's dollar. PayPal's dollar charges a fee — so it needs a different instruction, five zero-knowledge proofs instead of three, and one proof too large to fit in a Solana transaction at all. One transaction carries both sets of rules."
  },
  {
   "file": "09-not-only-equities.mp4",
-  "start": 131.5,
-  "end": 146.5,
+  "start": 134.6,
+  "end": 149.6,
   "seconds": 15,
   "line": "That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two different asset classes, the same dead end. This was never a story about tokenized stocks."
  },
  {
   "file": "10-what-is-missing.mp4",
-  "start": 146.5,
-  "end": 168.6,
-  "seconds": 22.1,
+  "start": 149.6,
+  "end": 171.6,
+  "seconds": 22,
   "line": "Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle is a condition you can check, and for the two that decide the market, the work on the far side is already running. Every figure here came off the chain."
  }
 ]

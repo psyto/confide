@@ -255,6 +255,35 @@ prov apply "$W/bob.json"   "$MINT_X" "$bob_X"   "$A_SEND" "$W/bob-X-keys.json"  
 prov apply "$W/alice.json" "$MINT_Y" "$alice_Y" "$B_SEND" "$W/alice-Y-keys.json" "$DEC_Y" >/dev/null
 show() { local d a p o; read -r d a p o < <(ct "$2"); printf '    %-24s ' "$1"
   cargo run --quiet -p confide-ct --bin read-balance -- "$3" "$d" "$a" "$4" 2>/dev/null | sed -n '3p' | sed 's/^ *//'; }
+# What each side could read, recorded while the keys still exist. The amounts are confidential, so
+# an observer cannot recover them later and neither can this repository — the only moment they can
+# be written down is now, by the parties, which is exactly what the claim is.
+read_units() { local d a p o; read -r d a p o < <(ct "$1")
+  cargo run --quiet -p confide-ct --bin read-balance -- "$2" "$d" "$a" "$3" 2>/dev/null \
+  | sed -n '3p' | grep -oE '= [0-9]+ units' | grep -oE '[0-9]+'; }
+if [ "$MODE" = dvp ]; then
+  python3 - > web/dvp.json <<PY
+import json, time
+print(json.dumps({
+ "generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+ "cluster": "devnet",
+ "note": "What each side of one delivery-versus-payment could read. Written by the parties at the "
+         "time, because the amounts are confidential and nobody — this repository included — can "
+         "recover them from the chain afterwards.",
+ "stock_mint": "$MINT_X", "cash_mint": "$MINT_Y",
+ "delivered_units": $A_SEND, "paid_units": $B_SEND,
+ "price_per_share": round($B_SEND / $A_SEND, 2),
+ "seller": {"stock_before": $A_UNITS, "stock_after": $(read_units "$alice_X" "$W/alice-X-keys.json" "$DEC_X"),
+            "cash_before": 0, "cash_after": $(read_units "$alice_Y" "$W/alice-Y-keys.json" "$DEC_Y"),
+            "accounts": ["$alice_X", "$alice_Y"]},
+ "buyer":  {"stock_before": 0, "stock_after": $(read_units "$bob_X" "$W/bob-X-keys.json" "$DEC_X"),
+            "cash_before": $B_UNITS, "cash_after": $(read_units "$bob_Y" "$W/bob-Y-keys.json" "$DEC_Y"),
+            "accounts": ["$bob_X", "$bob_Y"]},
+}, indent=1))
+PY
+  echo "    recorded to web/dvp.json — what the two sides could read, while they still could"
+fi
+
 if [ "$MODE" = dvp ]; then LX="stock"; LY="cash"; else LX="mint X"; LY="mint Y"; fi
 show "alice, $LX (delivered)"  "$alice_X" "$W/alice-X-keys.json" "$DEC_X"
 show "bob, $LX (received)"     "$bob_X"   "$W/bob-X-keys.json"   "$DEC_X"
