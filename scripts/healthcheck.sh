@@ -198,6 +198,28 @@ else
   bad "https://youtu.be/$VIDEO  — private, deleted, or no longer embeddable"
 fi
 
+# The superseded uploads. video/README.md carried "unlist them rather than leaving three answers to
+# one question" as a standing instruction; the founder deleted all three on 2026-09-21. STATUS.md
+# had warned the opposite way -- that an old URL still returned 200, so a mis-paste would not look
+# broken -- and that warning is now false. It is checked instead of written down, because the
+# reason it was written down is that it changed.
+#
+# A stray 11-character token that is not a video id answers 404 and passes, so over-matching here
+# is harmless; only a superseded id that is actually LIVE fails.
+old=$(grep -oE 'youtu\.be/[A-Za-z0-9_-]{11}|`[A-Za-z0-9_-]{11}`' video/README.md 2>/dev/null \
+      | grep -oE '[A-Za-z0-9_-]{11}' | sort -u | grep -v "^$VIDEO$" || true)
+live=""
+for id in $old; do
+  c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+      "https://www.youtube.com/oembed?url=https://youtu.be/$id&format=json")
+  [ "$c" = 200 ] && live="$live $id"
+done
+if [ -z "$live" ]; then
+  ok "every superseded upload is gone — $VIDEO is the only live answer"
+else
+  bad "a superseded upload is still public:$live — two answers to one question"
+fi
+
 # Every file the page fetches, because a 200 on the page says nothing about them. `loans.json` was
 # 404 on the live site while `index.html` returned 200, so the panel promising to read two loans
 # off the chain showed a missing-file message to anybody who scrolled that far.

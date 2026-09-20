@@ -246,9 +246,12 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
    抜けではなく、提出時に出てくる欄。出たときに使うもの:
    - リンク3本、いずれも生存確認済み（2026-09-15、全て HTTP 200）:
      `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
-     `https://youtu.be/gilIzns5joM`。**動画は `gilIzns5joM` が現行**（2026-09-20 差し替え、`p1aQuEnzhQk` は旧）で、
-     `KQsRwP8HTs0` と `ZuhLvH5MFgE` は旧版。**旧 URL も 200 を返すので、貼り間違えても壊れて見えない**
-     ——現行の判定は `scripts/healthcheck.sh` の `VIDEO` を正とすること。ここに ID を書き写すたびに
+     `https://youtu.be/gilIzns5joM`。**動画は `gilIzns5joM` が現行**で、`p1aQuEnzhQk`・`KQsRwP8HTs0`・
+     `ZuhLvH5MFgE` は旧版。**2026-09-21、founder が旧3本を削除。3本とも 404 を返す。**
+     以前ここには「旧 URL も 200 を返すので、貼り間違えても壊れて見えない」と書いてあった。**逆になった**
+     ——貼り間違えると見えて壊れる。ただし**これを散文で持たない**: `scripts/healthcheck.sh` が
+     `video/README.md` に載る全 ID の消滅と現行の生存を毎回測る（現行を旧側に置く壊し方は除外規則に
+     吸われるので、`VIDEO` を別 ID にして生存検出そのものを落とすこと）。ここに ID を書き写すたびに
      腐る（09-15 に一度腐った）。
    - 過去作業の開示欄（規約要件）。記入元は [`docs/WORK-WINDOW.md`](docs/WORK-WINDOW.md) と
      上の再利用表。**repo に書いてあることは開示にならない。**

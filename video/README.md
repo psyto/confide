@@ -26,18 +26,20 @@ to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck
 `web/poster.jpg` is a frame from this file rather than from the old one, and the caption under it
 stopped calling it "the earlier walkthrough".
 
-**`p1aQuEnzhQk` is superseded.** The occurrences left in this file are its history and belong here;
-the one left in `STATUS.md` says so explicitly. Unlist it rather than leaving two answers to one
-question — that is the note the next section already makes about the two before it.
+**`p1aQuEnzhQk` was deleted by the founder on 2026-09-21**, along with the two before it. The
+occurrences left in this file are history and belong here; they are written as bare ids rather than
+links, because the URLs now 404 and a reader should not be handed one to click.
+`scripts/healthcheck.sh` checks that every id named here is gone and that the current one is not,
+so "one answer to one question" is measured rather than remembered.
 
 
-**Superseded 2026-09-20: https://youtu.be/p1aQuEnzhQk** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
+**Superseded 2026-09-20, deleted 2026-09-21: `p1aQuEnzhQk`** — `Confide_Stocklana_20260915.mp4`, uploaded 2026-09-15:
 the current render at 1920x1080, the recorded narration, and the subtitle track. It says 1,869 mints
 across two issuers and shows the confidential account the page and the README point at.
 
 Superseded uploads, in order: `ZuhLvH5MFgE` (732 mints, one issuer, an account that no longer
-exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the seizure). Nothing
-links to either; unlist them rather than leaving three answers to one question.
+exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the seizure). Both
+were deleted on 2026-09-21. Nothing links to either.
 
 **Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
 **2:07**; the published cut is **2:22**, because the voice is generated externally and paces
