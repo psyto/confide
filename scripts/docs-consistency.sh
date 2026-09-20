@@ -195,6 +195,14 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+# A post cannot be edited after it goes out, so its figures are generated and this checks the
+# generated file is current. The template is the source; x-post.txt is derived.
+if [ -f docs/cwf-2026/x-post.txt ]; then
+  ./scripts/x-post.sh 2>/dev/null | diff -q - docs/cwf-2026/x-post.txt >/dev/null \
+    && ok "docs/cwf-2026/x-post.txt is what its generator produces" \
+    || bad "x-post.txt has drifted — ./scripts/x-post.sh > docs/cwf-2026/x-post.txt"
+fi
+
 # The short description is a SUBMITTED field, and the one it replaced carried a mint count from
 # before a third issuer existed. Prose checks elsewhere skip it because it is not markdown.
 python3 - <<'PY' && ok "_submission/short.txt matches the mint count and names the wedge" || bad "_submission/short.txt has drifted — it is a submitted field"

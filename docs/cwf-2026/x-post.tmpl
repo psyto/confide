@@ -1,0 +1,44 @@
+Every tokenized stock on Solana ships confidential balances.
+
+All {MINTS} of them.
+
+I counted the accounts actually using one.
+
+Zero.
+
+━━━
+
+{ACCOUNTS} live token accounts across Apple, NVIDIA, SpaceX and Anthropic, and not one is configured for confidential transfers. Not few — zero.
+
+The reason is one field. `autoApproveNewAccounts` is false on {MINTS} of {MINTS}, so a confidential account cannot exist until the issuer signs for it. None has. The feature is shipped, gated, and unused.
+
+And it is not an equities story. USDC and USDT cannot move confidentially at all. PYUSD and USDG can — and land on the identical configuration: gate shut, auditor slot empty, the same key holding confidential authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door.
+
+━━━
+
+I spent a month building a loan against those positions and hit the gate every time: a loan needs somebody to hold the collateral, and that somebody needs an account no issuer will approve.
+
+A trade needs nobody. Both legs go in one transaction, so either both settle or neither does — Solana's atomicity where a clearing house would be.
+
+So it runs. 50,000 shares against $8,750,000, one transaction, delivery against payment. Every account involved still reports a public balance of 0. Nobody watching learns the size or the price it implies.
+
+Why not just use an exchange? You cannot. A pool's reserves are public and a trade moves them by exactly the amount traded, so anything settled against a pool publishes the size — whatever the token can do. It has to be two parties, directly.
+
+━━━
+
+There is a standing issuer on devnet whose gate is shut exactly as all {MINTS} are, and I published the key that opens it. Two minutes:
+
+git clone https://github.com/psyto/confide
+./scripts/testbed-join.sh
+
+{ACCOUNTS} live accounts have never done that.
+
+━━━
+
+Nobody outside my own repository has used any of it. No pilot, no issuer asked, traction is zero and I would rather say so than have you find it.
+
+Everything above came off the chain and one command reproduces each. Kamino's refusal to take a confidential deposit is correct underwriting, not an oversight — I quote their own pinned source and concede it before saying anything about the gap.
+
+If I have read that source wrong, or the count is wrong, I would much rather hear it from you than from a judge.
+
+psyto.github.io/confide

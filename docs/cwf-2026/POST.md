@@ -126,6 +126,35 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 
 ---
 
+## For X — one long post, founder has Premium
+
+**Attach `video/Confide_Stocklana_20260920.mp4` natively.** Not the YouTube link: X carries the
+file itself further than it carries a link off-platform, and 2:22 is inside Premium's limit. The
+YouTube upload stays where it is for the submission forms.
+
+**2,376 characters**, against Premium's 25,000. The reason a single post beats a thread
+here is that the argument has one shape and a thread invites replying to one post of it.
+
+**The first 131 characters are what a reader sees before X folds the rest behind *Show more*,**
+so they have to stand alone. They are the count and nothing else:
+
+```
+Every tokenized stock on Solana ships confidential balances.
+
+All 1,992 of them.
+
+I counted the accounts actually using one.
+
+Zero.
+```
+
+The full text is generated into [`x-post.txt`](x-post.txt) by `./scripts/x-post.sh`, which reads
+the two figures out of `web/mints.json` and `web/usage.json` rather than letting them be typed —
+the short description sat in a submitted field saying 1,869 for days because it was typed once.
+
+**One link, at the end.** `psyto.github.io/confide`, after everything. A link in the opening lines
+costs reach, and the post has to earn the click before it offers one.
+
 ## Why it is written this way
 
 - **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
