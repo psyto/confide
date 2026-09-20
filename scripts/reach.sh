@@ -34,16 +34,34 @@ except FileNotFoundError:
 days = d.get("days", {})
 if not days:
     print("  nothing recorded yet"); raise SystemExit(0)
-print("  %-12s %8s %8s %8s" % ("date", "views", "unique", "clones"))
+print("  %-12s %8s %8s %8s %8s" % ("date", "views", "unique", "clones", "cloners"))
 for k in sorted(days):
     v = days[k]
-    print("  %-12s %8d %8d %8d" % (k, v.get("views", 0), v.get("uniques", 0), v.get("clones", 0)))
+    print("  %-12s %8d %8d %8d %8s" % (k, v.get("views", 0), v.get("uniques", 0),
+          v.get("clones", 0), v.get("clone_uniques", "-")))
 print()
-print("  %-12s %8d %8d %8d" % ("total",
+# Views and clones are events and add up. Uniques are PEOPLE, and GitHub dedupes them only inside
+# one fourteen-day window, so a sum across days counts a returning visitor once per day. It is an
+# upper bound and is printed as one — the deduplicated figure for the last window follows.
+print("  %-12s %8d %8s %8d %8s" % ("total",
       sum(v.get("views", 0) for v in days.values()),
-      sum(v.get("uniques", 0) for v in days.values()),
-      sum(v.get("clones", 0) for v in days.values())))
+      "\u2264%d" % sum(v.get("uniques", 0) for v in days.values()),
+      sum(v.get("clones", 0) for v in days.values()),
+      "\u2264%d" % sum(v.get("clone_uniques", 0) for v in days.values())))
+for w in d.get("windows", [])[-1:]:
+    print("  %-12s %8d %8d %8d %8d   deduplicated by GitHub, 14 days to that read"
+          % ("window " + w["read"][5:], w["views"], w["view_uniques"],
+             w["clones"], w["clone_uniques"]))
 print("  first recorded %s, last %s" % (min(days), max(days)))
+# A public repository is cloned by machines that never read it. Saying so here, computed, keeps the
+# largest number on the page from being the one quoted — it is the least meaningful one present.
+tv = sum(v.get("views", 0) for v in days.values())
+tc = sum(v.get("clones", 0) for v in days.values())
+if tc > 10 * max(tv, 1):
+    print("\n  clones exceed views %dx. A public repo is mirrored by machines that never read it;" % (tc // max(tv, 1)))
+    w = (d.get("windows") or [{}])[-1]
+    print("  the number that means a person arrived is `unique`, which is %s."
+          % w.get("view_uniques", "not recorded"))
 ref = d.get("referrers", {})
 if ref:
     print("\n  where they came from, last seen")
@@ -82,8 +100,20 @@ def day(ts): return ts[:10]
 # fourteen-day window loses history instead of silently rewriting it to zero.
 for e in views.get("views", []):
     days.setdefault(day(e["timestamp"]), {}).update(views=e["count"], uniques=e["uniques"])
+# `uniques` in a day object is VIEW uniques, which is GitHub's own naming under /traffic/views.
+# Clone uniques are recorded under their own key rather than sharing it, because the two sit in one
+# object and a reader pairing `clones` with `uniques` would be reading two different populations.
 for e in clones.get("clones", []):
-    days.setdefault(day(e["timestamp"]), {})["clones"] = e["count"]
+    days.setdefault(day(e["timestamp"]), {}).update(
+        clones=e["count"], clone_uniques=e["uniques"])
+# GitHub's deduplicated totals for the window it just served. The merged day table cannot
+# reproduce these — dedupe needs the raw visitors, which the API never hands over — so the only way
+# to have a true unique count later is to keep the one GitHub computed at read time.
+w = {"read": datetime.date.today().isoformat(),
+     "views": views.get("count", 0), "view_uniques": views.get("uniques", 0),
+     "clones": clones.get("count", 0), "clone_uniques": clones.get("uniques", 0)}
+ws = [x for x in d.get("windows", []) if x["read"] != w["read"]] + [w]
+d["windows"] = sorted(ws, key=lambda x: x["read"])
 d["referrers"] = {r["referrer"]: {"count": r["count"], "uniques": r["uniques"]} for r in refs}
 d["last_read"] = datetime.date.today().isoformat()
 json.dump(d, open(out, "w"), indent=1, sort_keys=True)

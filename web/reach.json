@@ -1,0 +1,105 @@
+{
+ "days": {
+  "2026-09-06": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-07": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-08": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-09": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-10": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-11": {
+   "clone_uniques": 0,
+   "clones": 0,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-12": {
+   "clone_uniques": 109,
+   "clones": 314,
+   "uniques": 1,
+   "views": 11
+  },
+  "2026-09-13": {
+   "clone_uniques": 105,
+   "clones": 295,
+   "uniques": 4,
+   "views": 10
+  },
+  "2026-09-14": {
+   "clone_uniques": 30,
+   "clones": 58,
+   "uniques": 1,
+   "views": 1
+  },
+  "2026-09-15": {
+   "clone_uniques": 168,
+   "clones": 577,
+   "uniques": 3,
+   "views": 13
+  },
+  "2026-09-16": {
+   "clone_uniques": 145,
+   "clones": 430,
+   "uniques": 1,
+   "views": 1
+  },
+  "2026-09-17": {
+   "clone_uniques": 14,
+   "clones": 26,
+   "uniques": 0,
+   "views": 0
+  },
+  "2026-09-18": {
+   "clone_uniques": 12,
+   "clones": 23,
+   "uniques": 1,
+   "views": 1
+  },
+  "2026-09-19": {
+   "clone_uniques": 10,
+   "clones": 14,
+   "uniques": 0,
+   "views": 0
+  }
+ },
+ "last_read": "2026-09-20",
+ "referrers": {
+  "github.com": {
+   "count": 34,
+   "uniques": 5
+  }
+ },
+ "what_this_is": "GitHub traffic on the repository, snapshotted because GitHub keeps only fourteen days. Distribution learning, not traction.",
+ "windows": [
+  {
+   "clone_uniques": 402,
+   "clones": 1737,
+   "read": "2026-09-20",
+   "view_uniques": 7,
+   "views": 37
+  }
+ ]
+}

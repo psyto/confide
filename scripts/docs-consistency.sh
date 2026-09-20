@@ -320,6 +320,33 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+echo "  THE BASELINE — REACH.md against the traffic snapshot it describes"
+python3 - <<'PY2' && ok "REACH.md's two unique-visitor figures match web/reach.json" || bad "REACH.md quotes a visitor figure web/reach.json does not hold — ./scripts/reach.sh, then fix the prose"
+import json, pathlib, re, sys
+try:
+    d = json.load(open("web/reach.json"))
+except FileNotFoundError:
+    print("      web/reach.json missing — run ./scripts/reach.sh"); sys.exit(1)
+txt = pathlib.Path("docs/cwf-2026/REACH.md").read_text(encoding="utf-8")
+m = re.search(r"it gives (\d+) where GitHub's own figure for the same fourteen days is (\d+)", txt)
+if not m:
+    print("      REACH.md no longer states the pair this check reads"); sys.exit(1)
+summed = sum(v.get("uniques", 0) for v in d.get("days", {}).values())
+windows = d.get("windows") or []
+if not windows:
+    print("      web/reach.json has no `windows` entry to compare against"); sys.exit(1)
+dedup = windows[0]["view_uniques"]
+bad = []
+if int(m.group(1)) != summed:
+    bad.append("REACH.md says summed uniques %s; reach.json sums to %d" % (m.group(1), summed))
+if int(m.group(2)) != dedup:
+    bad.append("REACH.md says deduplicated %s; the baseline window holds %d" % (m.group(2), dedup))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PY2
+
+echo
 echo "  THE LINKS — one video, one program, everywhere"
 ids=$(grep -rhoE "youtu\.be/[A-Za-z0-9_-]{11}|embed/[A-Za-z0-9_-]{11}|VIDEO:-[A-Za-z0-9_-]{11}" \
       README.md web/index.html _submission/full.md docs/DURABILITY.md scripts/healthcheck.sh 2>/dev/null \

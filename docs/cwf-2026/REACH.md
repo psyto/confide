@@ -22,6 +22,24 @@ file with dates in it, which anyone can diff — rather than a number remembered
 accounts is founder-only, so the script refuses with that message instead of recording nothing
 quietly. Run it **before the post goes out** to establish a baseline, and weekly after.
 
+**The baseline was taken 2026-09-20, before the post.** It is `web/reach.json`, committed, and no
+figure from it is retyped here — read it with `./scripts/reach.sh --show`.
+
+### Two numbers in it that do not mean what they look like
+
+Both were found while taking the baseline, and both would have been quoted wrong.
+
+- **Clones are not readers.** A public repository is mirrored by machines. The baseline window
+  holds more than forty clones for every page view, on days with one human visitor. The script now
+  says so in its own output, computed from the ratio rather than asserted, so the largest number
+  on the screen is not the one that gets repeated.
+- **Unique visitors do not add up.** GitHub deduplicates uniques only *within* one fourteen-day
+  window, so summing the daily column counts a returning visitor once per day — for the baseline
+  it gives 11 where GitHub's own figure for the same fourteen days is 7. The merged table cannot
+  recover the true count, because dedupe needs the raw visitors and the API never hands them over.
+  So each read now also stores the deduplicated totals GitHub computed at that moment, under
+  `windows`, and the summed column is printed with a `≤`.
+
 ## What is not instrumented, and why it is a decision rather than an oversight
 
 **The decision page.** `psyto.github.io/confide/kamino.html` is static hosting. There is no server
