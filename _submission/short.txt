@@ -1,1 +1,1 @@
-1,869 tokenized stocks on Solana ship with privacy nobody can use — Confide makes it usable: hold your position without publishing it, and still prove what you must.
+A stock-to-stablecoin swap that settles in one Solana transaction with neither side publishing the amount — delivery versus payment, with nobody in the middle.

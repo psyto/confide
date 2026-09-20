@@ -1,11 +1,27 @@
-# Chosen (short.txt) — carries the finding and the benefit in one sentence
-Every tokenized stock on Solana ships with privacy nobody can use — Confide makes it usable: hold your position without publishing it, and still prove what you must.
+# Chosen (short.txt) — what it is, then the concept it replaces. 159 characters.
+A stock-to-stablecoin swap that settles in one Solana transaction with neither side publishing the amount — delivery versus payment, with nobody in the middle.
 
-# A — product first, no finding. Cleanest rhythm, least memorable claim.
-Hold tokenized stocks on Solana without publishing your position — and still prove what you must, to whom you choose, when you choose.
+# What this replaces, and why it was wrong twice over:
+#
+#   "1,869 tokenized stocks on Solana ship with privacy nobody can use — Confide makes it usable:
+#    hold your position without publishing it, and still prove what you must."
+#
+#   * 1,869 is a count from before a third issuer existed. The number is 1,992, and this one was
+#     sitting in a SUBMITTED field.
+#   * it describes the disclosure half — the product GTM.md decided not to pitch — and says
+#     nothing about a trade, a stablecoin, or settlement.
+#
+# No character limit for this field is recorded anywhere, so the replacement is kept near the
+# length of the one that already fit. If the form states a limit, put it in STATUS with the quote.
 
-# B — leads on the lender, which is the most legible use but overstates a gap (no seizure).
-Prove your tokenized stock position covers a loan without showing anyone what you hold.
+# A — leads on the measurement. The strongest single fact, but a judge scanning a list of 131
+# projects learns what is broken elsewhere rather than what this is.
+Of 329,536 live tokenized-stock accounts on Solana, zero are confidential. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
 
-# C — blunt about the finding, weakest as a product line.
-All 1,869 tokenized stocks on Solana have confidential transfers switched on and the auditor key empty. Confide is what fills it.
+# B — shortest. Loses "delivery versus payment", which is the frame that makes a finance reader
+# understand immediately what institution is being removed.
+Stock-to-stablecoin swaps on Solana where neither side publishes the amount. One transaction, no clearing house, nobody in the middle.
+
+# C — the organiser's own words, verbatim from the brief's "what to build" list. Closest fit to
+# the call, but reads as an echo rather than a claim.
+Confidential stock-to-stablecoin swaps: two parties settle tokenized stock against a stablecoin in one Solana transaction, and neither publishes what moved.

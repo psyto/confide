@@ -195,6 +195,22 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+# The short description is a SUBMITTED field, and the one it replaced carried a mint count from
+# before a third issuer existed. Prose checks elsewhere skip it because it is not markdown.
+python3 - <<'PY' && ok "_submission/short.txt matches the mint count and names the wedge" || bad "_submission/short.txt has drifted — it is a submitted field"
+import json, re, sys
+t = open("_submission/short.txt", encoding="utf-8").read()
+want = str(len(json.load(open("web/mints.json"))))
+bad = []
+for m in re.finditer(r"\b([1-9][\d,]{3,})\b", t):
+    if m.group(1).replace(",", "") not in (want, str(json.load(open("web/usage.json"))["total_accounts"])):
+        bad.append("%s is neither the mint count nor the account count" % m.group(1))
+if not re.search(r"stock-to-stablecoin|stablecoin swap", t, re.I):
+    bad.append("it does not name the wedge")
+if bad:
+    print("      " + "; ".join(bad)); sys.exit(1)
+PY
+
 echo "  THE SLOT SCAN — the per-issuer table against web/slots.json"
 python3 - <<'PY' && ok "every issuer's mint count matches web/slots.json" || bad "an issuer's mint count has drifted — RPC=<endpoint> ./scripts/slot-scan.sh, then fix the prose"
 import json, re, sys, pathlib
