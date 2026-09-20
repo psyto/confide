@@ -20,7 +20,7 @@ arrives afterwards cannot be told apart from what was already there.
 `./scripts/capacity.sh` and `./scripts/slot-scan.sh` before posting and update from their output —
 a post quoting a figure the page contradicts is worse than no post. Current readings:
 **330,266 accounts / 0 confidential**, and
-**$22.0 m / $83.0 m**.
+**$23.2 m / $84.0 m**.
 
 ---
 
@@ -54,7 +54,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > them made.**
 >
 > This matters because people already lend against these tokens. Kamino runs 19 tokenized-equity
-> reserves: **$22.0 m deposited, $83.0 m of borrowing their own caps authorise, and $0 of it
+> reserves: **$23.2 m deposited, $84.0 m of borrowing their own caps authorise, and $0 of it
 > reachable if you would rather your position were not public.**
 >
 > **Kamino's refusal is correct underwriting, not an oversight.** A lender who cannot read a balance
@@ -164,8 +164,9 @@ costs reach, and the post has to earn the click before it offers one.
   anyone looks at the evidence.
 - **The failure is told as a failure.** A month of building the wrong shape, said plainly, is what
   earns the sentence after it.
-- **Every number carries the command that produces it.** The chain moved $21.1 m → $22.0 m in three
-  days while the previous draft was being written.
+- **Every number carries the command that produces it.** The chain moved $21.1 m → $22.0 m while
+  the previous draft was being written, and $22.0 m → $23.2 m in the single day between the
+  account rescan and this one. A figure typed into a post is wrong within a week.
 - **No claim of traction.** Nothing here says anyone uses this, because nobody does.
 
 ### The ask, which the previous draft did not have

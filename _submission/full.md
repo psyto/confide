@@ -60,7 +60,7 @@ party held anything. Then **securities lending**, where lending your book is how
 
 ## The collateral half also runs
 
-Kamino runs 19 live markets in these tokens: **$22.0m deposited, $83.0m authorised, $0 reachable
+Kamino runs 19 live markets in these tokens: **$23.2m deposited, $84.0m authorised, $0 reachable
 confidentially** — its program refuses a deposit from an account holding value confidentially
 (`constraints.rs:187`). Confide proves a floor over an escrow's own ciphertext and settles a
 default without the borrower: devnet loans `26QJWCRw…` `seized` and `9yfKfFD5…` `released`. But a

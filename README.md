@@ -244,7 +244,7 @@ lender needs now run on devnet — the check, and the seizure.
 > against or liquidated. **1,992 of 1,992** tokenized-equity mints clear every other condition.
 >
 > And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %. At the
-> reserves' own prices that is **$22.0 m of tokenized stock deposited** and **$83.0 m of borrowing
+> reserves' own prices that is **$23.2 m of tokenized stock deposited** and **$84.0 m of borrowing
 > their caps already authorise** — of which **$0 is reachable while a position stays confidential**.
 > SpaceX has a reserve too: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in all of
 > them is public**, and that is the only way in.

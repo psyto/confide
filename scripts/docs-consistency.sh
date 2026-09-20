@@ -354,12 +354,24 @@ cap = json.load(open("web/capacity.json"))
 want = {"%.1f" % (cap["held_usd"] / 1e6), "%.1f" % (cap["authorised_capacity_usd"] / 1e6)}
 # Files that speak in the present tense about the market. CHECKIN-1.md and the reviews describe a
 # dated recording and a dated review, so they are allowed to hold the number that was true then.
+# POST.md, STORY.md and TESTBED.md were outside this list while all three quoted the pair. The
+# account scan had the same hole on the same day, found the same way: grep the repository for the
+# figure, then compare that against what the check reads. A file list is a claim about coverage
+# and nothing was checking it.
 files = ["README.md", "docs/27-DAYS.md", "docs/cwf-2026/THE-PINCER.md",
-         "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "docs/cwf-2026/GTM.md", "_submission/full.md"]
+         "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "docs/cwf-2026/GTM.md", "_submission/full.md",
+         "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md", "docs/TESTBED.md"]
 files += [str(p) for p in pathlib.Path("docs/packets").glob("*.md")]
 bad = []
 for f in files:
-    for n in re.findall(r"\$(\d{2}\.\d)\s?m\b", pathlib.Path(f).read_text(encoding="utf-8")):
+    for line in pathlib.Path(f).read_text(encoding="utf-8").splitlines():
+      # A line recording a MOVEMENT between two readings is history, not a current claim, and its
+      # earlier figure is supposed to disagree. A blanket substitution rewrote one of these into a
+      # sentence that was simply false — "$21.1 m → $23.2 m in three days" — so the exemption is
+      # narrow: the arrow has to be there, which a current claim never has.
+      if "\u2192" in line:
+          continue
+      for n in re.findall(r"\$(\d{2}\.\d)\s?m\b", line):
         if n not in want:
             bad.append("%s says $%sm; capacity.json says %s" % (f, n, " / ".join(sorted(want))))
 for b in bad[:8]:
@@ -393,6 +405,17 @@ for b in bad:
     print("      " + b)
 sys.exit(1 if bad else 0)
 PY2
+
+echo
+echo "  THE PRIVATE ENDPOINT — it may exist as an environment variable and nowhere else"
+# web/slots.json recorded the founder's Alchemy URL on this script's first run, key and all, into a
+# file that is committed AND published to the site. It was caught by reading the file. Nothing was
+# stopping the next one, and the endpoint is pasted into a terminal every time the chain is
+# rescanned — so the next one was a matter of time rather than of care.
+leak=$(grep -rIl -E 'g\.alchemy\.com|helius-rpc\.com/\?api-key|quiknode\.pro/[0-9a-f]{8}' . 2>/dev/null \
+       | grep -v '^\./\.git/' | grep -v '^\./scripts/docs-consistency\.sh$' || true)
+[ -z "$leak" ] && ok "no keyed RPC endpoint appears in any file" \
+               || bad "a keyed RPC endpoint is in the tree: $(printf '%s ' $leak)"
 
 echo
 echo "  THE LINKS — one video, one program, everywhere"

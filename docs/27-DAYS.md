@@ -106,7 +106,7 @@ edit, and it is the substance of one of the weekly check-ins.
 > `./scripts/seizure-e2e.sh` has demonstrated since it was written and what nobody read it as. The
 > first customer is a counterparty, not a protocol; the curator is the second.
 >
-> The capacity number keeps its job and loses a different one: **$22.0 m deposited and $83.0 m
+> The capacity number keeps its job and loses a different one: **$23.2 m deposited and $84.0 m
 > authorised is the size of the problem, not a pipeline.** See [`cwf-2026/GTM.md`](cwf-2026/GTM.md).
 
 Not "a lending protocol". A **vault curator or market creator with capital to allocate** —
@@ -192,7 +192,7 @@ are what make the page checkable rather than a claim about live data.
 **4. The market evidence map** — **done, 2026-09-16**. The bet said *make the number computable by
 anyone, from live chain data, without asking anyone's permission.* `./scripts/capacity.sh`:
 
-> **$22.0 m** of tokenized stock deposited across Kamino's reserves, and **$83.0 m** of borrowing
+> **$23.2 m** of tokenized stock deposited across Kamino's reserves, and **$84.0 m** of borrowing
 > their caps and LTVs already authorise. **$0 of it reachable while a position stays confidential.**
 
 Computed from Kamino's own caps, LTVs and prices. Nobody had to agree to anything. And sharper than
