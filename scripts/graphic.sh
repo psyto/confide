@@ -18,5 +18,5 @@ node video/shot.mjs
 "${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -loglevel error -y -i /tmp/graphic.png -q:v 3 "$OUT"
 "${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -loglevel error -y -i "$OUT" -vf scale=360:-1 /tmp/graphic-card.png
 bytes=$(wc -c < "$OUT" | tr -d ' ')
-printf '  wrote %s \u2014 %d KB, and /tmp/graphic-card.png at the size a card shows it\n' "$OUT" "$((bytes / 1024))"
+printf '  wrote %s - %d KB, and /tmp/graphic-card.png at the size a card shows it\n' "$OUT" "$((bytes / 1024))"
 [ "$bytes" -le 512000 ] || { echo "  over the 0.5 MB the form stores" >&2; exit 1; }
