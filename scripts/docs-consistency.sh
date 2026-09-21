@@ -371,6 +371,12 @@ for f in files:
       # narrow: the arrow has to be there, which a current claim never has.
       if "\u2192" in line:
           continue
+      # A figure written without its decimal -- "$22 m" -- was invisible to this check and sat
+      # stale in POST.md for days. Both forms are read now; the decimal-less one is reported
+      # whatever its value, because there is no reading of capacity.json it can be right about.
+      for n in re.findall(r"\$(\d{2})\s?m\b", line):
+          bad.append("%s says $%s m without a decimal; write it as %s so it can be checked"
+                     % (f, n, " or ".join(sorted(want))))
       for n in re.findall(r"\$(\d{2}\.\d)\s?m\b", line):
         if n not in want:
             bad.append("%s says $%sm; capacity.json says %s" % (f, n, " / ".join(sorted(want))))

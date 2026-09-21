@@ -8,37 +8,42 @@ Zero.
 
 ━━━
 
-{ACCOUNTS} live token accounts across Apple, NVIDIA, SpaceX and Anthropic, and not one is configured for confidential transfers. Not few — zero.
+So I built the thing they are for.
 
-The reason is one field. `autoApproveNewAccounts` is false on {MINTS} of {MINTS}, so a confidential account cannot exist until the issuer signs for it. None has. The feature is shipped, gated, and unused.
+50,000 tokenized shares against $8,750,000, in one Solana transaction. Delivery against payment. Either both legs settle or neither does.
 
-And it is not an equities story. USDC and USDT cannot move confidentially at all. PYUSD and USDG can — and land on the identical configuration: gate shut, auditor slot empty, the same key holding confidential authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door.
-
-━━━
-
-I spent a month building a loan against those positions and hit the gate every time: a loan needs somebody to hold the collateral, and that somebody needs an account no issuer will approve.
-
-A trade needs nobody. Both legs go in one transaction, so either both settle or neither does — Solana's atomicity where a clearing house would be.
-
-So it runs. 50,000 shares against $8,750,000, one transaction, delivery against payment. Every account involved still reports a public balance of 0. Nobody watching learns the size or the price it implies.
-
-Why not just use an exchange? You cannot. A pool's reserves are public and a trade moves them by exactly the amount traded, so anything settled against a pool publishes the size — whatever the token can do. It has to be two parties, directly.
+Every account involved still reports a public balance of 0. Nobody watching learns the size, or the price it implies, or that either party held anything.
 
 ━━━
 
-There is a standing issuer on devnet whose gate is shut exactly as all {MINTS} are, and I published the key that opens it. Two minutes:
+A loan needs somebody in the middle. A trade needs nobody — the transaction is the clearing house.
 
-git clone https://github.com/psyto/confide
-./scripts/testbed-join.sh
+━━━
+
+That is not the design I set out to build. I spent a month on a loan against these positions and hit the same wall every time: collateral needs a third party to hold it, and a third party needs an account.
+
+No issuer will approve one. autoApproveNewAccounts is false on {MINTS} of {MINTS} — a confidential account cannot exist until the issuer signs for it, and across {ACCOUNTS} live accounts none has. Shipped, gated, unused.
+
+Not an equities story either. PYUSD and USDG land on the identical configuration: gate shut, auditor slot empty. PayPal's dollar ships the same unusable privacy feature behind the same door.
+
+Four issuers, two asset classes, one dead end. Nobody chose this — it is what the substrate does.
+
+And no, you cannot just use a pool. Its reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size, whatever the token can do.
+
+━━━
+
+Kamino refuses a confidential deposit, and they are right to. A lender who cannot read a balance cannot price it. I quote their own source and concede it before saying anything about the gap.
+
+Nobody outside my repository has used any of this. No pilot, no issuer asked. Traction is zero and I would rather say so than have you find it.
+
+━━━
+
+There is an issuer standing on devnet, gated exactly as all {MINTS} are, and I published the key that opens it. Two minutes:
+
+git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh
 
 {ACCOUNTS} live accounts have never done that.
 
-━━━
-
-Nobody outside my own repository has used any of it. No pilot, no issuer asked, traction is zero and I would rather say so than have you find it.
-
-Everything above came off the chain and one command reproduces each. Kamino's refusal to take a confidential deposit is correct underwriting, not an oversight — I quote their own pinned source and concede it before saying anything about the gap.
-
-If I have read that source wrong, or the count is wrong, I would much rather hear it from you than from a judge.
-
 psyto.github.io/confide
+
+If I have read Kamino's source wrong, or the count is wrong, I would much rather hear it from you than from a judge.

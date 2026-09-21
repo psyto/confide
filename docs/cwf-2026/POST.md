@@ -82,7 +82,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > the size a clearing house would have been told anyway.
 >
 > **What this does not do:** it does not make a real xStock pledgeable, it does not open Kamino's
-> $83 m, and nobody outside my own repository has used any of it. The `$0` stands.
+> $84.0 m, and nobody outside my own repository has used any of it. The `$0` stands.
 >
 > **One thing you can do, and it is the point of this post.** I stood up an issuer on devnet whose
 > gate is shut exactly as all 1,992 are — `autoApproveNewAccounts: false`, auditor slot empty — and
@@ -132,7 +132,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 file itself further than it carries a link off-platform, and 2:22 is inside Premium's limit. The
 YouTube upload stays where it is for the submission forms.
 
-**2,376 characters**, against Premium's 25,000. The reason a single post beats a thread
+**2,036 characters**, against Premium's 25,000 (draft A was 2,377). The reason a single post beats a thread
 here is that the argument has one shape and a thread invites replying to one post of it.
 
 **The first 131 characters are what a reader sees before X folds the rest behind *Show more*,**
@@ -177,8 +177,13 @@ below is for a post with no media. **Attaching the video may shorten what shows 
 more*.** If it does, the first line carries it alone — "Every tokenized stock on Solana ships
 confidential balances." — but look at the preview with the video attached before sending.
 
-**One link, at the end.** `psyto.github.io/confide`, after everything. A link in the opening lines
-costs reach, and the post has to earn the click before it offers one.
+**One link, in the last block.** `psyto.github.io/confide`. A link in the opening lines costs
+reach, and the post has to earn the click before it offers one.
+
+**Amended 2026-09-21:** it is no longer the final line. B closes on *"I would much rather hear it
+from you than from a judge"*, because a bare URL is a weak last beat and an invitation to correct
+draws replies, which the ranking counts. The rule was "not in the opening lines"; ending on the
+link was never the part doing the work.
 
 ### Naming the hackathons — a self-reply, not the post
 
@@ -219,22 +224,24 @@ devnet issuer is standing whether anyone is judging or not.
 it is true of one and false of the other. Not a request to look, vote or share. It states where the
 project is entered and then gets out of the way.
 
-### Draft B — written 2026-09-21, not in use
+### Draft B — written 2026-09-21, **adopted the same day**
 
-The founder asked whether the post reads as something that would travel. It does not, and it was
-not written to: the design below buys credibility and spends reach. Draft B is the version that
-spends less of the reach, and it is kept so the choice is a choice.
+The founder asked whether the post reads as something that would travel. The 09-20 draft did not,
+and was not written to: the design below buys credibility and spends reach. B spends less of the
+reach and **the founder chose it on 2026-09-21 — "B の方がわかりやすい"**. B is now the post;
+the 09-20 version is kept as draft A.
 
-Render it with `./scripts/x-post.sh b` — through the generator, never as a second finished file,
-so a rejected draft cannot sit here quoting a count from the week it was written. The zero-guard
-covers it too: both drafts refuse to render if a confidential account ever exists.
+Render either through the generator, never as a second finished file, so a superseded draft cannot
+sit here quoting a count from the week it was written: `./scripts/x-post.sh` for the post,
+`./scripts/x-post.sh a` for the one it replaced. The zero-guard covers both — neither renders if a
+confidential account ever exists.
 
 **What B changes.**
 
 - **Backticks and the indented code block are gone.** X renders no markdown, so `autoApproveNewAccounts`
   and the two-line command were going to appear with their punctuation showing. That part is a
   display defect rather than a preference, and it should be fixed in whichever draft ships.
-- **The built thing moves to the second block**, from line 23 of 44. A reads diagnosis, diagnosis,
+- **The built thing moves to the second block**, from line 23 of 44. A read diagnosis, diagnosis,
   diagnosis, result.
 - **One line is isolated so it can be quoted alone:** *"A loan needs somebody in the middle. A trade
   needs nobody — the transaction is the clearing house."* A has no sentence that survives being cut
@@ -246,13 +253,18 @@ covers it too: both drafts refuse to render if a confidential account ever exist
 promoted to their own block. They are where the credibility is; a shorter post that drops them is
 a different post.
 
-**What B costs, said plainly.**
+**One cost was listed and then recovered.** The first B shrank the stablecoin comparison to a
+single sentence and lost *"four issuers, two asset classes, one dead end"*. The founder pushed back
+on losing it, and was right: what was long in A was the **enumeration** of matching fields, not the
+conclusion. Dropping the enumeration and keeping the conclusion puts the fact back in less space
+than A used — and standing alone as its own paragraph it became **a second quotable line**, which
+is the thing B was written to get. 2,036 → 2,218 characters, still under A's 2,377.
+
+**What B still costs, said plainly.**
 
 - **Five dividers where A has four** — which contradicts the criticism that prompted it, that this
   reads as an essay rather than a post. Isolating the quotable line was judged worth it. That is a
   judgement, not a finding.
-- **The stablecoin comparison shrinks to one sentence.** "Four issuers, two asset classes, one dead
-  end" is a strong fact and B loses it.
 - **It still will not travel.** The baseline is 7 unique visitors. That is a cold-start problem, not
   a copy problem, and B is easier to read rather than differently distributed.
 
@@ -261,7 +273,7 @@ a different post.
 - **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
   until somebody counts; the count is the contribution, and it is cheap for a reader to repeat.
 - **Kamino is conceded as correct before anything is said about the gap.** A post that reads as an
-  attack on a protocol with $22 m in it gets answered as an attack, and the framing freezes before
+  attack on a protocol with $23.2 m in it gets answered as an attack, and the framing freezes before
   anyone looks at the evidence.
 - **The failure is told as a failure.** A month of building the wrong shape, said plainly, is what
   earns the sentence after it.

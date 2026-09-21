@@ -2,7 +2,7 @@
 # The post, with its two figures read rather than typed.
 #
 #   ./scripts/x-post.sh > docs/cwf-2026/x-post.txt   # the post in use
-#   ./scripts/x-post.sh b                             # the alternative draft, to read and compare
+#   ./scripts/x-post.sh a                             # the superseded draft, to read and compare
 #
 # A draft is rendered through here rather than kept as a second finished file, so a rejected
 # alternative cannot sit in the repository quoting a count from the week it was written -- which is
@@ -15,8 +15,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 case "${1:-}" in
   "")  TMPL=docs/cwf-2026/x-post.tmpl ;;
-  b)   TMPL=docs/cwf-2026/x-post-b.tmpl ;;
-  *)   echo "  unknown draft: $1 (have: b)" >&2; exit 2 ;;
+  a)   TMPL=docs/cwf-2026/x-post-a.tmpl ;;
+  *)   echo "  unknown draft: $1 (have: a)" >&2; exit 2 ;;
 esac
 TMPL="$TMPL" python3 - <<'PY'
 import json
