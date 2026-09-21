@@ -57,38 +57,27 @@ Solana only. No bridge, no second chain.
 Token-2022 confidential transfers hold the position; the trade is two of its instructions in one transaction, with Solana's atomicity where a clearing house would be. The proofs are verified by Solana's own ZK ElGamal Proof Program into context accounts and cited by address, so nobody trusts our arithmetic. One proof exceeds the 1232-byte transaction limit and is staged through spl-record. Mint findings read from mainnet-beta; trades run on devnet.
 ```
 
-## What technologies are you using or integrating with? · no limit shown
+## What technologies are you using or integrating with? · ≤500
 
 ```
-Language and runtime
-- Rust
-- Solana native programs, no Anchor
-
-On chain
-- Token-2022 confidential transfers - spl-token-2022-interface, spl-token-confidential-transfer-proof-extraction
-- Solana's ZK ElGamal Proof Program - solana-zk-sdk, solana-zk-elgamal-proof-interface. Ciphertext-commitment equality, grouped-ciphertext validity and batched range proofs, verified into context accounts and cited by address
-- spl-record - stages the one proof that will not fit in a 1232-byte transaction
-- Address lookup tables, ComputeBudget
-- Confide's seizure program - our own native Solana program, deployed to devnet
-
-Integrated read-only, nothing asked of anyone
-- Kamino Lend - decoded from its published source at a pinned commit. No deployment, no contact
-- Solana mainnet-beta - the mint and account findings are read from it by scripts in this repository
-
-Reused from my own earlier work, disclosed
-- aperture-core - unmodified git dependency
-- aperture-receipts - a devnet program Confide calls rather than compiles
-
-Developer tools
-- Solana CLI, spl-token, cargo
-- Python - the chain scans and the consistency checks
-- Puppeteer and ffmpeg - the video is rendered from the live page, not from a mock of it
-
-AI tools
-- Anthropic's Claude - drafting and implementation
-- OpenAI's Codex - adversarial review
-- Every review request and its result are committed together in docs/reviews/, and findings from both were rejected after being checked against the real files
+Rust; Solana native programs, no Anchor.
+- Token-2022 confidential transfers
+- Solana's ZK ElGamal Proof Program - equality, validity and range proofs into context accounts
+- spl-record - stages the oversized proof
+- Confide's seizure program, native, on devnet
+- Kamino Lend - read-only at a pinned commit, no contact
+- aperture-core, aperture-receipts - my earlier work, disclosed
+- Solana CLI, cargo, Python, Puppeteer, ffmpeg
+- AI: Claude to build, Codex to review; both logged in docs/reviews/
 ```
+
+**Every limit here was found by hitting it, not read off the form.** The technologies field shows
+no limit and took exactly 500 characters before cutting mid-word, so the first list — 1,467
+characters — went in as a third of itself. **Any field whose limit this file does not state has not
+been tested yet.** When one refuses text, measure what it accepted and put the number in the
+heading; `./scripts/cwf-form.sh` enforces whatever the heading says.
+
+**The limit is 500 and the form does not say so.** The founder hit it: the first version was 1,467 characters and the field accepted exactly 500 before cutting mid-word. Measured from what it took, not guessed.
 
 **The form asks for AI tools by name.** Answering straight costs nothing and the evidence is
 already committed: every review payload sits in `docs/reviews/payloads/` beside its result.
