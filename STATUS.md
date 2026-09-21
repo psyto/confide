@@ -228,10 +228,12 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
    両リンクを毎回見る。`_submission/pasted.json` が貼った時点の本文の sha256 を保持し、
    以後ファイルが動いたら `docs-consistency.sh` が落ちる。
 
+   **提出済み。** 受領 **2026-09-20 19:17 PDT**、締切（09-21 08:00 PDT）の **12時間43分前**。
+   *"Your team, judges, and Colosseum can view this video."* 提出者 psyto。
+
    | 残り | |
    |---|---|
-   | **フォームに動画リンクを提出** | **締切 2026-09-21 08:00 PDT = 09-22 00:00 JST。** *"Submitted links cannot be changed or deleted"*、*"One video per team each week"*。*"I checked that judges can watch this video without requesting access"* のチェックも要る |
-   | **日付の出典** | Colosseum のページで check-in の日程を読むこと。**規約にも判定基準にも check-in の条項は無い**（[`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md)）ので、日程はページが唯一の出典 |
+   | **check-in 2〜4 の日程の出典** | 旧版が書いていた 09-25 / 10-02 / 10-09 は**出典なし**。**規約にも判定基準にも check-in の条項は無い**（[`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md)）ので、Colosseum のダッシュボードが唯一の出典。**1週間ずれた Stocklana 締切と同じ形** |
 
 0c. **CWF フォーム — 全欄の貼付文を用意した。残りは founder の入力（2026-09-21）。**
 
