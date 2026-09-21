@@ -152,6 +152,31 @@ The full text is generated into [`x-post.txt`](x-post.txt) by `./scripts/x-post.
 the two figures out of `web/mints.json` and `web/usage.json` rather than letting them be typed —
 the short description sat in a submitted field saying 1,869 for days because it was typed once.
 
+**A normal post, not an X Article.** Asked 2026-09-21; checked rather than assumed, because X's
+behaviour changed in Q1 2026:
+
+- **An Article is treated like an external link.** The Article itself gets no wide organic
+  distribution — a preview post does the distribution work, so publishing as one means writing two
+  pieces of content and still relying on a post. This post already puts its single link last
+  *because a link costs reach*; an Article applies that cost to the whole thing.
+- **A long single post beats a thread**, which is the choice already made here for a different
+  reason. Each post in a thread is scored on its own and a weak first one buries the rest; a
+  long-form post is scored as one unit with **dwell time aggregated**, so length that is actually
+  read is an asset rather than a penalty. 2,377 characters is not too long for this surface.
+- Premium carries a scoring bonus on top, and the gap widened in Q1 2026.
+
+Sources: [Sprout Social](https://sproutsocial.com/insights/twitter-algorithm/),
+[Socialync on Articles](https://www.socialync.io/blog/x-twitter-articles-strategy-2026),
+[SMMNut on Premium](https://smmnut.com/blog/does-x-premium-give-real-algorithm-advantages-2026/).
+Second-hand analyses of a ranking system nobody outside X can run, so they are cited rather than
+treated as fact — but three of them agree on the Article/link point, which is the one that decides
+this.
+
+**One thing to check in the compose box, which no source can answer.** The 131-character figure
+below is for a post with no media. **Attaching the video may shorten what shows before *Show
+more*.** If it does, the first line carries it alone — "Every tokenized stock on Solana ships
+confidential balances." — but look at the preview with the video attached before sending.
+
 **One link, at the end.** `psyto.github.io/confide`, after everything. A link in the opening lines
 costs reach, and the post has to earn the click before it offers one.
 
