@@ -219,6 +219,43 @@ devnet issuer is standing whether anyone is judging or not.
 it is true of one and false of the other. Not a request to look, vote or share. It states where the
 project is entered and then gets out of the way.
 
+### Draft B — written 2026-09-21, not in use
+
+The founder asked whether the post reads as something that would travel. It does not, and it was
+not written to: the design below buys credibility and spends reach. Draft B is the version that
+spends less of the reach, and it is kept so the choice is a choice.
+
+Render it with `./scripts/x-post.sh b` — through the generator, never as a second finished file,
+so a rejected draft cannot sit here quoting a count from the week it was written. The zero-guard
+covers it too: both drafts refuse to render if a confidential account ever exists.
+
+**What B changes.**
+
+- **Backticks and the indented code block are gone.** X renders no markdown, so `autoApproveNewAccounts`
+  and the two-line command were going to appear with their punctuation showing. That part is a
+  display defect rather than a preference, and it should be fixed in whichever draft ships.
+- **The built thing moves to the second block**, from line 23 of 44. A reads diagnosis, diagnosis,
+  diagnosis, result.
+- **One line is isolated so it can be quoted alone:** *"A loan needs somebody in the middle. A trade
+  needs nobody — the transaction is the clearing house."* A has no sentence that survives being cut
+  out of it, and a post travels by the line somebody screenshots.
+- **The month of failure now explains the shape** instead of standing as its own episode, because
+  it follows the result rather than preceding it.
+
+**What B keeps, deliberately.** The Kamino concession and the zero-traction admission, both
+promoted to their own block. They are where the credibility is; a shorter post that drops them is
+a different post.
+
+**What B costs, said plainly.**
+
+- **Five dividers where A has four** — which contradicts the criticism that prompted it, that this
+  reads as an essay rather than a post. Isolating the quotable line was judged worth it. That is a
+  judgement, not a finding.
+- **The stablecoin comparison shrinks to one sentence.** "Four issuers, two asset classes, one dead
+  end" is a strong fact and B loses it.
+- **It still will not travel.** The baseline is 7 unique visitors. That is a cold-start problem, not
+  a copy problem, and B is easier to read rather than differently distributed.
+
 ## Why it is written this way
 
 - **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
