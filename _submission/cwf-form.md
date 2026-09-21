@@ -69,6 +69,25 @@ Real World Assets (RWA)
 No
 ```
 
+## Where is your team primarily based? · Public
+
+```
+Japan
+```
+
+## Team Telegram contact · founder enters directly — NOT recorded here
+
+**Deliberately absent.** The form does not mark this field Public, and it is used for prize
+distribution and accelerator interviews. **This repository is public**, so writing the handle here
+would expose it more widely than the form does. The founder holds it and types it in; what is
+recorded is that the field is filled, never the value.
+
+## Accelerator application · founder decided to apply, 2026-09-21
+
+**Include it.** The application opens fields this file has not seen — paste them and they get the
+same treatment as the rest: written here, counted against the form's own limits, and checked for
+figures the chain does not report.
+
 ## Notes for judges — anyone not listed who did meaningful work · ≤600
 
 ```

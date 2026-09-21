@@ -12,9 +12,18 @@ cd "$(dirname "$0")/.."
 python3 - <<'PY'
 import json, re, sys, pathlib
 t = pathlib.Path("_submission/cwf-form.md").read_text(encoding="utf-8")
-secs = re.findall(r"^## (.+?)\n\n```\n(.*?)\n```", t, re.S | re.M)
-if not secs:
-    print("  no fields found — the file's shape changed"); sys.exit(1)
+# `.` must not cross a newline in the HEADING. With re.S it did, so a section with no code block
+# let its heading swallow the prose under it and claim the NEXT section's block -- the Telegram
+# field reported 428/600, which was the judge-notes field, and the judge-notes field vanished from
+# the listing entirely. A checker that silently stops counting a field is worse than none.
+secs = re.findall(r"^## ([^\n]+)\n\n```\n(.*?)\n```", t, re.S | re.M)
+# The count itself is checked. A field whose code fence is broken simply stops being listed, and a
+# listing that is one row shorter reads exactly like a listing that is complete.
+EXPECTED = 11
+if len(secs) != EXPECTED:
+    print("  %d fields found, expected %d — a code fence is broken or a field was added"
+          % (len(secs), EXPECTED))
+    sys.exit(1)
 mints = "{:,}".format(len(json.load(open("web/mints.json"))))
 u = json.load(open("web/usage.json"))
 acc, conf = "{:,}".format(u["total_accounts"]), u["total_confidential_accounts"]

@@ -219,6 +219,29 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
+0c. **CWF フォーム — 全欄の貼付文を用意した。残りは founder の入力（2026-09-21）。**
+
+   **登録時の Brief description が腐ったまま Public 欄に座っていた** — *"All 1,869 tokenized
+   stocks … two issuers"*。**1,869 は第三の発行体が現れる前の数**で、Stocklana の short
+   description で腐ったのと同じ数字（[`_submission/short-alternatives.txt`](_submission/short-alternatives.txt)
+   に警告として記録済み）。しかも開示側の製品を売っていて、スワップが一行も無かった。
+
+   [`_submission/cwf-form.md`](_submission/cwf-form.md) が11欄ぶんの貼付文。
+   `./scripts/cwf-form.sh` がフォーム自身の上限で数え、**チェーンが報告しない4桁・6桁を拒否**し、
+   **欄数そのものを 11 に固定**する（フェンスが壊れて1欄が数えられなくなる形を捕まえるため）。
+   `docs-consistency.sh` に配線済み。**最初に書いたとき10欄中4欄が超過していた。**
+
+   | 決定済み | |
+   |---|---|
+   | Location | **Japan** |
+   | Telegram | **設定済み。値はこのリポジトリに書かない** — フォームで Public 表記が無い欄であり、**このリポジトリは公開**なので、書けばフォームより広く晒す |
+   | Accelerator | **出す**（2026-09-21 founder 判断） |
+
+   | 残り | |
+   |---|---|
+   | **Accelerator の追加欄** | 開くと出てくる欄はまだ見ていない。**貼れば同じ扱いにする** — 書いて、数えて、古い数字を拒否する |
+   | **過去開発作業の開示欄を探す** | 規約は「**提出フォームに**」開示せよと要求。`Anything else`（500字）に圧縮して入れたが、**「Media and code」か「Team」タブに専用欄がある可能性**。あれば [`docs/cwf-2026/FORM.md`](docs/cwf-2026/FORM.md) §2 の全文（約1,900字）が入る |
+
 0b. **CWF check-in 1 — 台本を書き直した。収録と、日付の出典確認が残っている（2026-09-21）。**
 
    **既存の収録 `video/Confide_CWF_Checkin1_20260916.mp4` は使えない。** 09-16 の週を報告していて、
