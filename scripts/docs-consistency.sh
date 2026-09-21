@@ -93,6 +93,15 @@ sys.exit(0 if sorted(man) == disk and all(n in lines for n in man) else 1)
 PY
 done
 
+# The set of filenames matching is not the same as the LINES.md content being current. The founder
+# records FROM this file, so a script edited without re-running lines.py hands them last week's
+# words under this week's clip names, and the check above would still pass.
+for cut in checkin presentation; do
+  python3 video/lines.py "$cut" --stdout 2>/dev/null | diff -q - "video/segments-$cut/LINES.md" >/dev/null \
+    && ok "segments-$cut/LINES.md is what lines.py produces from the script" \
+    || bad "segments-$cut/LINES.md has drifted — python3 video/lines.py $cut"
+done
+
 echo
 echo "  THE WIRE — the client against the program"
 if bash scripts/wire-check.sh >/dev/null 2>&1; then

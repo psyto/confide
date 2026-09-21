@@ -61,5 +61,12 @@ L += ["",
 for e, (title, body, pause) in zip(manifest, scenes):
     L += ["## `%s` — %s" % (e["file"], title), "", "> " + body.replace("\n", "\n> "), ""]
 
-io.open(f"{SEG}/LINES.md", "w", encoding="utf-8").write("\n".join(L))
+# --stdout prints instead of writing, so a check can compare the file on disk against what this
+# would produce without rewriting it. A check that repairs what it is checking reports success on
+# a repository that was wrong a moment earlier.
+out = "\n".join(L)
+if "--stdout" in sys.argv:
+    sys.stdout.write(out)
+    raise SystemExit(0)
+io.open(f"{SEG}/LINES.md", "w", encoding="utf-8").write(out)
 print(f"  wrote {SEG}/LINES.md — {len(scenes)} clips")
