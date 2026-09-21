@@ -1,68 +1,80 @@
-# Check-in 1 — 2026-09-18
+# Check-in 1 — rewritten 2026-09-21
 
-**One minute. Colosseum asks for it weekly; this is the first of four** (09-18, 09-25, 10-02,
-10-09). Not the submission presentation — that is
-[`CWF-PRESENTATION.md`](CWF-PRESENTATION.md), two to three minutes, due 10-12.
+**One minute.** The form asks three things: *what changed*, *what did you learn — share a test,
+conversation or decision*, and *what is next*. Written **after** the week's work rather than before
+it, so it reports rather than promises.
 
-The form asks three things: *what changed*, *what did you learn — share a test, conversation or
-decision*, and *what is next*. Written **after** the week's work rather than before it, so it
-reports rather than promises.
+**Rewritten, and the 09-16 recording is superseded.** `video/Confide_CWF_Checkin1_20260916.mp4`
+answered a different week: it said "eighteen hundred" mints when the count is now 1,992, quoted
+$21.1m / $81.6m when the chain reads $23.2m / $84.0m, and led with the Kamino verdict page —
+which was the week's change on 09-16 and is not the week's change now. **The swap runs.** Posting
+the old cut would put four stale figures in front of a judge to report work that has been
+superseded by better work.
 
-A minute is about 137 words at the pace the earlier recording held. Three answers inside that is
-tight, which is the point: it forces one thing per question.
+**The schedule under this has no source and needs one.** The previous version of this file asserted
+09-18 / 09-25 / 10-02 / 10-09 with nothing behind it. The Official Rules contain **no check-in
+clause at all**, and neither judging list — the seven on the web page nor the six in §8 — names
+check-ins ([`../docs/cwf-2026/CRITERIA.md`](../docs/cwf-2026/CRITERIA.md)). So this is a platform
+request rather than a rules obligation, and **the founder should read the dates off Colosseum's own
+page before posting.** A date with no source is exactly how the Stocklana deadline was carried a
+week wrong.
+
+**No figure that moves is spoken as an exact number.** The account count is "more than three
+hundred thousand" and the dollar figures are absent entirely. The Stocklana narration says "three
+hundred and twenty-nine thousand" and was wrong four days later by the chain simply moving; that
+rule is in [`../STATUS.md`](../STATUS.md) and this is the first script written under it.
+
+<!-- pace.py owns the table below. Do not hand-edit it: `python3 video/pace.py --write`. -->
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what changed | 19 | 41 | 134 | the page being used — a mint typed in, the verdict appearing |
-| 2 | what I learned | 22 + 1 | 48 | 135 | the reserve table live, then $21.1m / $81.6m / $0 |
-| 3 | what is next | 19 | 43 | 140 | the three missing pieces, as text |
-| | | **61 s** | **132** | | |
+| 1 | what changed | 20 | 44 | 136 | the swap decoded in the browser, both balances reading `0` |
+| 2 | what I learned | 24 + 1 | 53 | 136 | the gate, then the scan running to its total |
+| 3 | what is next | 19 | 41 | 134 | three lines of text |
+| | | **64 s** | **138** | | |
 
 ## The script
 
 ### 1 — what changed
 
-> If you hold tokenized stock and you would rather your position were not public, there was no way
-> to find out where that leaves you. Now there is a page. Pick any of the eighteen hundred, and
-> your browser answers it.
+> Fifty thousand tokenized shares against eight point seven five million dollars, in one Solana
+> transaction. Delivery against payment, and neither side publishes what moved. Every account
+> involved still reports a public balance of zero. Nobody watching learns the size, or the price
+> it implies.
 
-*Shows:* the page being used — a mint typed in, the verdict and the evidence appearing. **The
-change is what a holder can now find out**, not what I did to find it out. A first draft of this
-answer led with reading a protocol's source code, which is the method and not the change.
+*Shows:* the swap decoded in the browser, both balances reading `0`. **The result, before any
+account of how it got there.** The previous cut opened on what I had done; a judge has sixty
+seconds and wants the thing, not the method.
 
 ### 2 — what I learned · +1 s silence
 
-> The answer is no, everywhere, and for one reason. Kamino already lends against these — twenty-one
-> million dollars deposited, eighty-one million of borrowing authorised.
->
-> Its own program refuses a deposit from an account holding value confidentially. So none of that
-> money is reachable without publishing what you hold.
+> I did not set out to build that. A month on a loan hit the same wall every time — collateral
+> needs a third party to hold it, and no issuer will approve that account. So I counted how many
+> have ever got through. More than three hundred thousand live accounts, and zero.
 
-*Shows:* the reserve table, live, then the three figures. **The pause is before "its own
-program"** — the first half is someone else's success, the second is the wall. The source is the
-warrant and not the subject: it is on screen for a beat, and the voice does not read it out. Both
-numbers come off the chain and out of a public repository, so **nobody had to agree to anything for
-either to exist.**
+*Shows:* the gate, then the scan running to its total. **The pause is before "so I counted"** —
+the first half is a month spent on the wrong shape, the second is the measurement that says nobody
+else got the right one either. The form asks for a test, a conversation or a decision; this is the
+decision, with the test as the evidence it was right.
 
 ### 3 — what is next
 
-> Three things are missing and I can name them. Re-proving the floor, the liquidation hand-off, and
-> the issuer approving each escrow. Next week they get specified rather than described. Traction is
-> still zero, and I would rather say it than have it found.
+> Matching. Settlement is done; finding the party who wants the other side is not. And the gate
+> itself, on a real mint, is a conversation nobody has had. Traction is zero, and I would rather
+> say it than have it found.
 
-*Shows:* three lines of text. **Ending on traction is deliberate.** It is the weakest fact and the
-first one a judge checks; saying it costs five seconds and buys the rest of the minute.
+*Shows:* three lines of text. **Ending on traction is deliberate**, and is kept from the previous
+version: it is the weakest fact and the first one a judge checks, so saying it costs five seconds
+and buys the rest of the minute.
 
 ## What this deliberately leaves out
 
-- **The correction.** A review found that a repair I had reported as done — requiring the proof
-  context accounts to be owned by the ZK program — was a claim and not a check, and without it the
-  binding around it was decoration. It is fixed, tested and redeployed. It is the most interesting
-  thing that happened this week and it does not fit in sixty seconds without crowding out the
-  finding. **Check-in 2 or the submission presentation, where there is room to land it properly.**
-- **How any of it was found out.** Reading Kamino's source is the method. It earns one beat on
-  screen as the warrant for the claim, and no words.
-- **The packets and the capacity script.** The page is the one a holder would open; the rest is
-  what it is built on.
-- **Any number that needed someone to agree to it.** There are none this week, which is the part
-  worth noticing.
+- **The SEC's Innovation Exemption**, issued 2026-09-17 and pinned in
+  [`../docs/SEC-EXEMPTION.md`](../docs/SEC-EXEMPTION.md). It is the strongest external fact
+  available and it does not fit in sixty seconds without crowding out the week's own work. It
+  belongs in the submission presentation, where the AMM-only scope and the 0.25% volume cap can be
+  landed properly.
+- **The record-account path** for the fee-bearing leg. An implementation note, not a finding.
+- **The dollar figures.** $23.2m deposited and $84.0m authorised are real and checkable, but they
+  moved $1.17m in a single day this week. A recording cannot be re-cut every time the chain moves.
+- **How any of it was found out.** The method earns a beat on screen and no words.

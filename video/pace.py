@@ -47,25 +47,24 @@ def build(sc):
     rows.append("| | | **%d s** | **%d** | | |" % (total_s, total_w))
     return rows, total_s, total_w
 
-SHOWS_BY_DOC = {
- "video/CWF-PRESENTATION.md": {
- 1: "the title card — Confide, and what it does",
- 2: "the exchange as a diagram: two parties, two arrows, an empty middle",
- 3: "a position climbing across a quarter, watched",
- 4: "`spl-token balance` says 0; the confidential balance says 173,000",
- 5: "the mint scan finishing, the auditor slot empty",
- 6: "`./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0",
- 7: "PYUSD and USDG beside a tokenized stock, the matching fields lit",
- 8: "three steps: public state, moved by the amount, subtracted",
- 9: "both instruction names in one transaction; the record account",
- 10: "the conditions table, then a command and the page URL",
- },
- "video/CHECKIN-1.md": {
- 1: "the page being used — a mint typed in, the verdict appearing",
- 2: "the reserve table live, then $21.1m / $81.6m / $0",
- 3: "the three missing pieces, as text",
- },
-}
+def shows(text):
+    """The `what it shows` column, taken from each scene's own `*Shows:*` line.
+
+    This used to be a dict in this file, which made it a SECOND copy of something the script
+    already said -- and it drifted exactly as this repository's copies always do: it was still
+    holding "$21.1m / $81.6m / $0" and "329,536 accounts" long after both numbers had moved,
+    where no check could see them because nothing reads a table's last column.
+
+    The description runs from `*Shows:*` to where the bold commentary after it begins, not to the
+    first full stop: several of these contain `./scripts/...` and would be cut at the dot.
+    """
+    out = []
+    for m in re.finditer(r"^\*Shows:\*(.*?)(?=\n\n|\n### |\Z)", text, re.S | re.M):
+        s = " ".join(m.group(1).split())
+        s = s.split("**", 1)[0].strip().rstrip(".")
+        out.append(s)
+    return out
+
 
 import sys as _s
 targets = [a for a in _s.argv[1:] if not a.startswith("--")] or DOCS
@@ -73,11 +72,12 @@ write = "--write" in _s.argv
 bad = 0
 
 for DOC in targets:
-    SHOWS = SHOWS_BY_DOC[DOC]
     text = io.open(DOC, encoding="utf-8").read()
+    SHOWS = {i + 1: s for i, s in enumerate(shows(text))}
     sc = scenes(text)
     if len(sc) != len(SHOWS):
-        print("  %s: found %d scenes, expected %d — the heading format changed" % (DOC, len(sc), len(SHOWS)))
+        print("  %s: %d scenes but %d `*Shows:*` lines — every scene needs one"
+              % (DOC, len(sc), len(SHOWS)))
         bad += 1
         continue
     rows, total_s, total_w = build(sc)

@@ -65,15 +65,15 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what this is | 8 | 17 | 138 | the title card — Confide, and what it does |
-| 2 | the trade | 23 | 52 | 139 | the exchange as a diagram: two parties, two arrows, an empty middle |
+| 1 | what this is | 8 | 17 | 138 | the title card |
+| 2 | the trade | 23 | 52 | 139 | the exchange |
 | 3 | why anyone would bother | 14 + 2 | 31 | 139 | a position climbing across a quarter, watched |
-| 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` says 0; the confidential balance says 173,000 |
-| 5 | already solved, already switched off | 15 | 33 | 138 | the mint scan finishing, the auditor slot empty |
-| 6 | so I counted | 10 + 2 | 22 | 140 | `./scripts/usage-scan.sh` running to its total: 329,536 accounts, 0 |
-| 7 | and it is not only equities | 15 | 32 | 133 | PYUSD and USDG beside a tokenized stock, the matching fields lit |
-| 8 | why not just use an exchange | 26 | 58 | 137 | three steps: public state, moved by the amount, subtracted |
-| 9 | so what Confide actually is | 25 | 55 | 135 | both instruction names in one transaction; the record account |
+| 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
+| 5 | already solved, already switched off | 15 | 33 | 138 | the mint scan finishing; the auditor slot empty |
+| 6 | so I counted | 10 + 2 | 22 | 140 | the account scan running to its total |
+| 7 | and it is not only equities | 15 | 32 | 133 | PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit |
+| 8 | why not just use an exchange | 26 | 58 | 137 | the argument in three steps — public state, moved by exactly the traded amount, subtracted |
+| 9 | so what Confide actually is | 25 | 55 | 135 | the two instruction names in one transaction, then the record account the oversized proof had to be staged through |
 | 10 | what is missing | 19 | 41 | 134 | the conditions table, then a command and the page URL |
 | | | **175 s** | **364** | | |
 
