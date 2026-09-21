@@ -446,6 +446,38 @@ sys.exit(1 if bad else 0)
 PYP
 
 echo
+echo "  THE CHECK-IN CUT — the rendered file against the script it was cut from"
+python3 - <<'PYK' && ok "video/checkin-1.mp4 matches CHECKIN-1.md and fits the one minute" || bad "the check-in cut is out of date or over a minute — node video/record-checkin.js"
+import os, re, subprocess, sys, pathlib
+mp4 = "video/checkin-1.mp4"
+if not os.path.exists(mp4):
+    print("      %s is missing — node video/record-checkin.js" % mp4); sys.exit(1)
+md = pathlib.Path("video/CHECKIN-1.md").read_text(encoding="utf-8")
+m = re.search(r"\| \| \| \*\*(\d+) s\*\* \| \*\*(\d+)\*\* \|", md)
+if not m:
+    print("      CHECKIN-1.md has no totals row — python3 video/pace.py --write"); sys.exit(1)
+want = int(m.group(1))
+# ffprobe the FILE. The recorder prints its own figure and it ran 1 s short of the encoded result;
+# trusting the report over the artifact is the mistake this repository keeps making.
+try:
+    got = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                "-of", "csv=p=0", mp4], capture_output=True, text=True,
+                               check=True).stdout.strip())
+except Exception as e:
+    print("      could not probe %s: %s" % (mp4, e)); sys.exit(1)
+bad = []
+if abs(got - want) > 2:
+    bad.append("%s is %.1f s; CHECKIN-1.md says %d s — re-render after editing the script" % (mp4, got, want))
+# Colosseum asks for "a 1-minute video" where its other fields say "up to 3 minutes", so 60 is
+# treated as a cap. The submitted link cannot be changed or deleted.
+if got > 60:
+    bad.append("%s is %.1f s, over the one minute the form asks for" % (mp4, got))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYK
+
+echo
 echo "  THE CWF FORM — every field against the limit the form states"
 ./scripts/cwf-form.sh >/dev/null 2>&1 \
   && ok "every CWF form field fits and quotes the counts the chain reports" \
