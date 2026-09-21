@@ -1,0 +1,23 @@
+{
+ "stocklana-full": {
+  "characters": 4969,
+  "file": "_submission/full.md",
+  "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
+  "pasted_utc": "2026-09-21 00:11:57 UTC",
+  "sha256": "9c5c62029fe27478c756137819c825fa37f55c045074926a0809b99f5e29872e"
+ },
+ "stocklana-short": {
+  "characters": 320,
+  "file": "_submission/short.txt",
+  "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
+  "pasted_utc": "2026-09-21 00:11:57 UTC",
+  "sha256": "1691b2d1e517d960e7778412a78eaf790f25fcb56efb1b9aae3cef8b9801fa17"
+ },
+ "youtube-description": {
+  "characters": 5083,
+  "file": "_submission/youtube-paste.txt",
+  "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
+  "pasted_utc": "2026-09-21 00:11:57 UTC",
+  "sha256": "fcb75f9d061ba05db9046373f5e0a8cd1ece2fe2c001bfc526c80eab649ebfde"
+ }
+}

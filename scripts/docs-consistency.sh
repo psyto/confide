@@ -407,6 +407,31 @@ sys.exit(1 if bad else 0)
 PY2
 
 echo
+echo "  THE SUBMITTED FIELDS — the files against what the founder said they pasted"
+# The one artifact nothing here can read is a form. "1,869 tokenized stocks" sat in the Stocklana
+# short description for days because it had been typed once and no check could see it. This does
+# not check the form either. It checks whether the FILE moved after the founder said they pasted
+# it, which is the same question asked from the side this repository can answer.
+python3 - <<'PYP' && ok "no submitted field has drifted since it was pasted" || bad "a file has changed since it was pasted — repaste it, then ./scripts/pasted.sh <field>"
+import hashlib, json, os, sys
+try:
+    d = json.load(open("_submission/pasted.json"))
+except FileNotFoundError:
+    print("      _submission/pasted.json is missing — ./scripts/pasted.sh <field>"); sys.exit(1)
+bad = []
+for k in sorted(d):
+    f = d[k]["file"]
+    if not os.path.exists(f):
+        bad.append("%s: %s is gone" % (k, f)); continue
+    now = hashlib.sha256(open(f, "rb").read()).hexdigest()
+    if now != d[k]["sha256"]:
+        bad.append("%s: %s changed since it was pasted %s" % (k, f, d[k]["pasted_utc"][:16]))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYP
+
+echo
 echo "  THE PRIVATE ENDPOINT — it may exist as an environment variable and nowhere else"
 # web/slots.json recorded the founder's Alchemy URL on this script's first run, key and all, into a
 # file that is committed AND published to the site. It was caught by reading the file. Nothing was
