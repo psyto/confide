@@ -219,7 +219,7 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
-0d. **CWF Week 1 video — 動画は公開済み。残るはフォームへのリンク提出（2026-09-21）。**
+0d. ~~**CWF Week 1 video**~~ → **完了。提出済み（2026-09-20 19:17 PDT、締切の12時間43分前）。**
 
    **https://youtu.be/mbE8HMwG0S4** · `Confide_CWF_Check-in-1_20260921.mp4` · 0:55
 
@@ -273,7 +273,8 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
    | **Accelerator の追加欄** | 開くと出てくる欄はまだ見ていない。**貼れば同じ扱いにする** — 書いて、数えて、古い数字を拒否する |
    | **過去開発作業の開示欄を探す** | 規約は「**提出フォームに**」開示せよと要求。`Anything else`（500字）に圧縮して入れたが、**「Media and code」か「Team」タブに専用欄がある可能性**。あれば [`docs/cwf-2026/FORM.md`](docs/cwf-2026/FORM.md) §2 の全文（約1,900字）が入る |
 
-0b. **CWF check-in 1 — 台本を書き直した。収録と、日付の出典確認が残っている（2026-09-21）。**
+0b. ~~**CWF check-in 1 — 収録と日付の出典が残っている**~~ → **両方完了。** 収録・公開・提出済み、日程は
+   ダッシュボードから出典を取った（下表）。
 
    **既存の収録 `video/Confide_CWF_Checkin1_20260916.mp4` は使えない。** 09-16 の週を報告していて、
    数字が4つ古い（「eighteen hundred」銘柄 → **1,992**、`$21.1m / $81.6m` → **$23.2m / $84.0m**）。
@@ -351,7 +352,10 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
      上の再利用表。**repo に書いてあることは開示にならない。**
 3. **9/14 公開のトラック / スポンサー / 審査員 / フォーム項目を読む。** Tempo トラックは条件未公開
    （"Session details coming soon"、9/16 workshop）。Solana トラックだけが $100,000 / 10件 と判明。
-4. **README / DESIGN の "written in-window" を CWF 向けにどうするか。** 両方の表が Confide を
+4. ~~**README / DESIGN の "written in-window"**~~ → **解決済み。** README:574 と DESIGN.md:210 が
+   「どちらの窓か」を明示し、`docs/WORK-WINDOW.md` へ導線を張っている。CWF フォームの
+   *repo context* 欄にも同じ開示を入れた（[`_submission/cwf-form.md`](_submission/cwf-form.md)）。
+   以下は当時の記述。**両方の表が Confide を**
    *written in-window* と書いている。これは **Stocklana の窓**では真だが、**CWF の窓では偽**
    （48 commit が 09-14 06:00 PT より前）。**同じ public repo を両方の審査員が読む。**
    CWF の審査員には二重の意味で不利 — 誤読されれば虚偽申告に見え、正しく読まれても

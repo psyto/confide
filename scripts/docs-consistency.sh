@@ -476,32 +476,36 @@ sys.exit(1 if bad else 0)
 PYP
 
 echo
-echo "  THE CHECK-IN CUT — the rendered file against the script it was cut from"
-python3 - <<'PYK' && ok "video/checkin-1.mp4 matches CHECKIN-1.md and fits the one minute" || bad "the check-in cut is out of date or over a minute — node video/record-checkin.js"
+echo "  THE SCRIPTED CUTS — each rendered file against the script it was cut from"
+python3 - <<'PYK' && ok "every scripted cut matches its script, and the check-in fits its minute" || bad "a cut is out of date or over its limit — re-render it"
 import os, re, subprocess, sys, pathlib
-mp4 = "video/checkin-1.mp4"
-if not os.path.exists(mp4):
-    print("      %s is missing — node video/record-checkin.js" % mp4); sys.exit(1)
-md = pathlib.Path("video/CHECKIN-1.md").read_text(encoding="utf-8")
-m = re.search(r"\| \| \| \*\*(\d+) s\*\* \| \*\*(\d+)\*\* \|", md)
-if not m:
-    print("      CHECKIN-1.md has no totals row — python3 video/pace.py --write"); sys.exit(1)
-want = int(m.group(1))
-# ffprobe the FILE. The recorder prints its own figure and it ran 1 s short of the encoded result;
-# trusting the report over the artifact is the mistake this repository keeps making.
-try:
-    got = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                                "-of", "csv=p=0", mp4], capture_output=True, text=True,
-                               check=True).stdout.strip())
-except Exception as e:
-    print("      could not probe %s: %s" % (mp4, e)); sys.exit(1)
+# Both scripted cuts, not just the one that had a deadline this morning. The check-in got this
+# check the day it was submitted; the presentation had none, and its script was edited hours after
+# the file was last rendered without anything noticing.
+CUTS = [("video/CHECKIN-1.md", "video/checkin-1.mp4", 60),
+        ("video/CWF-PRESENTATION.md", "video/presentation.mp4", None)]
 bad = []
-if abs(got - want) > 2:
-    bad.append("%s is %.1f s; CHECKIN-1.md says %d s — re-render after editing the script" % (mp4, got, want))
-# Colosseum asks for "a 1-minute video" where its other fields say "up to 3 minutes", so 60 is
-# treated as a cap. The submitted link cannot be changed or deleted.
-if got > 60:
-    bad.append("%s is %.1f s, over the one minute the form asks for" % (mp4, got))
+for doc, mp4, cap in CUTS:
+    if not os.path.exists(mp4):
+        bad.append("%s is missing" % mp4); continue
+    md = pathlib.Path(doc).read_text(encoding="utf-8")
+    m = re.search(r"\| \| \| \*\*(\d+) s\*\* \| \*\*(\d+)\*\* \|", md)
+    if not m:
+        bad.append("%s has no totals row — python3 video/pace.py --write" % doc); continue
+    want = int(m.group(1))
+    # ffprobe the FILE. A recorder prints its own figure and one of them ran a second short of the
+    # encoded result; trusting the report over the artifact is the mistake this repository is
+    # written against.
+    try:
+        got = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                    "-of", "csv=p=0", mp4], capture_output=True, text=True,
+                                   check=True).stdout.strip())
+    except Exception as e:
+        bad.append("could not probe %s: %s" % (mp4, e)); continue
+    if abs(got - want) > 2:
+        bad.append("%s is %.1f s; %s says %d s — re-render after editing the script" % (mp4, got, doc, want))
+    if cap and got > cap:
+        bad.append("%s is %.1f s, over the %d the form asks for" % (mp4, got, cap))
 for b in bad:
     print("      " + b)
 sys.exit(1 if bad else 0)
