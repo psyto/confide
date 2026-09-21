@@ -51,24 +51,48 @@ for tokenized equity. Nobody has built the block.**
 so being outside the relief is not a gap to close — Confide is not a TSV, is not seeking to be
 one, and the exemption is not a licence it lacks.
 
-### The shareholder-rights condition is the harder and more interesting one
+### The shareholder-rights condition — corrected 2026-09-21, and the correction is the finding
 
-A tokenized share must now carry dividends, votes, and proxy material delivery. **You cannot pay a
-dividend pro rata to a holder whose balance you cannot read.** So a confidential tokenized share
-needs the registrar to learn one number, for one purpose, at one time.
+**What this section said until 2026-09-21 was wrong, and it was load-bearing.** It read:
 
-Token-2022 today offers exactly two settings, and the mint scan says every issuer picked the same
-one: **a single global auditor key that reads everyone's everything forever, or null.** Filling it
-makes every holder permanently readable by one party; leaving it null means no holder can prove
-anything to anyone. All 1,992 are null.
+> *"You cannot pay a dividend pro rata to a holder whose balance you cannot read."*
 
-**This order makes null harder to defend and the global key no easier.** What it argues for is
-disclosure scoped to a recipient and a purpose — which is the shape this repository already
-builds: a proof over your own ciphertext, anchored on chain, and an amount encrypted to a named
-recipient so the counterparty can check it before signing.
+**Measured, and false.** Backed pays dividends by moving a **mint-level scalar**, not by
+distributing per holder. `scaledUiAmountConfig` carries a multiplier that scales every balance
+proportionally, and it is running right now:
 
-**That primitive exists here. The registrar application does not.** Saying otherwise would be the
-kind of claim `scripts/docs-consistency.sh` exists to prevent.
+| mint | multiplier | next multiplier, already scheduled |
+|---|---|---|
+| NVDAx | **1.0009180758490996** | 1.001701196801074 |
+| AAPLx | **1.0026642075893797** | 1.0032690125398187 |
+| SPCX.US | 1 | — (SpaceX pays no dividend) |
+
+**A scalar does not read anything.** It multiplies whatever sits in the account, ciphertext or not,
+so **a confidential balance rebases exactly like a public one**. Dividends are not an argument for
+scoped disclosure, and this document claimed they were for four days.
+
+### What survives is narrower, and better
+
+**Voting.** The order requires *"a right to exercise the same voting rights"*. **There is no scalar
+for a vote.** A tally proportional to holdings requires knowing the holdings, and no multiplier
+trick removes that. That is a genuine, compelled need for disclosure scoped to one recipient, one
+purpose, one moment — the record date.
+
+**And the same condition may be a problem for the issuers themselves.** Backed's tokens are
+*tracker notes*: a senior claim against a Jersey SPV for economic value, with the share register
+showing the custodian or the SPV, so **token holders typically have no vote at all**. The order
+requires one. Backpack Securities' structure is different — a security entitlement, *"redeemable
+1:1 for the real underlying share"*, convertible in both directions — and is closer to what the
+order asks for.
+
+**That is checkable and worth checking**, and it is a stronger observation than the dividend claim
+it replaces: the exemption's shareholder-rights condition may sit badly with the structure the
+largest tokenized-equity issuer on Solana actually uses.
+
+Token-2022 still offers exactly two disclosure settings — a global auditor key that reads everyone
+forever, or null — and all 1,992 are null. **The primitive for a third exists in this repository.
+The registrar application does not**, and saying otherwise would be the kind of claim
+`scripts/docs-consistency.sh` exists to prevent.
 
 ## What it does not change — say these out loud
 

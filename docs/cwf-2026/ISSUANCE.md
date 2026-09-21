@@ -129,11 +129,21 @@ The SEC's 17 September exemption requires tokenized NMS stock to convey **the sa
 the same voting rights** as the underlying, and requires the tokenizer to deliver proxy material
 ([`../SEC-EXEMPTION.md`](../SEC-EXEMPTION.md)).
 
-**You cannot pay a dividend pro rata to a holder whose balance you cannot read.**
+**Corrected 2026-09-21.** This paragraph said *"you cannot pay a dividend pro rata to a holder
+whose balance you cannot read"*. **That is false for the structure these issuers use.** Backed pays
+dividends by moving `scaledUiAmountConfig` — a mint-level multiplier that scales every balance
+proportionally without reading one, running today at 1.00092 on NVDAx with the next value already
+scheduled. **A confidential balance rebases exactly like a public one.**
 
-So a confidential tokenized share creates a need for **one party to learn one number, for one
-purpose, at one time** — the registrar, at the record date. Token-2022 offers a global auditor key
-that reads everyone forever, or null. Every issuer picked null.
+**What survives is the vote, and it is narrower and better.** The order requires *"a right to
+exercise the same voting rights"*, and **there is no scalar for a vote** — a tally proportional to
+holdings requires knowing the holdings. That is a compelled need for **one party to learn one
+number, for one purpose, at one moment**: the registrar, at the record date. Token-2022 offers a
+global auditor key that reads everyone forever, or null. Every issuer picked null.
+
+**And the same condition cuts at the issuers.** Backed's tokens are tracker notes against a Jersey
+SPV with the register showing the custodian, so holders typically have **no vote at all** — which
+the order requires. See [`../SEC-EXEMPTION.md`](../SEC-EXEMPTION.md).
 
 | | |
 |---|---|
