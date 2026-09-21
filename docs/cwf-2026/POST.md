@@ -155,6 +155,45 @@ the short description sat in a submitted field saying 1,869 for days because it 
 **One link, at the end.** `psyto.github.io/confide`, after everything. A link in the opening lines
 costs reach, and the post has to earn the click before it offers one.
 
+### Naming the hackathons — a self-reply, not the post
+
+Asked by the founder, 2026-09-21: does the video or the post have to say this is a Stocklana entry?
+
+**Nothing requires it.** The CWF Official Rules carry no publicity or announcement clause, and the
+one disclosure obligation they do impose — past development work — is placed **in the submission
+form**, not in the repository and not in public (`docs/WORK-WINDOW.md:109`). Stocklana's page, as
+read, asks for nothing of the kind either.
+
+So it is a question of whether it helps, and the answer differs by surface.
+
+**Not in the YouTube description.** Two reasons, the second one load-bearing. It has 38 characters
+spare, and a judge arriving from the form already knows. More importantly **the same video serves
+both contests**, and STATUS.md is explicit that the two framings are not interchangeable: Stocklana
+can be told "all of this was written for this contest" and CWF cannot, because 48 commits sit
+outside its window. Stamping one contest's name onto the artifact both of them watch is how that
+distinction starts to blur. Contest-neutral is safer, not merely tidier.
+
+**Not in the post body either — in a reply under it.** The post works because it is a measurement
+with no addressee and no ask. "This is my hackathon entry" turns a finding into a pitch, and hands
+a reader the licence to file it under *demo* rather than *this runs*. But the founder's actual
+problem is distribution — 7 unique visitors on the baseline — and contest tags do bring the
+organiser's audience.
+
+A self-reply gets both. The first post keeps its fold and its framing; the reply carries the
+context for anyone who wants it:
+
+```
+Context, since a few have asked: this is entered in the Stocklana hackathon, and in
+Colosseum's Crypto World's Fair.
+
+Nothing above depends on that. Every figure has the command that produces it, and the
+devnet issuer is standing whether anyone is judging or not.
+```
+
+**What that reply must not say.** Not *built for* either contest — that is a work-window claim and
+it is true of one and false of the other. Not a request to look, vote or share. It states where the
+project is entered and then gets out of the way.
+
 ## Why it is written this way
 
 - **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
