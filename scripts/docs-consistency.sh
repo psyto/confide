@@ -337,7 +337,15 @@ for f in files:
     # character limit or one issuer's share, and flagging those taught the check to cry wolf.
     pats = [r"([1-9],\d{3}) of \1", r"([1-9],\d{3}) (?:tokenized|mints|tokenized-equity)",
             r"(?:all|any of the|the other) ([1-9],\d{3})\b", r"\bof the ([1-9],\d{3})\b"]
-    found = {m if isinstance(m, str) else m[0] for p2 in pats for m in re.findall(p2, t)}
+    # A figure inside quotation marks is being QUOTED, not claimed -- STATUS.md and
+    # short-alternatives.txt both have to name "1,869" to record that it rotted in a submitted
+    # field, and a check that forbids naming the bad number forbids writing down the lesson.
+    # Only straight and curly double quotes count. The span may cross a line break -- these files
+    # wrap at 100 columns and the first attempt at this rule missed the quote it was written for,
+    # because it sat across two lines -- but it is bounded at 300 characters so an unpaired quote
+    # cannot swallow a whole section and silence the check.
+    unquoted = re.sub(r'["\u201c\u201d][^"\u201c\u201d]{0,300}?["\u201c\u201d]', " ", t, flags=re.S)
+    found = {m if isinstance(m, str) else m[0] for p2 in pats for m in re.findall(p2, unquoted)}
     for n in found:
         if n not in want:
             bad.append("%s says %s; web/mints.json holds %s" % (f, n, "{:,}".format(len(mints))))
