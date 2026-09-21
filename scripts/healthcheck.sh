@@ -206,6 +206,11 @@ fi
 #
 # Three outcomes, kept apart on purpose. A check that cannot read the page must say so rather than
 # pass -- this repository has shipped a green tick over an unreadable source before.
+#
+# WHAT THIS DOES NOT CHECK, so nobody reads more into the tick than is in it: the CONTENT. YouTube's
+# timedtext endpoint refuses the track body to this fetch, tried on 2026-09-21 against both the ASR
+# and the uploaded track, so whether the uploaded file is the corrected one is not verified here.
+# It says a human uploaded something, not that they uploaded the right thing.
 cc=$(curl -s --max-time 30 -A "Mozilla/5.0" "https://www.youtube.com/watch?v=$VIDEO" \
      | python3 -c '
 import json, re, sys

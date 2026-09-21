@@ -202,21 +202,13 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
-0a. **YouTube の英語字幕が自動生成のまま（2026-09-21 に検出）。**
-   founder が **title と description を更新し、日本語字幕をアップロード**したが、**英語は YouTube の
-   ASR のまま**。`video/captions-20260920.srt` が上がっていない。`scripts/fix-captions.sh` が持つ
-   **14件の補正がライブに無い** — うち実害があるもの:
-
-   | ASR | 正 |
-   |---|---|
-   | `Camino` | **`Kamino`** — 提出文が `constraints.rs:187` まで指して論じている相手の名前 |
-   | `confide`（小文字） | **`Confide`** — 自分のプロジェクト名 |
-   | `Everyone leaves` | **`Every one leaves`** — 意味が変わる |
-   | `Salana` / `Nvidia` / `stable coin` | Solana / NVIDIA / stablecoin |
-
-   **審査員の多数は英語で読む。** `scripts/healthcheck.sh` が毎回判定する（`UPLOADED` / `ASR` /
-   `NONE` / 読めなかった場合の `warn` を分ける — 読めないことを緑にしない）。
-   **やること: `video/captions-20260920.srt` を英語トラックとしてアップロードする。**
+0a. ~~**YouTube の英語字幕が自動生成のまま**~~ → **2026-09-21 に founder が
+   `video/captions-20260920.srt` を英語トラックとしてアップロード、解消。**
+   ライブの申告が `en kind=asr`「英語 (自動生成)」から `en kind=—`「英語」に変わり、ASR トラックは
+   消えた。`scripts/healthcheck.sh` が毎回判定する。
+   **ただし検査の天井:** YouTube の timedtext がトラック本文をこの取得に返さないので、**中身が
+   補正済みのものかは検証していない。** 人が何かを上げたことは言えるが、正しいものを上げたとは
+   言えない。`fix-captions.sh` の14件が効いているかは、founder が動画上で目視するしかない。
 
 0. **納品済みの動画が、言えない数字を1つ喋っている（2026-09-20、founder の判断）。**
    ナレーションは「**Three hundred and twenty-nine thousand accounts**」と言う。09-17 の測定では
