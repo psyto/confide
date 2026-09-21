@@ -210,6 +210,28 @@ The first number is admissibility, the second is usability, and until now this r
 number doing both jobs. `./scripts/kamino-admissible.sh` produces them; `web/kamino.json` carries
 the per-mint result.
 
+## The plan turned on 2026-09-20, and the weeks below were written before it
+
+**The bet in this document is a loan.** It is now a trade. A loan needs a third party to hold the
+collateral and that party cannot get an account; a trade needs no third party at all, so the swap
+runs where the loan could not. The weeks below still name the right *work* — one command a stranger
+can run, coverage over every mint, evidence frozen before the submission — but they name it against
+the packet and the lender.
+
+**What actually has to exist by 10-12, restated after the turn:**
+
+| | |
+|---|---|
+| **Demo video, ≤3 min, required** | `./scripts/swap-e2e.sh` running end to end, then the same signature decoded in a browser. The form says *"the live product, not a slide deck"*, and the 2:22 presentation is not that |
+| **Pitch video, ≤2 min, Public, required** | the founder on camera. **Nothing in this repository can stand in for it**, and it is the field criterion 5 (*Founder Communication*) reads |
+| **The swap, runnable by a stranger** | week 2's beat, unchanged by the turn |
+| **Not matching** | deliberately. Rule 3b-16 and §15(a) are why — [`SEC-EXEMPTION.md`](SEC-EXEMPTION.md) |
+
+**And the ground moved under all of it on 09-17**, when the SEC exempted tokenized-stock venues for
+five years: AMM-executed trading only, every fill's size published within ten minutes, Tier 1 capped
+at 0.25% of average daily volume. The lit venue now exists by regulation, and nobody built the block
+trade.
+
 ## Twenty-seven days
 
 | | date | beat |

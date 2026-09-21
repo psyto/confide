@@ -1,5 +1,14 @@
 # Confide — lawful delay for tokenized equity positions
 
+> **Read this after the pivot, 2026-09-20.** This document designs the **disclosure and collateral**
+> half: the auditor slot, the embargo, the floor proof, the seizure. All of it still runs. But the
+> product a reader meets first is now a **confidential stock-for-stablecoin swap** — delivery versus
+> payment in one transaction, with no third party, because a loan needs somebody to hold the
+> collateral and a trade does not. `README.md` leads with that; this file is the layer underneath
+> it and was written before the turn. Nothing here was invalidated by it, and nothing here mentions
+> it, which is why this note exists.
+
+
 *confide* (Latin): delay. In law, the period during which performance is not yet due.
 
 ---

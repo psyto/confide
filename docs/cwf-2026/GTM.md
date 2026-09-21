@@ -6,6 +6,31 @@ A required field on the submission form ([`CRITERIA.md`](CRITERIA.md)) and unwri
 **Traction is zero.** Nobody outside this repository has used any of it. That is the first sentence
 because it is the one a reader will otherwise spend the whole document looking for.
 
+## Superseded 2026-09-20 by the pivot, and kept rather than deleted
+
+**Everything below is about selling a loan.** Confide stopped being a loan on 2026-09-20: a loan
+needs a third party to hold the collateral, that party needs a confidential account, and
+`autoApproveNewAccounts` is false on 1,992 of 1,992 mints. A **trade** needs no third party, because
+a Solana transaction cannot half-happen — so the swap runs where the loan could not, and the product
+is confidential delivery versus payment.
+
+**What that does to the go-to-market:**
+
+| | before | now |
+|---|---|---|
+| first user | the lender, then the issuer as a gate | **a desk accumulating or unwinding size** — every purchase settles on chain, so the position is assembled in public and the price moves against it the whole way |
+| what blocks it | the issuer's gate on the escrow's account | **nothing structural.** Both sides are ordinary associated token accounts. What is missing is matching and price, and matching is deliberately not being built |
+| second user | — | **securities lending**, where lending your book is how you publish your book |
+| the $0 | the whole argument | **still true and still measured**, but it is the collateral half. That half waits on a venue; the swap waits on nobody |
+
+**And the timing changed under it, 2026-09-17.** The SEC exempted tokenized-stock venues for five
+years, covering AMM-executed trading only, requiring every fill's size published within ten minutes,
+and capping a Tier 1 name at 0.25% of average daily volume. The sanctioned venue publishes the size
+by rule and cannot carry size anyway — [`../SEC-EXEMPTION.md`](../SEC-EXEMPTION.md).
+
+**The analysis below is kept because it is still correct about the lender**, and because the
+paid-path section at the end never depended on which half sells first. It is history, not a plan.
+
 ## The beachhead is not a protocol integration
 
 This changed today, and it inverts what the month had assumed.

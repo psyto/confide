@@ -124,6 +124,9 @@ was sending its own rejection to `/dev/null`. All three are in
 
 Everything above is what runs. This is the market it runs into, measured rather than asserted.
 
+**The US market for this opened on 17 September 2026**, when the SEC exempted tokenized-stock
+venues for five years. The count below was re-run three days later.
+
 **1,992 tokenized stocks on Solana have confidential transfers switched on. Nobody has ever used
 one.** Three unrelated issuers, every mint they publish checked rather than sampled —
 `./scripts/slot-scan.sh`, re-run 2026-09-20:
@@ -430,8 +433,14 @@ Stated because a reader should find the limits here rather than discover them:
   but the seizure escrow is a token account a program owns, and while a loan is open the borrower
   cannot move what is in it. The same custody every lending protocol takes, named here rather than
   left inside a word used elsewhere to mean something else.
-- **Matching.** Settlement is done; finding the party who wants the other side is not. It is the
-  same two-sided problem as finding a lender, and no amount of cryptography answers it.
+- **Matching, and not only because it is hard.** Settlement is done; finding the party who wants
+  the other side is not, and it is the same two-sided problem as finding a lender. It also has a
+  second reason under the engineering one, added 2026-09-21: **bringing multiple buyers and sellers
+  together by established, non-discretionary methods is the exchange definition at Rule 3b-16, and
+  doing it for others is broker registration at §15(a).** Not doing it is what keeps this a
+  settlement primitive rather than a venue. And the obvious version would put back the one thing
+  the finding removed — a party who sees both sides. See
+  [`docs/SEC-EXEMPTION.md`](docs/SEC-EXEMPTION.md).
 - **Anything settled against a pool, permanently.** A pool's reserves are public and a trade moves
   them by exactly the traded amount, so the size is recoverable by subtracting two consecutive
   public states. Confidential composition works where the counterparty is a *party*, not a pool.
@@ -454,6 +463,16 @@ by exactly the traded amount, so the size is recoverable by subtracting two cons
 states. An order book publishes fills; a lending reserve publishes its totals. **Confidential
 composition works where the counterparty is a party, not a pool** — which is why this is a
 bilateral settlement primitive and not a venue, and why it will never be one.
+
+**As of 2026-09-17 that limit is also written into US regulation.** The SEC granted two five-year
+exemptions for tokenized NMS stock, and they cover **trading executed by an AMM only** — a venue
+relying on them must publish every fill's price, **size**, time and direction within **ten minutes**,
+and a Tier 1 name is capped at **0.25 % of average daily volume**. So the sanctioned venue publishes
+the size by rule, and size cannot go there anyway. The paragraph above was this repository's own
+structural finding; it is now a condition of the only US venue that may legally operate. A bilateral
+trade between two holders is outside that relief and does not need it — it was never an exchange.
+**Outside an exemption is not outside regulation**, and
+[`docs/SEC-EXEMPTION.md`](docs/SEC-EXEMPTION.md) says exactly what this does and does not claim.
 
 In TradFi a manager with discretion over $100M+ of Section 13(f) securities files Form 13F **45
 days after quarter end**. That lag is legislated, for exactly the harm that real-time position
