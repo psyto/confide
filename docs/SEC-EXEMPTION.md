@@ -85,36 +85,53 @@ requires one. Backpack Securities' structure is different — a security entitle
 1:1 for the real underlying share"*, convertible in both directions — and is closer to what the
 order asks for.
 
-**Founder, 2026-09-21: Backpack's tokenized securities do carry voting rights.** Recorded as
-founder-provided and **not yet sourced** — Backpack's own documentation should be pinned before any
-of this reaches a submission, the way `CRITERIA.md` pins the rules.
+**Corrected again 2026-09-22, and this is the second time this argument has been wrong.** The
+founder's first answer was that Backpack's tokens carry voting rights. The precise answer:
 
-**If that holds, the argument closes, and it is the tightest this project has had.**
+> **Held on chain, they do not vote.** The register shows the broker. To vote you **redeem the
+> token back into the security entitlement**, and then vote through the traditional proxy rails.
 
-| | Backed / xStocks | Backpack Securities |
+So confidentiality does not collide with voting, because **voting was never on chain**. The claim
+before this one said it did. It is wrong for the same reason the dividend claim was wrong: these
+are tracker and entitlement structures whose legal layer sits off chain, and on-chain
+confidentiality cannot collide with a legal right that is not exercised on chain.
+
+**Twice in two days this document reached for "regulation compels disclosure" and twice the
+structure routed around it.** The pattern is worth naming, because a third attempt in the same
+direction would be a fourth error.
+
+---
+
+## Where the size actually gets published — the door, not the right
+
+Backpack's headline feature is a **two-way door**: a US share bought in the brokerage converts 1:1
+to an on-chain token, and the token burns back into the entitlement whenever you want.
+
+**Every passage through that door publishes its size.** Minting in raises supply by the amount;
+redeeming out burns it and lowers supply by the amount. A mint's supply is public state, so the
+size is recoverable by subtracting two consecutive public states — **the identical argument this
+repository already makes about pool reserves**, arriving at the same place from the other side.
+
+And the door is not optional for anything that matters:
+
+| you want to | you must | which publishes |
 |---|---|---|
-| what the token is | a tracker note against a Jersey SPV | a security entitlement, **redeemable 1:1** |
-| the register shows | the custodian or the SPV | the holder's entitlement |
-| **votes** | **typically none** | **yes** |
-| dividends | rebase via `scaledUiAmountConfig` | multiplier is 1; SPCX pays none |
-| the SEC's condition (iii) | **requires a vote it does not confer** | **satisfiable** |
+| **vote** | redeem to the entitlement | the size of your position |
+| **move brokers** (ACATS) | redeem first | the size |
+| **exit at NAV** rather than into a pool | redeem | the size |
+| **enter at size** without moving a pool | mint in | the size |
 
-**So the only structure on Solana that can meet the order's shareholder-rights condition is also
-the one where confidentiality and voting collide.**
+**So the argument is not about a shareholder right at all. It is about the plumbing between two
+layers**, and the plumbing is the one place a holder has no alternative.
 
-A vote proportional to holdings is tallied from a snapshot at a record date. On chain, that
-snapshot reads balances. **A confidential balance cannot be read, so a confidential holder cannot
-be counted — unless they can prove their holding to the registrar, at that moment, and to nobody
-else.**
+**This is the strongest form the argument has taken, and it is the one that needs no regulation to
+be true.** It is also, exactly, what this repository already built: a bilateral settlement between
+a holder and an issuer, in one transaction, with neither side publishing the amount. See
+[`cwf-2026/ISSUANCE.md`](cwf-2026/ISSUANCE.md).
 
-That is not an analogy for what this repository builds. It is the thing: a proof over your own
-ciphertext, to a named recipient, anchored on chain. **The primitive exists. The registrar
-application does not**, and claiming otherwise is what `scripts/docs-consistency.sh` is for.
-
-**And the collision is live, not theoretical.** `SPCX.US` — the most traded tokenized equity on
-Solana, $439M in its first week — carries `autoApproveNewAccounts: false` and a null auditor slot,
-measured 2026-09-21. Today nobody can hold it confidentially at all, so the conflict has not
-surfaced. It surfaces the moment anyone can.
+**What is still unmeasured.** Whether supply moves per redemption or in batches decides how much
+is actually recoverable. `SPCX.US` supply was 42,488.081216 on 2026-09-21; a second reading tells
+more than any argument here does.
 
 Token-2022 still offers exactly two disclosure settings — a global auditor key that reads everyone
 forever, or null — and all 1,992 are null. **The primitive for a third exists in this repository.

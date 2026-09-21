@@ -68,7 +68,13 @@ it replaces, because the block trade's *"neither side publishes"* needs no such 
 
 ## The hypothesis to test before committing — redemption may leak the amount
 
-**HYPOTHESIS, NOT MEASURED.** *"Redemption is the arrow reversed"* may be false.
+**Upgraded from hypothesis to structure, 2026-09-22.** *"Redemption is the arrow reversed"* is
+false in an important way, and the founder's account of Backpack's two-way door is why: redemption
+**is** a burn, by design, because the whole product is converting the token back into the
+entitlement. So supply falls by the redeemed amount and the size is public.
+
+The original reasoning, which arrived at this from first principles before the structure was
+known:
 
 A token redeemed is normally **burned**. A mint's `supply` is public state. If the issuer burns on
 redemption, **supply falls by exactly the redeemed amount**, and the size is recoverable by
@@ -135,15 +141,26 @@ dividends by moving `scaledUiAmountConfig` — a mint-level multiplier that scal
 proportionally without reading one, running today at 1.00092 on NVDAx with the next value already
 scheduled. **A confidential balance rebases exactly like a public one.**
 
-**What survives is the vote, and it is narrower and better.** The order requires *"a right to
-exercise the same voting rights"*, and **there is no scalar for a vote** — a tally proportional to
-holdings requires knowing the holdings. That is a compelled need for **one party to learn one
-number, for one purpose, at one moment**: the registrar, at the record date. Token-2022 offers a
-global auditor key that reads everyone forever, or null. Every issuer picked null.
+**And the vote was wrong too, corrected 2026-09-22.** The replacement claim said a confidential
+holder could not be counted in a proxy tally. **Held on chain, these tokens do not vote at all** —
+the register shows the broker, and voting happens after you redeem back into the entitlement.
+Confidentiality cannot collide with a right that is never exercised on chain.
 
-**And the same condition cuts at the issuers.** Backed's tokens are tracker notes against a Jersey
-SPV with the register showing the custodian, so holders typically have **no vote at all** — which
-the order requires. See [`../SEC-EXEMPTION.md`](../SEC-EXEMPTION.md).
+**Twice the argument reached for "regulation compels disclosure" and twice the structure routed
+around it.** What was left when both fell away is better than either, and needs no regulation:
+
+> **Backpack's two-way door is its best feature and its largest disclosure leak.** A share converts
+> 1:1 into an on-chain token and burns back into the entitlement on demand — and **every passage
+> through that door publishes its size**, because minting raises a public supply and redeeming
+> lowers it by exactly the amount.
+
+And the door is not optional for anything that matters: **to vote you redeem. To move brokers you
+redeem. To exit at NAV rather than into a pool you redeem. To enter at size without moving a pool
+you mint in.** Each one publishes the number.
+
+**That is this proposal, exactly.** Confidential issuance and redemption is not a new use case
+bolted onto a settlement primitive — it is the confidential version of a door a named issuer
+already operates, at volume. See [`../SEC-EXEMPTION.md`](../SEC-EXEMPTION.md).
 
 | | |
 |---|---|
