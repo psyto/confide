@@ -83,6 +83,16 @@ def fetch(mint, tries=4):
 
 print(f"\n  {B}WHO ACTUALLY HOLDS ONE{OFF} {DIM}a balance is not a position{OFF}\n")
 print("    %-10s %-10s %9s %10s %8s %8s" % ("mint", "issuer", "accounts", ">=1 share", ">=10", ">=100"))
+DEC = {}
+for i in range(0, len(sys.argv[1:]), 100):
+    batch = sys.argv[1:][i:i + 100]
+    out = subprocess.run(["curl", "-s", "--max-time", "60", RPC, "-H", "content-type: application/json",
+                          "-d", json.dumps({"jsonrpc": "2.0", "id": 1, "method": "getMultipleAccounts",
+                                            "params": [batch, {"encoding": "jsonParsed"}]})],
+                         capture_output=True).stdout
+    for m, v in zip(batch, json.loads(out)["result"]["value"]):
+        DEC[m] = v["data"]["parsed"]["info"]["decimals"] if v else 8
+
 rows, tot = [], dict(accounts=0, at_least_1=0, at_least_10=0, at_least_100=0)
 for mint in sys.argv[1:]:
     sym, iss = SYMS.get(mint, ("?", "?"))
@@ -91,7 +101,10 @@ for mint in sys.argv[1:]:
         print("    %-10s %-10s  could not read it — the endpoint kept truncating" % (sym, iss))
         sys.exit(1)
     v = [struct.unpack("<Q", base64.b64decode(x["account"]["data"][0]))[0] for x in res]
-    one = 10 ** 8          # every tokenized-equity mint checked here is 8 decimals
+    # Decimals are read per mint, not assumed. The first version of this script hardcoded 8 with
+    # a comment saying every tokenized-equity mint uses it -- SPCX.US, the most traded one on
+    # Solana, uses 6, and the script would have reported its holders as a hundredth of their size.
+    one = 10 ** DEC[mint]
     c = dict(accounts=len(v),
              at_least_1=sum(1 for a in v if a >= one),
              at_least_10=sum(1 for a in v if a >= 10 * one),

@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-09-21 13:02:06 UTC",
+ "generated_utc": "2026-09-21 13:29:53 UTC",
  "note": "Accounts holding a meaningful position, not merely a balance. A baseline: the structure it describes is today's and is not permanent.",
  "rpc": "https://api.mainnet-beta.solana.com",
  "mints": [
@@ -7,52 +7,52 @@
    "mint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
    "symbol": "NVDAx",
    "issuer": "Backed",
-   "accounts": 181035,
-   "at_least_1": 1941,
-   "at_least_10": 434,
+   "accounts": 180991,
+   "at_least_1": 1946,
+   "at_least_10": 439,
    "at_least_100": 94
   },
   {
    "mint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
    "symbol": "AAPLx",
    "issuer": "Backed",
-   "accounts": 70674,
-   "at_least_1": 502,
-   "at_least_10": 110,
+   "accounts": 70697,
+   "at_least_1": 503,
+   "at_least_10": 109,
    "at_least_100": 26
   },
   {
    "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
    "symbol": "ANTHROPIC",
    "issuer": "PreStocks",
-   "accounts": 71238,
-   "at_least_1": 1612,
-   "at_least_10": 442,
-   "at_least_100": 76
+   "accounts": 71223,
+   "at_least_1": 442,
+   "at_least_10": 76,
+   "at_least_100": 13
   },
   {
    "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
    "symbol": "SPACEX",
    "issuer": "PreStocks",
    "accounts": 17891,
-   "at_least_1": 1091,
-   "at_least_10": 365,
-   "at_least_100": 80
+   "at_least_1": 365,
+   "at_least_10": 80,
+   "at_least_100": 18
   },
   {
    "mint": "AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc",
    "symbol": "AMC.US",
    "issuer": "Backpack",
-   "accounts": 13351,
-   "at_least_1": 50,
-   "at_least_10": 8,
-   "at_least_100": 1
+   "accounts": 13348,
+   "at_least_1": 861,
+   "at_least_10": 244,
+   "at_least_100": 50
   }
  ],
  "total": {
-  "accounts": 354189,
-  "at_least_1": 5196,
-  "at_least_10": 1359,
-  "at_least_100": 277
+  "accounts": 354150,
+  "at_least_1": 4117,
+  "at_least_10": 948,
+  "at_least_100": 201
  }
 }

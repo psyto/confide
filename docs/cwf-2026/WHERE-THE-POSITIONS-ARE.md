@@ -23,17 +23,22 @@ is reproducible: `./scripts/holders-scan.sh`.
 
 ## The answer: there is almost no on-chain holder base
 
-| mint | issuer | accounts with a balance | median holding | **hold < 1 token** | top 1% hold |
-|---|---|---|---|---|---|
-| NVDAx | Backed | 99,028 | **0.0046** | **98.0%** | — |
-| AAPLx | Backed | 35,754 | **0.0013** | **98.6%** | **99.4%** |
-| ANTHROPIC | PreStocks | 37,719 | **0.0067** | **95.7%** | **92.0%** |
-| AMC.US | Backpack | 4,236 | **0.0014** | **98.8%** | **84.9%** |
+| mint | issuer | decimals | accounts with a balance | median holding | **hold < 1 share** | top 1% hold |
+|---|---|---|---|---|---|---|
+| NVDAx | Backed | 8 | 98,932 | **0.00460** | **98.0%** | 98.8% |
+| AAPLx | Backed | 8 | 35,843 | **0.00131** | **98.6%** | 99.4% |
+| ANTHROPIC | PreStocks | 9 | 37,694 | **0.00067** | **98.8%** | 91.9% |
+| SPACEX | PreStocks | 9 | 10,103 | **0.00030** | **96.4%** | 89.9% |
+| AMC.US | Backpack | 6 | 4,230 | **0.13608** | **79.6%** | 84.4% |
 
 **The median NVDAx holder owns 0.0046 of a share.** At roughly $180 a share that is about
-**eighty cents**. The 90th percentile is 0.05 of a share. Across four mints from three unrelated
-issuers, **96–99% of accounts with any balance hold less than one share**, and the top 1% holds
-85–99% of everything.
+**eighty cents**. Across five mints from three unrelated issuers, **80–99% of accounts with any
+balance hold less than one share**, and the top 1% holds 84–99% of everything.
+
+> **Corrected 2026-09-21, and the correction matters.** The first version of this table assumed
+> every tokenized-equity mint has 8 decimals. **Four of six do not** — ANTHROPIC and SPACEX are 9,
+> AMC.US and SPCX.US are 6 — so three of the medians were wrong by a factor of ten or a hundred.
+> `holders-scan.sh` reads decimals per mint now; the figures above are the corrected ones.
 
 **The account count is dust.** 330,266 is a real number and it is not a population of investors.
 
@@ -63,14 +68,39 @@ Backpack's mints (`Archer8kgi…`, `DNL1tgEj…`) were not identified and are no
 |---|---|---|---|---|---|
 | NVDAx | Backed | 181,035 | **1,941** | 434 | 94 |
 | AAPLx | Backed | 70,674 | **502** | 110 | 26 |
-| ANTHROPIC | PreStocks | 71,238 | **1,612** | 442 | 76 |
-| SPACEX | PreStocks | 17,891 | **1,091** | 365 | 80 |
-| AMC.US | Backpack | 13,351 | **50** | 8 | 1 |
-| **total** | | **354,189** | **5,196** | **1,359** | **277** |
+| ANTHROPIC | PreStocks | 71,223 | **442** | 76 | 13 |
+| SPACEX | PreStocks | 17,891 | **365** | 80 | 18 |
+| AMC.US | Backpack | 13,348 | **861** | 244 | 50 |
+| **total** | | **354,150** | **4,117** | **948** | **201** |
 
-**Five thousand accounts hold a whole share. Two hundred and seventy-seven hold a hundred.** That
-is the on-chain holder base of tokenized equity on Solana, today, and it is the number that moves
-if any of this changes.
+**Four thousand accounts hold a whole share. Two hundred and one hold a hundred.** That is the
+on-chain holder base of these five mints today, and it is the number that moves if any of this
+changes.
+
+### SPCX.US is missing from that table, and it is the one that matters most
+
+`SPCX.US` — Backpack Securities' tokenized SpaceX equity, listed through Wormhole's **Sunrise** on
+2026-06-12, the day of the Nasdaq IPO — **could not be scanned.** Its account list is large enough
+that the public endpoint truncates the response every time, and Alchemy refuses
+`getProgramAccounts` outright. What was readable:
+
+| | |
+|---|---|
+| supply | **42,488 shares**, 6 decimals |
+| top 20 accounts | **48.3% of supply** — far flatter than NVDAx, where one address holds 52% |
+| the largest holders | DEX pools: Meteora `LBUZKhRx…`, Raydium CLMM `CAMMCzo5…`, `goonuddt…` |
+| two of the top six | **ordinary wallets, about 1,100 shares each** |
+| the gate | `autoApproveNewAccounts: false`, auditor slot **null** — identical to all 1,992 |
+
+**So the dust conclusion does not generalise to SPCX**, and saying otherwise would be wrong. This
+is the most traded tokenized equity on Solana — Backpack reports **$439M in its first week against
+$9.8M of liquidity** — and it has a real, distributed holder base with individual wallets holding
+positions worth serious money.
+
+**Which makes the finding stronger, not weaker.** The reframing it hands over:
+
+> **The most traded tokenized stock on Solana has real holders with real positions, and not one of
+> them can hold it privately.** The gate is shut on it exactly as it is on the other 1,991.
 
 ## What this does to the pitch — the uncomfortable half first
 
