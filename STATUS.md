@@ -219,6 +219,20 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
+0d. **CWF Week 1 video — 動画は公開済み。残るはフォームへのリンク提出（2026-09-21）。**
+
+   **https://youtu.be/mbE8HMwG0S4** · `Confide_CWF_Check-in-1_20260921.mp4` · 0:55
+
+   実ページで照合済み: oembed 200、タイトル完全一致、説明文 1,602字が**一文字単位で一致**、
+   英語・日本語とも**アップロード版**（自動生成は founder が削除）。`healthcheck.sh` が
+   両リンクを毎回見る。`_submission/pasted.json` が貼った時点の本文の sha256 を保持し、
+   以後ファイルが動いたら `docs-consistency.sh` が落ちる。
+
+   | 残り | |
+   |---|---|
+   | **フォームに動画リンクを提出** | **締切 2026-09-21 08:00 PDT = 09-22 00:00 JST。** *"Submitted links cannot be changed or deleted"*、*"One video per team each week"*。*"I checked that judges can watch this video without requesting access"* のチェックも要る |
+   | **日付の出典** | Colosseum のページで check-in の日程を読むこと。**規約にも判定基準にも check-in の条項は無い**（[`docs/cwf-2026/CRITERIA.md`](docs/cwf-2026/CRITERIA.md)）ので、日程はページが唯一の出典 |
+
 0c. **CWF フォーム — 全欄の貼付文を用意した。残りは founder の入力（2026-09-21）。**
 
    **登録時の Brief description が腐ったまま Public 欄に座っていた** — *"All 1,869 tokenized

@@ -25,10 +25,11 @@ field_file() {
     stocklana-short)     echo "_submission/short.txt" ;;
     youtube-description) echo "_submission/youtube-paste.txt" ;;
     x-post)              echo "docs/cwf-2026/x-post.txt" ;;
+    cwf-checkin1)        echo "_submission/youtube-checkin1-paste.txt" ;;
     *)                   echo "" ;;
   esac
 }
-FIELDS="stocklana-full stocklana-short youtube-description x-post"
+FIELDS="stocklana-full stocklana-short youtube-description x-post cwf-checkin1"
 
 show() {
   python3 - "$OUT" <<'PY'

@@ -234,6 +234,17 @@ case "$cc" in
   *)        warn "could not read the caption tracks — YouTube's page shape may have changed" ;;
 esac
 
+# The check-in. A second upload with its own deadline and its own link, submitted to a form that
+# cannot be edited afterwards, so "is it still watchable" is worth asking every run rather than
+# assumed from the day it went up.
+CHECKIN="${CHECKIN:-mbE8HMwG0S4}"
+if curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+   "https://www.youtube.com/oembed?url=https://youtu.be/$CHECKIN&format=json" | grep -q 200; then
+  ok "https://youtu.be/$CHECKIN  (check-in 1, public and embeddable)"
+else
+  bad "https://youtu.be/$CHECKIN  — the check-in is private, deleted, or no longer embeddable"
+fi
+
 # The superseded uploads. video/README.md carried "unlist them rather than leaving three answers to
 # one question" as a standing instruction; the founder deleted all three on 2026-09-21. STATUS.md
 # had warned the opposite way -- that an old URL still returned 200, so a mis-paste would not look
@@ -243,7 +254,7 @@ esac
 # A stray 11-character token that is not a video id answers 404 and passes, so over-matching here
 # is harmless; only a superseded id that is actually LIVE fails.
 old=$(grep -oE 'youtu\.be/[A-Za-z0-9_-]{11}|`[A-Za-z0-9_-]{11}`' video/README.md 2>/dev/null \
-      | grep -oE '[A-Za-z0-9_-]{11}' | sort -u | grep -v "^$VIDEO$" || true)
+      | grep -oE '[A-Za-z0-9_-]{11}' | sort -u | grep -v "^$VIDEO$" | grep -v "^$CHECKIN$" || true)
 live=""
 for id in $old; do
   c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \

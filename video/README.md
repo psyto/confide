@@ -28,6 +28,11 @@ to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck
 `web/poster.jpg` is a frame from this file rather than from the old one, and the caption under it
 stopped calling it "the earlier walkthrough".
 
+**Check-in 1 is a second live upload: `mbE8HMwG0S4`**, `Confide_CWF_Check-in-1_20260921.mp4`,
+0:55, with `checkin-1-20260921.srt` as its English track. It is not a version of the presentation
+and does not supersede anything — `scripts/healthcheck.sh` watches both links and excludes both
+from the superseded scan below.
+
 **`p1aQuEnzhQk` was deleted by the founder on 2026-09-21**, along with the two before it. The
 occurrences left in this file are history and belong here; they are written as bare ids rather than
 links, because the URLs now 404 and a reader should not be handed one to click.
