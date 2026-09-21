@@ -2,7 +2,7 @@
 # Correct the auto-generated caption track against the script, without touching the audio.
 #
 #   ./scripts/fix-captions.sh video/Confide_Stocklana_20260915.mp4 > video/captions.srt
-#   ./scripts/fix-captions.sh video/Confide_CWF_Checkin1_20260916.mp4 > video/checkin-1.srt
+#   ./scripts/fix-captions.sh video/Confide_CWF_Chech-in-1_20260921.mp4 > video/checkin-1-20260921.srt
 #
 # The captions in the delivered file are ASR: they hear the voice and write what they heard. The
 # voice is right and the transcript is not — "Salana" for Solana, lowercase "confide" for the
@@ -20,6 +20,13 @@ s = sys.stdin.read()
 # a single-space pattern silently misses half of these and reports success.
 fixes = [
     (r'Salana', 'Solana'),
+    # 2026-09-21: the check-in's track heard one Solana transaction as one salon a transaction.
+    # The rule above covers the ASR mishearing a single word; this is it splitting one into two.
+    # Note the doubled backslashes -- this whole block lives inside python3 -c '' in a shell
+    # double-quoted string, so a single backslash is eaten and an inner double quote ends the
+    # string. Both mistakes were made adding this rule.
+    (r'\\bsalon\\s+a\\s+transaction\\b', 'Solana transaction'),
+    (r'\\bSalon\\s+a\\s+transaction\\b', 'Solana transaction'),
     # The check-in's transcript heard the protocol's name as a Spanish road. It is the subject of
     # the whole minute, so this is the one that matters most and the one nobody would query.
     (r'\\bCamino\\b', 'Kamino'),

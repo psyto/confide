@@ -1,0 +1,96 @@
+1
+00:00:00,000 --> 00:00:02,200
+Confide  was  a  loan  against
+
+2
+00:00:02,200 --> 00:00:04,720
+tokenized  stock.  This  week  it
+
+3
+00:00:04,720 --> 00:00:07,279
+became  delivery  versus  payment.
+
+4
+00:00:07,279 --> 00:00:10,800
+50,000  shares  against  8.75  million
+
+5
+00:00:10,800 --> 00:00:13,559
+dollars,  one  Solana transaction.
+
+6
+00:00:13,559 --> 00:00:16,080
+Neither  side  publishing  what  moved.
+
+7
+00:00:16,080 --> 00:00:17,760
+Every  account  still  reports  a
+
+8
+00:00:17,760 --> 00:00:19,720
+public  balance  of  zero.
+
+9
+00:00:19,961 --> 00:00:22,321
+The  loan  kept  hitting  one  wall.
+
+10
+00:00:22,321 --> 00:00:24,801
+Collateral  needs  a  third  party  and
+
+11
+00:00:24,801 --> 00:00:26,401
+no  issuer  will  approve  that
+
+12
+00:00:26,401 --> 00:00:28,921
+account.  So,  I  counted  how  many
+
+13
+00:00:28,921 --> 00:00:32,641
+ever  have  across  more  than  300,000
+
+14
+00:00:32,641 --> 00:00:36,321
+live  accounts,  zero.  A  trade  needs
+
+15
+00:00:36,321 --> 00:00:37,121
+none.
+
+16
+00:00:37,122 --> 00:00:39,281
+Making  the  swap  runnable  by  a
+
+17
+00:00:39,281 --> 00:00:41,881
+stranger.  Then  the  gate  on  a  real
+
+18
+00:00:41,881 --> 00:00:44,162
+mint,  a  conversation  nobody  has
+
+19
+00:00:44,162 --> 00:00:45,202
+had.
+
+20
+00:00:45,202 --> 00:00:47,482
+Not  matching.  Bringing  buyers  and
+
+21
+00:00:47,482 --> 00:00:49,402
+sellers  together  is  what  makes  an
+
+22
+00:00:49,402 --> 00:00:50,721
+exchange.
+
+23
+00:00:50,721 --> 00:00:52,721
+Traction  is  zero.  And  I  would
+
+24
+00:00:52,721 --> 00:00:54,842
+rather  say  it  than  have  it  found.
+
