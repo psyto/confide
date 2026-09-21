@@ -40,7 +40,7 @@ balance hold less than one share**, and the top 1% holds 84–99% of everything.
 > AMC.US and SPCX.US are 6 — so three of the medians were wrong by a factor of ten or a hundred.
 > `holders-scan.sh` reads decimals per mint now; the figures above are the corrected ones.
 
-**The account count is dust.** 384,181 is a real number and it is not a population of investors.
+**The account count is dust.** 465,520 is a real number and it is not a population of investors.
 
 ---
 
@@ -92,10 +92,19 @@ that the public endpoint truncates the response every time, and Alchemy refuses
 | two of the top six | **ordinary wallets, about 1,100 shares each** |
 | the gate | `autoApproveNewAccounts: false`, auditor slot **null** — identical to all 1,992 |
 
-**So the dust conclusion does not generalise to SPCX**, and saying otherwise would be wrong. This
-is the most traded tokenized equity on Solana — Backpack reports **$439M in its first week against
-$9.8M of liquidity** — and it has a real, distributed holder base with individual wallets holding
-positions worth serious money.
+**Corrected again 2026-09-22, once SPCX could actually be scanned.** This said *"the dust
+conclusion does not generalise to SPCX"*. **Half right, and the half that was wrong mattered.**
+
+`scripts/lib/gpa.py` reads it now — partitioning on the first byte of the owner field, 256 disjoint
+slices — and the numbers are: **102,011 accounts, 35,263 with a balance, median 0.00053 of a share,
+95.5% holding less than one.** The tail is dust exactly like the others.
+
+**What is different about SPCX is the top, not the tail.** Its largest twenty accounts hold 48.3%
+where one NVDAx address holds 52.4% on its own, its float sits in DEX pools rather than an issuer
+treasury, and **1,576 accounts hold a whole share and 68 hold a hundred** — more real holders than
+any other mint measured. Backpack reports **$439M in its first week against $9.8M of liquidity**.
+
+**So: a real holder base at the top, dust underneath, and the same shut gate as all 1,991 others.**
 
 **Which makes the finding stronger, not weaker.** The reframing it hands over:
 
@@ -111,7 +120,7 @@ custodian.
 **It weakens the market-size reading of the headline**, though not the finding. *The capability is
 shipped and unused* survives intact and is now confirmed on a fourth mint and a third issuer. But
 if a judge asks *how many people would use this today*, the honest answer from this data is **very
-few, on chain**. The submission must not imply that 384,181 is a market.
+few, on chain**. The submission must not imply that 465,520 is a market.
 
 ---
 

@@ -59,21 +59,24 @@ if [ ${#MINTS[@]} -eq 0 ]; then
   #
   #   Backed     AAPLx, NVDAx        Apple and NVIDIA
   #   PreStocks  SPACEX, ANTHROPIC   the two nobody can buy on an exchange
-  #   Backpack   AMC.US, GPRO.US     verified non-empty 2026-09-22; AAPL.US and TSLA.US are not
+  #   Backpack   AMC.US, SPCX.US     verified non-empty 2026-09-22
   #
-  # SPCX.US is deliberately absent and it is the most traded of all of them: its account list is
-  # large enough that the public endpoint truncates every attempt, and Alchemy refuses
-  # getProgramAccounts outright. An unreadable mint is reported below, never counted as zero.
+  # SPCX.US was absent for exactly as long as it was unreadable, which made the most traded
+  # tokenized equity on Solana the one mint this scan could not measure. scripts/lib/gpa.py reads
+  # it now by partitioning on the first byte of the owner field. An unreadable mint is still
+  # reported rather than counted as zero.
   MINTS=(XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp \
          Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh \
          PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh \
          Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw \
          AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc \
-         GPRR2u6NS5yBQHWGauoJ9HXgjrTH8dDsrBfTV5zAYvDH)
+         SPCXxcqXj6e5dJDVNovHN8744zkbhM2bYudU45BimGb)
 fi
 
 RPC="$R" T22="$T22" OUT="$OUT" python3 - "${MINTS[@]}" <<'PY'
 import json, os, subprocess, sys, time
+sys.path.insert(0, "scripts/lib")
+from gpa import token_accounts      # partitions a mint too large to answer in one response
 RPC, T22, OUT = os.environ["RPC"], os.environ["T22"], os.environ["OUT"]
 SYMS = {m["mint"]: (m["symbol"], m["issuer"]) for m in json.load(open("web/mints.json"))}
 GREEN, RED, DIM, OFF = "\033[32m", "\033[31m", "\033[2m", "\033[0m"
@@ -91,13 +94,14 @@ rows, total_accounts, total_conf, empty = [], 0, 0, []
 print(f"\n  \033[1mIS ANYBODY THROUGH THE GATE?\033[0m {DIM}accounts, not mints{OFF}\n")
 for mint in sys.argv[1:]:
     sym, issuer = SYMS.get(mint, ("?", "?"))
-    r = rpc({"jsonrpc": "2.0", "id": 1, "method": "getProgramAccounts", "params": [T22, {
-        "encoding": "base64", "dataSlice": {"offset": 0, "length": 0},
-        "filters": [{"memcmp": {"offset": 0, "bytes": mint}}]}]})
-    if "error" in r:
-        print(f"  {sym:10} {RED}error{OFF} {r['error'].get('message','')[:70]}")
+    # Partitioned when the whole set will not come back -- scripts/lib/gpa.py. SPCX.US is the
+    # reason: the most traded tokenized equity on Solana, and the one mint this scan could not read.
+    try:
+        got = token_accounts(RPC, mint, offset=0, length=0)
+    except RuntimeError as e:
+        print(f"  {sym:10} {RED}{e}{OFF}")
         sys.exit(1)
-    accs = r["result"]
+    accs = got
     # Zero accounts is not a measurement, it is an absence, and an absence that adds zero to a
     # total is invisible. This is the bug that let two dead Backpack mints sit in the sample.
     if not accs:
@@ -106,7 +110,7 @@ for mint in sys.argv[1:]:
         empty.append(sym)
     # 456 is the floor for an account carrying ConfidentialTransferAccount: 165 base, an account
     # type byte, a 4-byte TLV header and 286 bytes of extension. 400 is under it on purpose.
-    big = [a["pubkey"] for a in accs if a["account"]["space"] >= 400]
+    big = [a["pubkey"] for a in accs if (a["space"] or 0) >= 400]
     conf = []
     for key in big:
         d = rpc({"jsonrpc": "2.0", "id": 1, "method": "getAccountInfo",

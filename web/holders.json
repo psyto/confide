@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-09-21 13:29:53 UTC",
+ "generated_utc": "2026-09-21 22:15:21 UTC",
  "note": "Accounts holding a meaningful position, not merely a balance. A baseline: the structure it describes is today's and is not permanent.",
  "rpc": "https://api.mainnet-beta.solana.com",
  "mints": [
@@ -7,35 +7,35 @@
    "mint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
    "symbol": "NVDAx",
    "issuer": "Backed",
-   "accounts": 180991,
-   "at_least_1": 1946,
-   "at_least_10": 439,
-   "at_least_100": 94
+   "accounts": 188187,
+   "at_least_1": 2022,
+   "at_least_10": 441,
+   "at_least_100": 90
   },
   {
    "mint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
    "symbol": "AAPLx",
    "issuer": "Backed",
-   "accounts": 70697,
-   "at_least_1": 503,
-   "at_least_10": 109,
+   "accounts": 72961,
+   "at_least_1": 497,
+   "at_least_10": 114,
    "at_least_100": 26
   },
   {
    "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
    "symbol": "ANTHROPIC",
    "issuer": "PreStocks",
-   "accounts": 71223,
-   "at_least_1": 442,
+   "accounts": 71088,
+   "at_least_1": 441,
    "at_least_10": 76,
-   "at_least_100": 13
+   "at_least_100": 12
   },
   {
    "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
    "symbol": "SPACEX",
    "issuer": "PreStocks",
-   "accounts": 17891,
-   "at_least_1": 365,
+   "accounts": 17882,
+   "at_least_1": 364,
    "at_least_10": 80,
    "at_least_100": 18
   },
@@ -43,16 +43,25 @@
    "mint": "AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc",
    "symbol": "AMC.US",
    "issuer": "Backpack",
-   "accounts": 13348,
-   "at_least_1": 861,
-   "at_least_10": 244,
-   "at_least_100": 50
+   "accounts": 13349,
+   "at_least_1": 855,
+   "at_least_10": 243,
+   "at_least_100": 54
+  },
+  {
+   "mint": "SPCXxcqXj6e5dJDVNovHN8744zkbhM2bYudU45BimGb",
+   "symbol": "SPCX.US",
+   "issuer": "Backpack",
+   "accounts": 102031,
+   "at_least_1": 1576,
+   "at_least_10": 373,
+   "at_least_100": 68
   }
  ],
  "total": {
-  "accounts": 354150,
-  "at_least_1": 4117,
-  "at_least_10": 948,
-  "at_least_100": 201
+  "accounts": 465498,
+  "at_least_1": 5755,
+  "at_least_10": 1327,
+  "at_least_100": 268
  }
 }

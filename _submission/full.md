@@ -28,7 +28,7 @@ chain — judging runs weeks and devnet resets.
 Every tokenized stock on Solana runs Token-2022 with confidential transfers **on** and the auditor
 key **empty** — **all 1,992**, three unrelated issuers, every mint checked rather than sampled.
 
-So I stopped reading settings and counted accounts. **384,181 across Apple, NVIDIA, SpaceX and
+So I stopped reading settings and counted accounts. **465,520 across Apple, NVIDIA, SpaceX and
 Anthropic. Zero are confidential** (`./scripts/usage-scan.sh`). Not "few" — zero. Every mint needs
 the issuer's signature to open one and nobody has asked, **so there is no incumbent here and nothing
 to be late to.** The US market opened on **17 September**, when the SEC exempted tokenized-stock
