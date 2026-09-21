@@ -34,24 +34,26 @@ def check(m):
         try:
             v = json.load(urllib.request.urlopen(req, timeout=30)).get('result', {}).get('value')
             if not v:
-                return (m['symbol'], 'NO_ACCOUNT', None)
+                return (m['symbol'], 'NO_ACCOUNT', None, [])
+            all_ext = [e['extension'] for e in v['data']['parsed']['info'].get('extensions', [])]
             ext = [e for e in v['data']['parsed']['info'].get('extensions', [])
                    if e['extension'] == 'confidentialTransferMint']
             if not ext:
-                return (m['symbol'], 'NO_CT_EXTENSION', None)
+                return (m['symbol'], 'NO_CT_EXTENSION', None, all_ext)
             st = ext[0]['state']
             k = st.get('auditorElgamalPubkey')
-            return (m['symbol'], 'EMPTY' if k is None else 'KEY', st.get('autoApproveNewAccounts'))
+            return (m['symbol'], 'EMPTY' if k is None else 'KEY',
+                    st.get('autoApproveNewAccounts'), all_ext)
         except Exception:
             time.sleep(0.6 * (attempt + 1))
             continue
-    return (m['symbol'], 'ERROR', None)
+    return (m['symbol'], 'ERROR', None, [])
 
 with cf.ThreadPoolExecutor(max_workers=4) as ex:
     res = list(ex.map(check, mints))
 
 by_issuer = Counter()
-for m, (_, st, _auto) in zip(mints, res):
+for m, (_, st, _auto, _ex) in zip(mints, res):
     by_issuer[(m.get('issuer', '?'), st)] += 1
 print('  checked  %d tokenized-equity mints on Solana' % len(res))
 for (issuer, st), v in sorted(by_issuer.items()):
@@ -84,6 +86,25 @@ if auto:
     print('\n  some mint auto-approves now:', auto[:12])
     print('  the pincer has a hole in it — that is a finding, and the docs say there is none')
     raise SystemExit(1)
+# The other confidential capability Token-2022 ships, and the second question this same fetch can
+# answer for free. ConfidentialMintBurn keeps the SUPPLY encrypted -- current_supply is a
+# PodElGamalCiphertext -- so an issuer can mint and burn without moving the public figure. Codex
+# surfaced it on 2026-09-22 while reviewing a claim that redemption always publishes its size.
+#
+# If this is zero too, the finding is not "the confidential transfer capability is unused". It is
+# "every confidential capability Token-2022 ships is unused" -- the same claim one size up, for no
+# extra scan.
+ext_count = Counter()
+for r in res:
+    for e in r[3]:
+        ext_count[e] += 1
+cmb = ext_count.get('confidentialMintBurn', 0)
+print()
+print('  THE OTHER CONFIDENTIAL CAPABILITY')
+print('    %d of %d carry confidentialMintBurn - an ENCRYPTED supply' % (cmb, len(res)))
+if cmb == 0:
+    print('    So a redemption that burns moves a public figure by exactly the redeemed amount,')
+    print('    on every one of them. Configuration, not protocol: one instruction changes it.')
 print()
 print('  Every mint Kamino would accept is a mint whose issuer must approve each escrow.')
 print('  No amount of engineering on this side removes that.')
@@ -106,6 +127,8 @@ _json.dump({
     'issuers': sorted({m.get('issuer', '?') for m in mints}),
     'by_issuer': [{'issuer': i, 'auditor': st, 'mints': v}
                   for (i, st), v in sorted(by_issuer.items())],
+    'confidential_mint_burn': cmb,
+    'extensions': dict(sorted(ext_count.items(), key=lambda x: -x[1])),
     'auditor_empty': sum(1 for r in res if r[1] == 'EMPTY'),
     'gated': len(gated),
     'auto_approve': len(auto),

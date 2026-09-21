@@ -69,16 +69,31 @@ mechanism, not the product.
 Codex surfaced `ConfidentialMintBurn` — a Token-2022 extension whose `current_supply` is a
 ciphertext, so an issuer can mint and burn without moving public supply.
 
-**None of the six mints checked has it.** If that holds across all 1,992, the finding widens from
+**Scanned all 1,992 on 2026-09-22. The answer is zero.**
 
-> *the confidential transfer capability is shipped and unused*
+```
+1992 of 1992   confidentialTransferMint      shipped, and 0 accounts use it
+   0 of 1992   confidentialMintBurn          not adopted at all
+```
 
-to
+So the finding is no longer about one extension:
 
-> **every confidential capability Token-2022 ships is shipped and unused.**
+> **Token-2022 ships two confidential capabilities. Every tokenized stock on Solana carries the
+> first and uses none of it; not one carries the second.**
 
-That is the same claim, a size larger, at the cost of one scan. **It is the highest-value thing
-available this week** and it is the kind this repository is built for.
+**And the same scan shows what they do adopt**, which makes the abstention deliberate rather than
+inattentive — these are not issuers who ignored the extension list:
+
+| extension | mints |
+|---|---|
+| `metadataPointer`, `permanentDelegate`, `defaultAccountState`, `scaledUiAmountConfig`, `pausableConfig`, `transferHook`, `tokenMetadata` | **1,992 — all of them** |
+| **`confidentialTransferMint`** | **1,992 — all of them, gate shut, auditor null** |
+| `transferFeeConfig`, `confidentialTransferFeeConfig` | 8 |
+| **`confidentialMintBurn`** | **0** |
+
+**Seven extensions on every single mint, configured deliberately.** The eighth is switched on and
+walled off, and the ninth was never turned on. That is a much harder thing to explain away than a
+count of unused accounts.
 
 ---
 
