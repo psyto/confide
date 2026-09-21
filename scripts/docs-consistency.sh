@@ -397,7 +397,8 @@ want = {"%.1f" % (cap["held_usd"] / 1e6), "%.1f" % (cap["authorised_capacity_usd
 # and nothing was checking it.
 files = ["README.md", "docs/27-DAYS.md", "docs/cwf-2026/THE-PINCER.md",
          "docs/cwf-2026/FOUNDER-MARKET-FIT.md", "docs/cwf-2026/GTM.md", "_submission/full.md",
-         "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md", "docs/TESTBED.md"]
+         "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md", "docs/TESTBED.md",
+         "_submission/cwf-form.md"]
 files += [str(p) for p in pathlib.Path("docs/packets").glob("*.md")]
 bad = []
 for f in files:

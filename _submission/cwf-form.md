@@ -230,3 +230,86 @@ minutes, it is **Public**, and criterion 5 is *Founder Communication* — this i
 criterion reads. Nothing here can stand in for it.
 
 **Both are founder work.** Recording and voice are founder-only.
+
+---
+
+# Accelerator application
+
+**Private to organizers and the Colosseum team.** Which is a reason to be more exact, not less: a
+field nobody outside sees is where an unverifiable claim survives longest.
+
+**Four of these are founder facts and are marked as such.** The agent does not know whether an
+entity exists or whether the work was full time, and inventing either here would be the one kind of
+error the rest of this repository is built to prevent.
+
+## How do you know people actually need, or will need this product? · ≤1000
+
+```
+Honestly: I do not know yet, and the measurements I have say something narrower than "people want this".
+
+What I can show. Kamino runs 19 live reserves in tokenized equity: $23.2m deposited, $84.0m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a constraint nobody chose.
+
+What it does not show. 330,266 live accounts and zero confidential proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
+
+What would settle it. Somebody outside my repository opening a confidential position on the devnet issuer whose key I published, or a desk saying what it would pay to move size unpublished. Neither has happened. Until one does this is an argument, not evidence.
+```
+
+## How far along are you? Do you have users? · ≤1000
+
+```
+No users. No pilot, no design partner, no letter of intent, no issuer approached. Traction is zero and I would rather say it than have you find it.
+
+What runs. A confidential stock-for-stablecoin swap settles on devnet in one transaction: 50,000 shares against $8,750,000, two signatures, all four accounts still reporting a public balance of 0. A second settles against a mint shaped like PYUSD, which charges a fee — that leg needs a different instruction, five proofs not three, and one proof too large to fit a transaction, staged through a record account. The collateral half runs too: a floor proved over an escrow's own ciphertext, a default settled without the borrower.
+
+104 tests. Every figure is read off the chain by a script here, and ./scripts/healthcheck.sh re-checks each claim against devnet, because judging runs weeks and devnet resets.
+
+Nothing is on mainnet. Nobody outside the repository has run any of it.
+```
+
+## Who else is building in this space, and what are they getting wrong? · ≤1000
+
+```
+Mostly they are not getting it wrong, and I would rather say so than manufacture a villain.
+
+Backed, Backpack and PreStocks ship tokenized equity on Token-2022 with confidential transfers on — 1,992 mints — and all leave autoApproveNewAccounts false. Not an oversight: turning it on lets anyone open an account they cannot see into.
+
+Kamino refuses confidential collateral and is right to: a lender who cannot read a balance cannot price it. Their program requires the extensions inactive at deposit. Correct underwriting.
+
+What is wrong is upstream of them all. Token-2022 offers one disclosure model: a single auditor key that decrypts everything, for everyone, forever — or null. Fill it and every holder is permanently readable by one party; leave it null and nobody can prove anything to anyone. Every issuer picked null. Every decision downstream is locally correct inside a design with no third option.
+
+Confide builds the third option: disclosure scoped to a recipient and a purpose.
+```
+
+## How do you make money, or how do you plan to? · ≤500
+
+```
+No revenue, no price tested. Three candidates, ordered by whether the buyer already pays for something of that shape:
+
+1. The decision surface as risk tooling. Venues and curators already buy risk analytics; the compatibility packets are that shape and need no integration.
+2. Integration work, when a venue wants confidential collateral admitted.
+3. A fee on settlement. Last deliberately: a fee on a primitive nobody uses is a spreadsheet, not a business.
+
+Which is real is what I have not tested.
+```
+
+## How long have you each been working on this? Full time? · ≤500
+
+```
+FOUNDER TO ANSWER. What the repository can evidence: the first commit is 2026-09-12 and there are 238 of them, so Confide as it stands is about ten days of work. It builds on aperture, an earlier Apache-2.0 project of mine, used as a dependency rather than copied.
+
+Whether that was full time, and what came before 09-12, is the founder's to state. The agent does not know and will not guess.
+```
+
+## Where is each member based? Do you work in-person? · ≤500
+
+```
+One person, based in Japan. There is no team to be co-located, so the in-person question does not arise, and funding would not change where the work happens unless the founder decides to hire — which is the founder's answer to give, not the repository's.
+```
+
+## Legal entity / investment / fundraising / live token
+
+```
+Live token: No. Confide has no token, and nothing in it depends on one existing.
+
+Legal entity, investment taken, currently fundraising: FOUNDER TO ANSWER. The repository holds no evidence either way and a guess here is a misrepresentation to an investor.
+```
