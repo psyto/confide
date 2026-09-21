@@ -438,6 +438,12 @@ sys.exit(1 if bad else 0)
 PYP
 
 echo
+echo "  THE CWF FORM — every field against the limit the form states"
+./scripts/cwf-form.sh >/dev/null 2>&1 \
+  && ok "every CWF form field fits and quotes the counts the chain reports" \
+  || bad "a CWF form field is over its limit or quotes a stale count — ./scripts/cwf-form.sh"
+
+echo
 echo "  THE PRIVATE ENDPOINT — it may exist as an environment variable and nowhere else"
 # web/slots.json recorded the founder's Alchemy URL on this script's first run, key and all, into a
 # file that is committed AND published to the site. It was caught by reading the file. Nothing was

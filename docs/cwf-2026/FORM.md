@@ -1,5 +1,16 @@
 # The submission form — what can be entered now, and what cannot
 
+> **The paste text lives in [`../../_submission/cwf-form.md`](../../_submission/cwf-form.md)**,
+> written 2026-09-21 against the form as the founder actually opened it. This file keeps the two
+> sections that are reasoning rather than paste text: what integrates with what (§1) and why the
+> disclosure is worded as it is (§2). `./scripts/cwf-form.sh` counts every field against the form's
+> own limits and refuses a count the chain does not report.
+>
+> **§1 below was written 2026-09-19 and describes the loan.** It does not mention the swap, the
+> record account or `spl-record`, all of which now carry the submission. Read `_submission/cwf-form.md`
+> for what goes in the form; §1 is kept for the composition argument under Official Rules §8(e),
+> which is still right.
+
 Field list from [`CRITERIA.md`](CRITERIA.md). Registration already took product name, category
 (RWA), description and team. **The rest appears at submission**, so some of this is text held ready
 rather than text that can be pasted today; each row says which.
