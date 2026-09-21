@@ -108,3 +108,68 @@ framing, and one undercount:
    in week 4. Test it against the artifact now, which is week 2's own beat.
 
 **Not this week:** the pitch and demo videos, the key rotation, RFQ, any second chain.
+
+---
+
+# Does any of it touch confidential DvP itself?
+
+Asked by the founder. **The mechanism is untouched. The moment it applies to is narrower than the
+pitch assumed, and one part of the issuance thesis has a hole in it.**
+
+## Untouched
+
+Nothing measured this week contradicts the mechanism. The proofs the chain will not assemble, the
+counterparty's amount decrypted out of the verified context before signing, the fee-bearing leg
+staged through a record account, both legs settling or neither — **all of it still runs, and none
+of the four dead claims was about any of it.**
+
+And one thing got stronger: **a pool cannot be confidential** was this repository's own structural
+finding, and since 2026-09-17 it is a written condition of the only US venue that may legally
+operate.
+
+## The hole: the conversion door is not atomic DvP as it is actually operated
+
+The issuance thesis rests on the issuer being the natural counterparty. But read what the door
+actually does:
+
+> a token is deposited with Backpack and **burns back into a security entitlement** — a brokerage
+> position, off chain.
+
+**The payment leg is off chain.** An on-chain burn and an off-chain credit **cannot be atomic**,
+so the door as operated is not delivery versus payment at all. It is delivery, then a promise.
+
+**Confide's claim is atomicity.** It has nothing to offer a leg that leaves the chain.
+
+**What would close it:** the issuer paying in stablecoin, on chain, in the same transaction. Then
+it is DvP and Confide's mechanism applies exactly. **Whether any issuer does that is unverified**
+and is the single most valuable thing to find out before building on this thesis.
+
+## The tension nobody has stated: atomicity and confidentiality want different counterparties
+
+| | worth most when | worth least when |
+|---|---|---|
+| **atomicity** — neither side goes first | the counterparty is **a stranger** | the counterparty is a regulated broker holding your custody already |
+| **confidentiality** — neither side publishes | the counterparty is **where the size is**, i.e. the issuer | — |
+
+**The two halves of the pitch point at different people.** Against the issuer, atomicity buys
+little: they are creditworthy, regulated, and already hold your assets. Against a stranger,
+confidentiality is worth most but there is nobody to match with.
+
+**This is not fatal and it is not hidden.** It is the honest shape of a bilateral settlement
+primitive, and naming it is better than having a judge find it.
+
+## What the measurements actually did for DvP — the strongest version
+
+The binding constraint was never the mechanism. It was **whether there is anybody to trade with on
+chain**, and until this week the answer looked like *no*.
+
+**`SPCX.US` answers it.** $439M in its first week. Ordinary wallets holding a thousand shares. A
+real, distributed holder base with real size.
+
+**And they are all routed through pools**, because that is the only route that exists — and a pool
+publishes the size by construction, which is the finding this repository started from.
+
+> **The counterparties exist. They are trading through the one venue that cannot keep a size
+> quiet. Confide is the other route.**
+
+That sentence was an assumption a week ago. It is measured now.
