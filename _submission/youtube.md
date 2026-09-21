@@ -16,7 +16,7 @@ errors; `./scripts/fix-captions.sh` corrects them against the script the voice w
 Confide — a stock-for-stablecoin swap on Solana, and nobody can see either amount
 ```
 
-## Description — 4962 / 5000 characters
+## Description — 4967 / 5000 characters
 
 ```
 Two parties settled 50,000 tokenized shares against $8,750,000 of stablecoin in ONE Solana transaction. Neither side published the size, the price, or that they held anything at all. Every account involved still reports a balance of zero.
@@ -53,7 +53,7 @@ THE MEASUREMENT NOBODY HAD MADE
 
 Every tokenized-equity mint on Solana — all 1,992, from three issuers with nothing to do with each other — runs Token-2022 with confidential transfers switched ON and the auditor key EMPTY.
 
-That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 465,520 live token accounts across Apple, NVIDIA, SpaceX and Anthropic. ZERO are configured for confidential transfers.
+That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 465,520 live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC. ZERO are configured for confidential transfers.
 
 Not few. Zero. Every mint needs the issuer's signature to open one and no issuer has given one — so there is no incumbent here and nothing to be late to.
 

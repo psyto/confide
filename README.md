@@ -35,7 +35,7 @@ the price it implies.
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
-| **465,520** | live token accounts across Apple, NVIDIA, SpaceX and Anthropic |
+| **465,520** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
 | **0** | of them are confidential. **Nobody has ever opened one.** |
 
 Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated

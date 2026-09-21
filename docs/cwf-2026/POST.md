@@ -34,7 +34,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
 >
-> So I counted. **465,520 token accounts across Apple, NVIDIA, SpaceX and Anthropic.
+> So I counted. **465,520 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
 > 0 are configured for confidential transfers.** Not few. Zero.
 > (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
 > one of which was large for an unrelated extension, so the check reads the extension list rather
@@ -112,7 +112,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
 > empty on every one.
 >
-> I counted the accounts. **465,520 of them across Apple, NVIDIA, SpaceX, Anthropic.
+> I counted the accounts. **465,520 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC.
 > 0 are confidential.** Nobody has ever opened one — the issuer has
 > to sign, and none has.
 >

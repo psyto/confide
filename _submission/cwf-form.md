@@ -20,7 +20,7 @@ Confide
 ## Brief description · Public · ≤500
 
 ```
-Two parties settle tokenized stock against a stablecoin in one Solana transaction, and neither publishes what moved. Delivery versus payment with nobody in the middle: the transaction is the clearing house. Every tokenized stock on Solana already ships confidential balances — all 1,992 of them, three unrelated issuers, auditor slot empty on every one. So I counted the accounts actually using it. Across 465,520 live accounts on Apple, NVIDIA, SpaceX and Anthropic: zero. Shipped, gated, unused.
+Two parties settle tokenized stock against a stablecoin in one Solana transaction, and neither publishes what moved. Delivery versus payment with nobody in the middle: the transaction is the clearing house. Every tokenized stock on Solana already ships confidential balances — all 1,992, three unrelated issuers, auditor slot empty on every one. So I counted the accounts actually using it. Across 465,520 live accounts on Apple, NVIDIA, SpaceX, Anthropic and AMC: zero. Shipped, gated, unused.
 ```
 
 ## Project website · Public
