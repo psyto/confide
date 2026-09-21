@@ -28,10 +28,10 @@ rule is in [`../STATUS.md`](../STATUS.md) and this is the first script written u
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what changed | 20 | 44 | 136 | the swap decoded in the browser, both balances reading `0` |
-| 2 | what I learned | 24 + 1 | 53 | 136 | the gate, then the scan running to its total |
-| 3 | what is next | 19 | 41 | 134 | three lines of text |
-| | | **64 s** | **138** | | |
+| 1 | what changed | 18 | 40 | 138 | the swap decoded in the browser, both balances reading `0` |
+| 2 | what I learned | 20 + 1 | 45 | 139 | the gate, then the scan running to its total |
+| 3 | what is next | 20 | 45 | 139 | the line this does not cross, then the one thing that is next |
+| | | **59 s** | **130** | | |
 
 ## The script
 
@@ -39,8 +39,7 @@ rule is in [`../STATUS.md`](../STATUS.md) and this is the first script written u
 
 > Fifty thousand tokenized shares against eight point seven five million dollars, in one Solana
 > transaction. Delivery against payment, and neither side publishes what moved. Every account
-> involved still reports a public balance of zero. Nobody watching learns the size, or the price
-> it implies.
+> still reports a public balance of zero. Nobody learns the size, or the price.
 
 *Shows:* the swap decoded in the browser, both balances reading `0`. **The result, before any
 account of how it got there.** The previous cut opened on what I had done; a judge has sixty
@@ -48,9 +47,9 @@ seconds and wants the thing, not the method.
 
 ### 2 — what I learned · +1 s silence
 
-> I did not set out to build that. A month on a loan hit the same wall every time — collateral
-> needs a third party to hold it, and no issuer will approve that account. So I counted how many
-> have ever got through. More than three hundred thousand live accounts, and zero.
+> I did not set out to build that. A month on a loan hit the same wall: collateral needs a third
+> party, and no issuer will approve one. So I counted how many ever got through. More than three
+> hundred thousand live accounts, and zero.
 
 *Shows:* the gate, then the scan running to its total. **The pause is before "so I counted"** —
 the first half is a month spent on the wrong shape, the second is the measurement that says nobody
@@ -59,11 +58,11 @@ decision, with the test as the evidence it was right.
 
 ### 3 — what is next
 
-> Matching. Settlement is done; finding the party who wants the other side is not. And the gate
-> itself, on a real mint, is a conversation nobody has had. Traction is zero, and I would rather
-> say it than have it found.
+> Not matching. Bringing buyers and sellers together is what makes an exchange, and this is
+> deliberately not one. Next is the gate on a real mint — a conversation nobody has had.
+> Traction is zero, and I would rather say it than have it found.
 
-*Shows:* three lines of text. **Ending on traction is deliberate**, and is kept from the previous
+*Shows:* the line this does not cross, then the one thing that is next. **Ending on traction is deliberate**, and is kept from the previous
 version: it is the weakest fact and the first one a judge checks, so saying it costs five seconds
 and buys the rest of the minute.
 
