@@ -85,9 +85,36 @@ requires one. Backpack Securities' structure is different — a security entitle
 1:1 for the real underlying share"*, convertible in both directions — and is closer to what the
 order asks for.
 
-**That is checkable and worth checking**, and it is a stronger observation than the dividend claim
-it replaces: the exemption's shareholder-rights condition may sit badly with the structure the
-largest tokenized-equity issuer on Solana actually uses.
+**Founder, 2026-09-21: Backpack's tokenized securities do carry voting rights.** Recorded as
+founder-provided and **not yet sourced** — Backpack's own documentation should be pinned before any
+of this reaches a submission, the way `CRITERIA.md` pins the rules.
+
+**If that holds, the argument closes, and it is the tightest this project has had.**
+
+| | Backed / xStocks | Backpack Securities |
+|---|---|---|
+| what the token is | a tracker note against a Jersey SPV | a security entitlement, **redeemable 1:1** |
+| the register shows | the custodian or the SPV | the holder's entitlement |
+| **votes** | **typically none** | **yes** |
+| dividends | rebase via `scaledUiAmountConfig` | multiplier is 1; SPCX pays none |
+| the SEC's condition (iii) | **requires a vote it does not confer** | **satisfiable** |
+
+**So the only structure on Solana that can meet the order's shareholder-rights condition is also
+the one where confidentiality and voting collide.**
+
+A vote proportional to holdings is tallied from a snapshot at a record date. On chain, that
+snapshot reads balances. **A confidential balance cannot be read, so a confidential holder cannot
+be counted — unless they can prove their holding to the registrar, at that moment, and to nobody
+else.**
+
+That is not an analogy for what this repository builds. It is the thing: a proof over your own
+ciphertext, to a named recipient, anchored on chain. **The primitive exists. The registrar
+application does not**, and claiming otherwise is what `scripts/docs-consistency.sh` is for.
+
+**And the collision is live, not theoretical.** `SPCX.US` — the most traded tokenized equity on
+Solana, $439M in its first week — carries `autoApproveNewAccounts: false` and a null auditor slot,
+measured 2026-09-21. Today nobody can hold it confidentially at all, so the conflict has not
+surfaced. It surfaces the moment anyone can.
 
 Token-2022 still offers exactly two disclosure settings — a global auditor key that reads everyone
 forever, or null — and all 1,992 are null. **The primitive for a third exists in this repository.
