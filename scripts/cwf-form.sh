@@ -19,7 +19,7 @@ t = pathlib.Path("_submission/cwf-form.md").read_text(encoding="utf-8")
 secs = re.findall(r"^## ([^\n]+)\n\n```\n(.*?)\n```", t, re.S | re.M)
 # The count itself is checked. A field whose code fence is broken simply stops being listed, and a
 # listing that is one row shorter reads exactly like a listing that is complete.
-EXPECTED = 11
+EXPECTED = 13
 if len(secs) != EXPECTED:
     print("  %d fields found, expected %d — a code fence is broken or a field was added"
           % (len(secs), EXPECTED))

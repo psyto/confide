@@ -11,6 +11,12 @@ was sitting in a **Public** field — the same figure that rotted in Stocklana's
 
 ---
 
+## Project name · Public
+
+```
+Confide
+```
+
 ## Brief description · Public · ≤500
 
 ```
@@ -50,6 +56,25 @@ Solana only. No bridge, no second chain.
 
 Token-2022 confidential transfers hold the position; the trade is two of its instructions in one transaction, with Solana's atomicity where a clearing house would be. The proofs are verified by Solana's own ZK ElGamal Proof Program into context accounts and cited by address, so nobody trusts our arithmetic. One proof exceeds the 1232-byte transaction limit and is staged through spl-record. Mint findings read from mainnet-beta; trades run on devnet.
 ```
+
+## What technologies are you using or integrating with? · no limit shown
+
+```
+Rust, and Solana native programs — no Anchor.
+
+On chain: Token-2022 confidential transfers (spl-token-2022-interface, spl-token-confidential-transfer-proof-extraction) for the balances; Solana's ZK ElGamal Proof Program (solana-zk-sdk, solana-zk-elgamal-proof-interface) verifying ciphertext-commitment equality, grouped-ciphertext validity and batched range proofs into context accounts; spl-record to stage the one proof that exceeds the 1232-byte transaction limit; address lookup tables; ComputeBudget. Confide's own seizure program is a native Solana program deployed to devnet.
+
+Read-only integrations: Kamino Lend, decoded from its published source at a pinned commit — no deployment and nothing asked of them. Mint and account findings are read from mainnet-beta by scripts in this repository.
+
+Reused from my own earlier work, disclosed: aperture-core as an unmodified git dependency, and aperture-receipts as a devnet program Confide calls.
+
+Tooling: Solana CLI and spl-token, cargo, Python for the scan and consistency scripts, Puppeteer and ffmpeg to render the video from the live page rather than a mock of it.
+
+AI tools: Anthropic's Claude for drafting and implementation, and OpenAI's Codex for adversarial review — every review request and its result are committed together in docs/reviews/, and several findings from both were rejected after being checked against the real files.
+```
+
+**The form asks for AI tools by name.** Answering straight costs nothing and the evidence is
+already committed: every review payload sits in `docs/reviews/payloads/` beside its result.
 
 ## Which chains · select
 
