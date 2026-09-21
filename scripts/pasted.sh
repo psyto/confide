@@ -26,10 +26,12 @@ field_file() {
     youtube-description) echo "_submission/youtube-paste.txt" ;;
     x-post)              echo "docs/cwf-2026/x-post.txt" ;;
     cwf-checkin1)        echo "_submission/youtube-checkin1-paste.txt" ;;
+    cwf-form)            echo "_submission/cwf-form.md" ;;
+    cwf-graphic)         echo "_submission/graphic.jpg" ;;
     *)                   echo "" ;;
   esac
 }
-FIELDS="stocklana-full stocklana-short youtube-description x-post cwf-checkin1"
+FIELDS="stocklana-full stocklana-short youtube-description x-post cwf-checkin1 cwf-form cwf-graphic"
 
 show() {
   python3 - "$OUT" <<'PY'
@@ -59,6 +61,13 @@ done
 for k in "$@"; do
   OUT="$OUT" K="$k" F="$(field_file "$k")" URL="${URL:-}" python3 - <<'PY'
 import json, os, hashlib, datetime
+
+
+def _is_text(b):
+    try:
+        b.decode("utf-8"); return True
+    except UnicodeDecodeError:
+        return False
 out, k, f = os.environ["OUT"], os.environ["K"], os.environ["F"]
 try:
     d = json.load(open(out))
@@ -67,7 +76,10 @@ except FileNotFoundError:
 b = open(f, "rb").read()
 d[k] = {"file": f,
         "sha256": hashlib.sha256(b).hexdigest(),
-        "characters": len(b.decode("utf-8")),
+        # An uploaded image belongs here as much as a pasted field does -- it is the same question,
+        # has the artifact moved since it went in -- so this records bytes when the file is not text
+        # rather than refusing to record it at all.
+        **({"characters": len(b.decode("utf-8"))} if _is_text(b) else {"bytes": len(b)}),
         "pasted_utc": datetime.datetime.now(datetime.timezone.utc)
                       .strftime("%Y-%m-%d %H:%M:%S UTC"),
         "note": "Reported by the founder. Nothing here read the form; this records what the file "
