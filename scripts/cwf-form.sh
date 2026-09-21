@@ -19,7 +19,7 @@ t = pathlib.Path("_submission/cwf-form.md").read_text(encoding="utf-8")
 secs = re.findall(r"^## ([^\n]+)\n\n```\n(.*?)\n```", t, re.S | re.M)
 # The count itself is checked. A field whose code fence is broken simply stops being listed, and a
 # listing that is one row shorter reads exactly like a listing that is complete.
-EXPECTED = 13
+EXPECTED = 21   # 13 on Project details, 8 on Media and code
 if len(secs) != EXPECTED:
     print("  %d fields found, expected %d — a code fence is broken or a field was added"
           % (len(secs), EXPECTED))
@@ -31,7 +31,9 @@ bad = []
 G, R, OFF = "\033[32m", "\033[31m", "\033[0m"
 for head, body in secs:
     name, b = head.split(" ·")[0], body.strip()
-    m = re.search(r"≤(\d+)", head)
+    # "≤3 min" is a duration, not a character limit. Without the guard the demo video field was
+    # reported as 66 characters against an allowance of 3.
+    m = re.search(r"≤(\d+)(?!\s*min)", head)
     if m and len(b) > int(m.group(1)):
         bad.append("%s is %d characters, the form allows %s" % (name, len(b), m.group(1)))
         print("  %s✗%s %-46s %5d / %s" % (R, OFF, name, len(b), m.group(1)))
