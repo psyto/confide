@@ -18,7 +18,12 @@ h2{font-size:15px;font-weight:600;color:var(--dim);letter-spacing:.09em;text-tra
 pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.42;color:var(--fg);
  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
  overflow:hidden;white-space:pre}
-.figs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:6px}
+.figs{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:6px}
+.gate{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px 20px}
+.gk{font-size:14px;color:var(--yel)}
+.gv{font-size:22px;color:var(--bold);margin-top:4px}
+.gv b{color:var(--red)}
+.gn{font-size:13.5px;color:var(--dim);margin-top:6px}
 .fig{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 22px;
  opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
 .fig.in{opacity:1;transform:none}
@@ -36,21 +41,24 @@ pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.42;c
 </style>
 
 <div class="scene" id="s2">
-  <h2>Kamino, read just now</h2>
+  <h2>The gate, and who has been through it</h2>
+  <div class="gate">
+    <div class="gk mono">autoApproveNewAccounts</div>
+    <div class="gv mono" id="gate">false on <b id="gm">—</b> of <span id="gm2">—</span></div>
+    <div class="gn">no confidential account exists until the issuer signs for it</div>
+  </div>
   <pre id="table"></pre>
   <div class="figs">
-    <div class="fig a" id="f1"><div class="n" id="n1">—</div><div class="k">of tokenized stock deposited in Kamino reserves</div></div>
-    <div class="fig b" id="f2"><div class="n" id="n2">—</div><div class="k">of borrowing their caps and LTVs already authorise</div></div>
-    <div class="fig c" id="f3"><div class="n">$0</div><div class="k">reachable while your position stays confidential</div></div>
+    <div class="fig a" id="f1"><div class="n" id="n1">—</div><div class="k">live token accounts, across the four mints that have holders</div></div>
+    <div class="fig c" id="f2"><div class="n">0</div><div class="k">of them configured for confidential transfers</div></div>
   </div>
 </div>
 
 <div class="scene" id="s3">
-  <h2>What is missing</h2>
+  <h2>What is next</h2>
   <div class="lines">
-    <div class="li" id="l1"><span class="d">1</span><span>Re-proving the floor</span></div>
-    <div class="li" id="l2"><span class="d">2</span><span>The liquidation hand-off</span></div>
-    <div class="li" id="l3"><span class="d">3</span><span>The issuer approving each escrow</span></div>
+    <div class="li" id="l1"><span class="d">1</span><span>Matching — settlement is done, finding the other side is not</span></div>
+    <div class="li" id="l2"><span class="d">2</span><span>The gate, on a real mint — a conversation nobody has had</span></div>
   </div>
   <div class="tr" id="tr">Traction: <b>0</b></div>
 </div>
@@ -59,8 +67,9 @@ pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.42;c
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 window.__data = (d) => {
   document.getElementById("table").textContent = d.table;
-  document.getElementById("n1").textContent = d.held;
-  document.getElementById("n2").textContent = d.cap;
+  document.getElementById("n1").textContent = d.accounts;
+  document.getElementById("gm").textContent = d.mints;
+  document.getElementById("gm2").textContent = d.mints;
 };
 const show = (id) => {
   for (const s of document.querySelectorAll(".scene")) s.classList.remove("on");
@@ -68,24 +77,24 @@ const show = (id) => {
 };
 // Scene 2: the table is already there when the scene starts — it is the evidence, not a reveal.
 // The three figures land one at a time, on the beats the narration takes them.
+// The gate is on screen from the start -- it is the wall the narration spent a month hitting, not
+// a reveal. The scan's total lands on "so I counted", and the zero lands last and alone.
 window.__scene2 = async (seconds) => {
   show("s2");
-  await sleep(1200);
-  for (const [i, id] of ["f1", "f2", "f3"].entries()) {
-    document.getElementById(id).classList.add("in");
-    await sleep(i === 1 ? 2600 : 1800);
-  }
-  await sleep(seconds * 1000 - 1200 - 1800 - 2600 - 1800);
+  await sleep(9000);
+  document.getElementById("f1").classList.add("in");
+  await sleep(4200);
+  document.getElementById("f2").classList.add("in");
+  await sleep(Math.max(0, seconds * 1000 - 9000 - 4200));
 };
 window.__scene3 = async (seconds) => {
   show("s3");
-  await sleep(900);
-  for (const id of ["l1", "l2", "l3"]) {
+  await sleep(600);
+  for (const id of ["l1", "l2"]) {
     document.getElementById(id).classList.add("in");
-    await sleep(2400);
+    await sleep(5200);
   }
-  await sleep(1400);
   document.getElementById("tr").classList.add("in");
-  await sleep(seconds * 1000 - 900 - 7200 - 1400);
+  await sleep(Math.max(0, seconds * 1000 - 600 - 10400));
 };
 </script>

@@ -34,23 +34,31 @@ process.stderr.write(`• scene holds from CHECKIN-1.md: ${HOLD.join(" / ")} s\n
 
 function run(cmd, args, label) {
   process.stderr.write(`• ${label} …\n`);
+  // FORCE_COLOR is not enough: these scripts write the escapes themselves rather than going
+  // through a library that honours it, so the first render put "[32m0 [0m confidential" on screen
+  // where the finding's zero should have been. Strip them here, where the text is captured.
   return execFileSync(cmd, args, {
     cwd: repo, encoding: "utf8", maxBuffer: 8 * 1024 * 1024,
-    env: { ...process.env, FORCE_COLOR: "0" },
-  }).replace(/\s+$/, "");
+    env: { ...process.env, FORCE_COLOR: "0", NO_COLOR: "1", TERM: "dumb" },
+  }).replace(/\u001b\[[0-9;]*m/g, "").replace(/\s+$/, "");
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ── the real runs ────────────────────────────────────────────────────────────────────────────────
-const reserves = run("bash", ["scripts/kamino-reserves.sh"], "reading every Kamino reserve on mainnet");
+// Scene 2's evidence is the ACCOUNT scan, not the reserve table: the week's finding is that
+// nobody has been through the gate. --last reprints the stored result rather than re-scanning a
+// third of a million accounts, which takes minutes and would be re-run on every take.
+const scan = run("bash", ["scripts/usage-scan.sh", "--last"], "reprinting the account scan");
 const table = (() => {
-  const lines = reserves.split("\n");
-  const a = lines.findIndex((l) => /SYMBOL\s+ISSUER/.test(l));
-  if (a < 0) throw new Error("kamino-reserves.sh printed no table — the finding changed");
-  return lines.slice(a, a + 20).join("\n");   // header + 19 reserves
+  const lines = scan.split("\n").filter((l) => l.trim() !== "");
+  const a = lines.findIndex((l) => /IS ANYBODY THROUGH THE GATE/.test(l));
+  if (a < 0) throw new Error("usage-scan.sh --last printed no header — the finding changed");
+  return lines.slice(a + 1).join("\n");
 })();
-const cap = JSON.parse(readFileSync(path.join(repo, "web/capacity.json"), "utf8"));
-const usd = (n) => "$" + (n / 1e6).toFixed(1) + "m";
+const usage = JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8"));
+const mints = JSON.parse(readFileSync(path.join(repo, "web/mints.json"), "utf8"));
+if (usage.total_confidential_accounts !== 0)
+  throw new Error("a confidential account now exists — the narration says zero");
 
 // ── serve web/ so scene 1 drives the same files the site publishes ───────────────────────────────
 const server = spawn("python3", ["-m", "http.server", String(PORT)], {
@@ -66,9 +74,8 @@ const browser = await puppeteer.launch({
   args: ["--no-sandbox", "--hide-scrollbars", "--window-size=1280,720", "--force-device-scale-factor=1.5"],
 });
 const page = await browser.newPage();
-await page.goto(`http://127.0.0.1:${PORT}/kamino.html`, { waitUntil: "networkidle2" });
-// Start on the picker so the first frame is the thing being used, not the page's masthead.
-await page.evaluate(() => document.getElementById("q").scrollIntoView({ block: "center" }));
+await page.goto(`http://127.0.0.1:${PORT}/index.html`, { waitUntil: "networkidle2" });
+await page.evaluate(() => document.getElementById("swaps").scrollIntoView({ block: "center" }));
 
 const recorder = new PuppeteerScreenRecorder(page, {
   fps: 30, videoFrame: { width: 1920, height: 1080 }, aspectRatio: "16:9", ffmpeg_Path: FFMPEG,
@@ -78,32 +85,28 @@ await recorder.start(outFile);
 const t0 = Date.now();
 const mark = () => marks.push((Date.now() - t0) / 1000);
 
-// ── scene 1 — the page, operated ─────────────────────────────────────────────────────────────────
+// ── scene 1 — the swap, decoded from devnet by the page itself ───────────────────────────────────
+// The browser fetches the transaction and reads the four balances. Waiting for that is the point:
+// a still of the panel would prove the page renders, not that the trade is on chain and the
+// accounts read zero. If devnet does not answer, this throws rather than recording a spinner.
 mark();
-await sleep(1500);
-await page.click("#q", { clickCount: 3 });
-await page.type("#q", "NVDAx", { delay: 190 });
-// The verdict arrives from mainnet. Waiting for it is the point: a screenshot would prove nothing.
 await page.waitForFunction(
-  () => /NVDAx/.test(document.querySelector("#out")?.textContent || "") &&
-        /REQUIRES INTEGRATION|INADMISSIBLE|NOT THIS PROBLEM/.test(document.querySelector("#out").textContent),
-  { timeout: 30000 },
+  () => {
+    const s = document.getElementById("swaps")?.textContent || "";
+    return /public balance/.test(s) && /0 on every one/.test(s) && !/reading devnet/.test(s);
+  },
+  { timeout: 45000 },
 );
-process.stderr.write("• the page answered from mainnet\n");
-await page.evaluate(() => document.querySelector("#out").scrollIntoView({ block: "start", behavior: "smooth" }));
-await sleep(5200);
-// Then down to the part a holder is actually deciding on: the reserve that already exists, its
-// LTV and its cap. The extension dump above it is there to be paused on, not held on.
-await page.evaluate(() => {
-  const h = [...document.querySelectorAll("#out h3")].find((e) => /already has a reserve/.test(e.textContent));
-  (h || document.querySelector("#out")).scrollIntoView({ block: "center", behavior: "smooth" });
-});
+process.stderr.write("• the page decoded the swaps from devnet\n");
+await page.evaluate(() => document.getElementById("swaps").scrollIntoView({ block: "center", behavior: "smooth" }));
 await sleep(Math.max(0, HOLD[0] * 1000 - (Date.now() - t0)));
 
 // ── scenes 2 and 3 — authored, over real output ──────────────────────────────────────────────────
 await page.goto("file://" + path.join(dir, "checkin.html"), { waitUntil: "load" });
 await page.evaluate((d) => window.__data(d), {
-  table, held: usd(cap.held_usd), cap: usd(cap.authorised_capacity_usd),
+  table,
+  accounts: usage.total_accounts.toLocaleString("en-US"),
+  mints: mints.length.toLocaleString("en-US"),
 });
 mark();
 await page.evaluate((s) => window.__scene2(s), HOLD[1]);
