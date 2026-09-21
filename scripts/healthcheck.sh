@@ -198,6 +198,37 @@ else
   bad "https://youtu.be/$VIDEO  — private, deleted, or no longer embeddable"
 fi
 
+# The English captions must be the corrected track, not YouTube's transcription. On 2026-09-21 the
+# founder uploaded a Japanese track and left English on ASR, and nothing noticed: scripts/
+# fix-captions.sh holds fourteen corrections that only exist in video/captions-*.srt, including
+# "Camino" -> "Kamino" (a protocol this submission argues about by source line) and "confide" ->
+# "Confide" (the project's own name, uncapitalised in its own video).
+#
+# Three outcomes, kept apart on purpose. A check that cannot read the page must say so rather than
+# pass -- this repository has shipped a green tick over an unreadable source before.
+cc=$(curl -s --max-time 30 -A "Mozilla/5.0" "https://www.youtube.com/watch?v=$VIDEO" \
+     | python3 -c '
+import json, re, sys
+h = sys.stdin.read()
+m = re.search(r"\"captionTracks\":(\[.*?\])(?=,\"audioTracks\"|,\"translationLanguages\"|\})", h)
+if not m:
+    print("UNREADABLE"); raise SystemExit
+try:
+    tr = json.loads(m.group(1))
+except Exception:
+    print("UNREADABLE"); raise SystemExit
+en = [x for x in tr if x.get("languageCode") == "en"]
+if not en:                             print("NONE")
+elif all(x.get("kind") == "asr" for x in en): print("ASR")
+else:                                  print("UPLOADED")
+' 2>/dev/null)
+case "$cc" in
+  UPLOADED) ok "the English captions are the uploaded track, not YouTube's transcription" ;;
+  ASR)      bad "the English captions are YouTube's ASR — upload video/captions-*.srt; fix-captions.sh's corrections are not live" ;;
+  NONE)     bad "the video has no English caption track at all" ;;
+  *)        warn "could not read the caption tracks — YouTube's page shape may have changed" ;;
+esac
+
 # The superseded uploads. video/README.md carried "unlist them rather than leaving three answers to
 # one question" as a standing instruction; the founder deleted all three on 2026-09-21. STATUS.md
 # had warned the opposite way -- that an old URL still returned 200, so a mis-paste would not look

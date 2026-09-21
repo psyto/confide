@@ -1,1 +1,3 @@
 A stock-to-stablecoin swap that settles in one Solana transaction with neither side publishing the amount — delivery versus payment, with nobody in the middle.
+
+A stock-to-stablecoin swap that settles in one Solana transaction with neither side publishing the amount — delivery versus payment, with nobody in the middle.
