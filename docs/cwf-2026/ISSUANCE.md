@@ -68,12 +68,20 @@ it replaces, because the block trade's *"neither side publishes"* needs no such 
 
 ## The hypothesis to test before committing — redemption may leak the amount
 
-**Upgraded from hypothesis to structure, 2026-09-22.** *"Redemption is the arrow reversed"* is
-false in an important way, and the founder's account of Backpack's two-way door is why: redemption
-**is** a burn, by design, because the whole product is converting the token back into the
-entitlement. So supply falls by the redeemed amount and the size is public.
+**Still conditional, and downgraded again after Codex's review, 2026-09-22**
+([review](../reviews/2026-09-22-tokenized-equity-structure.md)). It was briefly written up as
+"upgraded from hypothesis to structure". **That was too strong.** It holds only where redemption
+uses an ordinary `Burn`, and four things defeat it: a **treasury transfer** that moves no supply at
+all, **batching** that reveals only a net, **reissuance**, and the **`ConfidentialMintBurn`**
+extension, whose supply is itself a ciphertext.
 
-The original reasoning, which arrived at this from first principles before the structure was
+**Measured: none of the six mints checked carries `ConfidentialMintBurn`**, so a burn on them is
+public today — a fact about configuration, one instruction from changing. And `SPCX.US` supply did
+move, 42,488.081216 → 42,488.076967 in a day, in a fraction rather than a round batch. **No
+individual burn instruction was captured**, so this rests on differencing rather than on reading
+the instruction, which is the weaker observation.
+
+The original first-principles reasoning, which reached the same place before the structure was
 known:
 
 A token redeemed is normally **burned**. A mint's `supply` is public state. If the issuer burns on
@@ -149,10 +157,13 @@ Confidentiality cannot collide with a right that is never exercised on chain.
 **Twice the argument reached for "regulation compels disclosure" and twice the structure routed
 around it.** What was left when both fell away is better than either, and needs no regulation:
 
-> **Backpack's two-way door is its best feature and its largest disclosure leak.** A share converts
-> 1:1 into an on-chain token and burns back into the entitlement on demand — and **every passage
-> through that door publishes its size**, because minting raises a public supply and redeeming
-> lowers it by exactly the amount.
+> **Backpack's two-way door is its best feature and, as configured today, its largest disclosure
+> leak.** A share converts 1:1 into an on-chain token and burns back into the entitlement on demand
+> — and **as these mints are configured, a burn moves a public supply by exactly the amount**.
+
+**Say "as configured", not "always".** An issuer can transfer to treasury instead of burning, can
+batch, or can enable `ConfidentialMintBurn` and keep supply encrypted. **None of the six mints
+checked has it**, which is why the leak is real today and why the sentence has a date on it.
 
 And the door is not optional for anything that matters: **to vote you redeem. To move brokers you
 redeem. To exit at NAV rather than into a pool you redeem. To enter at size without moving a pool

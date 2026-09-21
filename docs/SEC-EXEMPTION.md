@@ -57,9 +57,22 @@ one, and the exemption is not a licence it lacks.
 
 > *"You cannot pay a dividend pro rata to a holder whose balance you cannot read."*
 
-**Measured, and false.** Backed pays dividends by moving a **mint-level scalar**, not by
-distributing per holder. `scaledUiAmountConfig` carries a multiplier that scales every balance
-proportionally, and it is running right now:
+**Measured, and false — but the first correction was itself wrong about the mechanism, and Codex
+caught it** ([review](reviews/2026-09-22-tokenized-equity-structure.md)). This section said *"a
+confidential balance rebases exactly like a public one."* **It does not rebase at all.**
+
+`scaledUiAmountConfig::amount_to_ui_amount(amount: u64, decimals, timestamp) -> Option<String>`
+takes a **public u64** and returns a **formatted string**. Read in
+`spl-token-2022-interface-2.1.0/src/extension/scaled_ui_amount/mod.rs:74`. It never touches
+`base.amount`, never touches a ciphertext, mints nothing and proves nothing. **It is a display
+conversion.**
+
+**What survives of the correction, and it is what mattered:** if one raw token is defined as a
+time-varying quantity of economic exposure, **that conversion is published globally and no
+individual balance is read to deliver it.** So the original claim — *you cannot pay a dividend pro
+rata to a holder whose balance you cannot read* — is still not safe. But the mechanism is a
+**legal and product interpretation of what a token means**, not an on-chain distribution, and the
+measured multiplier below is evidence of a multiplier changing and of **nothing else**:
 
 | mint | multiplier | next multiplier, already scheduled |
 |---|---|---|
@@ -67,9 +80,11 @@ proportionally, and it is running right now:
 | AAPLx | **1.0026642075893797** | 1.0032690125398187 |
 | SPCX.US | 1 | — (SpaceX pays no dividend) |
 
-**A scalar does not read anything.** It multiplies whatever sits in the account, ciphertext or not,
-so **a confidential balance rebases exactly like a public one**. Dividends are not an argument for
-scoped disclosure, and this document claimed they were for four days.
+**It is not evidence that a custodian bought shares, that a dividend was paid, or that any balance
+moved.** Calling a multiplier change a dividend requires the terms, which this repository does not
+have. What can be said is the narrow thing: **a global conversion factor delivers proportional
+economics without reading anybody's balance**, so dividends are not a safe argument for scoped
+disclosure — and this document claimed they were for four days, then explained it wrongly for one.
 
 ### What survives is narrower, and better
 
@@ -129,9 +144,27 @@ be true.** It is also, exactly, what this repository already built: a bilateral 
 a holder and an issuer, in one transaction, with neither side publishing the amount. See
 [`cwf-2026/ISSUANCE.md`](cwf-2026/ISSUANCE.md).
 
-**What is still unmeasured.** Whether supply moves per redemption or in batches decides how much
-is actually recoverable. `SPCX.US` supply was 42,488.081216 on 2026-09-21; a second reading tells
-more than any argument here does.
+### Conditional, not structural — Codex's third correction
+
+**The door publishes its size only if redemption uses an ordinary `Burn`.** Four ways it does not,
+from the [review](reviews/2026-09-22-tokenized-equity-structure.md):
+
+| | |
+|---|---|
+| **treasury transfer** | the holder transfers to issuer inventory and is paid off chain. **Public supply does not move at all**, and the transfer itself can be confidential |
+| **batching or netting** | a supply delta aggregates many mints and burns and reveals at most the net |
+| **reissuance** | redeem into treasury, redistribute the same units later |
+| **`ConfidentialMintBurn`** | a separate Token-2022 extension whose `current_supply` is a `PodElGamalCiphertext` — **an encrypted supply**. Confidential mint and burn do not move the public `mint.supply` at all |
+
+**Measured 2026-09-22: none of the six mints checked carries `ConfidentialMintBurn`** — not NVDAx,
+AAPLx, ANTHROPIC, SPACEX, SPCX.US or AMC.US. So on these mints today a `Burn` is public. **That is
+a fact about configuration, not about the protocol**, and it is one instruction away from changing.
+
+**And a second reading says supply does move.** `SPCX.US` was **42,488.081216** on 2026-09-21 and
+**42,488.076967** on 2026-09-22 — down **0.004249**, a fraction rather than a round batch. **An
+individual burn instruction was not captured**: the last forty signatures on the mint carry
+transfers only. So the movement is inferred from differencing, which is the weaker of the two
+observations Codex names — the instruction itself would be direct.
 
 Token-2022 still offers exactly two disclosure settings — a global auditor key that reads everyone
 forever, or null — and all 1,992 are null. **The primitive for a third exists in this repository.

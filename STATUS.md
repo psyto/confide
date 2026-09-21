@@ -280,9 +280,20 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
      **同じ方向への3回目は4つ目の誤りになる。**
    - **両方が崩れて残ったものが、どちらより強く、規制を必要としない:**
 
-     > **Backpack の双方向ドアは最大の長所であり、最大の開示漏れ。**
-     > 株 ⇄ トークンの 1:1 変換は、**通るたびにサイズを公開する** —
-     > mint は公開 supply を増やし、burn は同額だけ減らす。
+     > **Backpack の双方向ドアは最大の長所であり、いまの設定では最大の開示漏れ。**
+     > **この6銘柄の設定では** burn が公開 supply を同額だけ動かす。
+
+     **⚠ Codex レビュー（2026-09-22）で3点訂正**
+     [`docs/reviews/2026-09-22-tokenized-equity-structure.md`](docs/reviews/2026-09-22-tokenized-equity-structure.md):
+     ① `scaledUiAmountConfig` は**残高をリベースしない**。`amount_to_ui_amount(u64) -> String` の
+     **表示変換**で、暗号文も `base.amount` も触らない（実ファイルで確認済み）。
+     ② supply 差分は**無条件ではない** — treasury 移管なら supply は動かない、batching は純額しか出さない、
+     再発行、そして **`ConfidentialMintBurn` 拡張は supply 自体が暗号文**。
+     ③ Gemini の記述の**固有名詞（InCore Bank / Apex Clearing / UCC Article 8 / Chainlink PoR）は
+     再構成の疑いが強い。一次資料なしに提出文へ入れない。**
+
+     **実測: 6銘柄とも `ConfidentialMintBurn` を持たない。** だから今日は burn が公開される。
+     **設定の事実であって、プロトコルの事実ではない。**
 
      **そしてドアは、重要なことすべてで必須:** 投票するには償還。ブローカー移管も償還。
      プールではなく NAV で出るのも償還。プールを動かさずにサイズで入るのも mint。
