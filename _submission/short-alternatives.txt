@@ -20,11 +20,11 @@ A stock-to-stablecoin swap that settles in one Solana transaction with neither s
 # REJECTED AGAIN 2026-09-21, for a second reason that did not exist when this was written:
 # the form closes 09-25 16:00 ET and judging runs to 10-02, so a field submitted on the 25th
 # CANNOT BE EDITED for the week it is being read. The account count moved 730 in three days
-# (329,536 -> 330,266). A precise figure frozen in a submitted field will be wrong while it is
+# (329,536 -> 384,181). A precise figure frozen in a submitted field will be wrong while it is
 # judged, which is exactly how "1,869" survived above. If a number ever does go in here it goes
 # in as "more than 330,000", which survives drift in both directions -- the same rule STATUS.md
 # now carries for the video narration.
-Of 330,266 live tokenized-stock accounts on Solana, zero are confidential. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
+Of 384,181 live tokenized-stock accounts on Solana, zero are confidential. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
 
 # B — shortest. Loses "delivery versus payment", which is the frame that makes a finance reader
 # understand immediately what institution is being removed.

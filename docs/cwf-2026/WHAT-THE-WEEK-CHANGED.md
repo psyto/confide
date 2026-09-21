@@ -103,7 +103,7 @@ count of unused accounts.
 framing, and one undercount:
 
 1. **`usage-scan.sh` samples two dead Backpack mints.** `AAPL.US` and `TSLA.US` have zero accounts,
-   so Backpack contributes **0** to the 330,266 headline while its live mints hold tens of
+   so Backpack contributes **0** to the 384,181 headline while its live mints hold tens of
    thousands. The headline understates — safe in direction, wrong in fact.
 2. **Do not present the account count as a market.** It is a measure of an unused capability, not
    of demand. A judge who reads the distribution will find 98% of it under one share.

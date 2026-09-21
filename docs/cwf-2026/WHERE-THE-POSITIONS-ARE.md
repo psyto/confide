@@ -40,7 +40,7 @@ balance hold less than one share**, and the top 1% holds 84–99% of everything.
 > AMC.US and SPCX.US are 6 — so three of the medians were wrong by a factor of ten or a hundred.
 > `holders-scan.sh` reads decimals per mint now; the figures above are the corrected ones.
 
-**The account count is dust.** 330,266 is a real number and it is not a population of investors.
+**The account count is dust.** 384,181 is a real number and it is not a population of investors.
 
 ---
 
@@ -111,7 +111,7 @@ custodian.
 **It weakens the market-size reading of the headline**, though not the finding. *The capability is
 shipped and unused* survives intact and is now confirmed on a fourth mint and a third issuer. But
 if a judge asks *how many people would use this today*, the honest answer from this data is **very
-few, on chain**. The submission must not imply that 330,266 is a market.
+few, on chain**. The submission must not imply that 384,181 is a market.
 
 ---
 

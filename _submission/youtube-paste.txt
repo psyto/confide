@@ -39,7 +39,7 @@ THE MEASUREMENT NOBODY HAD MADE
 
 Every tokenized-equity mint on Solana — all 1,992, from three issuers with nothing to do with each other — runs Token-2022 with confidential transfers switched ON and the auditor key EMPTY.
 
-That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 330,266 live token accounts across Apple, NVIDIA, SpaceX and Anthropic. ZERO are configured for confidential transfers.
+That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 384,181 live token accounts across Apple, NVIDIA, SpaceX and Anthropic. ZERO are configured for confidential transfers.
 
 Not few. Zero. Every mint needs the issuer's signature to open one and no issuer has given one — so there is no incumbent here and nothing to be late to.
 

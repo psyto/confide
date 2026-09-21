@@ -5,7 +5,7 @@ once, has no addressee, and asks for no meeting, no reply and no favour.
 
 **What changed from the 09-19 draft, so the change is a decision rather than a drift:**
 
-- The headline is no longer the Kamino pincer. It is a measurement nobody had made — **330,266
+- The headline is no longer the Kamino pincer. It is a measurement nobody had made — **384,181
   token accounts, and not one of them confidential.** The pincer is why, and is now support.
 - The draft said *"it does not make the pincer go away"* and that was true of a **loan**. A loan
   needs a third party to hold collateral, and that third party is what the gate bites. **A trade
@@ -19,7 +19,7 @@ arrives afterwards cannot be told apart from what was already there.
 **Every number below is recomputable, and they move.** Re-run `./scripts/usage-scan.sh`,
 `./scripts/capacity.sh` and `./scripts/slot-scan.sh` before posting and update from their output —
 a post quoting a figure the page contradicts is worse than no post. Current readings:
-**330,266 accounts / 0 confidential**, and
+**384,181 accounts / 0 confidential**, and
 **$23.2 m / $84.0 m**.
 
 ---
@@ -34,7 +34,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
 >
-> So I counted. **330,266 token accounts across Apple, NVIDIA, SpaceX and Anthropic.
+> So I counted. **384,181 token accounts across Apple, NVIDIA, SpaceX and Anthropic.
 > 0 are configured for confidential transfers.** Not few. Zero.
 > (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
 > one of which was large for an unrelated extension, so the check reads the extension list rather
@@ -95,7 +95,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 >
 > It is devnet and the tokens represent nothing. You will need the Solana CLI, a Rust toolchain and
 > a little devnet SOL — the script tries the airdrop and tells you what to do when it is throttled,
-> which it usually is. **It is the thing 330,266 live accounts have never done.** Mint
+> which it usually is. **It is the thing 384,181 live accounts have never done.** Mint
 > `7MEQEiy1…`; the approval key is in `keys/` and cannot mint, which is checked rather than claimed.
 >
 > Everything above is checkable without taking my word for it:
@@ -112,7 +112,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
 > empty on every one.
 >
-> I counted the accounts. **330,266 of them across Apple, NVIDIA, SpaceX, Anthropic.
+> I counted the accounts. **384,181 of them across Apple, NVIDIA, SpaceX, Anthropic.
 > 0 are confidential.** Nobody has ever opened one — the issuer has
 > to sign, and none has.
 >

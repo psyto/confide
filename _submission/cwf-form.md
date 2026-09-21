@@ -20,7 +20,7 @@ Confide
 ## Brief description · Public · ≤500
 
 ```
-Two parties settle tokenized stock against a stablecoin in one Solana transaction, and neither publishes what moved. Delivery versus payment with nobody in the middle: the transaction is the clearing house. Every tokenized stock on Solana already ships confidential balances — all 1,992 of them, three unrelated issuers, auditor slot empty on every one. So I counted the accounts actually using it. Across 330,266 live accounts on Apple, NVIDIA, SpaceX and Anthropic: zero. Shipped, gated, unused.
+Two parties settle tokenized stock against a stablecoin in one Solana transaction, and neither publishes what moved. Delivery versus payment with nobody in the middle: the transaction is the clearing house. Every tokenized stock on Solana already ships confidential balances — all 1,992 of them, three unrelated issuers, auditor slot empty on every one. So I counted the accounts actually using it. Across 384,181 live accounts on Apple, NVIDIA, SpaceX and Anthropic: zero. Shipped, gated, unused.
 ```
 
 ## Project website · Public
@@ -294,7 +294,7 @@ Honestly: I do not know yet, and the measurements I have say something narrower 
 
 What I can show. Kamino runs 19 live reserves in tokenized equity: $23.2m deposited, $84.0m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a constraint nobody chose.
 
-What it does not show. 330,266 live accounts and zero confidential proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
+What it does not show. 384,181 live accounts and zero confidential proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
 
 What would settle it. Somebody outside my repository opening a confidential position on the devnet issuer whose key I published, or a desk saying what it would pay to move size unpublished. Neither has happened. Until one does this is an argument, not evidence.
 ```

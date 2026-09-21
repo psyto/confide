@@ -227,9 +227,20 @@ echo
 # A post cannot be edited after it goes out, so its figures are generated and this checks the
 # generated file is current. The template is the source; x-post.txt is derived.
 if [ -f docs/cwf-2026/x-post.txt ]; then
-  ./scripts/x-post.sh 2>/dev/null | diff -q - docs/cwf-2026/x-post.txt >/dev/null \
-    && ok "docs/cwf-2026/x-post.txt is what its generator produces" \
-    || bad "x-post.txt has drifted — ./scripts/x-post.sh > docs/cwf-2026/x-post.txt"
+  # Skipped once posted. A post cannot be edited, so x-post.txt is frozen at what went out and
+# Skipped once posted. A post cannot be edited, so x-post.txt is frozen at what went out and
+# regenerating it would destroy the only record of what was actually said. pasted.json carries the
+# flag and the sha; THE SUBMITTED FIELDS check below still verifies the file against it.
+#
+# Written as if/else, not as `A && ok || B && ok2 || bad`. That chain evaluates left to right, so a
+# successful first branch fell through to the second `&&` and printed BOTH ticks.
+if python3 -c "import json,sys; sys.exit(0 if json.load(open('_submission/pasted.json')).get('x-post',{}).get('immutable') else 1)" 2>/dev/null; then
+  ok "x-post.txt is frozen at what was posted — not regenerated"
+elif ./scripts/x-post.sh 2>/dev/null | diff -q - docs/cwf-2026/x-post.txt >/dev/null; then
+  ok "docs/cwf-2026/x-post.txt is what its generator produces"
+else
+  bad "x-post.txt has drifted — ./scripts/x-post.sh > docs/cwf-2026/x-post.txt"
+fi
 fi
 
 # The short description is a SUBMITTED field, and the one it replaced carried a mint count from

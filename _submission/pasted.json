@@ -40,7 +40,8 @@
  "x-post": {
   "characters": 2218,
   "file": "docs/cwf-2026/x-post.txt",
-  "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
+  "immutable": true,
+  "note": "Posted. A post cannot be edited, so this file is FROZEN at what actually went out and must not be regenerated -- ./scripts/x-post.sh would rewrite it with today's figures and the repository would stop holding a record of what was said. It quotes 330,266 where the corrected scan says 384,181: the post understates, which is the safe direction, and it stays as posted.",
   "pasted_utc": "2026-09-21 00:38:14 UTC",
   "sha256": "52303ff47ccc00e4f3866c71509a2b623e6242229a880a4678b6972683b68fa3",
   "url": "https://x.com/psyto/status/2101833039114592625"

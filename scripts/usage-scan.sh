@@ -47,15 +47,29 @@ fi
 
 MINTS=("$@")
 if [ ${#MINTS[@]} -eq 0 ]; then
-  # Two per issuer, chosen to have holders rather than alphabetically. The first sample took the
-  # first Backpack mints by name and both had ZERO token accounts — a mint with no holders cannot
-  # answer a question about holders, and it would have padded the total with nothing.
+  # THE SELECTION RULE, stated because the last one was stated falsely. The comment here used to
+  # say "chosen to have holders rather than alphabetically" -- and two of the six, AAPL.US and
+  # TSLA.US, had ZERO token accounts. Backpack contributed nothing to the headline for days while
+  # its live mints held tens of thousands, and nothing failed, because a mint with no accounts adds
+  # zero and zero looks like agreement.
+  #
+  # The rule now: TWO PER ISSUER, each verified non-empty, preferring names a reader recognises.
+  # Recognisability is a real criterion and is admitted as one -- picking by supply instead puts
+  # AMBRx and HRZRBx at the top, which measures the same thing and tells a reader nothing.
+  #
+  #   Backed     AAPLx, NVDAx        Apple and NVIDIA
+  #   PreStocks  SPACEX, ANTHROPIC   the two nobody can buy on an exchange
+  #   Backpack   AMC.US, GPRO.US     verified non-empty 2026-09-22; AAPL.US and TSLA.US are not
+  #
+  # SPCX.US is deliberately absent and it is the most traded of all of them: its account list is
+  # large enough that the public endpoint truncates every attempt, and Alchemy refuses
+  # getProgramAccounts outright. An unreadable mint is reported below, never counted as zero.
   MINTS=(XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp \
          Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh \
-         AAPLEDt8RpzPgXyhvFzkMBofvFSQw9gpeMCoUdPdLnB8 \
-         TSLAqBbv4CNCnzWFeB7LmydAyEiNMJtve7DYKLpdK4S \
          PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh \
-         Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw)
+         Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw \
+         AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc \
+         GPRR2u6NS5yBQHWGauoJ9HXgjrTH8dDsrBfTV5zAYvDH)
 fi
 
 RPC="$R" T22="$T22" OUT="$OUT" python3 - "${MINTS[@]}" <<'PY'
@@ -73,7 +87,7 @@ def rpc(body):
     except Exception:
         return {"error": {"message": out[:120].decode("utf8", "replace")}}
 
-rows, total_accounts, total_conf = [], 0, 0
+rows, total_accounts, total_conf, empty = [], 0, 0, []
 print(f"\n  \033[1mIS ANYBODY THROUGH THE GATE?\033[0m {DIM}accounts, not mints{OFF}\n")
 for mint in sys.argv[1:]:
     sym, issuer = SYMS.get(mint, ("?", "?"))
@@ -84,6 +98,12 @@ for mint in sys.argv[1:]:
         print(f"  {sym:10} {RED}error{OFF} {r['error'].get('message','')[:70]}")
         sys.exit(1)
     accs = r["result"]
+    # Zero accounts is not a measurement, it is an absence, and an absence that adds zero to a
+    # total is invisible. This is the bug that let two dead Backpack mints sit in the sample.
+    if not accs:
+        print(f"  {sym:10} {issuer:10} {RED}no token accounts at all{OFF} — it cannot answer a "
+              f"question about accounts, and it is not counted as agreement")
+        empty.append(sym)
     # 456 is the floor for an account carrying ConfidentialTransferAccount: 165 base, an account
     # type byte, a 4-byte TLV header and 286 bytes of extension. 400 is under it on purpose.
     big = [a["pubkey"] for a in accs if a["account"]["space"] >= 400]
@@ -104,6 +124,10 @@ for mint in sys.argv[1:]:
                  "confidential_accounts": len(conf), "confidential": conf})
     time.sleep(1)
 
+if empty:
+    print(f"\n  {RED}{len(empty)} of the sampled mints are empty: {', '.join(empty)}{OFF}")
+    print("  Fix the sample rather than publishing a total that silently excludes an issuer.")
+    sys.exit(1)
 print(f"\n  {total_accounts} token accounts across {len(rows)} mints, "
       f"\033[1m{total_conf}\033[0m configured for confidential transfers\n")
 json.dump({"generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
