@@ -3,14 +3,22 @@
 #
 #   ./scripts/graphic.sh
 #
-# SOURCE: web/confide-dvp-public-graphic.png, commissioned by the founder 2026-09-21. The form
-# stores at 0.5 MB and the original is 1.2 MB, so it is quantised rather than left for whatever
-# the form's own compressor does to a gradient.
+# SOURCE: web/confide-solana-dvp-graphic.png, commissioned by the founder 2026-09-21. The form
+# stores at 0.5 MB and the original is 1.6 MB, so the compression is chosen here rather than left
+# to whatever the form does to a gradient.
 #
-# WHAT THIS REPLACED, TWICE. First a crop of web/poster.jpg -- a real frame of the delivered video,
+# WHY JPEG AND NOT A QUANTISED PNG. The light draft this replaced was flat enough to take 192
+# colours cleanly. This one is a dark gradient, and quantising it -- even at 256 colours, even with
+# Sierra dithering -- speckles the whole background; the crop at /tmp/graphic-card.png makes it
+# obvious. JPEG at q2 is 123 KB against the PNG's 475 KB and has neither banding nor speckle. The
+# format follows the image, not a preference.
+#
+# WHAT THIS REPLACED, THREE TIMES. A crop of web/poster.jpg -- a real frame of the delivered video,
 # honest and unreadable, because at card size a panel of small terminal type is texture. Then a
-# page built here, readable but generic. The founder's is the one that is both legible and
-# distinct at 360px.
+# page built here: legible, and indistinguishable from any other RWA project. Then a light
+# commissioned draft, whose only signal for CONFIDENTIAL was a purple ellipsis that read as
+# "loading". This one puts an opaque lens in the middle of the exchange: you can see something is
+# behind it and not what, which is the product.
 #
 # THE CHECK THAT MATTERS: render it at 360px and LOOK. A built version had the exchange mark as
 # U+21C4 at 44px between two 72px figures; at card size it collapsed into a not-equals sign and the
@@ -19,13 +27,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
-SRC=web/confide-dvp-public-graphic.png
-OUT=_submission/graphic.png
+SRC=web/confide-solana-dvp-graphic.png
+OUT=_submission/graphic.jpg
 CARD=/tmp/graphic-card.png
 [ -f "$SRC" ] || { echo "  $SRC is missing" >&2; exit 1; }
-"$FF" -loglevel error -y -i "$SRC" -vf "scale=1024:1024,palettegen=max_colors=192" /tmp/graphic-pal.png
-"$FF" -loglevel error -y -i "$SRC" -i /tmp/graphic-pal.png \
-      -lavfi "scale=1024:1024[x];[x][1:v]paletteuse" "$OUT"
+"$FF" -loglevel error -y -i "$SRC" -vf scale=1024:1024 -q:v 2 "$OUT"
 "$FF" -loglevel error -y -i "$OUT" -vf scale=360:-1 "$CARD"
 bytes=$(wc -c < "$OUT" | tr -d ' ')
 printf '  %s - %d KB (source %d KB), and %s at the size a card shows it\n' \

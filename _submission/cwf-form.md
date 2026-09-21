@@ -165,29 +165,36 @@ Traction is zero.
 ## Project logo or graphic · Public · required
 
 ```
-_submission/graphic.png   (1024x1024, 338 KB — ./scripts/graphic.sh)
+_submission/graphic.jpg   (1024x1024, 123 KB — ./scripts/graphic.sh)
 ```
 
-Commissioned by the founder 2026-09-21, from `web/confide-dvp-public-graphic.png`. Quantised to
-192 colours because the source is 1.2 MB and the form stores at 0.5 MB — better to choose the
-compression than to let the form's own do it to a gradient.
+From `web/confide-solana-dvp-graphic.png`, commissioned by the founder 2026-09-21.
 
-**It is the third attempt and the first that works.** A crop of the delivered video's own frame was
-honest and unreadable: at 360px a panel of small terminal type is texture. A page built here was
-legible but read as any RWA project. This one is both — the wordmark survives the downscale, the
-two arrows read as an exchange at card size, and certificate against coin carries delivery versus
-payment without a caption.
+**Fourth attempt, and the first where the differentiator is the strongest thing in the frame.**
 
-**It claims nothing, which is a feature.** No figure, no number, nothing to defend. This repository
-argues that its numbers are checkable; an image that overstates would cost more than it wins.
+| | why it was dropped |
+|---|---|
+| a crop of the video's own poster frame | honest, and at 360px a panel of small terminal type is texture |
+| a page built in this repository | legible, and indistinguishable from any other RWA project |
+| a light commissioned draft | good eye-catch; its only signal for *confidential* was a purple ellipsis that read as "loading" |
+| **this one** | **an opaque lens sits in the middle of the exchange — something is visibly behind it and unreadable, which is exactly what the product does** |
 
-**The one soft spot, recorded rather than fixed.** The purple `•••` between the two sides is the
-only element carrying *confidential*, and at card size it reads closer to "loading" than to
-"concealed". The differentiator is the weakest signal in the frame. Worth a revision if there is
-ever a reason to open the file again; not worth blocking a submission over.
+The wordmark survives the downscale, the two arrows read as an exchange rather than collapsing, and
+the purple-to-green gradient is Solana's palette without borrowing its mark.
 
-**Check any replacement the same way:** run `./scripts/graphic.sh` and look at `/tmp/graphic-card.png`.
-A built version had its exchange mark collapse into a not-equals sign at 360px, which made the
+**JPEG, not a quantised PNG.** The light draft was flat enough to take 192 colours cleanly; this is
+a dark gradient and quantising it speckles the background even at 256 colours with dithering. 123 KB
+against 475 KB, and no banding. The format follows the image.
+
+**It claims nothing**, which is a feature: no figure, no number, nothing to defend. This repository
+argues its numbers are checkable, and an image that overstated would cost more than it won.
+
+**`web/confide-dvp-public-graphic.png` is the light draft**, kept as the rejected alternative with
+its reason above rather than deleted — the same treatment `_submission/short-alternatives.txt` gets.
+Neither file is published: `scripts/publish-site.sh` names what it serves.
+
+**Check any replacement the same way:** `./scripts/graphic.sh`, then look at `/tmp/graphic-card.png`.
+A built version once had its exchange mark collapse into a not-equals sign at 360px, which made the
 headline say the opposite of the claim. Only looking catches that.
 
 ## GitHub link · Public · required
