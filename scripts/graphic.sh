@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
-# The project graphic the CWF form asks for, cropped out of the video's own poster frame.
+# The project graphic the CWF form asks for, rendered from video/graphic.html.
 #
 #   ./scripts/graphic.sh
 #
-# Generated rather than exported by hand, so it cannot drift from the cut it came from. The source
-# is web/poster.jpg, which is itself a real frame of the delivered video rather than a mock — the
-# same rule the video render follows.
+# WHY IT IS NOT A VIDEO FRAME ANY MORE. The first version cropped web/poster.jpg, a real frame of
+# the delivered cut. Honest, and unreadable: the form shows this as a card among many projects, and
+# at ~360px wide a 1920x640 panel of small type is texture. This page is built for that size --
+# one trade, one sentence, four zeros.
 #
-# The crop exists because the frame is 16:9 with a quarter of its height empty top and bottom. On a
-# project card that becomes letterboxing and unreadable text; cropped to the content band, the
-# whole product reads at tile size: two parties, the two legs, nobody in the middle, and what the
-# chain shows everyone else.
+# WHAT TO CHECK AFTER CHANGING IT. Render, downscale to 360px, and LOOK. The exchange mark was
+# U+21C4 at 44px between two 72px figures; at card size it collapsed into a not-equals sign, so the
+# headline read 50,000 shares NOT $8,750,000. Nothing but looking catches that.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SRC=web/poster.jpg
 OUT=_submission/graphic.jpg
-[ -f "$SRC" ] || { echo "  $SRC is missing — it is published by ./scripts/publish-site.sh" >&2; exit 1; }
-ffmpeg -loglevel error -y -i "$SRC" -vf "crop=1920:640:0:230" -q:v 3 "$OUT"
+node video/shot.mjs
+"${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -loglevel error -y -i /tmp/graphic.png -q:v 3 "$OUT"
+"${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -loglevel error -y -i "$OUT" -vf scale=360:-1 /tmp/graphic-card.png
 bytes=$(wc -c < "$OUT" | tr -d ' ')
-printf '  wrote %s — %d KB\n' "$OUT" "$((bytes / 1024))"
-# The form stores at 0.5 MB and accepts 20 MB before compression. Only the stored figure can bite.
+printf '  wrote %s \u2014 %d KB, and /tmp/graphic-card.png at the size a card shows it\n' "$OUT" "$((bytes / 1024))"
 [ "$bytes" -le 512000 ] || { echo "  over the 0.5 MB the form stores" >&2; exit 1; }
