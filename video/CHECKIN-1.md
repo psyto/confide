@@ -11,13 +11,24 @@ which was the week's change on 09-16 and is not the week's change now. **The swa
 the old cut would put four stale figures in front of a judge to report work that has been
 superseded by better work.
 
-**The schedule under this has no source and needs one.** The previous version of this file asserted
-09-18 / 09-25 / 10-02 / 10-09 with nothing behind it. The Official Rules contain **no check-in
-clause at all**, and neither judging list — the seven on the web page nor the six in §8 — names
-check-ins ([`../docs/cwf-2026/CRITERIA.md`](../docs/cwf-2026/CRITERIA.md)). So this is a platform
-request rather than a rules obligation, and **the founder should read the dates off Colosseum's own
-page before posting.** A date with no source is exactly how the Stocklana deadline was carried a
-week wrong.
+**The schedule, from Colosseum's own dashboard (read 2026-09-21).** Submissions open during the
+last three days of each week, at 08:00 PDT:
+
+| week | opens | due | due, JST |
+|---|---|---|---|
+| 1 | 09-18 | **09-21 08:00 PDT** — submitted 09-20 19:17 PDT | — |
+| 2 | 09-25 | **09-28 08:00 PDT** | 09-29 00:00 |
+| 3 | 10-02 | **10-05 08:00 PDT** | 10-06 00:00 |
+| 4 | 10-09 | **10-12 08:00 PDT** | 10-13 00:00 |
+
+**The dates this file used to assert were not wrong; they were mislabelled.** 09-18 / 09-25 /
+10-02 / 10-09 are the days each window *opens*, written here as though they were the days it
+closes — which is the more dangerous of the two errors, because it reads as three days of slack
+that do not exist on the far end.
+
+The Official Rules still contain **no check-in clause at all**, and neither judging list names one
+([`../docs/cwf-2026/CRITERIA.md`](../docs/cwf-2026/CRITERIA.md)). This is a platform request, and
+the dashboard is its only source.
 
 **No figure that moves is spoken as an exact number.** The account count is "more than three
 hundred thousand" and the dollar figures are absent entirely. The Stocklana narration says "three
