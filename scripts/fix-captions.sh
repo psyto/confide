@@ -59,5 +59,10 @@ for bad, good in fixes:
 # The project's name, only where the transcript lowercased it at the start of a sentence.
 s = re.sub(r'(?m)^(\s*)confide\b', r'\1Confide', s)
 s = re.sub(r'(?<=[.!?] )confide\b', 'Confide', s)
+# The ASR track separates words with two spaces. That is fine for a machine and wrong on a screen,
+# so runs of spaces collapse to one -- AFTER every rule above, because those are written against
+# the doubled form and match on \\s+ deliberately. Only spaces: timecode lines use single spaces
+# around their arrow and cue separation is blank lines, so neither is touched.
+s = re.sub(r'[ \\t]{2,}', ' ', s)
 sys.stdout.write(s)
 "

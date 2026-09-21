@@ -1,38 +1,38 @@
 1
 00:00:00,000 --> 00:00:02,080
-If  you  hold  tokenized  stocks  on
+If you hold tokenized stocks on
 
 2
 00:00:02,080 --> 00:00:03,760
-Solana,  everyone  can  see  your
+Solana, everyone can see your
 
 3
 00:00:03,760 --> 00:00:06,240
-position.  Nobody  attacked  anything.
+position. Nobody attacked anything.
 
 4
 00:00:06,240 --> 00:00:08,000
-The  chain  simply  publishes  it.
+The chain simply publishes it.
 
 5
 00:00:08,241 --> 00:00:10,481
-Here  is  a  fund  buying  NVIDIA
+Here is a fund buying NVIDIA
 
 6
 00:00:10,481 --> 00:00:12,921
-through  one  quarter.  Every  purchase
+through one quarter. Every purchase
 
 7
 00:00:12,921 --> 00:00:14,961
-readable  the  moment  it  settles.
+readable the moment it settles.
 
 8
 00:00:14,961 --> 00:00:16,600
-Not  after  the  position  is  built,
+Not after the position is built,
 
 9
 00:00:16,600 --> 00:00:18,321
-but  while  it  is  still  being
+but while it is still being
 
 10
 00:00:18,321 --> 00:00:18,961
@@ -40,15 +40,15 @@ built.
 
 11
 00:00:18,962 --> 00:00:21,641
-Solana  already  shipped  the  fix.
+Solana already shipped the fix.
 
 12
 00:00:21,641 --> 00:00:23,482
-Every  tokenized  stock  here  has
+Every tokenized stock here has
 
 13
 00:00:23,482 --> 00:00:25,721
-confidential  transfers  switched  on
+confidential transfers switched on
 
 14
 00:00:25,721 --> 00:00:27,242
@@ -56,99 +56,99 @@ confidential  transfers  switched  on
 
 15
 00:00:27,242 --> 00:00:28,842
-of  them  from  two  issuers  with
+of them from two issuers with
 
 16
 00:00:28,842 --> 00:00:30,402
-nothing  to  do  with  each  other.
+nothing to do with each other.
 
 17
 00:00:30,402 --> 00:00:32,082
-And  every  single  one  leaves  the
+And every single one leaves the
 
 18
 00:00:32,082 --> 00:00:34,242
-auditor  key  empty  because  the  only
+auditor key empty because the only
 
 19
 00:00:34,242 --> 00:00:36,401
-key  on  offer  reads  everyone's
+key on offer reads everyone's
 
 20
 00:00:36,401 --> 00:00:38,002
-everything  forever.
+everything forever.
 
 21
 00:00:38,003 --> 00:00:41,123
-Confide  fills  that  slot  properly.
+Confide fills that slot properly.
 
 22
 00:00:41,123 --> 00:00:43,523
-The  market  sees  nothing.  A  lender
+The market sees nothing. A lender
 
 23
 00:00:43,523 --> 00:00:45,523
-learns  one  bit.  The  collateral
+learns one bit. The collateral
 
 24
 00:00:45,523 --> 00:00:48,003
-covers  the  loan.  Your  auditor  sees
+covers the loan. Your auditor sees
 
 25
 00:00:48,003 --> 00:00:50,443
-the  position  in  full.  You  choose
+the position in full. You choose
 
 26
 00:00:50,443 --> 00:00:52,643
-who,  how  much,  and  when.
+who, how much, and when.
 
 27
 00:00:52,884 --> 00:00:55,283
-Your  position  stops  being  public
+Your position stops being public
 
 28
 00:00:55,283 --> 00:00:56,804
-and  you  can  still  prove  what  you
+and you can still prove what you
 
 29
 00:00:56,804 --> 00:00:57,884
-need  to.
+need to.
 
 30
 00:00:57,884 --> 00:00:59,804
-Last  quarter's  number  cannot  be
+Last quarter's number cannot be
 
 31
 00:00:59,804 --> 00:01:02,283
-tidied  afterwards.  It  is  sealed  on
+tidied afterwards. It is sealed on
 
 32
 00:01:02,283 --> 00:01:04,084
-the  reporting  date  and  opened  by
+the reporting date and opened by
 
 33
 00:01:04,084 --> 00:01:06,483
-people  you  do  not  control.
+people you do not control.
 
 34
 00:01:06,483 --> 00:01:08,483
-A  stock  split  does  not  corrupt
+A stock split does not corrupt
 
 35
 00:01:08,483 --> 00:01:10,204
-what  you  already  disclosed.
+what you already disclosed.
 
 36
 00:01:10,205 --> 00:01:13,285
-This  is  a  real  account  right  now.
+This is a real account right now.
 
 37
 00:01:13,285 --> 00:01:15,605
-The  chain  says  it  holds  nothing.
+The chain says it holds nothing.
 
 38
 00:01:15,605 --> 00:01:18,165
-It  holds  173,000
+It holds 173,000
 
 39
 00:01:18,165 --> 00:01:19,005
@@ -156,11 +156,11 @@ shares.
 
 40
 00:01:19,006 --> 00:01:21,206
-And  this  is  the  lender's  check,
+And this is the lender's check,
 
 41
 00:01:21,206 --> 00:01:23,325
-running  on  Solana's  zero-knowledge
+running on Solana's zero-knowledge
 
 42
 00:01:23,325 --> 00:01:24,486
@@ -168,43 +168,43 @@ program.
 
 43
 00:01:24,486 --> 00:01:26,765
-Two  proofs,  both  accepted.
+Two proofs, both accepted.
 
 44
 00:01:26,765 --> 00:01:28,725
-The  chain  confirmed  the  collateral
+The chain confirmed the collateral
 
 45
 00:01:28,725 --> 00:01:31,166
-covers  the  loan  without  ever  being
+covers the loan without ever being
 
 46
 00:01:31,166 --> 00:01:33,206
-told  what  is  in  the  account.
+told what is in the account.
 
 47
 00:01:33,447 --> 00:01:35,647
-And  on  default,  the  lender  takes
+And on default, the lender takes
 
 48
 00:01:35,647 --> 00:01:37,407
-it.  A  transfer  the  borrower
+it. A transfer the borrower
 
 49
 00:01:37,407 --> 00:01:39,287
-authorized  at  origination  and
+authorized at origination and
 
 50
 00:01:39,287 --> 00:01:41,806
-cannot  now  refuse.  No  key  is
+cannot now refuse. No key is
 
 51
 00:01:41,806 --> 00:01:44,207
-reconstructed,  nobody  is  asked,  and
+reconstructed, nobody is asked, and
 
 52
 00:01:44,207 --> 00:01:45,926
-neither  account  ever  shows  what
+neither account ever shows what
 
 53
 00:01:45,926 --> 00:01:46,687
@@ -212,15 +212,15 @@ moved.
 
 54
 00:01:46,928 --> 00:01:49,248
-Your  position  is  yours,  and  you
+Your position is yours, and you
 
 55
 00:01:49,248 --> 00:01:51,328
-can  still  prove  what  you  must.
+can still prove what you must.
 
 56
 00:01:51,328 --> 00:01:53,487
-Try  it  yourself.  No  wallet,  no
+Try it yourself. No wallet, no
 
 57
 00:01:53,487 --> 00:01:54,288

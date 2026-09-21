@@ -16,7 +16,9 @@ Checked against the delivered file rather than assumed:
 | every claim still live | `swap-status.sh`, `testbed-up.sh --check`, `usage-scan.sh --last`, `healthcheck.sh` — all clear the day it was cut |
 
 **The caption track is ASR and had six errors**, corrected into
-[`captions-20260920.srt`](captions-20260920.srt) by `./scripts/fix-captions.sh`. Upload that as the
+[`captions-20260920.srt`](captions-20260920.srt) by `./scripts/fix-captions.sh`, which also
+collapses the ASR's doubled word spacing — a hand-made single-spaced copy lived beside it as
+`captions-20260920a.srt` until the script learned to do it, and is gone. Upload that as the
 caption track; YouTube's own transcript is worse. The one worth naming: *"Everyone leaves the
 auditor key empty"* is a sentence about people, and the line is about **mints** — every one of
 them. The transcript changed the subject of the finding.

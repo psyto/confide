@@ -73,7 +73,19 @@ if [ -f "$CAPS" ]; then
   done
   ./scripts/fix-captions.sh "$PUB" 2>/dev/null | diff -q - "$CAPS" >/dev/null \
     && ok "$CAPS is what fix-captions.sh produces from the published file" \
-    || bad "captions.srt has drifted from its generator"
+    || bad "$CAPS has drifted from its generator"
+fi
+
+# The check-in's own track. A separate upload with a separate deadline, and the file that caught
+# the ASR writing the chain's name as "salon a".
+CK=video/checkin-1-20260921.srt
+CKV=video/Confide_CWF_Check-in-1_20260921.mp4
+if [ -f "$CK" ] && [ -f "$CKV" ]; then
+  ./scripts/fix-captions.sh "$CKV" 2>/dev/null | diff -q - "$CK" >/dev/null \
+    && ok "$CK is what fix-captions.sh produces from the delivered check-in" \
+    || bad "$CK has drifted from its generator"
+else
+  bad "the check-in cut or its caption track is missing"
 fi
 
 echo
