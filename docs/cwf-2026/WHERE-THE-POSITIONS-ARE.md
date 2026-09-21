@@ -4,7 +4,20 @@ The founder asked whether an investor who buys tokenized stock ends up holding i
 on-chain account, or as a book entry inside an issuer's or custodian's bulk account.
 
 **Measured, not reasoned.** Every figure below is one `getProgramAccounts` call against mainnet and
-is reproducible.
+is reproducible: `./scripts/holders-scan.sh`.
+
+> **This is a baseline, not a verdict** — the founder's correction, 2026-09-21, and it changes how
+> everything below should be read. **The structure described here is today's.** Tokenized equity on
+> Solana is about a year old, the US market for it opened on 17 September, and nothing about this
+> shape is permanent.
+>
+> That is why it is a script. A snapshot says *how it is*; a script re-run says *whether it is
+> changing*, and the column where a change would appear first is **`>= 1 share`**. Today that is
+> **5,196 of 354,189 accounts — 1.467%**, and **277** hold a hundred shares or more.
+>
+> **It also makes the thesis falsifiable, which is the point.** If a third option between public
+> self-custody and invisible custody is what the market is missing, that column grows. If it does
+> not grow, the thesis was wrong, and this repository will have recorded the number that says so.
 
 ---
 
@@ -43,6 +56,21 @@ inside an exchange or a custodian as book entries.
 Backpack's mints (`Archer8kgi…`, `DNL1tgEj…`) were not identified and are not guessed at.
 
 ---
+
+## The number to watch — `./scripts/holders-scan.sh`
+
+| mint | issuer | accounts | **≥ 1 share** | ≥ 10 | ≥ 100 |
+|---|---|---|---|---|---|
+| NVDAx | Backed | 181,035 | **1,941** | 434 | 94 |
+| AAPLx | Backed | 70,674 | **502** | 110 | 26 |
+| ANTHROPIC | PreStocks | 71,238 | **1,612** | 442 | 76 |
+| SPACEX | PreStocks | 17,891 | **1,091** | 365 | 80 |
+| AMC.US | Backpack | 13,351 | **50** | 8 | 1 |
+| **total** | | **354,189** | **5,196** | **1,359** | **277** |
+
+**Five thousand accounts hold a whole share. Two hundred and seventy-seven hold a hundred.** That
+is the on-chain holder base of tokenized equity on Solana, today, and it is the number that moves
+if any of this changes.
 
 ## What this does to the pitch — the uncomfortable half first
 
@@ -108,6 +136,7 @@ curl -s https://api.mainnet-beta.solana.com -H 'content-type: application/json' 
 
 The owner of each account is at offset 32, the amount at offset 64.
 
-**This is not yet a script.** It was run by hand to answer a question, and a claim in a submission
-should not rest on that — `./scripts/usage-scan.sh` is the pattern to follow if any of these
-figures is going to be quoted.
+**The holder counts are now a script** — `./scripts/holders-scan.sh`, writing `web/holders.json`
+with its own timestamp, `--last` to reprint without re-scanning. The concentration and owner-type
+figures at the top of this document were run by hand to answer a question and are **not** a script;
+anything from them that reaches a submission has to become one first.
