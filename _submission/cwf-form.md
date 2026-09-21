@@ -94,6 +94,27 @@ Solana   (only — no other chain is integrated)
 Real World Assets (RWA)
 ```
 
+**Kept after the pivot, asked by the founder 2026-09-21.** The turn from a loan to delivery versus
+payment changed the mechanism, not the asset class. Confide exists because tokenized equity exists:
+the finding is *1,992 tokenized-equity mints, all gated*, which is a fact about this asset on this
+chain and not about lending or about privacy in general. The loan and the swap were always two ways
+at the same asset.
+
+Three reasons it is also the better place to be judged from:
+
+- **The measurement is unique here.** Nobody else has counted the accounts. Under a DeFi or privacy
+  heading, confidential transfers are a well-worn topic and this becomes one entry among many.
+- **The SEC's 17 September exemption is an RWA event** — it is about tokenized NMS stock
+  specifically. Sitting in RWA puts this beside the year's largest development in its own category
+  rather than adjacent to it.
+- **A trading heading would invite the wrong comparison.** Confide is deliberately not a venue, and
+  `docs/SEC-EXEMPTION.md` records why not building matching is what keeps it clear of Rule 3b-16.
+  Being judged against order books and AMMs is being judged as the thing it refuses to be.
+
+**If the category list has an option this file has not seen, that is worth re-asking** — the
+options were never pasted, so this is reasoning about the one that is selected rather than a
+comparison against the full list.
+
 ## Is your project a mobile-focused dApp?
 
 ```
