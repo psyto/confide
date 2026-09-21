@@ -129,13 +129,25 @@ grep -q "^$((t + z)) tests, $z over the seizure program\." _submission/full.md \
 n=$(python3 -c "print(len(open('_submission/full.md',encoding='utf-8').read()))")
 [ "$n" -le 5000 ] && ok "_submission/full.md is $n characters, inside 5,000" \
                   || bad "_submission/full.md is $n characters, over 5,000"
-read -r have claimed < <(python3 -c "
-import re; s=open('_submission/youtube.md',encoding='utf-8').read()
+# Both YouTube copies, not just the first. The check-in file was written with hand-typed heading
+# figures that were wrong by 7 and 22 the moment it was saved.
+for yt in _submission/youtube.md _submission/youtube-checkin1.md; do
+  read -r have claimed tl tclaimed < <(YT="$yt" python3 -c "
+import os, re; s=open(os.environ['YT'],encoding='utf-8').read()
 b=re.findall(r'\`\`\`\n(.*?)\n\`\`\`',s,re.S)
-print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).group(1))")
-[ "$have" = "$claimed" ] && [ "$have" -le 5000 ] \
-  && ok "the YouTube description is $have characters and its heading agrees" \
-  || bad "the YouTube description is $have characters; the heading claims $claimed"
+print(len(max(b,key=len).strip()), re.search(r'## Description — (\d+)',s).group(1),
+      len(min(b,key=len).strip()), re.search(r'## Title — (\d+)',s).group(1))")
+  [ "$have" = "$claimed" ] && [ "$have" -le 5000 ] && [ "$tl" = "$tclaimed" ] && [ "$tl" -le 100 ] \
+    && ok "${yt#_submission/}: title $tl and description $have, both inside and both as claimed" \
+    || bad "${yt#_submission/}: title $tl/$tclaimed, description $have/$claimed — a heading disagrees or a limit is passed"
+done
+for cut in "" checkin1; do
+  out=_submission/youtube${cut:+-$cut}-paste.txt
+  [ -z "$cut" ] && out=_submission/youtube-paste.txt
+  ./scripts/youtube-paste.sh $cut 2>/dev/null | diff -q - "$out" >/dev/null \
+    && ok "${out#_submission/} is what its generator produces" \
+    || bad "${out#_submission/} has drifted — ./scripts/youtube-paste.sh $cut > $out"
+done
 # And the chapters against the file they describe. The published Stocklana cut carried chapter
 # times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
 # from the recorder's plan. This reads them off the delivery.
@@ -149,10 +161,6 @@ print('\n'.join(re.findall(r'(?m)^\d+:\d\d .*\$', d)))") >/dev/null \
     && ok "the YouTube chapters are the ones in the delivered file" \
     || bad "the YouTube chapters do not match the file — ./scripts/video-chapters.sh"
 fi
-
-./scripts/youtube-paste.sh 2>/dev/null | diff -q - _submission/youtube-paste.txt >/dev/null \
-  && ok "youtube-paste.txt is what its generator produces" \
-  || bad "youtube-paste.txt has drifted from youtube.md"
 
 # Every prose restatement of the market totals, against the file that computes them. On 2026-09-19
 # the chain moved from $21.1m to $22.0m and six documents plus the packet GENERATOR still said the
