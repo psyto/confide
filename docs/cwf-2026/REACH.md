@@ -69,6 +69,35 @@ itself rather than hidden, which is the only version of it this project can defe
 
 **This is the founder's call, not the agent's.** It is recorded here undecided.
 
+## The post went out — 2026-09-21
+
+https://x.com/psyto/status/2101833039114592625 · draft B, 2,218 characters, video attached natively.
+
+**The baseline was taken first**, on 09-20, before it: 37 views, **7 unique visitors**, one
+referrer. Whatever arrives now can be told apart from what was already there — which was the whole
+reason for taking it.
+
+**What the text was is pinned, not remembered.** `_submission/pasted.json` holds the sha256 of
+`docs/cwf-2026/x-post.txt` at the moment it went out, and `docs-consistency.sh` fails if that file
+moves afterwards. A post cannot be edited, so the repository must not quietly drift away from what
+was actually said.
+
+**The post's own text is not verified here.** x.com answers 403 to this session and the mirrors are
+blocked, so what is recorded is the file that was generated and the founder's word that it was
+posted — not a reading of the post. Anyone wanting the text should open the link.
+
+### Measuring it
+
+`./scripts/reach.sh` **at +1 day and +7 days.** GitHub keeps fourteen days and then drops it, so a
+reading taken after 10-05 cannot see this week at all — and judging runs to 10-02.
+
+Read the daily `unique` column, not `clones` and not the summed total. The baseline window had
+**more than forty clones per page view** on days with one human visitor, and summing daily uniques
+overstates by half.
+
+**None of it is traction.** A visitor count says a link travelled. The first thing that would count
+is somebody opening an account on the devnet testbed, and it counts as exactly what it is.
+
 ## What would actually count
 
 Stated so the bar does not move later:

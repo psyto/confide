@@ -2,6 +2,7 @@
 # Record that a submitted field was pasted, so the repository can tell when it has drifted from it.
 #
 #   ./scripts/pasted.sh stocklana-full stocklana-short     # stamp these fields as pasted now
+#   URL=https://x.com/... ./scripts/pasted.sh x-post      # stamp it, and keep where it went
 #   ./scripts/pasted.sh --show                             # what is on file
 #
 # WHY THIS EXISTS. A submitted field is the one artifact this repository cannot read back. The
@@ -23,10 +24,11 @@ field_file() {
     stocklana-full)      echo "_submission/full.md" ;;
     stocklana-short)     echo "_submission/short.txt" ;;
     youtube-description) echo "_submission/youtube-paste.txt" ;;
+    x-post)              echo "docs/cwf-2026/x-post.txt" ;;
     *)                   echo "" ;;
   esac
 }
-FIELDS="stocklana-full stocklana-short youtube-description"
+FIELDS="stocklana-full stocklana-short youtube-description x-post"
 
 show() {
   python3 - "$OUT" <<'PY'
@@ -41,6 +43,8 @@ for k in sorted(d):
     now = hashlib.sha256(open(f, "rb").read()).hexdigest() if os.path.exists(f) else "MISSING"
     state = "current" if now == v["sha256"] else "FILE HAS CHANGED SINCE"
     print("  %-20s %-32s pasted %s  %s" % (k, f, v["pasted_utc"][:16], state))
+    if v.get("url"):
+        print("  %-20s %s" % ("", v["url"]))
 PY
 }
 
@@ -52,7 +56,7 @@ for k in "$@"; do
 done
 
 for k in "$@"; do
-  OUT="$OUT" K="$k" F="$(field_file "$k")" python3 - <<'PY'
+  OUT="$OUT" K="$k" F="$(field_file "$k")" URL="${URL:-}" python3 - <<'PY'
 import json, os, hashlib, datetime
 out, k, f = os.environ["OUT"], os.environ["K"], os.environ["F"]
 try:
@@ -67,6 +71,8 @@ d[k] = {"file": f,
                       .strftime("%Y-%m-%d %H:%M:%S UTC"),
         "note": "Reported by the founder. Nothing here read the form; this records what the file "
                 "was at the moment they said they had pasted it."}
+if os.environ.get("URL"):
+    d[k]["url"] = os.environ["URL"]
 json.dump(d, open(out, "w"), indent=1, sort_keys=True)
 print("  recorded %s <- %s" % (k, f))
 PY
