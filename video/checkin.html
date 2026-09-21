@@ -34,6 +34,7 @@ pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.42;c
 .li{display:flex;gap:16px;align-items:baseline;opacity:0;transform:translateX(-10px);
  transition:opacity .45s ease,transform .45s ease;font-size:26px;color:var(--bold)}
 .li.in{opacity:1;transform:none}
+.li .g{color:var(--grn);font-family:ui-monospace,Menlo,monospace;font-size:20px}
 .li .d{color:var(--red);font-family:ui-monospace,Menlo,monospace;font-size:20px}
 .tr{margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:22px;color:var(--dim);
  opacity:0;transition:opacity .5s ease}
@@ -57,8 +58,9 @@ pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.42;c
 <div class="scene" id="s3">
   <h2>What is next</h2>
   <div class="lines">
-    <div class="li" id="l1"><span class="d">✕</span><span>Matching &mdash; bringing buyers and sellers together is what makes an exchange</span></div>
-    <div class="li" id="l2"><span class="d">→</span><span>The gate, on a real mint &mdash; a conversation nobody has had</span></div>
+    <div class="li" id="l1"><span class="g">→</span><span>The swap, runnable by a stranger and not just by me</span></div>
+    <div class="li" id="l2"><span class="g">→</span><span>The gate, on a real mint &mdash; a conversation nobody has had</span></div>
+    <div class="li" id="l3"><span class="d">✕</span><span>Matching &mdash; bringing buyers and sellers together is what makes an exchange</span></div>
   </div>
   <div class="tr" id="tr">Traction: <b>0</b></div>
 </div>
@@ -90,11 +92,11 @@ window.__scene2 = async (seconds) => {
 window.__scene3 = async (seconds) => {
   show("s3");
   await sleep(600);
-  for (const id of ["l1", "l2"]) {
+  for (const id of ["l1", "l2", "l3"]) {
     document.getElementById(id).classList.add("in");
-    await sleep(5200);
+    await sleep(4300);
   }
   document.getElementById("tr").classList.add("in");
-  await sleep(Math.max(0, seconds * 1000 - 600 - 10400));
+  await sleep(Math.max(0, seconds * 1000 - 600 - 12900));
 };
 </script>
