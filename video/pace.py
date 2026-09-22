@@ -13,7 +13,12 @@ import io, re, sys
 
 WPM = 137          # the pace the earlier recording actually held
 TAIL = 0.6         # a line should finish before the picture does
-DOCS = ["video/CWF-PRESENTATION.md", "video/CHECKIN-1.md"]
+# DERIVED, not listed. This was a hand-maintained list of two, and a third check-in script would
+# have been written, paced by hand, and never checked again -- the exact shape of every drift in
+# this repository. A check-in script IS `video/CHECKIN-<n>.md`, so the glob is the definition.
+import glob as _g
+DOCS = ["video/CWF-PRESENTATION.md"] + sorted(
+    _g.glob("video/CHECKIN-*.md"), key=lambda s: int(re.search(r"(\d+)", s).group(1)))
 
 def scenes(text):
     """Each scene heading is `### N — title`, optionally followed by `· +P s silence`.

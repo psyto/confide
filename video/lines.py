@@ -12,9 +12,20 @@ failure this file exists to prevent; making one here would be the joke writing i
 """
 import io, json, os, re, sys
 
+# The check-in entry names CHECKIN-1 because segments-checkin holds CHECKIN-1's clips, and those
+# were submitted. A later check-in is a DIFFERENT cut with its own directory, so it is passed in
+# rather than silently replacing the one on disk:
+#
+#     CHECKIN_DOC=video/CHECKIN-2.md CHECKIN_SEG=video/segments-checkin-2 \
+#       python3 video/lines.py checkin
+#
+# Defaults unchanged, so nothing that already passes starts failing.
+CHECKIN_DOC = os.environ.get("CHECKIN_DOC", "video/CHECKIN-1.md")
+CHECKIN_SEG = os.environ.get("CHECKIN_SEG", "video/segments-checkin")
+CHECKIN_TITLE = "Check-in " + re.search(r"(\d+)", CHECKIN_DOC).group(1)
+
 CUTS = {
-    "checkin": ("video/CHECKIN-1.md", "video/segments-checkin",
-                "Check-in 1", "Three clips"),
+    "checkin": (CHECKIN_DOC, CHECKIN_SEG, CHECKIN_TITLE, "Three clips"),
     "presentation": ("video/CWF-PRESENTATION.md", "video/segments-presentation",
                      "The CWF presentation, rough cut", "Eight clips"),
 }

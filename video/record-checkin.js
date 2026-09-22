@@ -26,11 +26,14 @@ const PORT = 8791;
 
 // Seconds per scene, read out of the script rather than repeated here — the one place they are
 // decided is the narration, and pace.py derives them from its word counts.
-const md = readFileSync(path.join(dir, "CHECKIN-1.md"), "utf8");
+// Which check-in is being recorded is passed in, not compiled in -- CHECKIN_DOC=CHECKIN-2.md.
+// The default is CHECKIN-1.md so the command that produced the submitted cut still reproduces it.
+const DOC = process.env.CHECKIN_DOC ? path.basename(process.env.CHECKIN_DOC) : "CHECKIN-1.md";
+const md = readFileSync(path.join(dir, DOC), "utf8");
 const rows = [...md.matchAll(/^\| (\d) \| [^|]+\| ([\d]+)(?: \+ ([\d.]+))? \|/gm)];
-if (rows.length !== 3) throw new Error(`CHECKIN-1.md: expected 3 timing rows, found ${rows.length}`);
+if (rows.length !== 3) throw new Error(`${DOC}: expected 3 timing rows, found ${rows.length}`);
 const HOLD = rows.map((m) => parseInt(m[2], 10) + (m[3] ? parseFloat(m[3]) : 0));
-process.stderr.write(`• scene holds from CHECKIN-1.md: ${HOLD.join(" / ")} s\n`);
+process.stderr.write(`• scene holds from ${DOC}: ${HOLD.join(" / ")} s\n`);
 
 function run(cmd, args, label) {
   process.stderr.write(`• ${label} …\n`);

@@ -493,12 +493,26 @@ import os, re, subprocess, sys, pathlib
 # Both scripted cuts, not just the one that had a deadline this morning. The check-in got this
 # check the day it was submitted; the presentation had none, and its script was edited hours after
 # the file was last rendered without anything noticing.
-CUTS = [("video/CHECKIN-1.md", "video/checkin-1.mp4", 60),
-        ("video/CWF-PRESENTATION.md", "video/presentation.mp4", None)]
+# DERIVED. This was a list of two, so CHECKIN-2.md would have been written and rendered with
+# nothing comparing them. A check-in script is `video/CHECKIN-<n>.md` and its cut is
+# `video/checkin-<n>.mp4`; that pairing is the rule, and the glob applies it to whatever exists.
+import glob
+ins = sorted(glob.glob("video/CHECKIN-*.md"),
+             key=lambda s: int(re.search(r"(\d+)", s).group(1)))
+CUTS = [(d, "video/checkin-%s.mp4" % re.search(r"(\d+)", d).group(1), 60) for d in ins]
+CUTS.append(("video/CWF-PRESENTATION.md", "video/presentation.mp4", None))
+# The NEWEST check-in may legitimately have no cut yet -- the script is written days before the
+# recording window opens. Any earlier one missing its cut is a real failure: it means a file that
+# was submitted has been deleted. So the tolerance is for exactly one doc, and it is named.
+pending = ins[-1] if ins else None
 bad = []
 for doc, mp4, cap in CUTS:
     if not os.path.exists(mp4):
-        bad.append("%s is missing" % mp4); continue
+        if doc == pending:
+            print("      %s has no cut yet — record it before the window closes" % doc)
+        else:
+            bad.append("%s is missing" % mp4)
+        continue
     md = pathlib.Path(doc).read_text(encoding="utf-8")
     m = re.search(r"\| \| \| \*\*(\d+) s\*\* \| \*\*(\d+)\*\* \|", md)
     if not m:
