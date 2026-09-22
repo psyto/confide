@@ -272,9 +272,15 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
    | やること | |
    |---|---|
-   | **YouTube に投稿** | 説明文とチャプターは [`_submission/youtube.md`](_submission/youtube.md) に更新ずみ（4,878字）。字幕は `video/captions-20260922.srt` を英語トラックとして上げる |
-   | **新しい動画 ID を渡す** | `gilIzns5joM` を指している全面を差し替える。`healthcheck.sh` が新旧両方を見る |
-   | **旧版の扱い** | `Confide_Stocklana_20260920.mp4` は 09-17 時点の数字（「three hundred and twenty-nine thousand」）を喋る。説明文からその注記は削除ずみ |
+   ~~**投稿**~~ → **完了。`https://youtu.be/C86U3R0IgiU`（2026-09-22）。**
+   `gilIzns5joM` は **404 を返す**ので、旧版は削除ずみ。「1つの問いに1つの答え」は
+   `healthcheck.sh` が毎回測る。全面（`README.md`・`web/index.html`・`docs/DURABILITY.md`・
+   `video/README.md`・`healthcheck.sh`）を新 ID に差し替えた。
+
+   | 残り | |
+   |---|---|
+   | **字幕を上げる** | `video/captions-20260922.srt`（68キュー）を**英語トラック**として。**自動生成のままだと場面7の16秒が空白**で、それが ASR が落とした区間 |
+   | **説明文とチャプターを貼る** | [`_submission/youtube-paste.txt`](_submission/youtube-paste.txt)。貼ったら `./scripts/pasted.sh youtube-description` |
 
 0h. **⚠ 提出物の背骨を入れ替えた（2026-09-22、founder の判断）。動画の再収録が残っている。**
 
@@ -589,7 +595,7 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    抜けではなく、提出時に出てくる欄。出たときに使うもの:
    - リンク3本、いずれも生存確認済み（2026-09-15、全て HTTP 200）:
      `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
-     `https://youtu.be/gilIzns5joM`。**動画は `gilIzns5joM` が現行**で、`p1aQuEnzhQk`・`KQsRwP8HTs0`・
+     `https://youtu.be/C86U3R0IgiU`。**動画は `C86U3R0IgiU` が現行**で、`p1aQuEnzhQk`・`KQsRwP8HTs0`・
      `ZuhLvH5MFgE` は旧版。**2026-09-21、founder が旧3本を削除。3本とも 404 を返す。**
      以前ここには「旧 URL も 200 を返すので、貼り間違えても壊れて見えない」と書いてあった。**逆になった**
      ——貼り間違えると見えて壊れる。ただし**これを散文で持たない**: `scripts/healthcheck.sh` が

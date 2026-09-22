@@ -1,6 +1,6 @@
 # Confide
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/gilIzns5joM) · no wallet, no API key, no install
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/C86U3R0IgiU) · no wallet, no API key, no install
 
 **Confidential delivery-versus-payment for tokenized stocks on Solana** — a **stock-to-stablecoin
 swap in one transaction**, with neither side publishing what moved. Confide builds the

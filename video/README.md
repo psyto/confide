@@ -1,6 +1,6 @@
 # video
 
-## `Confide_Stocklana_20260922.mp4` — **not yet uploaded**
+## `Confide_Stocklana_20260922.mp4` — **published: https://youtu.be/C86U3R0IgiU**
 
 The delivered cut is **2:28**, 1920x1080, AAC stereo, with a caption track. The founder generated the voice and
 recomposited to it, so the file is 148.6s against the silent master's 177.1s — the two clocks
@@ -38,7 +38,7 @@ accounts"*, measured 09-17 and 465,520 four days later. Its narration was frozen
 `DELIVERED-20260920.md`, which this cut's `DELIVERED-20260922.md` replaces, the way that file said
 it should be.
 
-**Uploaded 2026-09-20 as `gilIzns5joM`**, and every surface that names the current video was moved
+**Uploaded 2026-09-22 as `C86U3R0IgiU`**, and every surface that names the current video was moved
 to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck.sh` and `STATUS.md`.
 `web/poster.jpg` is a frame from this file rather than from the old one, and the caption under it
 stopped calling it "the earlier walkthrough".
