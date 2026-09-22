@@ -9,7 +9,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/" />
 <meta property="og:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
-<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Three real devnet trades, decoded in your browser. Of 330,266 live accounts, zero are confidential." />
+<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Four real devnet trades, decoded in your browser. Of 465,520 live accounts, zero are confidential." />
 <meta property="og:image" content="https://psyto.github.io/confide/poster.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
@@ -109,8 +109,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     <div class="three">
       <div class="panel"><div class="big">1,992</div><div class="cap2">tokenized stocks ship
       confidential balances &mdash; every one of them</div></div>
-      <div class="panel"><div class="big" id="heroAccounts">330,266</div><div class="cap2">live token
-      accounts across Apple, NVIDIA, SpaceX and Anthropic</div></div>
+      <div class="panel"><div class="big" id="heroAccounts">465,520</div><div class="cap2">live token
+      accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC</div></div>
       <div class="panel"><div class="big z">0</div><div class="cap2">of them are confidential.
       <b>Nobody has ever opened one.</b></div></div>
     </div>
@@ -123,7 +123,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     <h2 id="do-it">Go and do it yourself. Two minutes, devnet, nobody's permission.</h2>
     <div class="lede">There is a standing issuer on devnet whose gate is shut exactly as all 1,992
     are &mdash; and whose approval key is <b>published in the repository</b>. So you can open a
-    confidential position and hold something the chain reports as zero:</div>
+    confidential position the chain reports as zero — and, since 2026-09-22, <b>trade it with
+    somebody else in one transaction that shows neither size</b>:</div>
     <pre style="margin-top:18px">git clone https://github.com/psyto/confide
 ./scripts/testbed-join.sh</pre>
     <div class="note">Needs the Solana CLI, Rust and a little devnet SOL. The key can approve
@@ -171,8 +172,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </figure>
   <div class="note"><b>The presentation</b>, 2:22 &mdash; the trade, the count, and what is left.
   Click the frame, or
-  <a href="https://youtu.be/gilIzns5joM" target="_blank" rel="noopener">watch on YouTube</a>
-  (youtu.be/gilIzns5joM). Every terminal pane in it is the stdout of a command run
+  <a href="https://youtu.be/C86U3R0IgiU" target="_blank" rel="noopener">watch on YouTube</a>
+  (youtu.be/C86U3R0IgiU). Every terminal pane in it is the stdout of a command run
   moments before the recording; two of them reach mainnet and devnet.</div>
 
   <section style="border:0;padding:0;margin:0">
@@ -602,7 +603,7 @@ async function runProofs(){
 document.getElementById("vid").addEventListener("click", e => {
   const a = e.currentTarget;
   const f = document.createElement("iframe");
-  f.src = "https://www.youtube.com/embed/gilIzns5joM?autoplay=1";
+  f.src = "https://www.youtube.com/embed/C86U3R0IgiU?autoplay=1";
   f.title = "Confide"; f.allowFullscreen = true;
   f.allow = "autoplay; encrypted-media; picture-in-picture";
   f.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0";

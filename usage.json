@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-09-20 11:40:47 UTC",
+ "generated_utc": "2026-09-21 22:18:18 UTC",
  "note": "Accounts, not mints. Counts token accounts per mint and how many carry the ConfidentialTransferAccount extension. Size is the cheap filter; the extension list is what decides.",
  "rpc": "https://api.mainnet-beta.solana.com",
- "total_accounts": 330266,
+ "total_accounts": 465520,
  "total_confidential_accounts": 0,
  "mints": [
   {
    "mint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
    "symbol": "AAPLx",
    "issuer": "Backed",
-   "accounts": 65112,
+   "accounts": 72958,
    "over_400_bytes": 7,
    "confidential_accounts": 0,
    "confidential": []
@@ -18,26 +18,8 @@
    "mint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
    "symbol": "NVDAx",
    "issuer": "Backed",
-   "accounts": 176920,
+   "accounts": 188234,
    "over_400_bytes": 28,
-   "confidential_accounts": 0,
-   "confidential": []
-  },
-  {
-   "mint": "AAPLEDt8RpzPgXyhvFzkMBofvFSQw9gpeMCoUdPdLnB8",
-   "symbol": "AAPL.US",
-   "issuer": "Backpack",
-   "accounts": 0,
-   "over_400_bytes": 0,
-   "confidential_accounts": 0,
-   "confidential": []
-  },
-  {
-   "mint": "TSLAqBbv4CNCnzWFeB7LmydAyEiNMJtve7DYKLpdK4S",
-   "symbol": "TSLA.US",
-   "issuer": "Backpack",
-   "accounts": 0,
-   "over_400_bytes": 0,
    "confidential_accounts": 0,
    "confidential": []
   },
@@ -45,7 +27,7 @@
    "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
    "symbol": "SPACEX",
    "issuer": "PreStocks",
-   "accounts": 17915,
+   "accounts": 17882,
    "over_400_bytes": 6,
    "confidential_accounts": 0,
    "confidential": []
@@ -54,8 +36,26 @@
    "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
    "symbol": "ANTHROPIC",
    "issuer": "PreStocks",
-   "accounts": 70319,
-   "over_400_bytes": 30,
+   "accounts": 71083,
+   "over_400_bytes": 29,
+   "confidential_accounts": 0,
+   "confidential": []
+  },
+  {
+   "mint": "AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc",
+   "symbol": "AMC.US",
+   "issuer": "Backpack",
+   "accounts": 13352,
+   "over_400_bytes": 4,
+   "confidential_accounts": 0,
+   "confidential": []
+  },
+  {
+   "mint": "SPCXxcqXj6e5dJDVNovHN8744zkbhM2bYudU45BimGb",
+   "symbol": "SPCX.US",
+   "issuer": "Backpack",
+   "accounts": 102011,
+   "over_400_bytes": 27,
    "confidential_accounts": 0,
    "confidential": []
   }

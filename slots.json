@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-09-20 11:54:29 UTC",
+ "generated_utc": "2026-09-21 15:54:02 UTC",
  "endpoint": "private",
  "note": "Every tokenized-equity mint on Solana, read one at a time. Not a sample.",
  "mints": 1992,
@@ -25,6 +25,19 @@
    "mints": 8
   }
  ],
+ "confidential_mint_burn": 0,
+ "extensions": {
+  "metadataPointer": 1992,
+  "permanentDelegate": 1992,
+  "defaultAccountState": 1992,
+  "scaledUiAmountConfig": 1992,
+  "pausableConfig": 1992,
+  "confidentialTransferMint": 1992,
+  "transferHook": 1992,
+  "tokenMetadata": 1992,
+  "transferFeeConfig": 8,
+  "confidentialTransferFeeConfig": 8
+ },
  "auditor_empty": 1992,
  "gated": 1992,
  "auto_approve": 0
