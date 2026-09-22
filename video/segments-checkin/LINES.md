@@ -18,18 +18,12 @@ reading without pauses.
 
 ## `01-what-changed.mp4` — what changed
 
-> Confide was a loan against tokenized stock. This week it became delivery versus payment. Fifty
-> thousand shares against eight point seven five million dollars, one Solana transaction, neither
-> side publishing what moved. Every account still reports a public balance of zero.
+Confide was a loan against tokenized stock. This week it became delivery versus payment. Fifty thousand shares against eight point seven five million dollars, one Solana transaction, neither side publishing what moved. Every account still reports a public balance of zero.
 
 ## `02-what-i-learned.mp4` — what I learned
 
-> The loan kept hitting one wall: collateral needs a third party, and no issuer will approve
-> that account. So I counted how many ever have. Across more than three hundred thousand
-> live accounts — zero. A trade needs none.
+The loan kept hitting one wall: collateral needs a third party, and no issuer will approve that account. So I counted how many ever have. Across more than three hundred thousand live accounts — zero. A trade needs none.
 
 ## `03-what-is-next.mp4` — what is next
 
-> Making the swap runnable by a stranger. Then the gate on a real mint — a conversation
-> nobody has had. Not matching: bringing buyers and sellers together is what makes an exchange.
-> Traction is zero, and I would rather say it than have it found.
+Making the swap runnable by a stranger. Then the gate on a real mint — a conversation nobody has had. Not matching: bringing buyers and sellers together is what makes an exchange. Traction is zero, and I would rather say it than have it found.

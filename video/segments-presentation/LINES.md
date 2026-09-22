@@ -1,6 +1,6 @@
 # The CWF presentation, rough cut — the cut, clip by clip
 
-Eight clips in `segments-presentation/`, **silent**, cut at the boundaries the recorder logged.
+Ten clips in `segments-presentation/`, **silent**, cut at the boundaries the recorder logged.
 Generate the voice per clip and lay it back in order; the clip length is the budget, and the
 delivery should finish a little before the picture does.
 
@@ -25,60 +25,46 @@ reading without pauses.
 
 ## `01-the-tape.mp4` — the tape
 
-> Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It
-> only covers trading through an automated market maker — where every trade you make is published.
-> The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal.
+Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It only covers trading through an automated market maker — where every trade you make is published. The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal.
 
 ## `02-the-block.mp4` — the block
 
-> Block trades have always settled away from the tape.
-> 
-> The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has.
+Block trades have always settled away from the tape.
+
+The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has.
 
 ## `03-the-trade.mp4` — the trade
 
-> So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side
-> check the other before signing — with nobody in the middle. Fifty thousand tokenized shares
-> against eight point seven five million in stablecoin, in a single transaction.
+So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side check the other before signing — with nobody in the middle. Fifty thousand tokenized shares against eight point seven five million in stablecoin, in a single transaction.
 
 ## `04-this-account.mp4` — this account
 
-> This is a real account on Solana, right now. The chain says it holds nothing.
-> 
-> It holds a hundred and seventy-three thousand shares.
+This is a real account on Solana, right now. The chain says it holds nothing.
+
+It holds a hundred and seventy-three thousand shares.
 
 ## `05-already-shipped.mp4` — already solved, already switched off
 
-> Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with
-> nothing to do with each other, confidential transfers switched on. Every one leaves the auditor
-> key empty, and every one needs the issuer's signature to open an account.
+Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with nothing to do with each other, confidential transfers switched on. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account.
 
 ## `06-so-i-counted.mp4` — so I counted
 
-> So I stopped reading the settings and counted. Nearly half a million accounts, across Apple,
-> NVIDIA, SpaceX and Anthropic.
-> 
-> Not one.
+So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic.
+
+Not one.
 
 ## `07-not-only-equities.mp4` — and it is not only equities
 
-> PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset
-> classes, one dead end. Nobody chose this.
+PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset classes, one dead end. Nobody chose this.
 
 ## `08-why-not-an-exchange.mp4` — why not just use an exchange
 
-> You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade
-> moves them by exactly the amount traded — so anything settled against one publishes the size. The
-> exemption requires an AMM.
+You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM.
 
 ## `09-why-it-is-hard.mp4` — why it is hard
 
-> The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is
-> too large to send at all — it goes on chain in a record account first. Four files, two machines,
-> neither side ever holding the other's key.
+The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, neither side ever holding the other's key.
 
 ## `10-what-i-got-wrong.mp4` — what I got wrong, and what nobody has used
 
-> I called that last step the safety step. A review found it was signing something it had never
-> looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run.
-> Nobody outside this repository has used any of this.
+I called that last step the safety step. A review found it was signing something it had never looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run. Nobody outside this repository has used any of this.

@@ -25,14 +25,21 @@ CHECKIN_SEG = os.environ.get("CHECKIN_SEG", "video/segments-checkin")
 CHECKIN_TITLE = "Check-in " + re.search(r"(\d+)", CHECKIN_DOC).group(1)
 
 CUTS = {
-    "checkin": (CHECKIN_DOC, CHECKIN_SEG, CHECKIN_TITLE, "Three clips"),
+    "checkin": (CHECKIN_DOC, CHECKIN_SEG, CHECKIN_TITLE),
     "presentation": ("video/CWF-PRESENTATION.md", "video/segments-presentation",
-                     "The CWF presentation, rough cut", "Eight clips"),
+                     "The CWF presentation, rough cut"),
 }
+
+# The count used to be a word in the tuple above -- "Eight clips" -- and it sat over a table of ten
+# for as long as the cut had ten. It is the length of the manifest, so it is read from there.
+WORDS = ["no", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+         "Eleven", "Twelve"]
+def clips(n):
+    return "%s clip%s" % (WORDS[n] if n < len(WORDS) else n, "" if n == 1 else "s")
 cut = sys.argv[1] if len(sys.argv) > 1 else "checkin"
 if cut not in CUTS:
     raise SystemExit("  usage: lines.py [%s]" % "|".join(CUTS))
-DOC, SEG, TITLE, COUNT = CUTS[cut]
+DOC, SEG, TITLE = CUTS[cut]
 
 md = io.open(DOC, encoding="utf-8").read()
 manifest = json.load(open(f"{SEG}/manifest.json"))
@@ -51,7 +58,7 @@ if len(scenes) != len(manifest):
 
 L = ["# %s — the cut, clip by clip" % TITLE,
      "",
-     "%s in `%s/`, **silent**, cut at the boundaries the recorder logged." % (COUNT, os.path.basename(SEG)),
+     "%s in `%s/`, **silent**, cut at the boundaries the recorder logged." % (clips(len(manifest)), os.path.basename(SEG)),
      "Generate the voice per clip and lay it back in order; the clip length is the budget, and the",
      "delivery should finish a little before the picture does.",
      "",
@@ -70,7 +77,11 @@ L += ["",
       "reading without pauses.",
       ""]
 for e, (title, body, pause) in zip(manifest, scenes):
-    L += ["## `%s` — %s" % (e["file"], title), "", "> " + body.replace("\n", "\n> "), ""]
+    # PLAIN TEXT, ONE LINE PER PARAGRAPH. These get pasted into a voice tool as they are, and a
+    # blockquote marker is read aloud by some of them and is noise in all of them. The blank line
+    # between paragraphs is the scene's declared silence, so it survives.
+    spoken = "\n\n".join(" ".join(para.split()) for para in body.split("\n\n"))
+    L += ["## `%s` — %s" % (e["file"], title), "", spoken, ""]
 
 # --stdout prints instead of writing, so a check can compare the file on disk against what this
 # would produce without rewriting it. A check that repairs what it is checking reports success on
