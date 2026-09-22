@@ -32,11 +32,11 @@ missed: `confidential transfer switched` was lowercase-only and the line now ope
 the file is read again.** The new ones: *bite for bite* for **byte for byte**, which is the entire
 claim of the check that scene describes, and *let's* for *lets*.
 
-**The caption tracks on the upload, read off the watch page 2026-09-22:** an uploaded `en`, an
-uploaded `ja`, **and YouTube's own `en kind=asr` still listed beside them.** That is different from
-the 09-20 upload, where uploading the English track made the ASR one disappear. `healthcheck.sh`
-confirms the default English track is the uploaded one, so a viewer gets the corrected captions —
-but the machine transcript is still reachable, and it is the one missing sixteen seconds.
+**The caption tracks on the upload, read off the watch page 2026-09-22:** an uploaded `en` and an
+uploaded `ja`, **and nothing else.** For a few hours YouTube's own `en kind=asr` sat beside them —
+the 09-20 upload had lost its ASR track the moment the English one went up, and this one did not —
+so the transcript missing sixteen seconds stayed reachable until the founder deleted it. Re-read
+after: two tracks, both uploaded, no machine transcript.
 
 **What is still not verified, and the reason is the same as last time:** YouTube's `timedtext`
 returns no body to this fetch, so nothing here has read either track's words. That a file was

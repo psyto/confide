@@ -223,13 +223,20 @@ try:
 except Exception:
     print("UNREADABLE"); raise SystemExit
 en = [x for x in tr if x.get("languageCode") == "en"]
-if not en:                             print("NONE")
-elif all(x.get("kind") == "asr" for x in en): print("ASR")
-else:                                  print("UPLOADED")
+asr = [x for x in en if x.get("kind") == "asr"]
+# BOTH is not UPLOADED. On 2026-09-22 this said UPLOADED while YouTube kept its own transcript
+# listed beside the uploaded one -- and that transcript was the one missing sixteen seconds of the
+# film. The default served is the uploaded track, so a viewer is fine; someone who opens the caption
+# menu is not. "Which track is default" and "which tracks exist" are two questions.
+if not en:                print("NONE")
+elif len(asr) == len(en): print("ASR")
+elif asr:                 print("BOTH")
+else:                     print("UPLOADED")
 ' 2>/dev/null)
 case "$cc" in
   UPLOADED) ok "the English captions are the uploaded track, not YouTube's transcription" ;;
   ASR)      bad "the English captions are YouTube's ASR — upload video/captions-*.srt; fix-captions.sh's corrections are not live" ;;
+  BOTH)     bad "YouTube's own English transcript is still listed beside the uploaded one — delete it in Subtitles, or the machine's version stays one menu click away" ;;
   NONE)     bad "the video has no English caption track at all" ;;
   *)        warn "could not read the caption tracks — YouTube's page shape may have changed" ;;
 esac
