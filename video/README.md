@@ -1,27 +1,42 @@
 # video
 
-## `Confide_Stocklana_20260920.mp4` — **published: https://youtu.be/gilIzns5joM**
+## `Confide_Stocklana_20260922.mp4` — **not yet uploaded**
 
-**2:22, 1920x1080, AAC stereo, with a caption track.** The founder generated the voice and
-recomposited to it, so the file is 142.3s against the silent master's 175.1s — the two clocks
+The delivered cut is **2:28**, 1920x1080, AAC stereo, with a caption track. The founder generated the voice and
+recomposited to it, so the file is 148.6s against the silent master's 177.1s — the two clocks
 disagree by design and the delivered file is the authority.
 
 Checked against the delivered file rather than assumed:
 
 | | |
 |---|---|
-| every line present | 69 cues, all ten scenes, in order |
-| **the pause survives** | the picture flips from `public balance 0` to `173,000` between 46s and 48s, and the voice says *"holds nothing"* before it and *"it holds a hundred and seventy-three thousand"* after. That gap is the strongest ten seconds in the film and recompositing could have eaten it |
-| no dropouts | `silencedetect` at -45dB/0.8s finds nothing |
-| every claim still live | `swap-status.sh`, `testbed-up.sh --check`, `usage-scan.sh --last`, `healthcheck.sh` — all clear the day it was cut |
+| every line present | all ten scenes, in order — **verified from the audio, not the transcript** |
+| **the reveal survives** | the picture holds `public balance 0` through 55.0s and reads `173000 units` by 55.8s, with a 0.57s gap in the voice at 53.8s. Same structure as the cut that shipped, whose gap there was 0.62s. The script budgets five seconds of silence; a delivery paced to the voice has never had them, in either cut |
+| no dropped line | the longest silence is **1.44s at 98.5s**, between *"Nobody chose this"* and *"You cannot do this on one"*. Longer than any pause in the 09-20 cut, which had none over a second, and far short of the five a missing line would leave |
+| every claim still live | `swap-status.sh`, `testbed-up.sh --check`, `usage-scan.sh --last`, `healthcheck.sh` |
 
-**The caption track is ASR and had six errors**, corrected into
-[`captions-20260920.srt`](captions-20260920.srt) by `./scripts/fix-captions.sh`, which also
-collapses the ASR's doubled word spacing — a hand-made single-spaced copy lived beside it as
-`captions-20260920a.srt` until the script learned to do it, and is gone. Upload that as the
-caption track; YouTube's own transcript is worse. The one worth naming: *"Everyone leaves the
-auditor key empty"* is a sentence about people, and the line is about **mints** — every one of
-them. The transcript changed the subject of the finding.
+**The ASR track lost sixteen seconds.** It has no cues at all between 83.4s and 99.8s — the whole of
+*and it is not only equities*. The audio is there: that window measures **-24.1 dB mean**, against
+-23.1 dB in the scene before it, with the short breaths of speech in it, and the picture is the
+stablecoin table. So the voice said it and the transcriber lost it.
+
+`fix-captions.sh` corrects words and never moves a cue, which is the right contract and the reason
+filling a hole is a separate step: [`../scripts/caption-gap.py`](../scripts/caption-gap.py) writes
+the missing cues from the script, and refuses unless the gap is over six seconds, the audio inside
+it is not silent, and **exactly one** scene of the script is absent from the transcript. Both
+together produce [`captions-20260922.srt`](captions-20260922.srt) — 68 cues, all ten scenes.
+
+Five word-level corrections were needed, and two of them were rules that already existed and had
+missed: `confidential transfer switched` was lowercase-only and the line now opens a sentence, and
+`and everyone` was anchored to the end of a line and now sits mid-line. **A rule is not a fix until
+the file is read again.** The new ones: *bite for bite* for **byte for byte**, which is the entire
+claim of the check that scene describes, and *let's* for *lets*.
+
+**Superseded 2026-09-22: `Confide_Stocklana_20260920.mp4`** — 2:22, published as `gilIzns5joM`. It
+speaks the order the restructure replaced and says *"three hundred and twenty-nine thousand
+accounts"*, measured 09-17 and 465,520 four days later. Its narration was frozen in
+`DELIVERED-20260920.md`, which this cut's `DELIVERED-20260922.md` replaces, the way that file said
+it should be.
 
 **Uploaded 2026-09-20 as `gilIzns5joM`**, and every surface that names the current video was moved
 to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck.sh` and `STATUS.md`.
@@ -48,8 +63,8 @@ Superseded uploads, in order: `ZuhLvH5MFgE` (732 mints, one issuer, an account t
 exists) and `KQsRwP8HTs0` (the same nine scenes, before the captions carried the seizure). Both
 were deleted on 2026-09-21. Nothing links to either.
 
-**Two clocks, and they do not agree.** `confide.mp4` is the silent master at the recorder's pacing,
-**2:07**; the published cut is **2:22**, because the voice is generated externally and paces
+**Two clocks, and they do not agree.** `presentation.mp4` is the silent master at the recorder's
+pacing, 2:57; the delivered cut is 2:28, because the voice is generated externally and paces
 differently, and the clips were recomposited to it. The published file is the authority for
 anything a viewer sees — chapters especially, which come from its own subtitle track and not from
 `record.js` holds.

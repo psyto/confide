@@ -14,7 +14,7 @@ FFPROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
 FFMPEG="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 # The file that is actually published. It moved on 2026-09-20 and the check kept passing against
 # the old one, because it verifies that a claim matches A file rather than THE file.
-PUB="${PUB:-video/Confide_Stocklana_20260920.mp4}"
+PUB="${PUB:-video/Confide_Stocklana_20260922.mp4}"
 
 fail=0
 ok()  { printf '  \033[32m✓\033[0m %s\n' "$1"; }
@@ -25,9 +25,11 @@ echo "  THE VIDEO — measured from the file"
 if [ -f "$PUB" ]; then
   mmss=$("$FFPROBE" -v error -show_entries format=duration -of default=nw=1:nk=1 "$PUB" \
          | python3 -c "import sys;d=float(sys.stdin.read());print('%d:%02d'%(d//60,d%60))")
-  grep -q "published cut is \*\*$mmss\*\*" video/README.md \
-    && ok "the published cut is $mmss and video/README.md says so" \
-    || bad "the published cut is $mmss; video/README.md claims another length"
+  # "delivered" rather than "published": the founder cuts the file and uploads it afterwards, so
+  # between those two moments the README would have had to claim something untrue to pass.
+  grep -qE "(published|delivered) cut is \*\*$mmss\*\*" video/README.md \
+    && ok "the delivered cut is $mmss and video/README.md says so" \
+    || bad "the delivered cut is $mmss; video/README.md claims another length"
 
   "$FFMPEG" -nostdin -v error -i "$PUB" -map 0:s:0 -f srt - 2>/dev/null > /tmp/.dc.srt || true
   cues=$(grep -c '\-\->' /tmp/.dc.srt 2>/dev/null || echo 0)
@@ -44,10 +46,12 @@ t = re.sub(r'\\s+', ' ', t)
 # guarded a seizure line, and that scene does not exist in this film — it kept passing on the old
 # file and failed the moment the check was pointed at the one that is published.
 missing = [n for n, p in [
+    ('the rule', r'within\\s+10\\s+minutes'),
+    ('the gap', r'Nobody\\s+has\\s+built\\s+the\\s+block'),
+    ('what Confide is', r'builds\\s+the\\s+proofs'),
+    ('the empty middle', r'nobody\\s+in\\s+the\\s+middle'),
     ('the moment', r'173,000\\s+shares'),
-    ('what Confide is', r'That\\s+is\\s+the\\s+product'),
     ('the count', r'accounts\\s+across\\s+Apple'),
-    ('the empty middle', r'stands\\s+between\\s+nobody'),
 ] if not re.search(p, t, re.I)]
 print(', '.join(missing))
 sys.exit(1 if missing else 0)
@@ -56,22 +60,33 @@ sys.exit(1 if missing else 0)
     || bad "missing from the captions: $(cat /tmp/.dc.missing) — sound-off viewers lose it"
 
   # Silence is a property of the audio. Reading caption gaps is how this was got wrong.
-  sil=$("$FFMPEG" -nostdin -hide_banner -i "$PUB" -af silencedetect=noise=-40dB:d=1 -f null - 2>&1 \
-        | grep -c silence_start || true)
-  [ "$sil" -eq 0 ] && ok "no silent second anywhere in the audio" \
-                   || bad "$sil silent stretches — a line may not have been laid in"
+  # A DROPPED LINE, not a breath. This was d=1 and the 09-22 delivery has a 1.4s beat between two
+  # scenes, which is film-making and not a fault -- the check said "a line may not have been laid in"
+  # about a pause between two lines that are both there. The shortest scripted line runs about five
+  # seconds, so anything over three is the shape of a missing one; shorter pauses are printed and
+  # not counted, because a person should still see them move.
+  "$FFMPEG" -nostdin -hide_banner -i "$PUB" -af silencedetect=noise=-40dB:d=1 -f null - 2>&1 \
+    | grep -aoE 'silence_start: [0-9.]+|silence_duration: [0-9.]+' | paste - - > /tmp/.dc.sil || true
+  sil=$(awk '{d=$4+0; if (d>3) n++} END{print n+0}' /tmp/.dc.sil)
+  if [ "$sil" -eq 0 ]; then
+    ok "no stretch long enough to be a missing line$(awk '{d=$4+0; if (d>1) printf "  (longest pause %.1fs at %.0fs)", d, $2}' /tmp/.dc.sil)"
+  else
+    bad "$sil stretches over 3s — a line may not have been laid in"
+  fi
 else
   bad "$PUB is missing"
 fi
 
 # The caption file for the CURRENT video, not whichever one was published first. This guarded
 # video/captions.srt — the 09-15 cut's track — and went on passing after the upload changed.
-CAPS="${CAPS:-video/captions-20260920.srt}"
+CAPS="${CAPS:-video/captions-20260922.srt}"
 if [ -f "$CAPS" ]; then
   for w in Salana Nvidia "stable coin" "Everyone leaves"; do
     grep -q "$w" "$CAPS" && bad "$CAPS still says $w"
   done
-  ./scripts/fix-captions.sh "$PUB" 2>/dev/null | diff -q - "$CAPS" >/dev/null \
+  ./scripts/fix-captions.sh "$PUB" 2>/dev/null \
+    | python3 scripts/caption-gap.py "$PUB" video/DELIVERED-20260922.md 2>/dev/null \
+    | diff -q - "$CAPS" >/dev/null \
     && ok "$CAPS is what fix-captions.sh produces from the published file" \
     || bad "$CAPS has drifted from its generator"
 fi
@@ -163,11 +178,12 @@ done
 # And the chapters against the file they describe. The published Stocklana cut carried chapter
 # times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
 # from the recorder's plan. This reads them off the delivery.
-if [ -f video/Confide_Stocklana_20260920.mp4 ]; then
+if [ -f video/Confide_Stocklana_20260922.mp4 ]; then
   # TITLES comes from the FROZEN delivered narration, not from CWF-PRESENTATION.md. That file was
   # restructured on 2026-09-22 and the cut was not re-recorded, so its scene titles no longer match
   # the voice on the delivery — and this check is about what a judge opens, not about the next cut.
-  TITLES=video/DELIVERED-20260920.md ./scripts/video-chapters.sh video/Confide_Stocklana_20260920.mp4 2>/dev/null \
+  SRT=video/captions-20260922.srt TITLES=video/DELIVERED-20260922.md \
+  ./scripts/video-chapters.sh video/Confide_Stocklana_20260922.mp4 2>/dev/null \
   | diff -q - <(python3 -c "
 import re
 s = open('_submission/youtube.md', encoding='utf-8').read()

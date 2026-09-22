@@ -32,7 +32,8 @@ fixes = [
     (r'\\bCamino\\b', 'Kamino'),
     (r'\\bCaminos\\b', 'Kamino'),
     (r'zero\\s+knowledge', 'zero-knowledge'),
-    (r'confidential(\\s+)transfer(\\s+)switched', r'confidential\\1transfers\\2switched'),
+    # Was lowercase-only, and in the 09-22 delivery the phrase opens a sentence, so it missed.
+    (r'(?i)confidential(\\s+)transfer(\\s+)switched', r'Confidential\\1transfers\\2switched'),
     (r'Nvidia', 'NVIDIA'),
     # 2026-09-20, from the presentation's own track. Each was read off the delivered file and
     # checked against video/CWF-PRESENTATION.md, which is what the voice was given.
@@ -47,12 +48,19 @@ fixes = [
     # This phrase straddles a cue boundary -- \"and everyone\" ends one cue and \"needs the issuer\"
     # opens the next -- so a pattern spanning the two never matches: an SRT index and a timestamp
     # sit between them. Anchored to the end of a line instead, which is where it actually is.
-    (r'(?m)and(\s+)everyone$', r'and\1every one'),
+    # Anchored to line-end, and in the 09-22 delivery it sits mid-line. A rule is not a fix
+    # until the file is re-read: both of these were already here and both missed.
+    (r'and(\s+)everyone\b', r'and\1every one'),
     (r'issuer(\s+)signature', r\"issuer's\1signature\"),
-    (r'others(\s+)amount', r\"the other's\1amount\"),
+    # Widened from 'others amount' -- the 09-22 delivery says 'others key'. One rule, not two.
+    (r'others(\s+)(amount|key)', r\"the other's\1\2\"),
     # The screen says 329,536 and the voice rounds, which is right for speech. A caption writing a
     # DIFFERENT numeral beside that screen reads as an error, so it spells the rounding out.
     (r'\b329,000\b', 'three hundred and twenty-nine thousand'),
+    # 2026-09-22, read off Confide_Stocklana_20260922.mp4. 'byte for byte' is the whole claim of
+    # the check it describes, and the transcript made it a bite.
+    (r'\bbite(\s+)for(\s+)bite\b', r'byte\1for\2byte'),
+    (r\"\blet's(\s+)each\b\", r'lets\1each'),
 ]
 for bad, good in fixes:
     s = re.sub(bad, good, s)

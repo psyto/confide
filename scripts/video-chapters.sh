@@ -12,9 +12,15 @@
 # runs continuously within one.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SRC="${1:-video/Confide_Stocklana_20260920.mp4}"
-TITLES="${TITLES:-video/CWF-PRESENTATION.md}"
-"${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt - \
+SRC="${1:-video/Confide_Stocklana_20260922.mp4}"
+TITLES="${TITLES:-video/DELIVERED-20260922.md}"
+# SRT= reads a CORRECTED track instead of the file's own. The embedded one is ASR, and scene titles
+# are placed by matching a scene's opening words: "Salana already shipped" does not match "Solana
+# already shipped", so the chapter for that scene could not be placed at all. The corrected track is
+# what gets uploaded, so it is what the chapters should be read from.
+if [ -n "${SRT:-}" ]; then cat "$SRT"; else
+  "${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt -
+fi \
 | TITLES="$TITLES" python3 -c "
 import os, re, sys
 

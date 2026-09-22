@@ -1,0 +1,271 @@
+1
+00:00:00,000 --> 00:00:02,919
+Last week, the SEC gave tokenized
+
+2
+00:00:02,919 --> 00:00:05,680
+stock five years of relief.
+
+3
+00:00:05,680 --> 00:00:07,600
+Then you read the conditions. It
+
+4
+00:00:07,600 --> 00:00:09,040
+only covers trading through an
+
+5
+00:00:09,040 --> 00:00:11,240
+automated market maker where every
+
+6
+00:00:11,240 --> 00:00:13,280
+trade you make is published. The
+
+7
+00:00:13,280 --> 00:00:15,839
+size, the direction, within 10
+
+8
+00:00:15,839 --> 00:00:16,920
+minutes.
+
+9
+00:00:16,920 --> 00:00:19,320
+Nobody attacked anything. That is
+
+10
+00:00:19,320 --> 00:00:20,160
+the deal.
+
+11
+00:00:20,441 --> 00:00:22,401
+Block trades have always settled
+
+12
+00:00:22,401 --> 00:00:24,721
+away from the tape. The SEC has
+
+13
+00:00:24,721 --> 00:00:26,440
+now built the tape for tokenized
+
+14
+00:00:26,440 --> 00:00:28,241
+equity. Nobody has built the
+
+15
+00:00:28,241 --> 00:00:30,241
+block. Confide has.
+
+16
+00:00:30,482 --> 00:00:33,161
+So, here is one. Confide builds
+
+17
+00:00:33,161 --> 00:00:34,842
+the proofs the chain will not
+
+18
+00:00:34,842 --> 00:00:36,842
+assemble for you and lets each
+
+19
+00:00:36,842 --> 00:00:38,602
+side check the other before
+
+20
+00:00:38,602 --> 00:00:41,362
+signing with nobody in the middle.
+
+21
+00:00:41,362 --> 00:00:43,881
+50,000 tokenized shares against
+
+22
+00:00:43,881 --> 00:00:46,962
+8.75 million in stablecoin in a
+
+23
+00:00:46,962 --> 00:00:48,402
+single transaction.
+
+24
+00:00:48,683 --> 00:00:50,802
+This is a real account on Solana
+
+25
+00:00:50,802 --> 00:00:52,803
+right now. The chain says it
+
+26
+00:00:52,803 --> 00:00:57,122
+holds nothing. It holds 173,000
+
+27
+00:00:57,122 --> 00:00:57,923
+shares.
+
+28
+00:00:57,924 --> 00:01:00,124
+Solana already shipped what that
+
+29
+00:01:00,124 --> 00:01:02,924
+needs, nearly 2,000 tokenized
+
+30
+00:01:02,924 --> 00:01:05,283
+stocks, three issuers with nothing
+
+31
+00:01:05,283 --> 00:01:06,483
+to do with each other.
+
+32
+00:01:06,483 --> 00:01:09,044
+Confidential transfers switched on.
+
+33
+00:01:09,044 --> 00:01:10,924
+Every one leaves the auditor key
+
+34
+00:01:10,924 --> 00:01:12,803
+empty and every one needs the
+
+35
+00:01:12,803 --> 00:01:14,324
+issuer's signature to open an
+
+36
+00:01:14,324 --> 00:01:15,084
+account.
+
+37
+00:01:15,085 --> 00:01:17,565
+So, I stopped reading the settings
+
+38
+00:01:17,565 --> 00:01:20,485
+and counted nearly half a million
+
+39
+00:01:20,485 --> 00:01:23,405
+accounts across Apple, NVIDIA,
+
+40
+00:01:23,405 --> 00:01:27,205
+SpaceX, and Anthropic. Not one.
+
+41
+00:01:27,205 --> 00:01:29,516
+PayPal's dollar has the same
+
+42
+00:01:29,717 --> 00:01:32,029
+empty auditor slot and the
+
+43
+00:01:32,230 --> 00:01:34,541
+same locked door. Four issuers,
+
+44
+00:01:34,742 --> 00:01:37,054
+two asset classes, one dead
+
+45
+00:01:37,255 --> 00:01:39,566
+end. Nobody chose this.
+
+46
+00:01:39,767 --> 00:01:42,087
+You cannot do this on one, and
+
+47
+00:01:42,087 --> 00:01:44,366
+now that is written down. A
+
+48
+00:01:44,366 --> 00:01:46,647
+pool's reserves are public and a
+
+49
+00:01:46,647 --> 00:01:48,927
+trade moves them by exactly the
+
+50
+00:01:48,927 --> 00:01:51,246
+amount traded. So anything settled
+
+51
+00:01:51,246 --> 00:01:53,727
+against one publishes the size.
+
+52
+00:01:53,727 --> 00:01:56,447
+The exemption requires an AMM.
+
+53
+00:01:56,768 --> 00:01:58,648
+The proofs do not fit in one
+
+54
+00:01:58,648 --> 00:02:00,568
+transaction. On a mint that
+
+55
+00:02:00,568 --> 00:02:02,608
+charges a fee, there are five,
+
+56
+00:02:02,608 --> 00:02:04,488
+and one is too large to send at
+
+57
+00:02:04,488 --> 00:02:06,448
+all. It goes on chain in a
+
+58
+00:02:06,448 --> 00:02:08,207
+record account first.
+
+59
+00:02:08,207 --> 00:02:10,848
+Four files, two machines, neither
+
+60
+00:02:10,848 --> 00:02:13,128
+side ever holding the the other's key.
+
+61
+00:02:13,409 --> 00:02:15,089
+I called that last step, the
+
+62
+00:02:15,089 --> 00:02:17,209
+safety step. A review found it
+
+63
+00:02:17,209 --> 00:02:18,768
+was signing something it had never
+
+64
+00:02:18,768 --> 00:02:20,929
+looked at. The fix compares the
+
+65
+00:02:20,929 --> 00:02:22,968
+two, byte for byte and caught a
+
+66
+00:02:22,968 --> 00:02:25,168
+bug of mine on its first run.
+
+67
+00:02:25,168 --> 00:02:27,088
+Nobody outside this repository has
+
+68
+00:02:27,088 --> 00:02:28,489
+used any of this.
