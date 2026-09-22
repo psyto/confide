@@ -90,7 +90,7 @@ def rpc(body):
     except Exception:
         return {"error": {"message": out[:120].decode("utf8", "replace")}}
 
-rows, total_accounts, total_conf, empty = [], 0, 0, []
+rows, total_accounts, total_conf, total_appr, empty = [], 0, 0, 0, []
 print(f"\n  \033[1mIS ANYBODY THROUGH THE GATE?\033[0m {DIM}accounts, not mints{OFF}\n")
 for mint in sys.argv[1:]:
     sym, issuer = SYMS.get(mint, ("?", "?"))
@@ -111,21 +111,33 @@ for mint in sys.argv[1:]:
     # 456 is the floor for an account carrying ConfidentialTransferAccount: 165 base, an account
     # type byte, a 4-byte TLV header and 286 bytes of extension. 400 is under it on purpose.
     big = [a["pubkey"] for a in accs if (a["space"] or 0) >= 400]
-    conf = []
+    # CONFIGURED AND APPROVED ARE NOT THE SAME COUNT, and on 2026-09-22 the difference became the
+    # whole finding. Two NVDAx accounts carry the extension and neither is approved, so neither can
+    # receive a confidential transfer -- the issuer has not signed. This counted only the extension,
+    # so the day somebody configured one it would have reported the headline broken when what had
+    # happened was that somebody knocked.
+    conf, appr = [], []
     for key in big:
         d = rpc({"jsonrpc": "2.0", "id": 1, "method": "getAccountInfo",
                  "params": [key, {"encoding": "jsonParsed"}]})["result"]["value"]["data"]["parsed"]["info"]
-        if any(e["extension"] == "confidentialTransferAccount" for e in d.get("extensions", [])):
+        ct = next((e for e in d.get("extensions", [])
+                   if e["extension"] == "confidentialTransferAccount"), None)
+        if ct:
             conf.append(key)
+            if ct.get("state", {}).get("approved"):
+                appr.append(key)
         time.sleep(0.4)
     total_accounts += len(accs)
     total_conf += len(conf)
+    total_appr += len(appr)
     mark = f"{RED}{len(conf)}{OFF}" if conf else f"{GREEN}0{OFF}"
+    amark = f"{RED}{len(appr)}{OFF}" if appr else f"{GREEN}0{OFF}"
     print(f"  {sym:10} {issuer:10} {len(accs):7} accounts   {len(big):3} over 400 bytes   "
-          f"{mark} confidential")
+          f"{mark} configured   {amark} approved")
     rows.append({"mint": mint, "symbol": sym, "issuer": issuer,
                  "accounts": len(accs), "over_400_bytes": len(big),
-                 "confidential_accounts": len(conf), "confidential": conf})
+                 "confidential_accounts": len(conf), "confidential": conf,
+                 "approved_accounts": len(appr), "approved": appr})
     time.sleep(1)
 
 if empty:
@@ -133,13 +145,15 @@ if empty:
     print("  Fix the sample rather than publishing a total that silently excludes an issuer.")
     sys.exit(1)
 print(f"\n  {total_accounts} token accounts across {len(rows)} mints, "
-      f"\033[1m{total_conf}\033[0m configured for confidential transfers\n")
+      f"\033[1m{total_conf}\033[0m configured for confidential transfers, "
+      f"\033[1m{total_appr}\033[0m approved by an issuer\n")
 json.dump({"generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
            "note": "Accounts, not mints. Counts token accounts per mint and how many carry the "
                    "ConfidentialTransferAccount extension. Size is the cheap filter; the extension "
                    "list is what decides.",
            "rpc": RPC, "total_accounts": total_accounts,
-           "total_confidential_accounts": total_conf, "mints": rows},
+           "total_confidential_accounts": total_conf,
+           "total_approved_accounts": total_appr, "mints": rows},
           open(OUT, "w"), indent=1)
 print(f"  written to {OUT}\n")
 PY

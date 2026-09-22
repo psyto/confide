@@ -61,7 +61,7 @@ for showing a balance to somebody who needs to see it, is empty on every one of 
 So the honest answer is: **today, nobody.** And the second measurement says that is not a
 disadvantage.
 
-> **465,520 token accounts across four mints that have holders — Apple and NVIDIA from Backed,
+> **469,477 token accounts across four mints that have holders — Apple and NVIDIA from Backed,
 > SpaceX and Anthropic from PreStocks. Zero are configured for confidential transfers.**
 > `./scripts/usage-scan.sh`, written for this question because no such count existed.
 
@@ -91,7 +91,7 @@ each row can be checked by somebody who doesn't believe it.
 | what blocks it | **the exact condition that clears it** | what runs the moment it does |
 |---|---|---|
 | **The issuer gate** — no confidential account without the issuer | an issuer approving accounts. Not a protocol change: `ApproveAccount` is an instruction they already have and the plumbing they already shipped | **everything in §1, unchanged and with no new code.** The demonstrations already include the issuer's approval step, because the mirror mints are configured exactly this way |
-| **Venues refuse confidential collateral** — `$0` of Kamino's `$84.0m` of authorised borrowing is reachable | a reserve able to value a balance it cannot read, and to recover collateral at default without the holder | **the proved floor already exists**, verified by Solana's own ZK program, and settlement without the holder's signature is demonstrated on devnet — two loans, one seized, one released. `./scripts/kamino-verdict.sh` names what a reserve would need; two of the three are built |
+| **Venues refuse confidential collateral** — `$0` of Kamino's `$86.2m` of authorised borrowing is reachable | a reserve able to value a balance it cannot read, and to recover collateral at default without the holder | **the proved floor already exists**, verified by Solana's own ZK program, and settlement without the holder's signature is demonstrated on devnet — two loans, one seized, one released. `./scripts/kamino-verdict.sh` names what a reserve would need; two of the three are built |
 | **Confidential flash loans** — a program cannot read a confidential balance, so repayment must be proved *inline* | one number: the range proof's verify transaction is **1,269 bytes against a 1,232-byte limit**. Either the limit rises or the proof shrinks | the five-proof machinery is already written and running — the same path that settles the fee-bearing leg today |
 | **Matching** — somebody must want the other side | an indication-of-interest or request-for-quote layer. Nobody's permission required; simply not built | settlement, which is the part that is hard to get right, is done |
 | **A proved floor *and* an ordinary holder** — currently alternatives | the loan PDA proving a floor over a balance whose key it does not hold | recorded as a known direction, not as a claim |
@@ -110,7 +110,7 @@ operations decision, not a roadmap item — and on the day it happens, "somebody
 confidential settlement for this" is six months away and "this already settles, here are the
 transaction signatures" is the same afternoon.
 
-**Because the measurement says the seat is empty.** 465,520 accounts, zero confidential. Building
+**Because the measurement says the seat is empty.** 469,477 accounts, zero confidential. Building
 after the gate opens means building against whoever built before it.
 
 **Because the hard part is the part that does not change.** What took the work was not the business
@@ -128,7 +128,7 @@ is done, measured, and will still be true when the conditions change.
   move the price against the seller; securities lending where lending your book does not publish
   your book.
 - **A venue can read a proof instead of a balance** — confidential collateral inside a lending
-  market. That is the `$84.0m` that is currently `$0`.
+  market. That is the `$86.2m` that is currently `$0`.
 - **Composition beyond one asset pair** — a loan that cannot be liquidated while the underlying
   market is closed (the stock market is shut about 70% of the hours in a week; no on-chain lender
   can say that sentence today); rotation between issuers' wrappers without selling.
@@ -136,7 +136,7 @@ is done, measured, and will still be true when the conditions change.
 ## 6. What is not true, said here rather than found later
 
 - **Traction is zero.** Nobody outside this repository has used any of it. No pilot, no design
-  partner, no letter of intent. The 465,520-account scan measures a market, not a customer.
+  partner, no letter of intent. The 469,477-account scan measures a market, not a customer.
 - **No issuer has been asked.** The gate is described, not negotiated. Individual outreach was
   retired as a decision, with its cost written down where it was made.
 - **Price is off chain.** Nothing here says 50,000 shares are worth $8.75m. That is what the two

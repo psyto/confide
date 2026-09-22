@@ -16,7 +16,7 @@ it, and that is counted separately and is currently zero.
 
 **It is not a security, and no license is implicated.** These are devnet tokens representing
 nothing. Nothing here makes a real xStock pledgeable, and the `$0` reachable confidentially across
-Kamino's `$84.0m` of authorised borrowing is unchanged.
+Kamino's `$86.2m` of authorised borrowing is unchanged.
 
 **What it is:** the demonstration that **the issuer gate is an operations decision rather than a
 protocol problem.** [`cwf-2026/STORY.md`](cwf-2026/STORY.md) §3 lists that as the first of the

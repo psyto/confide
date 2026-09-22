@@ -314,6 +314,7 @@ import json, re, sys, pathlib
 u = json.load(open("web/usage.json"))
 total = u["total_accounts"]
 conf = u["total_confidential_accounts"]
+appr = u["total_approved_accounts"]
 want = {"{:,}".format(total), str(total)}
 # Per-mint counts are legitimate figures in an account-count context, and README prints all six.
 # They are checked line-for-line against the scan by THE PASTED SCAN below, which is stricter
@@ -342,7 +343,12 @@ for f in files:
     # And the headline: the whole claim is that the number of confidential accounts is this one.
     for m in re.finditer(r"(\d+) (?:of them )?configured for confidential", t):
         if int(m.group(1)) != conf:
-            bad.append(f"{f}: says {m.group(1)} confidential, web/usage.json says {conf}")
+            bad.append(f"{f}: says {m.group(1)} configured, web/usage.json says {conf}")
+    # CONFIGURED IS NO LONGER THE HEADLINE. On 2026-09-22 two NVDAx accounts configured one and
+    # neither was approved, so "zero" moved from the first number to the second. Both are checked.
+    for m in re.finditer(r"(\d+) approved by an issuer", t):
+        if int(m.group(1)) != appr:
+            bad.append(f"{f}: says {m.group(1)} approved, web/usage.json says {appr}")
     # "Of 330,266 live accounts" — the page's og:description, which no fetch can reach because a
     # crawler reads the source. The hero panel beside it is filled from usage.json; this is not.
     for m in re.finditer(r"Of ([1-9][\d,]{4,}) live accounts", t):
@@ -358,11 +364,13 @@ import json, pathlib, re, sys
 u = json.load(open("web/usage.json"))
 want = ["$ ./scripts/usage-scan.sh"]
 for m in u["mints"]:
-    want.append("  %-10s %-10s %7d accounts   %3d over 400 bytes   %d confidential"
+    want.append("  %-10s %-10s %7d accounts   %3d over 400 bytes   %d configured   %d approved"
                 % (m["symbol"], m["issuer"], m["accounts"], m["over_400_bytes"],
-                   m["confidential_accounts"]))
-want += ["", "  %d token accounts across %d mints, %d configured for confidential transfers"
-         % (u["total_accounts"], len(u["mints"]), u["total_confidential_accounts"])]
+                   m["confidential_accounts"], m["approved_accounts"]))
+want += ["", "  %d token accounts across %d mints, %d configured for confidential transfers, "
+             "%d approved by an issuer"
+         % (u["total_accounts"], len(u["mints"]), u["total_confidential_accounts"],
+            u["total_approved_accounts"])]
 t = pathlib.Path("README.md").read_text(encoding="utf-8")
 m = re.search(r"```\n(\$ \./scripts/usage-scan\.sh\n.*?)\n```", t, re.S)
 if not m:

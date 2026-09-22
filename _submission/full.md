@@ -18,15 +18,16 @@ nor is needed.
 ## Why nobody has built it
 
 Every tokenized stock on Solana already ships the feature this needs: **all 1,992** run Token-2022
-with confidential transfers **on** and the auditor slot **empty** — three unrelated issuers, every
-mint checked rather than sampled.
+with confidential transfers **on** and the auditor slot **empty** — three issuers, every mint
+checked, not sampled.
 
-So I stopped reading settings and counted accounts. **465,520 of them. Zero are confidential**
-(`./scripts/usage-scan.sh`). Not "few" — zero. The gate needs the issuer's signature to open one and
-nobody has asked, **so there is no incumbent here and nothing to be late to.**
+So I stopped reading settings and counted accounts. **469,477 of them. Two have configured a
+confidential account. Zero are approved** (`./scripts/usage-scan.sh`) — both on `NVDAx`, one the
+night of 21 September after two failed attempts. Somebody is knocking. **Neither can receive a
+confidential transfer until Backed signs, and Backed has not.**
 
-These mints are issued outside the US and are not NMS stock — the order is about the market being
-built, not about them.
+These mints are issued outside the US and are not NMS stock; the order is about the market being
+built, not them.
 
 ## Working end-to-end, devnet, today
 
@@ -54,11 +55,10 @@ review request and its reply are committed: [`docs/reviews/`](docs/reviews/).
   is in the demo; on `NVDAx` it is a conversation nobody has had.
 - **Matching.** Settlement is done; finding the other side is not — and bringing buyers and sellers
   together is the exchange definition at Rule 3b-16, so it stays off the roadmap.
-- **Price.** Nothing here says 50,000 shares are worth $8.75m. The two parties do.
 - **Pools, ever.** A pool's reserves are public and a trade moves them by exactly the amount traded,
   so anything settled against one publishes the size. Structural, not a roadmap item.
-- **The lending half is parked.** Kamino runs 19 live markets in these tokens — **$23.2m deposited,
-  $84.0m authorised, $0 reachable confidentially**; its program refuses a deposit from an account
+- **The lending half is parked.** Kamino runs 19 live markets in these tokens — **$24.0m deposited,
+  $86.2m authorised, $0 reachable confidentially**; its program refuses a deposit from an account
   holding value confidentially (`constraints.rs:187`). Confide proves a floor over an escrow's
   ciphertext and settles a default without the borrower. But a lender who cannot read a
   balance cannot price it, **so that half waits on a venue and the swap waits on nobody.**

@@ -20,7 +20,7 @@ Confide
 ## Brief description · Public · ≤500
 
 ```
-Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble for you and lets each side check the other before signing, with nobody in the middle. Every tokenized stock here already ships confidential balances — all 1,992, three unrelated issuers, auditor slot empty on every one. Across 465,520 live accounts: zero use it. Shipped, gated, unused.
+Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble and lets each side check the other before signing, with nobody in the middle. All 1,992 tokenized stocks here already ship confidential balances. Of 469,477 live accounts, two have configured one and zero are approved — the issuer has not signed.
 ```
 
 ## Project website · Public
@@ -42,7 +42,7 @@ For a desk accumulating or unwinding size: every on-chain purchase assembles the
 ## Why did you decide to build this, and why build it now? · ≤1000
 
 ```
-I set out to build a loan against tokenized stock and hit one wall every time. Collateral needs a third party, that party needs a confidential account, and autoApproveNewAccounts is false on all 1,992 mints — so one exists only if an issuer signs for it, and across 465,520 live accounts none has. I have not asked an issuer, so I cannot say they would refuse; what is measured is that nobody has been through that door. A trade needs no third party at all, because a Solana transaction cannot half-happen.
+I set out to build a loan against tokenized stock and hit one wall every time. Collateral needs a third party, that party needs a confidential account, and autoApproveNewAccounts is false on all 1,992 mints — so one exists only if an issuer signs for it, and across 469,477 live accounts none has. I have not asked an issuer, so I cannot say they would refuse; what is measured is that nobody has been through that door. A trade needs no third party at all, because a Solana transaction cannot half-happen.
 
 Why now is not my timing. On 17 September the SEC granted five-year relief for tokenized NMS stock, covering AMM-executed trading only: a venue must publish every fill's size, time and direction within ten minutes, and a Tier 1 name is capped at 0.25% of daily volume. Size cannot go there.
 
@@ -295,9 +295,9 @@ error the rest of this repository is built to prevent.
 ```
 Honestly: I do not know yet, and the measurements I have say something narrower than "people want this".
 
-What I can show. Kamino runs 19 live reserves in tokenized equity: $23.2m deposited, $84.0m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a constraint nobody chose.
+What I can show. Kamino runs 19 live reserves in tokenized equity: $24.0m deposited, $86.2m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a constraint nobody chose.
 
-What it does not show. 465,520 live accounts and zero confidential proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
+What it does not show. 469,477 live accounts and zero confidential proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
 
 What would settle it. Somebody outside my repository opening a confidential position on the devnet issuer whose key I published, or a desk saying what it would pay to move size unpublished. Neither has happened. Until one does this is an argument, not evidence.
 ```

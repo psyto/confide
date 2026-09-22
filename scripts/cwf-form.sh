@@ -27,6 +27,7 @@ if len(secs) != EXPECTED:
 mints = "{:,}".format(len(json.load(open("web/mints.json"))))
 u = json.load(open("web/usage.json"))
 acc, conf = "{:,}".format(u["total_accounts"]), u["total_confidential_accounts"]
+appr = u["total_approved_accounts"]
 bad = []
 G, R, OFF = "\033[32m", "\033[31m", "\033[0m"
 for head, body in secs:
@@ -48,8 +49,19 @@ for head, body in secs:
             bad.append("%s says %s where the mint count is %s" % (name, n, mints))
         elif 100000 <= v <= 999999 and n != acc:
             bad.append("%s says %s where the account count is %s" % (name, n, acc))
-if conf != 0:
-    bad.append("a confidential account now exists; the brief description says zero")
+# THE CLAIM MOVED FROM ONE COUNT TO THE NEXT. This fired whenever ANY account had configured a
+# confidential account, on the assumption that the brief description would then be saying "zero"
+# about the wrong thing. On 2026-09-22 two did, and the honest headline became "two configured,
+# zero approved" -- so the guard now asks what the form actually says against both numbers, and
+# only the approved count is allowed to be the zero.
+brief = next((b.strip() for h, b in secs if h.startswith("Brief description")), "")
+if brief:
+    if appr == 0 and not re.search(r"zero are approved|0 are approved|none (?:is|are) approved", brief, re.I):
+        bad.append("no account is approved and the brief description does not say so")
+    if conf and not re.search(r"\b(two|%d)\b[^.]{0,40}configured" % conf, brief, re.I):
+        bad.append("%d accounts have configured one; the brief description does not say how many" % conf)
+    if appr != 0:
+        bad.append("%d accounts are APPROVED — the gate has been opened, and every surface says it has not" % appr)
 print()
 for b in bad:
     print("  " + b)

@@ -35,7 +35,7 @@ the price it implies.
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
-| **465,520** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
+| **469,477** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
 | **0** | of them are confidential. **Nobody has ever opened one.** |
 
 Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
@@ -166,14 +166,14 @@ locked; it does not say whether anyone walked through. So count the accounts:
 
 ```
 $ ./scripts/usage-scan.sh
-  AAPLx      Backed       72958 accounts     7 over 400 bytes   0 confidential
-  NVDAx      Backed      188234 accounts    28 over 400 bytes   0 confidential
-  SPACEX     PreStocks    17882 accounts     6 over 400 bytes   0 confidential
-  ANTHROPIC  PreStocks    71083 accounts    29 over 400 bytes   0 confidential
-  AMC.US     Backpack     13352 accounts     4 over 400 bytes   0 confidential
-  SPCX.US    Backpack    102011 accounts    27 over 400 bytes   0 confidential
+  AAPLx      Backed       73822 accounts     7 over 400 bytes   0 configured   0 approved
+  NVDAx      Backed      189173 accounts    30 over 400 bytes   2 configured   0 approved
+  SPACEX     PreStocks    17870 accounts     6 over 400 bytes   0 configured   0 approved
+  ANTHROPIC  PreStocks    70869 accounts    29 over 400 bytes   0 configured   0 approved
+  AMC.US     Backpack     13344 accounts     4 over 400 bytes   0 configured   0 approved
+  SPCX.US    Backpack    104399 accounts    27 over 400 bytes   0 configured   0 approved
 
-  465520 token accounts across 6 mints, 0 configured for confidential transfers
+  469477 token accounts across 6 mints, 2 configured for confidential transfers, 0 approved by an issuer
 ```
 
 Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
@@ -261,7 +261,7 @@ lender needs now run on devnet — the check, and the seizure.
 > against or liquidated. **1,992 of 1,992** tokenized-equity mints clear every other condition.
 >
 > And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %. At the
-> reserves' own prices that is **$23.2 m of tokenized stock deposited** and **$84.0 m of borrowing
+> reserves' own prices that is **$24.0 m of tokenized stock deposited** and **$86.2 m of borrowing
 > their caps already authorise** — of which **$0 is reachable while a position stays confidential**.
 > SpaceX has a reserve too: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in all of
 > them is public**, and that is the only way in.

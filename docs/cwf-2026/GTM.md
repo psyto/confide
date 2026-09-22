@@ -69,7 +69,7 @@ published, and who need no venue to exist.
 
 ### And why the venue work was not wasted
 
-The capacity computation — **$23.2 m deposited and $84.0 m of borrowing authorised across Kamino's
+The capacity computation — **$24.0 m deposited and $86.2 m of borrowing authorised across Kamino's
 tokenized-equity reserves, $0 of it reachable confidentially** — is not a sales pipeline. It is the
 **size of the problem**, computed from someone else's numbers, and it is what makes a bilateral loan
 worth building a primitive for rather than a contract. The packets are what a venue needs *later*.

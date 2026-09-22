@@ -92,7 +92,7 @@ At the reserve's own price of 666.93, that cap and LTV authorise **$0 of borrowi
 token, of which **$0 is reachable while the position stays confidential**.
 
 Across every Kamino reserve holding a tokenized stock, `./scripts/capacity.sh` puts that at
-**$23.2 m deposited and $84.0 m of authorised borrowing, none of it reachable
+**$24.0 m deposited and $86.2 m of authorised borrowing, none of it reachable
 confidentially** — read 2026-09-20 11:50:46 UTC.
 
 **Nothing in this packet proposes changing any of them.** They are the prior, and the whole

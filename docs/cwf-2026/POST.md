@@ -5,7 +5,7 @@ once, has no addressee, and asks for no meeting, no reply and no favour.
 
 **What changed from the 09-19 draft, so the change is a decision rather than a drift:**
 
-- The headline is no longer the Kamino pincer. It is a measurement nobody had made — **465,520
+- The headline is no longer the Kamino pincer. It is a measurement nobody had made — **469,477
   token accounts, and not one of them confidential.** The pincer is why, and is now support.
 - The draft said *"it does not make the pincer go away"* and that was true of a **loan**. A loan
   needs a third party to hold collateral, and that third party is what the gate bites. **A trade
@@ -19,8 +19,8 @@ arrives afterwards cannot be told apart from what was already there.
 **Every number below is recomputable, and they move.** Re-run `./scripts/usage-scan.sh`,
 `./scripts/capacity.sh` and `./scripts/slot-scan.sh` before posting and update from their output —
 a post quoting a figure the page contradicts is worse than no post. Current readings:
-**465,520 accounts / 0 confidential**, and
-**$23.2 m / $84.0 m**.
+**469,477 accounts / 0 confidential**, and
+**$24.0 m / $86.2 m**.
 
 ---
 
@@ -34,7 +34,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
 >
-> So I counted. **465,520 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
+> So I counted. **469,477 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
 > 0 are configured for confidential transfers.** Not few. Zero.
 > (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
 > one of which was large for an unrelated extension, so the check reads the extension list rather
@@ -54,7 +54,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > them made.**
 >
 > This matters because people already lend against these tokens. Kamino runs 19 tokenized-equity
-> reserves: **$23.2 m deposited, $84.0 m of borrowing their own caps authorise, and $0 of it
+> reserves: **$24.0 m deposited, $86.2 m of borrowing their own caps authorise, and $0 of it
 > reachable if you would rather your position were not public.**
 >
 > **Kamino's refusal is correct underwriting, not an oversight.** A lender who cannot read a balance
@@ -82,7 +82,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > the size a clearing house would have been told anyway.
 >
 > **What this does not do:** it does not make a real xStock pledgeable, it does not open Kamino's
-> $84.0 m, and nobody outside my own repository has used any of it. The `$0` stands.
+> $86.2 m, and nobody outside my own repository has used any of it. The `$0` stands.
 >
 > **One thing you can do, and it is the point of this post.** I stood up an issuer on devnet whose
 > gate is shut exactly as all 1,992 are — `autoApproveNewAccounts: false`, auditor slot empty — and
@@ -95,7 +95,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 >
 > It is devnet and the tokens represent nothing. You will need the Solana CLI, a Rust toolchain and
 > a little devnet SOL — the script tries the airdrop and tells you what to do when it is throttled,
-> which it usually is. **It is the thing 465,520 live accounts have never done.** Mint
+> which it usually is. **It is the thing 469,477 live accounts have never done.** Mint
 > `7MEQEiy1…`; the approval key is in `keys/` and cannot mint, which is checked rather than claimed.
 >
 > Everything above is checkable without taking my word for it:
@@ -112,7 +112,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
 > empty on every one.
 >
-> I counted the accounts. **465,520 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC.
+> I counted the accounts. **469,477 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC.
 > 0 are confidential.** Nobody has ever opened one — the issuer has
 > to sign, and none has.
 >
@@ -273,7 +273,7 @@ is the thing B was written to get. 2,036 → 2,218 characters, still under A's 2
 - **It leads with a measurement nobody else has made.** "The feature is unused" is an assertion
   until somebody counts; the count is the contribution, and it is cheap for a reader to repeat.
 - **Kamino is conceded as correct before anything is said about the gap.** A post that reads as an
-  attack on a protocol with $23.2 m in it gets answered as an attack, and the framing freezes before
+  attack on a protocol with $24.0 m in it gets answered as an attack, and the framing freezes before
   anyone looks at the evidence.
 - **The failure is told as a failure.** A month of building the wrong shape, said plainly, is what
   earns the sentence after it.
