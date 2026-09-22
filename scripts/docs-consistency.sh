@@ -614,9 +614,20 @@ for f in ["_submission/full.md", "_submission/short.txt", "_submission/cwf-form.
         continue
     body = q.read_text(encoding="utf-8")
     for pat in BAD:
-        m = re.search(pat, body, re.I)
-        if m:
-            bad.append("%s says \"%s\"" % (f, m.group(0)))
+        for m in re.finditer(pat, body, re.I):
+            # QUOTING THE MISTAKE IS NOT MAKING IT. CHECKIN-2.md names the phrase in order to say it
+            # was a prediction and not a measurement, which is the point of the scene. A line that
+            # wraps it in quotes or italics is explaining it; a bare one is claiming it.
+            a = body.rfind("\n", 0, m.start()) + 1
+            b = body.find("\n", m.end())
+            line = body[a : b if b != -1 else len(body)]
+            q2 = m.group(0)
+            quoted = any(mark + v in line
+                         for mark in ('"', "\u201c", "*", "_")
+                         for v in (q2, q2.capitalize(), q2[0].upper() + q2[1:]))
+            if quoted:
+                continue
+            bad.append("%s says \"%s\"" % (f, q2))
 for b in bad:
     print("      " + b)
 sys.exit(1 if bad else 0)

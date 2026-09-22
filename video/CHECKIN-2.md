@@ -23,10 +23,21 @@ last three days of each week, at 08:00 PDT:
 runnable by a stranger" as the next thing. That is the whole reason this check-in opens by quoting
 it: a judge watching two in a row should see one of them close.
 
-**Scene 2 reports a defect in my own work, found by someone else.** It is the strongest thing in
-the minute and the least comfortable. The form asks for a test, a conversation or a decision; this
-is all three, and the decision is the general one — have the part you are most confident about read
-by someone who is not you.
+**Scene 2 is the week, and it changed on 2026-09-22.** It used to be the Codex review of my own
+swap — a defect in my work found by somebody I asked. That moved into scene 1, because something
+better happened: **a stranger corrected a claim, and then the chain settled it.**
+
+A reader replied to the post that *"no issuer will approve one"* was a prediction and not a
+measurement. They were right; nobody had been asked. Re-measuring found **two accounts had
+configured a confidential one and zero were approved** — the corrected sentence, proved, by someone
+who is not me and was not asked.
+
+The form wants a test, a conversation or a decision. This is a conversation that produced a test.
+
+**The one thing the scene refuses to do is put the two in order out loud.** The reply came about
+twenty-two hours before those accounts appeared. In sixty seconds that lands as cause, and nothing
+here can see a motive — the last claim that outran its evidence cost two artifacts that can never be
+corrected. The pause carries the turn; no date does.
 
 **No figure that moves is spoken as an exact number**, the rule from
 [`../STATUS.md`](../STATUS.md). "Nearly half a million" and "under six thousand" are 465,498 and
@@ -39,43 +50,50 @@ where they are dated.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what changed | 19 | 41 | 134 | two terminals side by side, offer to accept to settle to sign, and the decrypted amount appearing on the machine that did not create it |
-| 2 | what I learned | 19 + 1 | 43 | 140 | the check refusing a transaction, then passing the honest one |
-| 3 | what is next | 19 | 43 | 140 | the holder table, the `≥1 share` column |
-| | | **58 s** | **127** | | |
+| 1 | what changed | 22 | 49 | 137 | two terminals side by side, then the check refusing a transaction and passing the honest one |
+| 2 | what I learned | 19 + 1 | 41 | 134 | the reply, then the scan printing `2 configured 0 approved` |
+| 3 | what is next | 17 | 38 | 139 | the holder table, the `≥1 share` column |
+| | | **59 s** | **128** | | |
 
 ## The script
 
 ### 1 — what changed
 
-> Last week I said the next thing was making the swap work between strangers. It does. Four
-> messages, two machines, neither holding the other's key. Each decrypts what the other will send
-> before signing, and until both sign, nothing has happened.
+> Last week I said the next thing was making the swap work between strangers. It does — four
+> messages, two machines, neither holding the other's key. A review then found the step I called
+> the safety step was signing something it had never looked at. It compares them now.
 
-*Shows:* two terminals side by side, offer to accept to settle to sign, and the decrypted amount
-appearing on the machine that did not create it. **The picture is the two machines**, because that
-is the claim: not that a swap works, which last week already showed, but that it works without the
-two parties sharing anything.
+*Shows:* two terminals side by side, then the check refusing a transaction and passing the honest
+one. **Two beats in one scene, because the week's real subject is the next one.** The delivered
+promise and the defect found in it belong together: the thing works, and the part I was proudest of
+was wrong.
 
 ### 2 — what I learned · +1 s silence
 
-> I had it reviewed. The step I called the safety step was signing something it never looked at —
-> it decrypted one thing and signed another. Now it compares them byte for byte. It caught a bug
-> of mine on its first run.
+> Someone replied to my post. "No issuer will approve one" is a prediction, not a measurement. They
+> were right — I had never asked one.
+>
+> So I measured again. Two accounts have configured a confidential one. Forty-nine minutes apart.
+> Zero approved.
 
-*Shows:* the check refusing a transaction, then passing the honest one. **The pause is before "That
-check caught a bug of mine"** — the first half is the review's finding, the second is what the fix
-found immediately, which is the part that says the fix is real rather than announced.
+*Shows:* the reply, then the scan printing `2 configured   0 approved`. **The first correction from
+outside this repository, and the chain agreeing with the corrector.** The pause is before "so I
+measured again" — the first half is a stranger telling me a claim outran its evidence, the second is
+what the corrected claim turned out to be worth. **No date is spoken between the two.** The reply
+came twenty-two hours before those accounts appeared, and in sixty seconds that lands as cause. It
+is a sequence; the script will not pretend otherwise
+([`../docs/reviews/2026-09-22-external-no-issuer-will-approve.md`](../docs/reviews/2026-09-22-external-no-issuer-will-approve.md)).
 
 ### 3 — what is next
 
-> Next, the gate on a real mint — a conversation nobody has had. I also measured who actually
-> holds one. Of nearly half a million accounts, under six thousand hold even a single share. That
-> is the market, smaller than the count says.
+> The gate on a real mint — and somebody other than me is pushing on it now. Of nearly half a
+> million accounts, under six thousand hold even one share. That is the market, smaller than it
+> looks.
 
-*Shows:* the holder table, the `≥1 share` column. **Ending on the smaller number is the same move
-as check-in 1 ending on traction**: it is the fact that most weakens the pitch, and a judge who
-finds it themselves reads everything before it differently.
+*Shows:* the holder table, the `≥1 share` column. **"A conversation nobody has had" had to go**: two
+people have now had it with the chain instead, and the issuer has not answered. Ending on the
+smaller number is the same move as check-in 1 ending on traction — the fact that most weakens the
+pitch, said before a judge finds it.
 
 ## What this deliberately leaves out
 
@@ -89,3 +107,7 @@ finds it themselves reads everything before it differently.
   until the context keys were namespaced per attempt. Both were defects; neither is news.
 - **The SEC's Innovation Exemption.** Still the strongest external fact and still too large for
   sixty seconds ([`../docs/SEC-EXEMPTION.md`](../docs/SEC-EXEMPTION.md)).
+- **Whether the order explains the two accounts.** It cannot be tested here: every account scan in
+  this repository postdates 2026-09-17, so there is no *before*. `usage-scan.sh` now reads the
+  previous run before overwriting it, so the question is answered by the count moving or not
+  moving rather than by anybody arguing about it.
