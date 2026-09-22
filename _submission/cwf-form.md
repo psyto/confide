@@ -227,11 +227,6 @@ https://psyto.github.io/confide/
 
 ## Access instructions · ≤300
 
-**The 300 came from the form, not from this file.** Nothing here can read a form, so a field with no
-`≤N` on its heading is a field nothing checks — and this one had none. It grew to 735 characters and
-was discovered when the founder pasted it on 2026-09-22 and it was cut mid-URL at *"git clone
-https://githu"*. Exactly 300 went in. The limit is on the heading now, so `cwf-form.sh` enforces it.
-
 ```
 Nothing to log into — the page reads mainnet in your browser. For a confidential position of your own, on a devnet issuer gated as all 1,992 real ones are, its approval key published:
 
@@ -239,6 +234,11 @@ git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh
 
 Then the two-party trade: docs/TESTBED.md
 ```
+
+**The 300 came from the form, not from this file.** Nothing here can read a form, so a field with no
+`≤N` on its heading is a field nothing checks — and this one had none. It grew to 735 characters and
+was discovered when the founder pasted it on 2026-09-22 and it was cut mid-URL at *"git clone
+https://githu"*. Exactly 300 went in. The limit is on the heading now, so `cwf-form.sh` enforces it.
 
 ## Pitch video · Public · ≤2 min · required
 
