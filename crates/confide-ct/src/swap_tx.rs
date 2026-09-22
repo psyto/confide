@@ -34,49 +34,139 @@ const TOKEN_2022: &str = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const LIMIT: usize = 1232;
 
 struct Leg {
-    owner: Keypair,
+    /// The OWNER'S PUBKEY, not their key. A leg can be assembled by someone who cannot sign it,
+    /// which is the whole difference between a demonstration and a two-party trade: in a real one
+    /// neither side ever holds the other's keypair.
+    owner: Address,
     ctx: serde_json::Value,
     source: Address,
     destination: Address,
     mint: Address,
 }
 
+const USAGE: &str = "\
+swap-tx <payer.json> <bh> <a-owner.json> <a-ctx> <a-src> <a-dst> <a-mint> <b-owner.json> ...
+    one machine holding both keys. The demonstration.
+
+swap-tx build <payer-pubkey> <bh> <a-owner-pubkey> <a-ctx> <a-src> <a-dst> <a-mint> <b-...>
+    assemble UNSIGNED from pubkeys. Neither party needs the other's key.
+
+swap-tx sign <tx.b64|-> <keypair.json>
+    add one signature and print the result. Run once per party.";
+
 fn main() {
     let a: Vec<String> = std::env::args().skip(1).collect();
+    match a.first().map(String::as_str) {
+        Some("build") => build_unsigned(&a[1..]),
+        Some("sign") => add_signature(&a[1..]),
+        _ => both_keys_here(&a),
+    }
+}
+
+/// Assemble the transaction from PUBLIC keys only and sign nothing.
+///
+/// This is what makes a two-party swap possible at all. The legacy path below needs both keypairs
+/// on one machine, which is fine for a demonstration and is not a trade: in a real one neither
+/// side ever sees the other's key, so somebody has to be able to build the thing they will both
+/// sign without being able to sign it for them.
+fn build_unsigned(a: &[String]) {
     if a.len() < 12 {
-        eprintln!("swap-tx <payer.json> <bh> <a-owner.json> <a-ctx.json> <a-src> <a-dst> <a-mint> <b-owner.json> <b-ctx.json> <b-src> <b-dst> <b-mint>");
+        eprintln!("{USAGE}");
+        std::process::exit(2);
+    }
+    let payer = addr(&a[0]);
+    let blockhash = Hash::from_str(&a[1]).expect("blockhash");
+    let legs = [leg_pub(&a[2..7]), leg_pub(&a[7..12])];
+    let ixs: Vec<_> = legs.iter().map(instruction).collect();
+    let tx = Transaction::new_unsigned(Message::new(&ixs, Some(&payer)));
+    let mut tx = tx;
+    tx.message.recent_blockhash = blockhash;
+    report(&tx);
+    println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&tx).unwrap()));
+}
+
+/// Add exactly one signature. Run once by each party, on a transaction they have inspected.
+///
+/// `partial_sign` rather than `sign`: the whole point is that the transaction is incomplete until
+/// both have looked at it. A party who dislikes the other leg simply never runs this, and nothing
+/// has happened.
+fn add_signature(a: &[String]) {
+    if a.len() < 2 {
+        eprintln!("{USAGE}");
+        std::process::exit(2);
+    }
+    let raw = if a[0] == "-" {
+        let mut s = String::new();
+        std::io::Read::read_to_string(&mut std::io::stdin(), &mut s).expect("stdin");
+        s
+    } else {
+        std::fs::read_to_string(&a[0]).expect("tx file")
+    };
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(raw.trim())
+        .expect("base64");
+    let mut tx: Transaction = bincode::deserialize(&bytes).expect("transaction");
+    let kp = keypair(&a[1]);
+    let bh = tx.message.recent_blockhash;
+    tx.partial_sign(&[&kp], bh);
+    let signed = tx.signatures.iter().filter(|s| **s != Default::default()).count();
+    eprintln!(
+        "  signed by {}   {} of {} signatures present",
+        kp.pubkey(),
+        signed,
+        tx.signatures.len()
+    );
+    println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&tx).unwrap()));
+}
+
+/// The original form: both keypairs on one machine. Kept because `swap-e2e.sh` is a demonstration
+/// and demonstrating it end to end on one box is the point of that script.
+fn both_keys_here(a: &[String]) {
+    if a.len() < 12 {
+        eprintln!("{USAGE}");
         std::process::exit(2);
     }
     let payer = keypair(&a[0]);
     let blockhash = Hash::from_str(&a[1]).expect("blockhash");
-    let legs = [leg(&a[2..7]), leg(&a[7..12])];
-
+    let owners = [keypair(&a[2]), keypair(&a[7])];
+    let legs = [
+        leg_with(owners[0].pubkey(), &a[3..7]),
+        leg_with(owners[1].pubkey(), &a[8..12]),
+    ];
     let ixs: Vec<_> = legs.iter().map(instruction).collect();
     // Both owners sign, each authorising only their own leg. Neither can move the other's tokens,
     // and neither can be made to move their own — a party who dislikes the other leg simply does
     // not sign, and nothing has happened.
-    let signers: Vec<&Keypair> = vec![&payer, &legs[0].owner, &legs[1].owner];
+    let signers: Vec<&Keypair> = vec![&payer, &owners[0], &owners[1]];
     let tx = Transaction::new(
         &dedup(&signers),
         Message::new(&ixs, Some(&payer.pubkey())),
         blockhash,
     );
-    let bytes = bincode::serialize(&tx).unwrap();
+    report(&tx);
+    println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&tx).unwrap()));
+}
+
+fn report(tx: &Transaction) {
+    let bytes = bincode::serialize(tx).unwrap();
     eprintln!(
         "  one transaction    {} bytes{}",
         bytes.len(),
         if bytes.len() > LIMIT { "   <- OVER the 1,232-byte limit" } else { "" }
     );
-    println!("{}", base64::engine::general_purpose::STANDARD.encode(&bytes));
 }
 
-fn leg(a: &[String]) -> Leg {
+fn leg_pub(a: &[String]) -> Leg {
+    leg_with(addr(&a[0]), &a[1..5])
+}
+
+fn leg_with(owner: Address, a: &[String]) -> Leg {
     Leg {
-        owner: keypair(&a[0]),
-        ctx: serde_json::from_slice(&std::fs::read(&a[1]).expect("ctx.json")).unwrap(),
-        source: addr(&a[2]),
-        destination: addr(&a[3]),
-        mint: addr(&a[4]),
+        owner,
+        ctx: serde_json::from_slice(&std::fs::read(&a[0]).expect("ctx.json")).unwrap(),
+        source: addr(&a[1]),
+        destination: addr(&a[2]),
+        mint: addr(&a[3]),
     }
 }
 
@@ -101,7 +191,7 @@ fn instruction(l: &Leg) -> solana_instruction::Instruction {
             bytemuck::from_bytes(&dec),
             bytemuck::from_bytes(&lo),
             bytemuck::from_bytes(&hi),
-            &l.owner.pubkey(),
+            &l.owner,
             &[],
             ProofLocation::ContextStateAccount(&ctx("equality")),
             ProofLocation::ContextStateAccount(&ctx("validity")),
@@ -119,7 +209,7 @@ fn instruction(l: &Leg) -> solana_instruction::Instruction {
             bytemuck::from_bytes(&dec),
             bytemuck::from_bytes(&lo),
             bytemuck::from_bytes(&hi),
-            &l.owner.pubkey(),
+            &l.owner,
             &[],
             ProofLocation::ContextStateAccount(&ctx("equality")),
             ProofLocation::ContextStateAccount(&ctx("validity")),
