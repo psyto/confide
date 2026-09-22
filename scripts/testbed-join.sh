@@ -32,7 +32,15 @@ import json;d=json.load(open('$T'))['mints']['$ROLE'];print(d['mint'],d['decimal
 APPROVAL=$(python3 -c "import json;print(json.load(open('$T'))['approval_secret'])")
 FAUCETKEY=$(python3 -c "import json;print(json.load(open('$T'))['faucet_secret'])")
 
-W="${WORK:-$(mktemp -d)}"; mkdir -p "$W"
+# A DURABLE default, and one key file PER MINT. Both were wrong and both broke the same thing.
+#
+# The default was `mktemp -d`, so the ElGamal secret -- the only thing that can read your own
+# confidential balance -- was written somewhere the operating system deletes. And the file was
+# always called keys.json regardless of mint, so joining the cash mint after the equity mint
+# OVERWROTE the equity key. Nothing failed at the time; the balance simply became unreadable.
+#
+# A swap needs both keys at once, which is how this surfaced. scripts/swap-*.sh look here.
+W="${WORK:-$HOME/.config/confide/swap}"; mkdir -p "$W"
 KP="${1:-$W/you.json}"
 # You need a devnet keypair with some SOL. The airdrop is tried and is frequently throttled, and
 # when it is, this says so instead of quietly reaching for a keypair only the author has — which is
@@ -61,6 +69,7 @@ printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confi
 echo
 echo "  ${bold}--- you ---${off}"
 echo "    wallet   $YOU"
+KEYS="$W/$(echo "$MINT" | cut -c1-8)-keys.json"
 echo "    mint     $MINT   ${dim}($ROLE, $DEC decimals, autoApproveNewAccounts false)${off}"
 
 echo
@@ -74,7 +83,7 @@ echo "    account  $ACC   ${dim}(public balance $UNITS — visible to everyone, 
 
 echo
 echo "  ${bold}--- the gate. It is shut, and you open it yourself ---${off}"
-cargo run --quiet -p confide-ct --bin provision -- configure "$KP" "$MINT" "$ACC" 0 "$(bh)" "$W/keys.json" \
+cargo run --quiet -p confide-ct --bin provision -- configure "$KP" "$MINT" "$ACC" 0 "$(bh)" "$KEYS" \
   "$(mint_charges_fee "$MINT")" "$DEC" > "$W/cfg.txt" 2>/dev/null
 go "you configure the account" "$(cat "$W/cfg.txt")"
 go "the ISSUER approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve \
@@ -83,16 +92,16 @@ printf '    %ssigned with keys/devnet-approval-authority.json — published, and
 
 echo
 echo "  ${bold}--- and the position goes dark ---${off}"
-prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$KP" "$MINT" "$ACC" "$UNITS" "$(bh)" "$W/keys.json" "$(mint_charges_fee "$MINT")" "$DEC" 2>/dev/null)"; }
+prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$KP" "$MINT" "$ACC" "$UNITS" "$(bh)" "$KEYS" "$(mint_charges_fee "$MINT")" "$DEC" 2>/dev/null)"; }
 prov deposit
 prov apply
 read -r DECB AVAIL PUB OWNER < <(ct "$ACC")
 echo
 echo "    public balance   $PUB   ${dim}<- what the chain shows anyone, from here on${off}"
-printf '    '; cargo run --quiet -p confide-ct --bin read-balance -- "$W/keys.json" "$DECB" "$AVAIL" "$DEC" 2>/dev/null | sed -n '3p' | sed 's/^ *//'
+printf '    '; cargo run --quiet -p confide-ct --bin read-balance -- "$KEYS" "$DECB" "$AVAIL" "$DEC" 2>/dev/null | sed -n '3p' | sed 's/^ *//'
 echo
 printf '  %sYou are the first kind of account that does not exist on mainnet.%s\n' "$grn" "$off"
 echo "    explorer  https://explorer.solana.com/address/$ACC?cluster=devnet"
-echo "    keys      $W/keys.json   ${dim}(your ElGamal secret — lose it and the balance is unreadable)${off}"
+echo "    keys      $KEYS   ${dim}(your ElGamal secret — lose it and the balance is unreadable)${off}"
 echo "    trade     docs/TESTBED.md"
 echo

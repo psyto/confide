@@ -59,11 +59,34 @@ this is a bilateral settlement primitive and it cannot pretend otherwise.
 MODE=dvp ./scripts/swap-e2e.sh
 ```
 
-runs both sides against throwaway mints and is the fastest way to see the whole thing. To trade
-against **another person** on the standing mints, each of you runs `testbed-join.sh`, exchanges
-ElGamal public keys and account addresses, and builds their own leg — the sequence is
-[`cwf-2026/THE-SWAP.md`](cwf-2026/THE-SWAP.md), and the safety step is `swap-check`, which lets you
-decrypt what the other leg will actually send **before you sign it**.
+runs both sides against throwaway mints and is the fastest way to see the whole thing — but it
+holds both parties' keys, which no real trade does.
+
+**To trade against another person, four commands and four files.** Each of you runs
+`testbed-join.sh` on BOTH mints first, so you have an account and an ElGamal key on each.
+
+```
+you                                                   them
+──────────────────────────────────────────────────────────────────────────────────────
+swap-offer.sh  you.json --give <mint> N
+               --want <mint> M        > offer.json  ──▶
+                                                        swap-accept.sh them.json
+                                            ◀──────     offer.json > accept.json
+swap-settle.sh you.json accept.json
+               > settle.json                         ──▶
+                                                        swap-sign.sh them.json
+                                                        settle.json
+```
+
+**Why four and not two.** Each side needs the other's ElGamal public key before it can build its
+own proofs, and **each side decrypts the other's amount before signing** — that is what
+`swap-check` is for, and it runs inside steps 3 and 4. Cutting a round trip would mean one party
+signing before they can see what the other is actually sending.
+
+**Nothing moves until the fourth command.** A proof is not a transfer, and a transaction with one
+of two signatures cannot execute. Settled end to end on devnet 2026-09-22 between two keypairs
+that never shared anything but public keys: 100 equity against 17,500 cash, one transaction, 1,074
+bytes, all four public balances still `0`.
 
 **If you do this, say so.** An account on these mints that this repository did not open is the
 first outside use of any of it.

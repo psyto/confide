@@ -24,6 +24,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 R="${RPC:-https://api.devnet.solana.com}"
 . "$(dirname "$0")/lib/chain.sh"
+. "$(dirname "$0")/lib/swap.sh"
 W="${WORK:-$(mktemp -d)}"; mkdir -p "$W"
 
 # MODE=dvp makes the second mint a mirror of PYUSD instead of a second equity wrapper, so the
@@ -147,80 +148,14 @@ echo "  ${bold}--- each side builds the proofs for their own leg ---${off}"
 # Three proofs per leg, verified into context state accounts. This is the expensive, multi-
 # transaction part, and it happens BEFORE the swap — which is exactly why the exchange itself is
 # small enough to be one transaction.
+# Now a thin wrapper over scripts/lib/swap.sh, which swap-offer.sh and swap-accept.sh also use.
+# The only difference is that this one reads the counterparty's ElGamal key out of their key FILE,
+# because this script holds both parties. A real trade has only their pubkey.
 build() { # build <who> <mint-letter> <mint> <source> <dest> <dest-keys> <send-units> <decimals>
   local who="$1" ml="$2" mint="$3" src="$4" dst="$5" dkeys="$6" send="$7" dec_n="$8"
-  local dec avail pub owner aud alt range
-  read -r dec avail pub owner < <(ct "$src")
-  # An empty auditor slot is what PYUSD ships, so there is no key file to read. `none` is what
-  # seizure-ctx has always taken for a mint that names no auditor.
-  if [ -f "$W/auditor-$ml.json" ]; then
-    aud=$(python3 -c "import json;print(json.load(open('$W/auditor-$ml.json'))['elgamal_pubkey_b64'])")
-  else
-    aud=none
-  fi
-  local ctxf="$W/$who-ctx.json"
-  # Five proofs on a fee-bearing mint, three otherwise, and the mint decides rather than a flag:
-  # a transferFeeConfig makes Token-2022 refuse the plain Transfer even at 0 bps.
-  if [ "$(mint_charges_fee "$mint")" = fee ]; then
-    local wh bps maxf
-    read -r wh bps maxf < <(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$mint\",{\"encoding\":\"jsonParsed\"}]}" \
-      | python3 -c "
-import sys,json
-i=json.load(sys.stdin)['result']['value']['data']['parsed']['info']
-e={x['extension']:x.get('state',{}) for x in i.get('extensions',[])}
-f=e['transferFeeConfig']['newerTransferFee']
-print(e['confidentialTransferFeeConfig']['withdrawWithheldAuthorityElgamalPubkey'],
-      f['transferFeeBasisPoints'], f['maximumFee'])")
-    cx() { cargo run --quiet -p confide-ct --bin swap-ctx-fee -- "$W/$who.json" "$W/$who-$ml-keys.json" \
-      "$dec" "$avail" "$(elgamal "$dkeys")" "$aud" "$wh" "$bps" "$maxf" \
-      "$(base "$send" "$dec_n")" "$(bh)" "$ctxf" \
-      "$(solana-keygen pubkey "$W/$who.json")" "$W/$who-keys" "$1" "${2:-0}"; }
-  else
-    cx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$W/$who.json" "$W/$who-$ml-keys.json" \
-      "$dec" "$avail" "$(elgamal "$dkeys")" "$aud" "$(base "$send" "$dec_n")" "$(bh)" "$ctxf" \
-      "$(solana-keygen pubkey "$W/$who.json")" "$W/$who-keys" "$1" none; }
-  fi
-  cx none >/dev/null 2>"$W/$who-pass1.err" || { cat "$W/$who-pass1.err" >&2; exit 1; }
-  range=$(python3 -c "import json;print(json.load(open('$ctxf'))['range'])")
-  alt=$(solana -u "$R" -k "$W/$who.json" address-lookup-table create \
-        --authority "$(solana-keygen pubkey "$W/$who.json")" \
-        | grep -oE 'Lookup Table Address: [1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
-  # The with-fee range proof is verified FROM an account, so the record holding it goes in the
-  # table too. A missing address there is not an error — it is an account resolved the long way.
-  local rec; rec=$(python3 -c "
-import json;d=json.load(open('$ctxf'));print(d.get('record',''))")
-  solana -u "$R" -k "$W/$who.json" address-lookup-table extend "$alt" \
-    --addresses "$range,$(solana-keygen pubkey "$W/$who.json")${rec:+,$rec}" >/dev/null
-  sleep 3
-  cx "$alt" > "$W/$who-txs.txt" 2>"$W/$who-pass2.err"
-  # `go` reports a rejection on stdout, and sending that to /dev/null cost a run: the script said
-  # only "exit 1" and the reason was already thrown away.
-  #
-  # And they are sent in batches, because a blockhash does not live long enough for fourteen of
-  # them — the thirteenth came back `BlockhashNotFound`. Each batch is rebuilt against a fresh
-  # blockhash; the proofs themselves are cached on disk, so rebuilding re-signs rather than
-  # re-proves, and `skip` keeps the already-landed creates from being sent twice.
-  # Only the with-fee path is rebuilt between batches, because only it caches its proofs. Running
-  # `seizure-ctx` a second time would generate DIFFERENT proofs for the same context accounts, so
-  # its six transactions go in one batch and inside one blockhash, which is where they fit.
-  local n=0 out sent=0 batch=99
-  [ "$(python3 -c "
-import json;print(1 if json.load(open('$ctxf')).get('with_fee') else 0)")" = 1 ] && batch=5
-  while :; do
-    local inbatch=0
-    while read -r TX; do
-      [ "$inbatch" -lt "$batch" ] || break
-      n=$((n+1)); inbatch=$((inbatch+1))
-      out=$(go "$who proof tx $n" "$TX") || { printf '%s\n' "$out" >&2; exit 1; }
-    done < "$W/$who-txs.txt"
-    sent=$((sent+inbatch))
-    [ "$inbatch" -eq "$batch" ] || break
-    cx "$alt" "$sent" > "$W/$who-txs.txt" 2>"$W/$who-pass2.err"
-    [ -s "$W/$who-txs.txt" ] || break
-  done
-  local nctx; nctx=$(python3 -c "
-import json;d=json.load(open('$ctxf'));print(5 if d.get('with_fee') else 3)")
-  echo "    $who  $n transactions, $nctx contexts, authority is $who themselves"
+  ln -sf "$W/auditor-$ml.json" "$W/auditor-$who.json" 2>/dev/null || true
+  swap_leg "$who" "$W/$who.json" "$W/$who-$ml-keys.json" "$mint" "$src" "$dst" \
+           "$(elgamal "$dkeys")" "$send" "$dec_n" "$W/$who-ctx.json"
 }
 build alice X "$MINT_X" "$alice_X" "$bob_X"   "$W/bob-X-keys.json"   "$A_SEND" "$DEC_X"
 build bob   Y "$MINT_Y" "$bob_Y"   "$alice_Y" "$W/alice-Y-keys.json" "$B_SEND" "$DEC_Y"
@@ -232,10 +167,8 @@ printf '  revealed to anyone else: the amount is encrypted to the RECIPIENT as w
 printf '  so the recipient reads it straight out of the already-verified proof context.%s\n' "$off"
 look() { # look <who> <their-receiving-keys> <other's ctx.json>
   local v; v=$(python3 -c "import json;print(json.load(open('$3'))['validity'])")
-  local data; data=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$v\",{\"encoding\":\"base64\"}]}" \
-    | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value']['data'][0])")
   echo "    ${bold}$1 checks the leg addressed to them${off}   ${dim}context $v${off}"
-  cargo run --quiet -p confide-ct --bin swap-check -- "$2" "$data" 2>/dev/null
+  swap_look "$2" "$3"
 }
 look alice "$W/alice-Y-keys.json" "$W/bob-ctx.json"
 look bob   "$W/bob-X-keys.json"   "$W/alice-ctx.json"

@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-09-22 02:11:42 UTC",
+ "generated_utc": "2026-09-22 02:31:46 UTC",
  "cluster": "devnet",
  "note": "What each side of one delivery-versus-payment could read. Written by the parties at the time, because the amounts are confidential and nobody \u2014 this repository included \u2014 can recover them from the chain afterwards.",
- "stock_mint": "3EUJapBVr2zuawfSNfANYcdSXQqcEqCshj914E9gQPA2",
- "cash_mint": "GyGLZV7oQVnWesEq11ov1jeUzvjwPwX27QjjqYtyHhVa",
+ "stock_mint": "CCsrk4qVfrdsXE6EPBMJTgZGPnmrGWQm18iToBm1U7RH",
+ "cash_mint": "7Nxki1m94h6seBtrA38Y8T4JBigiMqQkHKr6rUqgu3M9",
  "delivered_units": 50000,
  "paid_units": 8750000,
  "price_per_share": 175.0,
@@ -13,8 +13,8 @@
   "cash_before": 0,
   "cash_after": 8750000,
   "accounts": [
-   "4UFArRAmQgbeAdoueNaXpjxXT3N6jU13ab8MZPrvfLQP",
-   "DXSPoJihS1UTMkyRsdKoF7fxsumStx6rdn28fos9MzR4"
+   "4eSV4UEK1rD6PBRqcjBBrdzXgFt9f6W4FnwR9QgrCvLB",
+   "2EmUM6pfeA1LVGP1pRLyybZfoet75srMET8KRfgdLtcs"
   ]
  },
  "buyer": {
@@ -23,8 +23,8 @@
   "cash_before": 9000000,
   "cash_after": 250000,
   "accounts": [
-   "5yFAYAgKZGcWdb5VUe3KxDCLGUQp9PKhzMVnLM1CGuAo",
-   "6QoeddrbETQSXKUVeoz54tK17oGMqDEvUssh7JzEKxW9"
+   "28dmv6iBmYfpWobtQApTVSUqXc7uCxcbSto8rdfZzmEN",
+   "7HMapywaT3CVB48WH7ScFun1vqGFDjgDsFRNVW12AeZM"
   ]
  }
 }
