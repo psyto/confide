@@ -1,17 +1,17 @@
 {
  "cwf-checkin1": {
-  "characters": 1838,
+  "characters": 2024,
   "file": "_submission/youtube-checkin1-paste.txt",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-22 08:10:56 UTC",
-  "sha256": "b26464dbca3eb70d1319af163cb482a3c045d002dae2de6c3f48ac7b9e800ff0"
+  "pasted_utc": "2026-09-22 11:54:39 UTC",
+  "sha256": "50fad2f919fb413440789688b24f338047c39974937f3954f4525adace5e40ac"
  },
  "cwf-form": {
-  "characters": 19255,
+  "characters": 19215,
   "file": "_submission/cwf-form.md",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-22 08:17:00 UTC",
-  "sha256": "be49d991d68ab787c492c8e8851a83bff04f39de778e0f5fdc1ab723591f6a85"
+  "pasted_utc": "2026-09-22 11:54:39 UTC",
+  "sha256": "b5ce9d4ad2e3f83d984b913ec1ac751d73366de8c98eade5abaa85968ab5b875"
  },
  "cwf-graphic": {
   "bytes": 126672,
@@ -22,11 +22,11 @@
   "url": "https://colosseum.com/arena/projects/confide"
  },
  "stocklana-full": {
-  "characters": 4988,
+  "characters": 4955,
   "file": "_submission/full.md",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-22 08:17:00 UTC",
-  "sha256": "ee579417923c19d3c2c2922e0a8878de68fb55276cb873528417ce6d543a2722"
+  "pasted_utc": "2026-09-22 11:54:39 UTC",
+  "sha256": "1a4e01e17708093d02dd5a0930abcf1d42b370e8db86054971a8b4a829b9cb57"
  },
  "stocklana-short": {
   "characters": 315,
@@ -45,11 +45,10 @@
   "url": "https://x.com/psyto/status/2101833039114592625"
  },
  "youtube-description": {
-  "characters": 4999,
+  "characters": 5110,
   "file": "_submission/youtube-paste.txt",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-22 08:00:01 UTC",
-  "sha256": "56f836d28066a59eceabb8bb9beffe1e7a75f6fda2237f6b7aaea86f29a3653d",
-  "url": "https://youtu.be/C86U3R0IgiU"
+  "pasted_utc": "2026-09-22 11:54:39 UTC",
+  "sha256": "b5a706f5bb0b88f2daa8f387938f79809dd795b9f792c037f268b94402ec07e8"
  }
 }
