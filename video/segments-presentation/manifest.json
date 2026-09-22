@@ -9,58 +9,58 @@
  {
   "file": "02-the-block.mp4",
   "start": 21,
-  "end": 34,
-  "seconds": 13,
-  "line": "Block trades have always settled away from the tape. The SEC has now built the tape for tokenized equity. Nobody has built the block."
+  "end": 35,
+  "seconds": 14,
+  "line": "Block trades have always settled away from the tape. The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has."
  },
  {
   "file": "03-the-trade.mp4",
-  "start": 34,
-  "end": 55,
+  "start": 35,
+  "end": 56,
   "seconds": 21,
   "line": "So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side check the other before signing — with nobody in the middle. Fifty thousand tokenized shares against eight point seven five million in stablecoin, in a single transaction."
  },
  {
   "file": "04-this-account.mp4",
-  "start": 55,
-  "end": 71,
+  "start": 56,
+  "end": 72,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
   "file": "05-already-shipped.mp4",
-  "start": 71,
-  "end": 90,
+  "start": 72,
+  "end": 91,
   "seconds": 19,
   "line": "Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with nothing to do with each other, confidential transfers switched on. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account."
  },
  {
   "file": "06-so-i-counted.mp4",
-  "start": 90,
-  "end": 102,
+  "start": 91,
+  "end": 103,
   "seconds": 12,
   "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
   "file": "07-not-only-equities.mp4",
-  "start": 102,
-  "end": 113,
+  "start": 103,
+  "end": 114,
   "seconds": 11,
   "line": "PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset classes, one dead end. Nobody chose this."
  },
  {
   "file": "08-why-not-an-exchange.mp4",
-  "start": 113,
-  "end": 132,
-  "seconds": 19,
+  "start": 114,
+  "end": 133.1,
+  "seconds": 19.1,
   "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM."
  },
  {
   "file": "09-why-it-is-hard.mp4",
-  "start": 132,
+  "start": 133.1,
   "end": 155.1,
-  "seconds": 23.1,
-  "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five of them, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, and neither side ever holds the other's key."
+  "seconds": 22,
+  "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, neither side ever holding the other's key."
  },
  {
   "file": "10-what-i-got-wrong.mp4",

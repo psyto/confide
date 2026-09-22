@@ -92,16 +92,16 @@ never reads the screen.
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | the tape | 21 | 47 | 138 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
-| 2 | the block | 11 + 2 | 24 | 138 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
+| 2 | the block | 12 + 2 | 26 | 137 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
 | 3 | the trade | 21 | 46 | 135 | the sentence that says what Confide does — |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
 | 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
 | 8 | why not just use an exchange | 19 | 41 | 134 | reserves moving by the traded amount |
-| 9 | why it is hard | 23 | 51 | 137 | the four commands, then the settled transaction and four balances reading `0` |
+| 9 | why it is hard | 22 | 48 | 135 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **177 s** | **367** | | |
+| | | **177 s** | **366** | | |
 
 ## The script
 
@@ -123,14 +123,18 @@ if it were terminal output. The rule earns one scene, not two.
 
 > Block trades have always settled away from the tape.
 >
-> The SEC has now built the tape for tokenized equity. Nobody has built the block.
+> The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has.
 
 *Shows:* the name, and under it what this actually is — *tokenized stock against a stablecoin, one
 transaction, neither amount published.* **That sentence was in the published cut and the
 restructure dropped it**, so for the first fifty seconds the only statement of what Confide does
 was the word *block*, which is trade jargon, over a diagram captioned *cash*. The narration says
 the gap and the screen says what fills it, which is the rule this file already has.
-**This is also where the product is named, so it comes before the picture of it.** The first cut put the diagram here and the title card after — so
+**This is also where the product is named, so it comes before the picture of it** — and the voice
+now says the name here rather than leaving it to the screen. *"Nobody has built the block. Confide
+has."* is two words added to make the answer land while the name is the largest thing on the frame;
+a viewer listening without watching used to hear the gap stated and the name withheld for another
+fourteen seconds. The first cut put the diagram here and the title card after — so
 *"nobody has built the block"* landed on a viewer who had just watched one settle, and the name
 arrived third. The gap has to be open before anything fills it.
 
@@ -198,9 +202,9 @@ it** — the scene used to make this case alone and now has the rule standing be
 
 ### 9 — why it is hard
 
-> The proofs do not fit in one transaction. On a mint that charges a fee there are five of them, and
-> one is too large to send at all — it goes on chain in a record account first. Four files, two
-> machines, and neither side ever holds the other's key.
+> The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is
+> too large to send at all — it goes on chain in a record account first. Four files, two machines,
+> neither side ever holding the other's key.
 
 *Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
 product arrives ninety seconds in, as the answer to a question the viewer already has.**
