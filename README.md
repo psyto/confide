@@ -45,13 +45,27 @@ nothing to be late to.**
 ## Go and do it yourself — two minutes, devnet, nobody's permission
 
 There is a standing issuer on devnet whose gate is shut exactly as all 1,992 are, and whose
-approval key is **published in this repository**. So you can open a confidential position and hold
-something the chain reports as zero:
+approval key is **published in this repository**. So you can hold something the chain reports as
+zero — and, as of 2026-09-22, **trade it with somebody else and have the chain show neither size**:
 
 ```bash
 git clone https://github.com/psyto/confide
-./scripts/testbed-join.sh
+./scripts/testbed-join.sh                    # a position the chain reports as 0
 ```
+
+**With a counterparty, four commands and four files.** Each of you joins both mints, then:
+
+```bash
+./scripts/swap-offer.sh  you.json --give <mint> 100 --want <mint> 17500  > offer.json
+# they: ./scripts/swap-accept.sh them.json offer.json > accept.json
+./scripts/swap-settle.sh you.json accept.json                            > settle.json
+# they: ./scripts/swap-sign.sh   them.json settle.json
+```
+
+**Steps 3 and 4 each decrypt the other side's amount before signing**, out of a proof context the
+chain has already verified — without the other party's cooperation, and without revealing it to
+anyone else. **Nothing moves until the fourth command**: a proof is not a transfer, and a
+transaction carrying one of two signatures cannot execute. [docs/TESTBED.md](docs/TESTBED.md)
 
 Needs the Solana CLI, Rust and a little devnet SOL. The key can approve accounts and **cannot
 mint**, which is checked rather than claimed — [docs/TESTBED.md](docs/TESTBED.md).

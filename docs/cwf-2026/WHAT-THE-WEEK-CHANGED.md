@@ -40,7 +40,24 @@ lesson, and it is not a small one for a project whose entire credibility rests o
 
 ---
 
-## The reframe the measurements force, and it is an improvement
+## The reframe the measurements force — and a correction to how it was stated
+
+**Checked against the actual surfaces on 2026-09-22, and this section was partly attacking a straw
+man.** The top-line framing was already transactional: README and `full.md` both open on *"neither
+side publishing what **moved**"*, *"in one **transaction**"*. There was no holding-first pitch to
+replace.
+
+**What was genuinely holding-framed was the call to action**, on four live surfaces: *"open a
+confidential position and **hold** something the chain reports as zero"*. And that was not merely
+mis-framed, it was **understated** — as of 2026-09-22 a stranger can do the trade, not only hold.
+All four now offer the trade, with the four commands and the point that steps 3 and 4 each decrypt
+the other side's amount before signing.
+
+**The delivered video is holding-framed** — *"if you hold tokenized stocks on Solana, everyone can
+see what you hold"* — and stays that way, the same exemption the account count has. The week-4
+presentation is where the transaction framing lands in a recording.
+
+**The argument below still holds and is worth keeping**, because it is why the CTA was wrong:
 
 **The pitch has been about a holding.** *A holder who would rather their position were not public.*
 

@@ -230,9 +230,13 @@ https://psyto.github.io/confide/
 ```
 Nothing to log into. The page reads mainnet in your browser and decodes the devnet trades - no wallet, no account, no key.
 
-To open a confidential position yourself, on a devnet issuer whose gate is shut exactly as all 1,992 real ones are and whose approval key is published:
+To hold a confidential position yourself, on a devnet issuer whose gate is shut exactly as all 1,992 real ones are and whose approval key is published:
 
 git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh
+
+And with a counterparty, to do the trade itself - four commands, four files, and each of you decrypts the other's amount before signing:
+
+swap-offer.sh -> swap-accept.sh -> swap-settle.sh -> swap-sign.sh   (docs/TESTBED.md)
 
 Needs the Solana CLI, a Rust toolchain and a little devnet SOL. The script tries the airdrop and tells you what to do when it is throttled, which it usually is.
 ```
