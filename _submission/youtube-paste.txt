@@ -41,17 +41,17 @@ THE MEASUREMENT NOBODY HAD MADE
 
 Every tokenized-equity mint on Solana — all 1,992, from three issuers with nothing to do with each other — runs Token-2022 with confidential transfers switched ON and the auditor key EMPTY.
 
-That much has been written about. The other half had not: has anybody used it? So I counted the accounts. 469,477 live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC. ZERO are configured for confidential transfers.
+That much has been written about. The other half had not: has anybody used it? So I counted. 469,477 live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC. TWO have configured a confidential account, both on NVDAx, one the night of 21 September after two failed attempts. ZERO are approved: neither can receive a confidential transfer until Backed signs, and Backed has not.
 
-Not few. Zero. Every mint needs the issuer's signature to open one and no issuer has given one — so there is no incumbent here and nothing to be late to.
+Somebody is knocking; the door has not opened. Every mint needs the issuer's signature and none has given one — so there is no incumbent here and nothing to be late to.
 
 IT IS NOT AN EQUITIES STORY
 
-USDC, USDT and USDS cannot move confidentially at all — legacy SPL, no extensions. PYUSD and USDG can, and they land on the identical configuration: gate closed, auditor slot empty, permanent delegate and freeze authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door. Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.
+USDC, USDT and USDS cannot move confidentially at all — legacy SPL. PYUSD and USDG can, and land on the identical configuration: gate closed, auditor slot empty, permanent delegate and freeze authority. PayPal's dollar ships the same unusable privacy feature behind the same door. Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.
 
 WHY NOT JUST USE AN EXCHANGE
 
-You cannot. A pool's reserves are public state and a trade moves them by exactly the amount traded, so anything settled against a pool publishes the size, whatever the token can do. Confidentially, it has to be two parties, directly. That is not a gap in this — it is why it is shaped the way it is.
+You cannot. A pool's reserves are public state and a trade moves them by exactly the amount traded, so anything settled against one publishes the size, whatever the token can do. It has to be two parties, directly — not a gap in this, but why it is shaped as it is.
 
 The SEC wrote the same thing down on 17 September: the relief covers AMM-executed trading only. Size cannot go there.
 

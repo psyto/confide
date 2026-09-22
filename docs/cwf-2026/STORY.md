@@ -61,8 +61,8 @@ for showing a balance to somebody who needs to see it, is empty on every one of 
 So the honest answer is: **today, nobody.** And the second measurement says that is not a
 disadvantage.
 
-> **469,477 token accounts across four mints that have holders — Apple and NVIDIA from Backed,
-> SpaceX and Anthropic from PreStocks. Zero are configured for confidential transfers.**
+> **469,477 token accounts. Two have configured a confidential account, both on NVDAx, and zero
+> are approved — the issuer has not signed.**
 > `./scripts/usage-scan.sh`, written for this question because no such count existed.
 
 Not "few". Zero. The first scan found seven large accounts on Apple xStock and every one was large

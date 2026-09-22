@@ -564,6 +564,36 @@ sys.exit(1 if bad else 0)
 PYK
 
 echo
+echo "  CONFIGURED IS NOT APPROVED — the headline moved on 2026-09-22"
+# For a day the number that mattered was "0 configured". Two NVDAx accounts then configured one and
+# neither was approved, so the claim moved to the next column. The danger is a surface that took the
+# NEW account count from a sweep and kept the OLD zero -- it reads as current and is false, and
+# POST.md and STORY.md were both in exactly that state. Dated records are exempt by name: they say
+# what was true when they were written, which is what a record is for.
+python3 - <<'PYC' && ok "no surface still says zero accounts are CONFIGURED" || bad "a surface says zero configured; web/usage.json says otherwise"
+import json, re, sys, pathlib, glob
+u = json.load(open("web/usage.json"))
+conf, appr = u["total_confidential_accounts"], u["total_approved_accounts"]
+FROZEN = ("docs/reviews/", "x-post.txt", "WHERE-THE-POSITIONS-ARE", "WHAT-THE-WEEK-CHANGED",
+          "DELIVERED-", "CHECKIN-1.md", "segments-checkin/")
+pat = re.compile(r"\b(zero|0|none)\b[^.\n]{0,30}configured for confidential", re.I)
+bad = []
+# Text only: _submission/*.* also matches graphic.jpg, and reading it as UTF-8 is a crash rather
+# than a finding.
+for f in sorted(set(glob.glob("_submission/*.md") + glob.glob("_submission/*.txt")
+                    + glob.glob("docs/**/*.md", recursive=True)
+                    + glob.glob("web/*.html") + ["README.md", "STATUS.md"])):
+    if any(k in f for k in FROZEN):
+        continue
+    for m in pat.finditer(pathlib.Path(f).read_text(encoding="utf-8")):
+        if conf != 0:
+            bad.append("%s says %r and %d have configured one" % (f, m.group(0)[:48], conf))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYC
+
+echo
 echo "  THE UNASKED QUESTION — a measurement is not a prediction"
 # 2026-09-22, and it came from outside this repository: a reader replied to the post that "no issuer
 # will approve one is a bit early if you haven't asked any issuers yet." They were right. What is

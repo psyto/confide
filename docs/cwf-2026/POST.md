@@ -35,7 +35,8 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > has anyone actually used it?
 >
 > So I counted. **469,477 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
-> 0 are configured for confidential transfers.** Not few. Zero.
+> Two have configured one — both on NVDAx — and 0 are approved by an issuer.** Somebody is
+> knocking; the door has not opened.
 > (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
 > one of which was large for an unrelated extension, so the check reads the extension list rather
 > than the size.)
