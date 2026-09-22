@@ -92,8 +92,8 @@ never reads the screen.
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | the tape | 22 | 49 | 137 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
-| 2 | the trade | 17 | 37 | 135 | the delivery-versus-payment diagram, both sides moving, sealed |
-| 3 | the block | 11 + 2 | 24 | 138 | the sentence, alone |
+| 2 | the block | 11 + 2 | 24 | 138 | the name, and the sentence under it |
+| 3 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
@@ -101,7 +101,7 @@ never reads the screen.
 | 8 | why not just use an exchange | 21 | 47 | 138 | reserves moving by the traded amount |
 | 9 | so what Confide actually is | 22 | 49 | 137 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **175 s** | **364** | | |
+| | | **173 s** | **361** | | |
 
 ## The script
 
@@ -116,24 +116,26 @@ the badge. **Two scenes became one.** The first cut spent thirty seconds on regu
 anything moved, in a monospace pane that ran off the right edge mid-word — a document rendered as
 if it were terminal output. The rule earns one scene, not two.
 
-### 2 — the trade
-
-> This is the same trade, settled between two people. Delivery and payment in one transaction,
-> neither able to happen without the other — and the only ones who can read either number are the
-> two making it.
-
-*Shows:* the delivery-versus-payment diagram, both sides moving, sealed. **Restored.** It was
-dropped as collateral damage when this was restructured, not by any decision — and it is the one
-picture that carries the whole product without a word of explanation.
-
-### 3 — the block · +2 s silence
+### 2 — the block · +2 s silence
 
 > Block trades have always settled away from the tape.
 >
 > The SEC has now built the tape for tokenized equity. Nobody has built the block.
 
-*Shows:* the sentence, alone. **The thesis, landing after the viewer has seen both halves** — the
-rule that publishes, and the trade that does not.
+*Shows:* the name, and the sentence under it. **This is where the product is named, so it comes
+before the picture of it.** The first cut put the diagram here and the title card after — so
+*"nobody has built the block"* landed on a viewer who had just watched one settle, and the name
+arrived third. The gap has to be open before anything fills it.
+
+### 3 — the trade
+
+> So here is one. Delivery and payment in a single transaction, neither able to happen without the
+> other — and the only people who can read either number are the two making the trade.
+
+*Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
+chain shows everyone else. **The answer to the sentence before it**, and the one picture that
+carries the product without a word of explanation. It was dropped in the 09-22 restructure as
+collateral damage rather than by any decision.
 
 ### 4 — this account · +5 s silence
 

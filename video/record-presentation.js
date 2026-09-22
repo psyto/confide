@@ -178,18 +178,21 @@ const scenes = [
     total: HOLD[0],
   },
   {
-    // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
-    // decision -- and it is the only picture that carries the product without a word of explanation.
-    file: "02-the-trade.mp4", for: "the trade", kind: "dvp",
-    label: "The same trade, settled between two people.",
-    seller: DVP.seller, buyer: DVP.buyer,
-    delivered: DVP.delivered_units, paid: DVP.paid_units,
+    // The title card, and it comes BEFORE the diagram. The first cut had it third: "nobody has built
+    // the block" landed on a viewer who had just watched one settle, and the product was not named
+    // until after its own picture. The gap is opened here and filled in the next scene.
+    file: "02-the-block.mp4", for: "the block", kind: "hero",
+    sub: "delivery versus payment, confidentially",
+    lede: "The SEC has now built the tape for tokenized equity.<br><b>Nobody has built the block.</b>",
     total: HOLD[1],
   },
   {
-    file: "03-the-block.mp4", for: "the block", kind: "hero",
-    sub: "block trades have always settled away from the tape",
-    lede: "The SEC has now built the tape for tokenized equity.<br><b>Nobody has built the block.</b>",
+    // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
+    // decision -- and it is the only picture that carries the product without a word of explanation.
+    file: "03-the-trade.mp4", for: "the trade", kind: "dvp",
+    label: "So here is one.",
+    seller: DVP.seller, buyer: DVP.buyer,
+    delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[2],
   },
   {
