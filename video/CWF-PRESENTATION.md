@@ -91,39 +91,40 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | the tape | 16 | 36 | 140 | the order's own conditions, quoted, with `sec.gov` in the address bar |
-| 2 | the cap | 14 | 30 | 134 | the tier table — 75 symbols, 0.25% of average daily volume |
+| 1 | the tape | 22 | 49 | 137 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
+| 2 | the trade | 17 | 37 | 135 | the delivery-versus-payment diagram, both sides moving, sealed |
 | 3 | the block | 11 + 2 | 24 | 138 | the sentence, alone |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
 | 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
-| 8 | why not just use an exchange | 24 | 54 | 138 | reserves moving by the traded amount |
-| 9 | so what Confide actually is | 26 | 58 | 137 | the four commands, then the settled transaction and four balances reading `0` |
+| 8 | why not just use an exchange | 21 | 47 | 138 | reserves moving by the traded amount |
+| 9 | so what Confide actually is | 22 | 49 | 137 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **173 s** | **360** | | |
+| | | **175 s** | **364** | | |
 
 ## The script
 
 ### 1 — the tape
 
-> Last week the SEC opened the market for tokenized stock. Its only venue publishes the price, the
-> size and the direction of every trade you make, within ten minutes. Nobody attacked anything.
-> That is the rule.
+> Last week the SEC opened the market for tokenized stock. Its venue publishes the size and the
+> direction of every trade you make, within ten minutes — and a quarter of one percent of a day's
+> volume is all you may trade. Nobody attacked anything. That is the rule.
 
-*Shows:* the order's own conditions, quoted, with `sec.gov` in the address bar. **The problem
-stated as a rule, not as a risk.** The previous opening led with what Confide is, which answers
-"what is this" to a viewer who has not yet been given a reason to care. This one is about the
-viewer's own trades, and it is checkable in one click.
+*Shows:* the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on
+the badge. **Two scenes became one.** The first cut spent thirty seconds on regulation text before
+anything moved, in a monospace pane that ran off the right edge mid-word — a document rendered as
+if it were terminal output. The rule earns one scene, not two.
 
-### 2 — the cap
+### 2 — the trade
 
-> And on a name like Apple or NVIDIA, a quarter of one percent of one day's volume is all you may
-> trade. A desk is capped out before it starts.
+> This is the same trade, settled between two people. Delivery and payment in one transaction,
+> neither able to happen without the other — and the only ones who can read either number are the
+> two making it.
 
-*Shows:* the tier table — 75 symbols, 0.25% of average daily volume. **The second half of the
-problem, and the one that cannot be worked around.** Publication you might live with; a cap you
-cannot.
+*Shows:* the delivery-versus-payment diagram, both sides moving, sealed. **Restored.** It was
+dropped as collateral damage when this was restructured, not by any decision — and it is the one
+picture that carries the whole product without a word of explanation.
 
 ### 3 — the block · +2 s silence
 
@@ -131,9 +132,8 @@ cannot.
 >
 > The SEC has now built the tape for tokenized equity. Nobody has built the block.
 
-*Shows:* the sentence, alone. **This is the thesis and it had no place in the previous cut.** Thirty
-seconds in, the viewer knows what is missing from the world and that nothing here has been claimed
-yet.
+*Shows:* the sentence, alone. **The thesis, landing after the viewer has seen both halves** — the
+rule that publishes, and the trade that does not.
 
 ### 4 — this account · +5 s silence
 
@@ -174,9 +174,9 @@ from an equities story to a substrate one.**
 
 ### 8 — why not just use an exchange
 
-> You cannot do this on one, and that is now written down. A pool's reserves are public, and a trade
-> moves them by exactly the amount traded — so anything settled against a pool publishes the size,
-> whatever the token can do. The exemption requires an AMM. It has to be two parties, directly.
+> You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade
+> moves them by exactly the amount traded — so anything settled against one publishes the size. The
+> exemption requires an AMM. It has to be two parties.
 
 *Shows:* reserves moving by the traded amount. **The structural argument, and the order agrees with
 it** — the scene used to make this case alone and now has the rule standing behind it.
@@ -185,8 +185,7 @@ it** — the scene used to make this case alone and now has the rule standing be
 
 > The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint
 > that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and
-> hands each side the other's amount to decrypt before signing. Four files, two machines, neither
-> holding the other's key.
+> hands each side the other's amount to decrypt before signing.
 
 *Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
 product arrives ninety seconds in, as the answer to a question the viewer already has.**

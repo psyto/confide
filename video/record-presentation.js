@@ -89,6 +89,15 @@ const DVP = JSON.parse(readFileSync(path.join(repo, "web/dvp.json"), "utf8"));
 // first three scenes are about a regulation, so the only honest picture is the text of it — and
 // typing that text into this file would be the copy this repository keeps making.
 const SEC = readFileSync(path.join(repo, "docs/SEC-EXEMPTION.md"), "utf8");
+// The card paraphrases for legibility, so every value on it is checked against the pinned row here.
+// Without this the scene would be typed text about a regulation, which is the copy this repository
+// keeps making -- and this one would be quoted back at a judge.
+function secMust(name, phrases) {
+  const row = secRow(name);
+  for (const p of phrases) {
+    if (!row.includes(p)) throw new Error(`the "${name}" condition no longer says "${p}" — docs/SEC-EXEMPTION.md`);
+  }
+}
 function secRow(name) {
   const m = SEC.match(new RegExp(`^\\| \\*\\*${name}\\*\\* \\| (.+?) \\|$`, "m"));
   if (!m) throw new Error(`docs/SEC-EXEMPTION.md no longer has the "${name}" condition`);
@@ -146,25 +155,35 @@ const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
 // to be by array index alone — and the 2026-09-22 restructure kept the count at ten while replacing
 // the first three scenes, so a render would have laid "the SEC opened the market" over the old title
 // card and reported success. An index is not a binding.
+secMust("Every trade's size is published", ["within 10 minutes", "the transaction size",
+                                            "the transaction time", "the transaction direction"]);
+secMust("Size is capped", ["0.25% of average daily share volume", "three months"]);
+
 const scenes = [
   // The product, then the product working, inside the first thirty seconds. The order this
   // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
   // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
   // and §8(e) asks how the work composes with other primitives — which was the buried scene.
   {
-    file: "01-the-tape.mp4", for: "the tape", kind: "evidence",
+    // The condition, at reading size. It used to be poured into the `pre` pane -- 13.5px monospace,
+    // white-space:pre -- so an English sentence ran off the right edge and was cut mid-word. The
+    // words on screen are short; every value in them is checked against the pinned order below.
+    file: "01-the-tape.mp4", for: "the tape", kind: "order",
     label: "The SEC's order, 17 September 2026.",
     stamp: "sec.gov — press release 2026-90",
-    body: "Every trade's size is published\n  " + secRow("Every trade's size is published"),
-    emphasis: ["within 10 minutes", "the transaction size", "transaction direction"],
+    quote: 'A venue must publish <em>the size, the time and the direction</em> of every trade it '
+         + 'executes — <em>within ten minutes</em>, free, and machine-readable.',
+    rule: ["0.25%", "of average daily volume is all you may trade in a Tier 1 name. "
+                  + "<b>Exceed it twice and the symbol pauses for three months.</b>"],
     total: HOLD[0],
   },
   {
-    file: "02-the-cap.mp4", for: "the cap", kind: "evidence",
-    label: "And there is a ceiling on what you may trade.",
-    stamp: "sec.gov — press release 2026-90",
-    body: "Size is capped\n  " + secRow("Size is capped"),
-    emphasis: ["0.25% of average daily share volume", "pauses for three months"],
+    // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
+    // decision -- and it is the only picture that carries the product without a word of explanation.
+    file: "02-the-trade.mp4", for: "the trade", kind: "dvp",
+    label: "The same trade, settled between two people.",
+    seller: DVP.seller, buyer: DVP.buyer,
+    delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[1],
   },
   {

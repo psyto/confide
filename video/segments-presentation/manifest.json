@@ -2,70 +2,70 @@
  {
   "file": "01-the-tape.mp4",
   "start": 0,
-  "end": 16,
-  "seconds": 16,
-  "line": "Last week the SEC opened the market for tokenized stock. Its only venue publishes the price, the size and the direction of every trade you make, within ten minutes. Nobody attacked anything. That is the rule."
+  "end": 22,
+  "seconds": 22,
+  "line": "Last week the SEC opened the market for tokenized stock. Its venue publishes the size and the direction of every trade you make, within ten minutes — and a quarter of one percent of a day's volume is all you may trade. Nobody attacked anything. That is the rule."
  },
  {
-  "file": "02-the-cap.mp4",
-  "start": 16,
-  "end": 30,
-  "seconds": 14,
-  "line": "And on a name like Apple or NVIDIA, a quarter of one percent of one day's volume is all you may trade. A desk is capped out before it starts."
+  "file": "02-the-trade.mp4",
+  "start": 22,
+  "end": 39,
+  "seconds": 17,
+  "line": "This is the same trade, settled between two people. Delivery and payment in one transaction, neither able to happen without the other — and the only ones who can read either number are the two making it."
  },
  {
   "file": "03-the-block.mp4",
-  "start": 30,
-  "end": 43,
+  "start": 39,
+  "end": 52,
   "seconds": 13,
   "line": "Block trades have always settled away from the tape. The SEC has now built the tape for tokenized equity. Nobody has built the block."
  },
  {
   "file": "04-this-account.mp4",
-  "start": 43,
-  "end": 59,
+  "start": 52,
+  "end": 68,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
   "file": "05-already-shipped.mp4",
-  "start": 59,
-  "end": 78,
+  "start": 68,
+  "end": 87,
   "seconds": 19,
   "line": "Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with nothing to do with each other, confidential transfers switched on. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account."
  },
  {
   "file": "06-so-i-counted.mp4",
-  "start": 78,
-  "end": 90,
-  "seconds": 12,
+  "start": 87,
+  "end": 99.1,
+  "seconds": 12.1,
   "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
   "file": "07-not-only-equities.mp4",
-  "start": 90,
-  "end": 101,
+  "start": 99.1,
+  "end": 110.1,
   "seconds": 11,
   "line": "PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset classes, one dead end. Nobody chose this."
  },
  {
   "file": "08-why-not-an-exchange.mp4",
-  "start": 101,
-  "end": 125.1,
-  "seconds": 24.1,
-  "line": "You cannot do this on one, and that is now written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against a pool publishes the size, whatever the token can do. The exemption requires an AMM. It has to be two parties, directly."
+  "start": 110.1,
+  "end": 131.1,
+  "seconds": 21,
+  "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM. It has to be two parties."
  },
  {
   "file": "09-what-confide-is.mp4",
-  "start": 125.1,
-  "end": 151.1,
-  "seconds": 26,
-  "line": "The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing. Four files, two machines, neither holding the other's key."
+  "start": 131.1,
+  "end": 153.1,
+  "seconds": 22,
+  "line": "The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 151.1,
-  "end": 173.1,
+  "start": 153.1,
+  "end": 175.1,
   "seconds": 22,
   "line": "I called that last step the safety step. A review found it was signing something it had never looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run. Nobody outside this repository has used any of this."
  }

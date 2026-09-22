@@ -19,6 +19,17 @@
   .sub{color:var(--dim);font-size:18px;margin-bottom:36px}
   .lede{font-size:26px;line-height:1.5;max-width:980px}
   .lede b{color:var(--bold);font-weight:600}
+  /* A REGULATION IS NOT TERMINAL OUTPUT. The first cut of this scene put the order's wording into
+     the `pre` pane above -- 13.5px, monospace, `white-space:pre` -- so a sentence of English ran off
+     the right edge and was cut mid-word. This is the same information at reading size, wrapped,
+     with the number it turns on given its own weight. */
+  .order{max-width:1180px}
+  .order .quote{font-size:30px;line-height:1.5;color:var(--bold);font-weight:500;max-width:1100px}
+  .order .quote em{font-style:normal;color:var(--y);font-weight:700}
+  .order .rule{margin-top:40px;display:flex;gap:20px;align-items:baseline}
+  .order .rule .k{font-size:52px;font-weight:700;color:var(--y);line-height:1;white-space:nowrap}
+  .order .rule .v{font-size:20px;line-height:1.5;color:var(--dim);max-width:720px}
+  .order .rule .v b{color:var(--bold);font-weight:600}
   .hl{color:var(--yel)}
   .wrap{display:flex;gap:56px;align-items:center}
   .pos{font-family:ui-monospace,monospace;font-size:46px;color:var(--red);font-weight:600;min-width:300px}
@@ -174,6 +185,15 @@ async function out(hold){await sleep(hold*1000);
 // takes to arrive — the same number in two files, which is the drift this repository keeps having.
 const rest=(s,t0)=>s.total==null?s.hold:Math.max(0,s.total-(performance.now()-t0)/1000-0.45);
 
+async function order(s){
+  const t0=performance.now();
+  const els=put('<div class="order"><div class="cap fade">'+s.label
+   +'<span class="stamp">'+(s.stamp||'')+'</span></div>'
+   +'<div class="quote fade">'+s.quote+'</div>'
+   +(s.rule?'<div class="rule fade"><span class="k">'+s.rule[0]+'</span><span class="v">'+s.rule[1]+'</span></div>':'')
+   +'</div>');
+  await sleep(80); await reveal(els,340); await out(rest(s,t0));
+}
 async function hero(s){
   const t0=performance.now();
   const els=put('<div><h1 class="fade">Confide</h1>'
@@ -315,7 +335,15 @@ async function missing(s){
    +s.items.map((t,i)=>'<div class="row fade"><div class="num">'+(i+1)+'</div>'
      +'<div class="tx">'+t+'</div></div>').join("")+'</div></div>');
   const all=[...stage.querySelectorAll(".fade")];
-  const lead=s.lead??4.5, step=s.step??7;
+  // THE STEP IS DERIVED FROM THE HOLD, not declared beside it. It was a constant twice, and twice
+  // the picture decided the scene's length: adding a fourth item ran 28 s against a script asking
+  // for 24, and trimming the narration then left the animation 3 s long again. The script owns the
+  // clock -- `total` comes from pace.py, which derives it from the words -- so the reveal fits
+  // inside whatever that is, and `step` is only a ceiling for short lists.
+  const lead=s.lead??4.5;
+  const n=all.length-1;
+  const room=Math.max(0,(s.total??0)-lead-0.9);
+  const step=n>0?Math.min(s.step??7,room/n):0;
   all[0].classList.add("on"); await sleep(lead*1000);
   for(const e of all.slice(1)){ e.classList.add("on"); await sleep(step*1000) }
   await out(rest(s,t0));
@@ -340,7 +368,8 @@ window.__play=async()=>{
   const t0=performance.now();
   for(const s of SCENES){
     console.log("CONFIDE_SCENE "+s.kind+" "+((performance.now()-t0)/1000).toFixed(1));
-    if(s.kind==="hero")await hero(s);
+    if(s.kind==="order")await order(s);
+    else if(s.kind==="hero")await hero(s);
     else if(s.kind==="leak")await leak(s);
     else if(s.kind==="slot")await slot(s);
     else if(s.kind==="views")await views(s);
