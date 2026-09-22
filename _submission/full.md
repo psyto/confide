@@ -18,8 +18,12 @@ nor is needed.
 ## Why nobody has built it
 
 Every tokenized stock on Solana already ships the feature this needs: **all 1,992** run Token-2022
-with confidential transfers **on** and the auditor slot **empty** — three issuers, every mint
-checked, not sampled.
+with confidential transfers **on** and the auditor slot **empty** — every mint checked, not sampled.
+
+**They did not miss it** — the same 1,992 run `permanentDelegate`, `pausableConfig` and a transfer
+hook. Token-2022 has **one** disclosure model: a key that reads everyone's everything, forever. Fill
+it and every holder is permanently readable; leave it null and nobody can prove anything.
+**No setting is correct.**
 
 So I stopped reading settings and counted accounts. **469,477 of them. Two have configured a
 confidential account. Zero are approved** (`./scripts/usage-scan.sh`) — both on `NVDAx`, one the
@@ -34,10 +38,10 @@ built, not them.
 | | |
 |---|---|
 | **Two strangers, four files** | `swap-offer` → `swap-accept` → `swap-settle` → `swap-sign`, two machines sharing nothing but public keys. `4t6HxA36…`, 2 signatures |
-| **Stock for cash, one transaction** | 50,000 shares ↔ **$8,750,000** — $175/share, agreed off chain. `4gzku3FW…`, 29,849 units. `./scripts/swap-e2e.sh` |
-| **Against a mint shaped like PYUSD** | it charges a fee, so that leg takes a *different instruction*, five proofs not three, and one too large for a transaction — staged in a record. `5ZrJPGRL…` |
+| **Stock for cash, one transaction** | 50,000 shares ↔ **$8,750,000** — $175/share, agreed off chain. `4gzku3FW…`. `./scripts/swap-e2e.sh` |
+| **Against a mint shaped like PYUSD** | it charges a fee, so that leg takes a *different instruction*, five proofs not three, one too large for a transaction — staged in a record. `5ZrJPGRL…` |
 | **Neither size published** | every account involved is an ordinary ATA and still reads `0` |
-| **Nobody is trusted** | each side decrypts the other's amount out of the verified context before signing — then **rebuilds the message and compares it byte for byte**, so a signer shown one thing and handed another refuses |
+| **Nobody is trusted** | each side decrypts the other's amount out of the verified context, then **rebuilds the transaction and compares it byte for byte** before signing |
 
 104 tests, 44 over the seizure program. `./scripts/healthcheck.sh` re-checks every claim against the
 chain — judging runs weeks and devnet resets.
@@ -45,29 +49,28 @@ chain — judging runs weeks and devnet resets.
 ## The claim I got wrong, and how you can tell
 
 I called that last row the safety step. **An adversarial review found it was signing an object it had
-never compared to the one it showed you** — a genuine proof on screen, any transaction underneath.
-The byte-for-byte rebuild is the fix, and on its first run it caught a second bug of mine. Every
-review request and its reply are committed: [`docs/reviews/`](docs/reviews/).
+never compared to the one it showed you.** The rebuild is the fix, and on its first run it caught a
+second bug of mine. Every review request and its reply are committed:
+[`docs/reviews/`](docs/reviews/).
 
 ## What is not built
 
 - **The gate.** A confidential account needs the issuer's signature. On the mirror mints that step
-  is in the demo; on `NVDAx` it is a conversation nobody has had.
-- **Matching.** Settlement is done; finding the other side is not — and bringing buyers and sellers
-  together is the exchange definition at Rule 3b-16, so it stays off the roadmap.
+  is in the demo; on `NVDAx` two accounts have now asked and Backed has not answered.
+- **Matching.** Settlement is done; finding the other side is not — bringing buyers and sellers
+  together is the exchange definition at Rule 3b-16, so it stays off.
 - **Pools, ever.** A pool's reserves are public and a trade moves them by exactly the amount traded,
-  so anything settled against one publishes the size. Structural, not a roadmap item.
+  so anything settled against one publishes the size.
 - **The lending half is parked.** Kamino runs 19 live markets in these tokens — **$24.0m deposited,
   $86.2m authorised, $0 reachable confidentially**; its program refuses a deposit from an account
-  holding value confidentially (`constraints.rs:187`). Confide proves a floor over an escrow's
-  ciphertext and settles a default without the borrower. But a lender who cannot read a
-  balance cannot price it, **so that half waits on a venue and the swap waits on nobody.**
+  holding value confidentially (`constraints.rs:187`). A lender who cannot read a balance cannot
+  price it, **so that half waits on a venue and the swap waits on nobody.**
 - **Traction is zero.** No pilot, no user, no issuer asked.
 
 ## Try it — two minutes, nothing needed from me
 
 **https://psyto.github.io/confide/** decodes the four devnet trades in your own browser. Then open a
-confidential position yourself, on a devnet issuer gated exactly as all 1,992 are, its approval key
+confidential position yourself, on a devnet issuer gated as all 1,992 are, its approval key
 published: `git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh`
 
 ## Built on
