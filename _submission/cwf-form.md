@@ -42,11 +42,11 @@ For a desk accumulating or unwinding size: every on-chain purchase assembles the
 ## Why did you decide to build this, and why build it now? · ≤1000
 
 ```
-I set out to build a loan against tokenized stock and hit one wall every time. Collateral needs a third party to hold it, that party needs a confidential account, and autoApproveNewAccounts is false on all 1,992 mints. No issuer will approve one. A trade needs no third party, because a Solana transaction cannot half-happen. That was the decision.
+I set out to build a loan against tokenized stock and hit one wall every time. Collateral needs a third party, that party needs a confidential account, and autoApproveNewAccounts is false on all 1,992 mints — so one exists only if an issuer signs for it, and across 465,520 live accounts none has. I have not asked an issuer, so I cannot say they would refuse; what is measured is that nobody has been through that door. A trade needs no third party at all, because a Solana transaction cannot half-happen.
 
-Why now is not my timing. On 17 September the SEC granted two five-year exemptions for tokenized NMS stock. The relief covers AMM-executed trading only; a venue must publish every fill's price, size, time and direction within ten minutes, and a Tier 1 name is capped at 0.25% of daily volume. The sanctioned venue publishes the size by regulation, and size cannot go there anyway.
+Why now is not my timing. On 17 September the SEC granted five-year relief for tokenized NMS stock, covering AMM-executed trading only: a venue must publish every fill's size, time and direction within ten minutes, and a Tier 1 name is capped at 0.25% of daily volume. Size cannot go there.
 
-A pool could never be confidential: its reserves are public and a trade moves them by exactly the traded amount. That was my structural finding. It is now a written condition of the only US venue that may legally operate. The lit venue exists. Nobody built the block.
+A pool could never be confidential either — its reserves are public and a trade moves them by exactly the amount traded. The lit venue now exists. Nobody built the block.
 ```
 
 ## How does your product use these chains? · ≤500

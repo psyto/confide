@@ -245,6 +245,35 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
 ## 未決（founder の手でしか動かない）
 
+0j. **⚠ リポジトリの外から初めて訂正が来た（2026-09-22）。正しかった。**
+
+   X の投稿に **@KirProzorov** から:
+
+   > "No issuer will approve one" is a bit early if you haven't asked any issuers yet.
+
+   **測ったのは「誰も通っていない」であって「扉が施錠されている」ではない。**
+   `autoApproveNewAccounts` が 1,992/1,992 で false、465,520口座で 0 — ここまでが測定。
+   「発行体は承認しない」は**根拠の無い主張**で、**誰にも聞いていない。**
+   [`docs/reviews/2026-09-22-external-no-issuer-will-approve.md`](docs/reviews/2026-09-22-external-no-issuer-will-approve.md)
+
+   **一番痛いのは、正しい言い方が既に書いてあったこと** — `full.md` は投稿前から
+   *"on `NVDAx` it is a conversation nobody has had"* と書いていた。それでも他の4面が過大主張していた。
+
+   | 面 | 状態 |
+   |---|---|
+   | `_submission/cwf-form.md` | **修正ずみ**（970/1000）。**貼り直しが要る** |
+   | `_submission/youtube-checkin1.md` | **修正ずみ**。動画の説明文は編集できる。**貼り直しが要る** |
+   | `docs/cwf-2026/x-post.txt` | **凍結。** 投稿した内容の記録で、書き換えたら訂正した事実が消える |
+   | `video/CHECKIN-1.md` と収録 | **変更不可。** check-in 1 の窓は 09-21 08:00 PDT に閉じた |
+
+   **4面のうち2面は永久に直せない。** 提出した動画と投稿済みのスレッドに、測定かどうか確かめる前に
+   入ってしまった。`docs-consistency.sh` が *"no issuer will approve"* とその変種を全提出面で
+   止めるようにした（わざと壊して確認ずみ）。
+
+   **主張そのものは無傷** — 「no incumbent」は「誰もやっていない」に乗っていて「誰もできない」には
+   乗っていない。ただし**発行体に聞くことが、やる価値のある行動に変わった**（*what is not built* の
+   1番目に既にある）。
+
 0i. **`Confide_Stocklana_20260922.mp4` を founder が収録（2026-09-22）。投稿がまだ。**
 
    **2:28**、1920x1080、AAC、字幕トラックつき。無音マスター 177.1秒に対し 148.6秒 —

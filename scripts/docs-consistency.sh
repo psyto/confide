@@ -556,6 +556,35 @@ sys.exit(1 if bad else 0)
 PYK
 
 echo
+echo "  THE UNASKED QUESTION — a measurement is not a prediction"
+# 2026-09-22, and it came from outside this repository: a reader replied to the post that "no issuer
+# will approve one is a bit early if you haven't asked any issuers yet." They were right. What is
+# measured is that autoApproveNewAccounts is false on 1,992 of 1,992 and that none of 465,520 live
+# accounts is confidential -- that nobody HAS been through the door. Whether an issuer WOULD refuse
+# is unknown, because nobody has asked, and saying otherwise hands a judge a claim with no command
+# under it. full.md already said "a conversation nobody has had"; four other surfaces did not.
+python3 - <<'PYU' && ok "no submission predicts what an issuer would do" || bad "a submission claims an issuer would refuse — nobody has asked one"
+import re, sys, pathlib
+BAD = [r"no issuer will approve", r"issuers? will (?:never )?refuse",
+       r"no issuer would approve", r"issuers? would (?:never )?approve"]
+bad = []
+for f in ["_submission/full.md", "_submission/short.txt", "_submission/cwf-form.md",
+          "_submission/youtube.md", "_submission/youtube-checkin1.md", "README.md",
+          "video/CWF-PRESENTATION.md", "video/CHECKIN-2.md", "web/index.html"]:
+    q = pathlib.Path(f)
+    if not q.exists():
+        continue
+    body = q.read_text(encoding="utf-8")
+    for pat in BAD:
+        m = re.search(pat, body, re.I)
+        if m:
+            bad.append("%s says \"%s\"" % (f, m.group(0)))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYU
+
+echo
 echo "  THE SEC ORDER — the pitch's spine against the pinned primary source"
 # full.md now OPENS on this order, so every figure in it has to come from the file that was pinned
 # from the SEC's own release — docs/SEC-EXEMPTION.md, which has already been corrected three times.

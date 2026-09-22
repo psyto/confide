@@ -18,7 +18,7 @@ the chain's own name as "one salon a transaction".
 Confide check-in 1 — the week a loan became delivery versus payment
 ```
 
-## Description — 1607 / 5000 characters
+## Description — 1731 / 5000 characters
 
 ```
 Week 1 check-in for Colosseum's Crypto World's Fair. Fifty-five seconds, three questions.
@@ -29,7 +29,7 @@ Confide was a loan against tokenized stock. This week it became delivery versus 
 
 WHAT I LEARNED
 
-The loan kept hitting one wall: collateral needs a third party to hold it, and no issuer will approve that account. So I counted how many ever have. Across more than 300,000 live token accounts on Apple, NVIDIA, SpaceX, Anthropic and AMC — zero are configured for confidential transfers. A trade needs no third party at all, because a Solana transaction cannot half-happen.
+The loan kept hitting one wall: collateral needs a third party to hold it, and that account exists only if an issuer signs for it. None has — and I have not asked one, so what is measured is the door nobody has been through, not a refusal. So I counted how many ever have. Across more than 300,000 live token accounts on Apple, NVIDIA, SpaceX, Anthropic and AMC — zero are configured for confidential transfers. A trade needs no third party at all, because a Solana transaction cannot half-happen.
 
 WHAT IS NEXT
 
