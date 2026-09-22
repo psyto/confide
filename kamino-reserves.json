@@ -23,10 +23,10 @@
    "borrow_factor_pct": 200,
    "deposit_limit": 2000.0,
    "borrow_limit": 0.0,
-   "available": 1388.51186599,
+   "available": 1358.29303863,
    "borrowed": 0.0,
-   "price": 336.70209695342584,
-   "price_ts": 1789902855
+   "price": 340.09816256087316,
+   "price_ts": 1790063951
   },
   {
    "symbol": "CRCLx",
@@ -46,10 +46,10 @@
    "borrow_factor_pct": 250,
    "deposit_limit": 50000.0,
    "borrow_limit": 0.0,
-   "available": 11331.72705835,
+   "available": 11565.78936249,
    "borrowed": 0.0,
-   "price": 91.84,
-   "price_ts": 1789903525
+   "price": 94.47,
+   "price_ts": 1790063276
   },
   {
    "symbol": "GOOGLx",
@@ -69,10 +69,10 @@
    "borrow_factor_pct": 200,
    "deposit_limit": 12000.0,
    "borrow_limit": 0.0,
-   "available": 8093.20202516,
+   "available": 8086.92976343,
    "borrowed": 0.0,
-   "price": 349.9098504510666,
-   "price_ts": 1789903525
+   "price": 356.0644467664371,
+   "price_ts": 1790063951
   },
   {
    "symbol": "HOODx",
@@ -92,10 +92,10 @@
    "borrow_factor_pct": 250,
    "deposit_limit": 12000.0,
    "borrow_limit": 0.0,
-   "available": 5696.80855066,
+   "available": 5572.03294552,
    "borrowed": 0.0,
-   "price": 119.86500000000001,
-   "price_ts": 1789903525
+   "price": 123.3,
+   "price_ts": 1790064493
   },
   {
    "symbol": "METAx",
@@ -117,8 +117,8 @@
    "borrow_limit": 0.0,
    "available": 0.001,
    "borrowed": 0.0,
-   "price": 666.9292659647996,
-   "price_ts": 1789763467
+   "price": 743.3637064913536,
+   "price_ts": 1790064493
   },
   {
    "symbol": "MSTRx",
@@ -138,10 +138,10 @@
    "borrow_factor_pct": 250,
    "deposit_limit": 90000.0,
    "borrow_limit": 0.0,
-   "available": 29711.15239253,
+   "available": 29545.11683841,
    "borrowed": 0.0,
-   "price": 153.9,
-   "price_ts": 1789902855
+   "price": 168.435,
+   "price_ts": 1790065157
   },
   {
    "symbol": "NVDAx",
@@ -161,10 +161,10 @@
    "borrow_factor_pct": 100,
    "deposit_limit": 102000.0,
    "borrow_limit": 0.0,
-   "available": 835.42629027,
+   "available": 696.74423827,
    "borrowed": 0.0,
-   "price": 222.3476146539344,
-   "price_ts": 1789902855
+   "price": 227.71172456280414,
+   "price_ts": 1790064536
   },
   {
    "symbol": "NVDAx",
@@ -184,10 +184,10 @@
    "borrow_factor_pct": 225,
    "deposit_limit": 18000.0,
    "borrow_limit": 500.0,
-   "available": 11363.14957743,
-   "borrowed": 41.315684464561464,
-   "price": 222.3476146539344,
-   "price_ts": 1789904488
+   "available": 11260.70316938,
+   "borrowed": 41.32753754202828,
+   "price": 227.71172456280414,
+   "price_ts": 1790065157
   },
   {
    "symbol": "QQQx",
@@ -207,10 +207,10 @@
    "borrow_factor_pct": 100,
    "deposit_limit": 33200.0,
    "borrow_limit": 0.0,
-   "available": 175.99742368,
+   "available": 180.20695468,
    "borrowed": 0.0,
-   "price": 723.5764086494204,
-   "price_ts": 1789838925
+   "price": 743.9221964268795,
+   "price_ts": 1790064502
   },
   {
    "symbol": "QQQx",
@@ -230,10 +230,10 @@
    "borrow_factor_pct": 166,
    "deposit_limit": 16000.0,
    "borrow_limit": 1000.0,
-   "available": 3822.37466939,
-   "borrowed": 63.6029695539856,
-   "price": 723.5764086494204,
-   "price_ts": 1789838925
+   "available": 3838.55482561,
+   "borrowed": 61.86699373754015,
+   "price": 743.9221964268795,
+   "price_ts": 1790063993
   },
   {
    "symbol": "QQQx",
@@ -276,10 +276,10 @@
    "borrow_factor_pct": 166,
    "deposit_limit": 20000.0,
    "borrow_limit": 5000.0,
-   "available": 5318.94254048,
-   "borrowed": 124.71338895590708,
-   "price": 765.9672948324153,
-   "price_ts": 1789903525
+   "available": 5360.78999036,
+   "borrowed": 124.46897333541203,
+   "price": 777.8699266534031,
+   "price_ts": 1790064629
   },
   {
    "symbol": "SPYx",
@@ -299,10 +299,10 @@
    "borrow_factor_pct": 100,
    "deposit_limit": 32300.0,
    "borrow_limit": 0.0,
-   "available": 558.442121,
+   "available": 578.626121,
    "borrowed": 0.0,
-   "price": 765.9672948324153,
-   "price_ts": 1789902855
+   "price": 777.8699266534031,
+   "price_ts": 1790064502
   },
   {
    "symbol": "SPYx",
@@ -345,10 +345,10 @@
    "borrow_factor_pct": 100,
    "deposit_limit": 20000.0,
    "borrow_limit": 0.0,
-   "available": 6761.74777912,
+   "available": 6981.24544595,
    "borrowed": 0.0,
-   "price": 107.06048437655586,
-   "price_ts": 1789904488
+   "price": 107.31577827638833,
+   "price_ts": 1790064499
   },
   {
    "symbol": "TSLAx",
@@ -368,10 +368,10 @@
    "borrow_factor_pct": 225,
    "deposit_limit": 20000.0,
    "borrow_limit": 2500.0,
-   "available": 7486.97563676,
-   "borrowed": 13.346131004385487,
-   "price": 364.33,
-   "price_ts": 1789902855
+   "available": 7431.31241655,
+   "borrowed": 12.480221822013633,
+   "price": 375.23,
+   "price_ts": 1790065165
   },
   {
    "symbol": "MU.US",
@@ -383,7 +383,7 @@
    "decimals": 6,
    "status": "Active",
    "ltv_pct": 40,
-   "liquidation_threshold_pct": 60,
+   "liquidation_threshold_pct": 50,
    "liquidation_bonus_bps": [
     500,
     1000
@@ -406,13 +406,13 @@
    "decimals": 6,
    "status": "Active",
    "ltv_pct": 40,
-   "liquidation_threshold_pct": 60,
+   "liquidation_threshold_pct": 50,
    "liquidation_bonus_bps": [
     500,
     1000
    ],
    "borrow_factor_pct": 150,
-   "deposit_limit": 15000.0,
+   "deposit_limit": 8000.0,
    "borrow_limit": 0.0,
    "available": 0.1,
    "borrowed": 0.0,
