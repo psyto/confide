@@ -219,6 +219,24 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
+0g. **CWF check-in 2 — 台本はある、収録がまだ。窓は 09-25 08:00 PDT に開き 09-28 08:00 PDT に閉じる。**
+
+   [`video/CHECKIN-2.md`](video/CHECKIN-2.md) を 2026-09-22 に書いた。58秒・127語・3シーン。
+   **窓が開く前に書いたのは check-in 1 と逆** — 09-22 時点で終わっている作業から書いたので、
+   **09-25 に読み直すこと。** 間に何か着地したら場面1に入り、今そこにあるものが退く。
+
+   骨は「前回の『次は何か』に答えが出ている」こと。check-in 1 は
+   *making the swap runnable by a stranger* で終わった。場面1がそれを引用して答える。
+   場面2は**自分の仕事の欠陥を他人が見つけた話** — safety step と呼んでいた段が、
+   見てもいないものに署名していた（[`docs/reviews/2026-09-22-two-party-swap.md`](docs/reviews/2026-09-22-two-party-swap.md)）。
+   場面3は**一番弱い数字で終わる** — 約46万口座のうち1株以上を持つのは6千未満。
+
+   | やること | |
+   |---|---|
+   | **09-25 に台本を読み直す** | 3日ぶん足りない。着地したものがあれば場面1へ |
+   | **収録して投稿** | 音声生成は founder の手。`CHECKIN_DOC=video/CHECKIN-2.md` を渡す（既定は CHECKIN-1 のまま） |
+   | **同じ朝に Stocklana の貼り直しが 13:00 PDT** | 差は5時間。**再測定 → 貼り直し → `./scripts/pasted.sh stocklana-full`** が先 |
+
 0f. **⚠ 保有分布を測った。今のピッチに不利な事実が出た（2026-09-21）** —
    [`docs/cwf-2026/WHERE-THE-POSITIONS-ARE.md`](docs/cwf-2026/WHERE-THE-POSITIONS-ARE.md)
 
@@ -366,7 +384,7 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
    数字が4つ古い（「eighteen hundred」銘柄 → **1,992**、`$21.1m / $81.6m` → **$23.2m / $84.0m**）。
    それ以上に**報告している週が違う** — スワップも 465,520 の走査も SEC も、全部この後の出来事。
 
-   [`video/CHECKIN-1.md`](video/CHECKIN-1.md) を書き直した。64秒・138語・3シーン。
+   [`video/CHECKIN-1.md`](video/CHECKIN-1.md) を書き直した。58秒・125語・3シーン。
    **動く数字は正確な値で喋らせていない** — 口座数は "more than three hundred thousand"、
    ドル額は入れていない。Stocklana のナレーションが4日で古くなった件の規則を、初めて適用した台本。
 

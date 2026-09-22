@@ -537,6 +537,41 @@ sys.exit(1 if bad else 0)
 PYK
 
 echo
+echo "  THE SPOKEN LENGTH — STATUS.md's script figures against the scripts"
+# STATUS.md said CHECKIN-1.md was "64秒・138語" for a day after the script was cut to 58 s and 125
+# words. Nothing looked: pace.py checks the table inside each script, and no check read the prose
+# that quotes it elsewhere. Exactly the shape this repository keeps repeating -- a number typed
+# once into a second place.
+python3 - <<'PYL' && ok "every spoken length quoted in prose matches the script it describes" || bad "a quoted script length is stale — the figure is in the script's own totals row"
+import re, sys, pathlib, glob
+
+# Every totals row, derived: `| | | **58 s** | **125** | | |`
+want = {}
+for doc in glob.glob("video/CHECKIN-*.md") + ["video/CWF-PRESENTATION.md"]:
+    m = re.search(r"\| \| \| \*\*(\d+) s\*\* \| \*\*(\d+)\*\* \|", pathlib.Path(doc).read_text(encoding="utf-8"))
+    if m:
+        want[doc] = (int(m.group(1)), int(m.group(2)))
+
+bad = []
+for f in ["STATUS.md", "video/README.md", "docs/27-DAYS.md"]:
+    p = pathlib.Path(f)
+    if not p.exists():
+        continue
+    for line in p.read_text(encoding="utf-8").splitlines():
+        for doc, (s, w) in want.items():
+            if doc not in line:
+                continue
+            # Both the Japanese form (58秒・125語) and the English one (58 s, 125 words).
+            for gs, gw in re.findall(r"(\d+)\s*(?:秒|s)\s*[・,]\s*(\d+)\s*(?:語|words)", line):
+                if (int(gs), int(gw)) != (s, w):
+                    bad.append("%s quotes %s as %s s / %s words; the script is %d s / %d words"
+                               % (f, doc, gs, gw, s, w))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYL
+
+echo
 echo "  THE CWF FORM — every field against the limit the form states"
 ./scripts/cwf-form.sh >/dev/null 2>&1 \
   && ok "every CWF form field fits and quotes the counts the chain reports" \
