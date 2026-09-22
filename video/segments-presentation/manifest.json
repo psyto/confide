@@ -4,7 +4,7 @@
   "start": 0,
   "end": 21,
   "seconds": 21,
-  "line": "Last week the SEC opened the market for tokenized stock. Its venue publishes the size and direction of every trade you make within ten minutes, and a quarter of one percent of a day's volume is all you may trade. Nobody attacked anything. That is the rule."
+  "line": "Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It only covers trading through an automated market maker — where every trade you make is published. The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal."
  },
  {
   "file": "02-the-block.mp4",
@@ -51,15 +51,15 @@
  {
   "file": "08-why-not-an-exchange.mp4",
   "start": 113,
-  "end": 132,
-  "seconds": 19,
+  "end": 132.1,
+  "seconds": 19.1,
   "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM."
  },
  {
   "file": "09-why-it-is-hard.mp4",
-  "start": 132,
+  "start": 132.1,
   "end": 155.1,
-  "seconds": 23.1,
+  "seconds": 23,
   "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five of them, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, and neither side ever holds the other's key."
  },
  {

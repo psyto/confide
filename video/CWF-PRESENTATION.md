@@ -93,7 +93,7 @@ never reads the screen.
 |---|---|---|---|---|---|
 | 1 | the tape | 21 | 47 | 138 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
 | 2 | the block | 11 + 2 | 24 | 138 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
-| 3 | the trade | 21 | 46 | 135 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
+| 3 | the trade | 21 | 46 | 135 | the sentence that says what Confide does — |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
@@ -107,12 +107,15 @@ never reads the screen.
 
 ### 1 — the tape
 
-> Last week the SEC opened the market for tokenized stock. Its venue publishes the size and
-> direction of every trade you make within ten minutes, and a quarter of one percent of a day's
-> volume is all you may trade. Nobody attacked anything. That is the rule.
+> Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It
+> only covers trading through an automated market maker — where every trade you make is published.
+> The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal.
 
 *Shows:* the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on
-the badge. **Two scenes became one.** The first cut spent thirty seconds on regulation text before
+the badge. **Relief, then the catch — and the numbers stay on the card.** The first version read
+out the conditions in order, which is accurate and is not a story: a viewer who does not already
+know what a TSV is has nothing to hold on to. The voice carries the turn and the screen carries
+0.25% and ten minutes, so neither has to do both. **Two scenes became one.** The first cut spent thirty seconds on regulation text before
 anything moved, in a monospace pane that ran off the right edge mid-word — a document rendered as
 if it were terminal output. The rule earns one scene, not two.
 
@@ -137,8 +140,10 @@ arrived third. The gap has to be open before anything fills it.
 > check the other before signing — with nobody in the middle. Fifty thousand tokenized shares
 > against eight point seven five million in stablecoin, in a single transaction.
 
-*Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
-chain shows everyone else. **This is where the film says what Confide does, and it used to say it
+*Shows:* the sentence that says what Confide does — **spoken and on screen, which the rule above
+otherwise forbids** — over the delivery-versus-payment diagram, both sides moving, sealed, and the
+four zeroes the chain shows everyone else. One exception in 177 seconds, because a judge skimming
+with the sound off would otherwise take away the outcome and never the product. **This is where the film says what Confide does, and it used to say it
 at scene 9** — two minutes in, by which point a viewer knew the outcome and not the product. The
 answer to *"nobody has built the block"* has to be the picture and the product together.
 **The answer to the sentence before it**, and the one picture that

@@ -4,10 +4,10 @@
 one transaction, with neither side publishing what moved.** Confide builds the proofs the chain will
 not assemble for you and lets each side check the other before signing, with nobody in the middle.
 
-**Block trades have always settled away from the tape.** On **2026-09-17** the SEC issued its
-Innovation Exemption: for five years a venue may trade tokenized NMS stock, on conditions —
-execution **by an AMM**, every fill's **size**, time and direction published **within ten minutes**,
-and a Tier 1 name capped at **0.25% of average daily volume**.
+**Block trades have always settled away from the tape.** On **2026-09-17** the SEC gave tokenized
+stock five years of relief — then set the conditions. It covers trading **executed by an AMM**,
+where every fill's **size**, time and direction is published **within ten minutes**, and a Tier 1
+name is capped at **0.25% of average daily volume**.
 
 **A desk cannot go there.** Confide settles that trade off the tape instead. Delivery versus
 payment is what a clearing house is for — neither party goes first, so finance inserts a

@@ -15,6 +15,12 @@
   .fade{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
   .fade.on{opacity:1;transform:none}
   .cap{color:var(--dim);font-size:15px;margin-bottom:26px}
+  /* THE ONE LINE A MUTED VIEWER MUST STILL GET. This file's rule is that the narration does not read
+     the screen, and this is the deliberate exception: the sentence that says what Confide does is
+     spoken AND shown, because a judge skimming with the sound off would otherwise learn the outcome
+     and never the product. */
+  .cap.say{font-size:21px;color:var(--fg);max-width:1180px;line-height:1.45;margin-bottom:22px}
+  .cap.say b{color:var(--bold);font-weight:600}
   h1{font-size:52px;font-weight:700;letter-spacing:-.02em;color:var(--bold);margin-bottom:10px}
   .sub{color:var(--dim);font-size:18px;margin-bottom:36px}
   .lede{font-size:26px;line-height:1.5;max-width:980px}
@@ -301,7 +307,7 @@ async function dvp(s){
    +rows.map(r=>'<div class="ln"><span class="lbl">'+r[0]+'</span><span class="was">'+r[1]+'</span>'
      +'<span class="to">&rarr;</span><span class="now y">'+r[2]+'</span></div>').join("")
    +'</div>';
-  put('<div><div class="cap fade">'+s.label+'</div>'
+  put('<div><div class="cap'+(s.say?" say":"")+' fade">'+s.label+'</div>'
    +'<div class="sealed fade"><span class="seal">encrypted &mdash; only these two can read any of it</span>'
    +'<div class="dvp">'
    +party("THE SELLER",[["stock",n(s.seller.stock_before),n(s.seller.stock_after)],

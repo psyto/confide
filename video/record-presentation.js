@@ -196,7 +196,12 @@ const scenes = [
     // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
     // decision -- and it is the only picture that carries the product without a word of explanation.
     file: "03-the-trade.mp4", for: "the trade", kind: "dvp",
-    label: "So here is one.",
+    // SPOKEN AND SHOWN, which this file's rules otherwise forbid. It is the sentence that says what
+    // Confide does, and a judge skimming with the sound off would otherwise take away the outcome
+    // and never the product. One exception in 177 seconds.
+    say: true,
+    label: "Confide <b>builds the proofs the chain will not assemble</b> for you, and lets "
+         + "<b>each side check the other before signing</b>.",
     seller: DVP.seller, buyer: DVP.buyer,
     delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[2],
