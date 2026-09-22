@@ -285,6 +285,14 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    1文目=156字が `short.txt` にそのまま収まる。`full.md` は見出し直下に全文、hero は
    副題と lede に分けた（ナレーションは空白を、画面はそれを埋めるものを言う）。
 
+   ⑤ **2文目（Confide 自身が何をするか）を動画が言うのが場面9＝約2分の地点だった** と founder が
+   指摘。冒頭2分、視聴者は**結果は知っていて製品を知らない**。**場面3（DvP の図）に移した** —
+   *"So here is one. Confide builds the proofs the chain will not assemble for you, and lets each
+   side check the other before signing — with nobody in the middle."* **0:35 で語られる。**
+   場面9は重複をやめ、*why it is hard*（証明が1取引に収まらない／手数料 mint では5つ／1つは
+   record 口座経由／4ファイル2台）に専念。場面8の *"It has to be two parties"* も
+   場面3の *"with nobody in the middle"* と同じことなので落とした。
+
    **さらに founder が順序の誤りを指摘（同日）。** DvP の図を hero の前に置いていた。**好みではなく
    論理の誤り** — 場面で *"Nobody has built the block"* と言う直前に、**block が settle する図を
    見せていた**。見た直後に「誰も作っていない」と言われる。加えて製品名 `Confide` が自分の図より

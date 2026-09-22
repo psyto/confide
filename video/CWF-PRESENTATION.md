@@ -91,24 +91,24 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | the tape | 22 | 49 | 137 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
+| 1 | the tape | 21 | 47 | 138 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
 | 2 | the block | 11 + 2 | 24 | 138 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
-| 3 | the trade | 16 | 35 | 136 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
+| 3 | the trade | 21 | 46 | 135 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
 | 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
-| 8 | why not just use an exchange | 21 | 47 | 138 | reserves moving by the traded amount |
-| 9 | so what Confide actually is | 21 | 47 | 138 | the four commands, then the settled transaction and four balances reading `0` |
+| 8 | why not just use an exchange | 19 | 41 | 134 | reserves moving by the traded amount |
+| 9 | why it is hard | 23 | 51 | 137 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **173 s** | **360** | | |
+| | | **177 s** | **367** | | |
 
 ## The script
 
 ### 1 — the tape
 
-> Last week the SEC opened the market for tokenized stock. Its venue publishes the size and the
-> direction of every trade you make, within ten minutes — and a quarter of one percent of a day's
+> Last week the SEC opened the market for tokenized stock. Its venue publishes the size and
+> direction of every trade you make within ten minutes, and a quarter of one percent of a day's
 > volume is all you may trade. Nobody attacked anything. That is the rule.
 
 *Shows:* the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on
@@ -133,12 +133,15 @@ arrived third. The gap has to be open before anything fills it.
 
 ### 3 — the trade
 
-> So here is one. Fifty thousand tokenized shares against eight point seven five million in
-> stablecoin — one transaction, neither leg able to happen without the other, and only those two
-> can read either number.
+> So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side
+> check the other before signing — with nobody in the middle. Fifty thousand tokenized shares
+> against eight point seven five million in stablecoin, in a single transaction.
 
 *Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
-chain shows everyone else. **The answer to the sentence before it**, and the one picture that
+chain shows everyone else. **This is where the film says what Confide does, and it used to say it
+at scene 9** — two minutes in, by which point a viewer knew the outcome and not the product. The
+answer to *"nobody has built the block"* has to be the picture and the product together.
+**The answer to the sentence before it**, and the one picture that
 carries the product without a word of explanation. It was dropped in the 09-22 restructure as
 collateral damage rather than by any decision.
 
@@ -183,16 +186,16 @@ from an equities story to a substrate one.**
 
 > You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade
 > moves them by exactly the amount traded — so anything settled against one publishes the size. The
-> exemption requires an AMM. It has to be two parties.
+> exemption requires an AMM.
 
 *Shows:* reserves moving by the traded amount. **The structural argument, and the order agrees with
 it** — the scene used to make this case alone and now has the rule standing behind it.
 
-### 9 — so what Confide actually is
+### 9 — why it is hard
 
-> The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint
-> that charges a fee one does not fit at all. Confide builds them, puts them on chain, and hands
-> each side the other's amount to decrypt before signing.
+> The proofs do not fit in one transaction. On a mint that charges a fee there are five of them, and
+> one is too large to send at all — it goes on chain in a record account first. Four files, two
+> machines, and neither side ever holds the other's key.
 
 *Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
 product arrives ninety seconds in, as the answer to a question the viewer already has.**

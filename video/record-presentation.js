@@ -251,8 +251,8 @@ const scenes = [
     total: HOLD[7],
   },
   {
-    file: "09-what-confide-is.mp4", for: "so what Confide actually is", kind: "evidence",
-    label: "The chain will not assemble that trade for you.",
+    file: "09-why-it-is-hard.mp4", for: "why it is hard", kind: "evidence",
+    label: "The proofs do not fit in one transaction.",
     body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
     emphasis: ["confidentialTransferWithFee"],
     total: HOLD[8],
