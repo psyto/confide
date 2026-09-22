@@ -7,12 +7,11 @@
   "sha256": "b26464dbca3eb70d1319af163cb482a3c045d002dae2de6c3f48ac7b9e800ff0"
  },
  "cwf-form": {
-  "characters": 19087,
+  "characters": 19255,
   "file": "_submission/cwf-form.md",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-22 02:02:05 UTC",
-  "sha256": "edce6cf059facf021d0fea95e70b99af087018a34129192b5c45519a343ad2a5",
-  "url": "https://colosseum.com/arena/projects/confide"
+  "pasted_utc": "2026-09-22 08:17:00 UTC",
+  "sha256": "be49d991d68ab787c492c8e8851a83bff04f39de778e0f5fdc1ab723591f6a85"
  },
  "cwf-graphic": {
   "bytes": 126672,
@@ -23,18 +22,18 @@
   "url": "https://colosseum.com/arena/projects/confide"
  },
  "stocklana-full": {
-  "characters": 4969,
+  "characters": 4988,
   "file": "_submission/full.md",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-21 00:11:57 UTC",
-  "sha256": "9c5c62029fe27478c756137819c825fa37f55c045074926a0809b99f5e29872e"
+  "pasted_utc": "2026-09-22 08:17:00 UTC",
+  "sha256": "ee579417923c19d3c2c2922e0a8878de68fb55276cb873528417ce6d543a2722"
  },
  "stocklana-short": {
-  "characters": 320,
+  "characters": 315,
   "file": "_submission/short.txt",
   "note": "Reported by the founder. Nothing here read the form; this records what the file was at the moment they said they had pasted it.",
-  "pasted_utc": "2026-09-21 00:11:57 UTC",
-  "sha256": "1691b2d1e517d960e7778412a78eaf790f25fcb56efb1b9aae3cef8b9801fa17"
+  "pasted_utc": "2026-09-22 08:17:00 UTC",
+  "sha256": "a6f78bc406f1d32b0742ea146e43b53aecd47d8444e2cc4730dc5bcdd1af87b7"
  },
  "x-post": {
   "characters": 2218,

@@ -245,6 +245,26 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
 ## 未決（founder の手でしか動かない）
 
+0k. **提出面は全部 current（2026-09-22 08:17）。両方の検査が赤ゼロ。**
+
+   | 欄 | 貼付 | |
+   |---|---|---|
+   | `stocklana-full` / `stocklana-short` | 09-22 08:17 | **SEC 先行の新しい背骨が入った** |
+   | `cwf-form` | 09-22 08:17 | Brief description・Why now（Kir の修正）・Access instructions（300字） |
+   | `cwf-checkin1` | 09-22 08:10 | *"no issuer will approve"* の修正ずみ |
+   | `youtube-description` | 09-22 08:00 | 新カット `C86U3R0IgiU` 向け |
+   | `cwf-graphic` / `x-post` | 09-21 | 変更なし |
+
+   `docs-consistency.sh` **緑41・赤0**、`healthcheck.sh` **all clear**。
+
+   **⚠ それでも 09-25 の朝にもう一度貼り直すこと。** `full.md` と `short.txt` は
+   **465,520 / 1,992 / $23.2m / $84.0m** を引用していて、**チェーンは毎日動く**。
+   09-20 に 329,536 が 465,520 になって納品済みの動画が古くなったのは、まさにこれ。
+   順序は `0g` にある — **再測定 → 貼り直し → `./scripts/pasted.sh`**、13:00 PDT の凍結まで。
+
+   **残っている founder 作業は check-in 2 の収録だけ**（窓 09-25 08:00 → 09-28 08:00 PDT）。
+   台本は [`video/CHECKIN-2.md`](video/CHECKIN-2.md)、58秒。**3日ぶん足りないので 09-25 に読み直す。**
+
 0j. **⚠ リポジトリの外から初めて訂正が来た（2026-09-22）。正しかった。**
 
    X の投稿に **@KirProzorov** から:
