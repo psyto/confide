@@ -564,6 +564,16 @@ sys.exit(1 if bad else 0)
 PYK
 
 echo
+echo "  THE EXTENSION INVENTORY — the 7-of-8 argument against web/slots.json"
+# WHY-THE-SLOT-IS-EMPTY.md turns on a count: four control extensions on 1,992 of 1,992, and the one
+# privacy extension inert beside them. That is the strongest thing this repository knows about why
+# the slot is empty, and it was about to be a table somebody typed. slot-roles.sh prints it from the
+# scan; this checks the document still carries exactly what it prints.
+./scripts/slot-roles.sh --check docs/cwf-2026/WHY-THE-SLOT-IS-EMPTY.md \
+  && ok "the extension table is what ./scripts/slot-roles.sh prints from web/slots.json" \
+  || bad "the extension table has drifted from the scan — ./scripts/slot-roles.sh"
+
+echo
 echo "  CONFIGURED IS NOT APPROVED — the headline moved on 2026-09-22"
 # For a day the number that mattered was "0 configured". Two NVDAx accounts then configured one and
 # neither was approved, so the claim moved to the next column. The danger is a surface that took the
