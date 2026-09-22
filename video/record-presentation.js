@@ -158,6 +158,12 @@ const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
 secMust("Every trade's size is published", ["within 10 minutes", "the transaction size",
                                             "the transaction time", "the transaction direction"]);
 secMust("Size is capped", ["0.25% of average daily share volume", "three months"]);
+// The card also says "five years of relief" and "only through an AMM". Both are the pinned file's,
+// so both are checked here rather than trusted to stay true.
+secMust("The venue is an AMM", ["only covers trading of Tokenized NMS Stock executed by an AMM"]);
+if (!SEC.includes("2031-09-17")) {
+  throw new Error("docs/SEC-EXEMPTION.md no longer gives the expiry — the card says five years");
+}
 
 const scenes = [
   // The product, then the product working, inside the first thirty seconds. The order this
@@ -171,8 +177,9 @@ const scenes = [
     file: "01-the-tape.mp4", for: "the tape", kind: "order",
     label: "The SEC's order, 17 September 2026.",
     stamp: "sec.gov — press release 2026-90",
-    quote: 'A venue must publish <em>the size, the time and the direction</em> of every trade it '
-         + 'executes — <em>within ten minutes</em>, free, and machine-readable.',
+    grant: "Tokenized stock: five years of relief.",
+    quote: '<span class="but">But only through an AMM — where</span> <em>every trade you make is '
+         + 'published</em>: the size, the direction, <em>within ten minutes</em>.',
     rule: ["0.25%", "of average daily volume is all you may trade in a Tier 1 name. "
                   + "<b>Exceed it twice and the symbol pauses for three months.</b>"],
     total: HOLD[0],

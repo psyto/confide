@@ -30,8 +30,14 @@
      the right edge and was cut mid-word. This is the same information at reading size, wrapped,
      with the number it turns on given its own weight. */
   .order{max-width:1180px}
+  /* RELIEF, THEN THE CATCH -- on screen, not only in the voice. The first version of this card was
+     the publication condition quoted on its own, so a viewer with the sound off saw a rule and
+     never the turn: the five years of relief that the rule is the price of. `reveal` brings these
+     in one at a time, so the turn happens in the picture. */
+  .order .grant{font-size:31px;line-height:1.45;color:var(--grn);font-weight:600;margin-bottom:22px}
   .order .quote{font-size:30px;line-height:1.5;color:var(--bold);font-weight:500;max-width:1100px}
   .order .quote em{font-style:normal;color:var(--y);font-weight:700}
+  .order .quote .but{color:var(--dim);font-weight:400}
   .order .rule{margin-top:40px;display:flex;gap:20px;align-items:baseline}
   .order .rule .k{font-size:52px;font-weight:700;color:var(--y);line-height:1;white-space:nowrap}
   .order .rule .v{font-size:20px;line-height:1.5;color:var(--dim);max-width:720px}
@@ -195,6 +201,7 @@ async function order(s){
   const t0=performance.now();
   const els=put('<div class="order"><div class="cap fade">'+s.label
    +'<span class="stamp">'+(s.stamp||'')+'</span></div>'
+   +(s.grant?'<div class="grant fade">'+s.grant+'</div>':'')
    +'<div class="quote fade">'+s.quote+'</div>'
    +(s.rule?'<div class="rule fade"><span class="k">'+s.rule[0]+'</span><span class="v">'+s.rule[1]+'</span></div>':'')
    +'</div>');
