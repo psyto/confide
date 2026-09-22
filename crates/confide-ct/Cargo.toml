@@ -58,6 +58,10 @@ name = "swap-tx"
 path = "src/swap_tx.rs"
 
 [[bin]]
+name = "swap-close"
+path = "src/swap_close.rs"
+
+[[bin]]
 name = "swap-ctx-fee"
 path = "src/swap_ctx_fee.rs"
 

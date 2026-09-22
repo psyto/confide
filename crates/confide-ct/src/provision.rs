@@ -148,9 +148,26 @@ fn main() {
 
     let ixs = match step.as_str() {
         "configure" => {
+            // REFUSE TO OVERWRITE. This wrote the new keypair BEFORE sending the transaction, so
+            // running `configure` again on an already-configured account replaced the only secret
+            // that can read its confidential balance -- and then the transaction failed, leaving
+            // the account intact and permanently unreadable. Nothing reported a problem; the
+            // balance simply became a number nobody could decrypt.
+            //
+            // Found by Codex, 2026-09-22 (docs/reviews/2026-09-22-two-party-swap.md), reviewing
+            // the bilateral swap -- which is what made re-running this a normal thing to do.
+            if std::path::Path::new(&keys_path).exists() {
+                eprintln!("  {keys_path} already exists.");
+                eprintln!("  It holds the only key that can read this account's confidential balance.");
+                eprintln!("  Overwriting it makes that balance unreadable forever, so this refuses.");
+                eprintln!("  Delete it yourself only if the account it belongs to is gone.");
+                std::process::exit(1);
+            }
             // The key this whole step exists for.
             let elgamal = ElGamalKeypair::new_rand();
             let ae = AeKey::new_rand();
+            // 0600. Under a common umask this landed as 0644 -- an ElGamal and an AE secret
+            // readable by every local user.
             std::fs::write(
                 &keys_path,
                 serde_json::to_vec_pretty(&serde_json::json!({
@@ -163,7 +180,14 @@ fn main() {
                 .unwrap(),
             )
             .unwrap();
-            eprintln!("  keys written    {keys_path}");
+            // 0600, set after the write. A secret that lands 0644 under a common umask is
+            // readable by every local user on the machine.
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                let _ = std::fs::set_permissions(&keys_path, std::fs::Permissions::from_mode(0o600));
+            }
+            eprintln!("  keys written    {keys_path}   (0600)");
             eprintln!("  elgamal pubkey  {}", b64(&elgamal.pubkey().to_bytes()));
 
             let proof = build_pubkey_validity_proof_data(&elgamal).expect("pubkey validity proof");

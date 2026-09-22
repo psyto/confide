@@ -21,6 +21,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 R="${RPC:-https://api.devnet.solana.com}"
 . "$(dirname "$0")/lib/chain.sh"
+. "$(dirname "$0")/lib/swap.sh"
 T=web/testbed.json
 UNITS="${UNITS:-5000}"
 bold=$'\033[1m'; dim=$'\033[2m'; grn=$'\033[32m'; off=$'\033[0m'
@@ -40,7 +41,7 @@ FAUCETKEY=$(python3 -c "import json;print(json.load(open('$T'))['faucet_secret']
 # OVERWROTE the equity key. Nothing failed at the time; the balance simply became unreadable.
 #
 # A swap needs both keys at once, which is how this surfaced. scripts/swap-*.sh look here.
-W="${WORK:-$HOME/.config/confide/swap}"; mkdir -p "$W"
+W="${WORK:-$(swap_workdir)}"; mkdir -p "$W"; chmod 700 "$W" 2>/dev/null || true
 KP="${1:-$W/you.json}"
 # You need a devnet keypair with some SOL. The airdrop is tried and is frequently throttled, and
 # when it is, this says so instead of quietly reaching for a keypair only the author has — which is

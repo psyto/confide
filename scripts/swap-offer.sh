@@ -21,7 +21,7 @@ cd "$(dirname "$0")/.."
 . "$(dirname "$0")/lib/chain.sh"
 . "$(dirname "$0")/lib/swap.sh"
 R="${RPC:-https://api.devnet.solana.com}"
-W="${WORK:-$HOME/.config/confide/swap}"; mkdir -p "$W"
+W="${WORK:-$(swap_workdir)}"; mkdir -p "$W"; chmod 700 "$W" 2>/dev/null || true
 
 KEY="${1:?usage: swap-offer.sh <keypair.json> --give <mint> <units> --want <mint> <units>}"; shift
 GIVE_MINT= GIVE_UNITS= WANT_MINT= WANT_UNITS=

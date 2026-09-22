@@ -20,16 +20,61 @@
 swap_leg() {
   local who="$1" payer="$2" mykeys="$3" mint="$4" src="$5" dst="$6" their_elg="$7"
   local send="$8" dec_n="$9" ctxf="${10}"
+
+  # ONE DIRECTORY PER ATTEMPT. The context keypairs used to live at a fixed `$W/<who>-keys`, and the
+  # accept and settle steps both passed a constant `who`. So a second attempt generated the same
+  # context addresses, found them already on chain, and died on the create -- the failure mode was
+  # "this swap can never be retried", which is the worst possible one to hit when the first attempt
+  # was abandoned. Codex, 2026-09-22.
+  #
+  # The suffix has to be stable ACROSS the batch loop below, which re-enters `cx` against a fresh
+  # blockhash and must address the same contexts, and different BETWEEN invocations. Computed once,
+  # here, and recorded in ctx.json so swap-abandon.sh can find the keys and reclaim the rent.
+  local kdir="$W/$who-keys-$(date -u +%Y%m%dT%H%M%S)-$$"
+  mkdir -p "$kdir"; chmod 700 "$kdir" 2>/dev/null || true
+
+  # EVERY ONE OF THESE COMES FROM A COUNTERPARTY'S FILE. The first version interpolated the unit
+  # count straight into a `python3 -c` string, so an offer whose "units" field was a fragment of
+  # Python ran arbitrary code on the victim's machine before anything was signed. Demonstrated,
+  # not theorised -- Codex found it, docs/reviews/2026-09-22-two-party-swap.md.
+  #
+  # So: validate shape here, at the boundary, and never build code out of a value again. Addresses
+  # are base58 and amounts are decimal integers; anything else is refused before it is used.
+  case "$send"  in ''|*[!0-9]*) echo "  units must be a whole number, got: $send" >&2; return 2;; esac
+  case "$dec_n" in ''|*[!0-9]*) echo "  decimals must be a number, got: $dec_n" >&2; return 2;; esac
+  local a
+  for a in "$mint" "$src" "$dst"; do
+    case "$a" in
+      ""|*[!1-9A-HJ-NP-Za-km-z]*) echo "  not a base58 address: $a" >&2; return 2;;
+    esac
+    [ ${#a} -ge 32 ] && [ ${#a} -le 44 ] || { echo "  address is the wrong length: $a" >&2; return 2; }
+  done
+  case "$their_elg" in
+    ""|*[!A-Za-z0-9+/=]*) echo "  not a base64 ElGamal key: $their_elg" >&2; return 2;;
+  esac
+  # Passed as ARGV, never interpolated. argv is data; a -c string is code.
+  local base_units
+  base_units=$(python3 -c 'import sys;print(int(sys.argv[1])*10**int(sys.argv[2]))' "$send" "$dec_n")
   local dec avail pub owner aud alt range me
   read -r dec avail pub owner < <(ct "$src")
   me=$(solana-keygen pubkey "$payer")
 
-  # An empty auditor slot is what PYUSD ships and what all 1,992 tokenized-equity mints ship, so
-  # there is usually no key to name. `none` is what the context builders have always taken.
-  aud=none
-  if [ -f "$W/auditor-$who.json" ]; then
-    aud=$(python3 -c "import json;print(json.load(open('$W/auditor-$who.json'))['elgamal_pubkey_b64'])")
-  fi
+  # READ THE AUDITOR OFF THE MINT, not off a file. The extracted version looked for
+  # $W/auditor-$who.json, which the demonstration happened to create and the bilateral scripts
+  # never do -- so a bilateral swap on a mint that DOES name an auditor would have silently proved
+  # `none` and been rejected by Token-2022. It works today only because all 1,992 tokenized-equity
+  # mints leave the slot null, which is the finding this repository is built on and a poor thing to
+  # depend on. Codex found it, 2026-09-22.
+  #
+  # The mint is the authority on its own auditor. A file cannot be stale if it is not consulted.
+  aud=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$mint\",{\"encoding\":\"jsonParsed\"}]}" \
+        | python3 -c "
+import sys, json
+v = json.load(sys.stdin).get('result', {}).get('value')
+e = {x['extension']: x.get('state', {}) for x in v['data']['parsed']['info'].get('extensions', [])}
+k = e.get('confidentialTransferMint', {}).get('auditorElgamalPubkey')
+print(k if k else 'none')")
+  [ -n "$aud" ] || aud=none
 
   # Five proofs on a fee-bearing mint, three otherwise, and the MINT decides rather than a flag: a
   # transferFeeConfig makes Token-2022 refuse the plain Transfer even at 0 bps.
@@ -45,11 +90,11 @@ print(e['confidentialTransferFeeConfig']['withdrawWithheldAuthorityElgamalPubkey
       f['transferFeeBasisPoints'], f['maximumFee'])")
     cx() { cargo run --quiet -p confide-ct --bin swap-ctx-fee -- "$payer" "$mykeys" \
       "$dec" "$avail" "$their_elg" "$aud" "$wh" "$bps" "$maxf" \
-      "$(python3 -c "print($send * 10**$dec_n)")" "$(bh)" "$ctxf" "$me" "$W/$who-keys" "$1" "${2:-0}"; }
+      "$base_units" "$(bh)" "$ctxf" "$me" "$kdir" "$1" "${2:-0}"; }
   else
     cx() { cargo run --quiet -p confide-ct --bin seizure-ctx -- "$payer" "$mykeys" \
       "$dec" "$avail" "$their_elg" "$aud" \
-      "$(python3 -c "print($send * 10**$dec_n)")" "$(bh)" "$ctxf" "$me" "$W/$who-keys" "$1" none; }
+      "$base_units" "$(bh)" "$ctxf" "$me" "$kdir" "$1" none; }
   fi
 
   cx none >/dev/null 2>"$W/$who-pass1.err" || { cat "$W/$who-pass1.err" >&2; return 1; }
@@ -85,6 +130,18 @@ print(e['confidentialTransferFeeConfig']['withdrawWithheldAuthorityElgamalPubkey
     cx "$alt" "$sent" > "$W/$who-txs.txt" 2>"$W/$who-pass2.err"
     [ -s "$W/$who-txs.txt" ] || break
   done
+  # The table and the key directory go into ctx.json because they are the only record of them, and
+  # without it the rent they hold is unrecoverable -- swap-abandon.sh had to say "this leg did not
+  # record its table" the first time it ran. Written with json.dump rather than appended as text, so
+  # a re-run rewrites rather than corrupts.
+  ALT="$alt" KDIR="$kdir" python3 -c "
+import json, os, sys
+f = sys.argv[1]
+d = json.load(open(f))
+d['alt'] = os.environ['ALT']
+d['keys_dir'] = os.environ['KDIR']
+json.dump(d, open(f, 'w'), indent=2, sort_keys=True)" "$ctxf"
+
   local nctx; nctx=$(python3 -c "import json;d=json.load(open('$ctxf'));print(5 if d.get('with_fee') else 3)")
   echo "    $who  $n transactions, $nctx contexts, authority is $who themselves"
 }
@@ -97,9 +154,43 @@ print(e['confidentialTransferFeeConfig']['withdrawWithheldAuthorityElgamalPubkey
 # else.
 swap_look() {
   local v; v=$(python3 -c "import json;print(json.load(open('$2'))['validity'])")
-  local data; data=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$v\",{\"encoding\":\"base64\"}]}" \
-    | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value']['data'][0])")
+  # AT `confirmed`, AND RETRIED. The first version read with the default commitment, which is
+  # finalized, immediately after the proof transactions had been confirmed -- so the context
+  # account existed and the read said it did not, and the caller died on a null with
+  # "'NoneType' object is not subscriptable". This repository has had that exact bug before, in
+  # lender-check, and the note about it is in docs/: read at the commitment you wrote at.
+  local data i
+  for i in 1 2 3 4 5 6 7 8; do
+    data=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$v\",{\"encoding\":\"base64\",\"commitment\":\"confirmed\"}]}" \
+      | python3 -c "
+import sys, json
+v = json.load(sys.stdin).get('result', {}).get('value')
+print(v['data'][0] if v else '')")
+    [ -n "$data" ] && break
+    sleep 2
+  done
+  # An absent context is not a zero amount. Saying so beats printing nothing and letting the caller
+  # decide it looked fine.
+  [ -n "$data" ] || { echo "    the proof context $v is not on chain — nothing to check, do not sign" >&2; return 1; }
   cargo run --quiet -p confide-ct --bin swap-check -- "$1" "$data" 2>/dev/null
+}
+
+# swap_workdir -- the directory holding your ElGamal secrets, namespaced BY CLUSTER.
+#
+# The filename is <mint first 8>-keys.json, and a mint address is the same string on devnet and
+# mainnet, so one flat directory would have the two colliding. Namespacing the directory rather
+# than the filename keeps the name readable and puts the separation where a mistake is obvious.
+# An unrecognised endpoint gets "unknown" rather than being assumed to be mainnet.
+swap_workdir() {
+  local c
+  case "${R:-}" in
+    *devnet*)  c=devnet ;;
+    *testnet*) c=testnet ;;
+    *localhost*|*127.0.0.1*) c=local ;;
+    *mainnet*|*publicnode*)  c=mainnet ;;
+    *) c=unknown ;;
+  esac
+  echo "$HOME/.config/confide/swap/$c"
 }
 
 # swap_elgamal <keys.json> -- the ElGamal pubkey to hand a counterparty. It is the only thing they

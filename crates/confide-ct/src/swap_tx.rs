@@ -52,13 +52,18 @@ swap-tx build <payer-pubkey> <bh> <a-owner-pubkey> <a-ctx> <a-src> <a-dst> <a-mi
     assemble UNSIGNED from pubkeys. Neither party needs the other's key.
 
 swap-tx sign <tx.b64|-> <keypair.json>
-    add one signature and print the result. Run once per party.";
+    add one signature and print the result. Run once per party.
+
+swap-tx verify <tx.b64|-> <payer-pubkey> <a-owner-pubkey> <a-ctx> <a-src> <a-dst> <a-mint> <b-...>
+    REBUILD the message you expect and compare it to the one you are about to sign.
+    Run this before `sign` on a transaction somebody else assembled.";
 
 fn main() {
     let a: Vec<String> = std::env::args().skip(1).collect();
     match a.first().map(String::as_str) {
         Some("build") => build_unsigned(&a[1..]),
         Some("sign") => add_signature(&a[1..]),
+        Some("verify") => verify_message(&a[1..]),
         _ => both_keys_here(&a),
     }
 }
@@ -85,6 +90,77 @@ fn build_unsigned(a: &[String]) {
     println!("{}", base64::engine::general_purpose::STANDARD.encode(bincode::serialize(&tx).unwrap()));
 }
 
+/// Rebuild the transaction you expect and compare it, byte for byte, to the one you were handed.
+///
+/// WHY THIS EXISTS, AND IT IS THE MOST IMPORTANT FUNCTION HERE. Without it step 4 of the bilateral
+/// protocol was a blind signing oracle: the acceptor decrypted an amount out of a proof context
+/// named in a JSON file, and then signed an opaque base64 transaction, with NOTHING connecting the
+/// two. An offerer could show a genuine context for the display and hand over a different
+/// transaction -- the acceptor's outgoing leg with no payment leg, a payment leg to somebody else,
+/// or any other instruction needing the acceptor's signature. The acceptor would sign exactly that.
+/// Found by Codex, 2026-09-22; docs/reviews/2026-09-22-two-party-swap.md.
+///
+/// Checking pieces of the message would mean enumerating every way it could be wrong. Rebuilding
+/// it from inputs the signer already trusts and comparing the whole thing means there is nothing
+/// left to enumerate: instruction count, order, every account, the program ids, the payer, the
+/// blockhash and the signer set are all covered by one equality.
+///
+/// The signer supplies their OWN leg from what they built, and the other leg from the context they
+/// just decrypted. If the transaction cites a different context, a different account or an extra
+/// instruction, the rebuild differs and this refuses.
+fn verify_message(a: &[String]) {
+    if a.len() < 12 {
+        eprintln!("{USAGE}");
+        std::process::exit(2);
+    }
+    let tx: Transaction = bincode::deserialize(&read_b64(&a[0])).expect("transaction");
+    let payer = addr(&a[1]);
+    let legs = [leg_pub(&a[2..7]), leg_pub(&a[7..12])];
+    let ixs: Vec<_> = legs.iter().map(instruction).collect();
+    let mut want = Message::new(&ixs, Some(&payer));
+    // The blockhash is the assembler's choice and cannot be rebuilt, so it is taken from the
+    // transaction and reported. Whether it is still valid is a question for the chain, and
+    // swap-sign.sh asks it separately -- a stale hash is a failed send, not a theft.
+    want.recent_blockhash = tx.message.recent_blockhash;
+
+    let got = bincode::serialize(&tx.message).unwrap();
+    let exp = bincode::serialize(&want).unwrap();
+    if got == exp {
+        eprintln!(
+            "  \u{2713} the transaction is exactly the one you expect   {} instructions, {} signers, blockhash {}",
+            tx.message.instructions.len(),
+            tx.message.header.num_required_signatures,
+            tx.message.recent_blockhash
+        );
+        return;
+    }
+    eprintln!("  \u{2717} THE TRANSACTION IS NOT THE ONE YOU EXPECT. Do not sign it.");
+    eprintln!("      instructions   handed to you {}, expected {}", tx.message.instructions.len(), want.instructions.len());
+    eprintln!("      signers        handed to you {}, expected {}", tx.message.header.num_required_signatures, want.header.num_required_signatures);
+    eprintln!("      accounts       handed to you {}, expected {}", tx.message.account_keys.len(), want.account_keys.len());
+    for (i, k) in want.account_keys.iter().enumerate() {
+        match tx.message.account_keys.get(i) {
+            Some(g) if g == k => {}
+            Some(g) => eprintln!("      account {i:<2}     handed to you {g}, expected {k}"),
+            None => eprintln!("      account {i:<2}     missing, expected {k}"),
+        }
+    }
+    std::process::exit(1);
+}
+
+fn read_b64(src: &str) -> Vec<u8> {
+    let raw = if src == "-" {
+        let mut s = String::new();
+        std::io::Read::read_to_string(&mut std::io::stdin(), &mut s).expect("stdin");
+        s
+    } else {
+        std::fs::read_to_string(src).expect("tx file")
+    };
+    base64::engine::general_purpose::STANDARD
+        .decode(raw.trim())
+        .expect("base64")
+}
+
 /// Add exactly one signature. Run once by each party, on a transaction they have inspected.
 ///
 /// `partial_sign` rather than `sign`: the whole point is that the transaction is incomplete until
@@ -95,17 +171,7 @@ fn add_signature(a: &[String]) {
         eprintln!("{USAGE}");
         std::process::exit(2);
     }
-    let raw = if a[0] == "-" {
-        let mut s = String::new();
-        std::io::Read::read_to_string(&mut std::io::stdin(), &mut s).expect("stdin");
-        s
-    } else {
-        std::fs::read_to_string(&a[0]).expect("tx file")
-    };
-    let bytes = base64::engine::general_purpose::STANDARD
-        .decode(raw.trim())
-        .expect("base64");
-    let mut tx: Transaction = bincode::deserialize(&bytes).expect("transaction");
+    let mut tx: Transaction = bincode::deserialize(&read_b64(&a[0])).expect("transaction");
     let kp = keypair(&a[1]);
     let bh = tx.message.recent_blockhash;
     tx.partial_sign(&[&kp], bh);

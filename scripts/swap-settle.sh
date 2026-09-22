@@ -14,7 +14,7 @@ cd "$(dirname "$0")/.."
 . "$(dirname "$0")/lib/chain.sh"
 . "$(dirname "$0")/lib/swap.sh"
 R="${RPC:-https://api.devnet.solana.com}"
-W="${WORK:-$HOME/.config/confide/swap}"; mkdir -p "$W"
+W="${WORK:-$(swap_workdir)}"; mkdir -p "$W"; chmod 700 "$W" 2>/dev/null || true
 bold=$'\033[1m'; dim=$'\033[2m'; red=$'\033[31m'; off=$'\033[0m'
 
 KEY="${1:?usage: swap-settle.sh <keypair.json> accept.json}"
