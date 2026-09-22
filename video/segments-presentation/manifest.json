@@ -16,51 +16,51 @@
  {
   "file": "03-the-trade.mp4",
   "start": 35,
-  "end": 50,
-  "seconds": 15,
-  "line": "So here is one. Delivery and payment in a single transaction, neither able to happen without the other — and the only people who can read either number are the two making the trade."
+  "end": 51,
+  "seconds": 16,
+  "line": "So here is one. Fifty thousand tokenized shares against eight point seven five million in stablecoin — one transaction, neither leg able to happen without the other, and only those two can read either number."
  },
  {
   "file": "04-this-account.mp4",
-  "start": 50,
-  "end": 66,
+  "start": 51,
+  "end": 67,
   "seconds": 16,
   "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
   "file": "05-already-shipped.mp4",
-  "start": 66,
-  "end": 85,
+  "start": 67,
+  "end": 86,
   "seconds": 19,
   "line": "Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with nothing to do with each other, confidential transfers switched on. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account."
  },
  {
   "file": "06-so-i-counted.mp4",
-  "start": 85,
-  "end": 97,
+  "start": 86,
+  "end": 98,
   "seconds": 12,
   "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
  },
  {
   "file": "07-not-only-equities.mp4",
-  "start": 97,
-  "end": 108,
+  "start": 98,
+  "end": 109,
   "seconds": 11,
   "line": "PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset classes, one dead end. Nobody chose this."
  },
  {
   "file": "08-why-not-an-exchange.mp4",
-  "start": 108,
-  "end": 129,
+  "start": 109,
+  "end": 130,
   "seconds": 21,
   "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM. It has to be two parties."
  },
  {
   "file": "09-what-confide-is.mp4",
-  "start": 129,
+  "start": 130,
   "end": 151.1,
-  "seconds": 22.1,
-  "line": "The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing."
+  "seconds": 21.1,
+  "line": "The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint that charges a fee one does not fit at all. Confide builds them, puts them on chain, and hands each side the other's amount to decrypt before signing."
  },
  {
   "file": "10-what-i-got-wrong.mp4",

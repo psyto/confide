@@ -92,16 +92,16 @@ never reads the screen.
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | the tape | 22 | 49 | 137 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
-| 2 | the block | 11 + 2 | 24 | 138 | the name, and the sentence under it |
-| 3 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
+| 2 | the block | 11 + 2 | 24 | 138 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
+| 3 | the trade | 16 | 35 | 136 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
 | 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
 | 8 | why not just use an exchange | 21 | 47 | 138 | reserves moving by the traded amount |
-| 9 | so what Confide actually is | 22 | 49 | 137 | the four commands, then the settled transaction and four balances reading `0` |
+| 9 | so what Confide actually is | 21 | 47 | 138 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **173 s** | **361** | | |
+| | | **173 s** | **360** | | |
 
 ## The script
 
@@ -122,15 +122,20 @@ if it were terminal output. The rule earns one scene, not two.
 >
 > The SEC has now built the tape for tokenized equity. Nobody has built the block.
 
-*Shows:* the name, and the sentence under it. **This is where the product is named, so it comes
-before the picture of it.** The first cut put the diagram here and the title card after — so
+*Shows:* the name, and under it what this actually is — *tokenized stock against a stablecoin, one
+transaction, neither amount published.* **That sentence was in the published cut and the
+restructure dropped it**, so for the first fifty seconds the only statement of what Confide does
+was the word *block*, which is trade jargon, over a diagram captioned *cash*. The narration says
+the gap and the screen says what fills it, which is the rule this file already has.
+**This is also where the product is named, so it comes before the picture of it.** The first cut put the diagram here and the title card after — so
 *"nobody has built the block"* landed on a viewer who had just watched one settle, and the name
 arrived third. The gap has to be open before anything fills it.
 
 ### 3 — the trade
 
-> So here is one. Delivery and payment in a single transaction, neither able to happen without the
-> other — and the only people who can read either number are the two making the trade.
+> So here is one. Fifty thousand tokenized shares against eight point seven five million in
+> stablecoin — one transaction, neither leg able to happen without the other, and only those two
+> can read either number.
 
 *Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
 chain shows everyone else. **The answer to the sentence before it**, and the one picture that
@@ -186,8 +191,8 @@ it** — the scene used to make this case alone and now has the rule standing be
 ### 9 — so what Confide actually is
 
 > The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint
-> that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and
-> hands each side the other's amount to decrypt before signing.
+> that charges a fee one does not fit at all. Confide builds them, puts them on chain, and hands
+> each side the other's amount to decrypt before signing.
 
 *Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
 product arrives ninety seconds in, as the answer to a question the viewer already has.**

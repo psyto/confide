@@ -182,8 +182,14 @@ const scenes = [
     // the block" landed on a viewer who had just watched one settle, and the product was not named
     // until after its own picture. The gap is opened here and filled in the next scene.
     file: "02-the-block.mp4", for: "the block", kind: "hero",
-    sub: "delivery versus payment, confidentially",
-    lede: "The SEC has now built the tape for tokenized equity.<br><b>Nobody has built the block.</b>",
+    // THE PLAIN SENTENCE, PUT BACK. The published cut opened with "Confide settles tokenized stock
+    // against a stablecoin in a single transaction, and neither side publishes what moved" and the
+    // restructure dropped it without replacing it -- so for fifty seconds the only statement of what
+    // this IS was the word "block", which is trade jargon, and a diagram captioned "cash".
+    //
+    // The narration says the gap; the screen says what fills it. Neither reads the other.
+    sub: "confidential delivery-versus-payment for tokenized stocks on Solana",
+    lede: "A stock-to-stablecoin swap in <b>one transaction</b>,<br>with <b>neither side publishing what moved</b>.",
     total: HOLD[1],
   },
   {

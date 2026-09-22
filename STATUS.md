@@ -269,6 +269,22 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    一言の説明もなしに製品を伝える唯一の絵で、Codex の「冒頭15秒」とも一致する。
    ③ 冒頭が**30秒間、法令の文字列だけで何も動かなかった** → SEC を2場面から1場面に圧縮。
 
+   ④ **「トークン化株式とステーブルコインの confidential DvP だ」が伝わらない** と founder が指摘。
+   これも私が消していた — 旧カットの場面1は *"Confide settles tokenized stock against a stablecoin
+   in a single transaction, and neither side publishes what moved"* という**平易な一文**で、構成変更で
+   落としたまま置き換えていなかった。冒頭50秒で何であるかを言うのは **"block"**（金融の隠語）と
+   `cash` と書かれた図だけ。**stablecoin も confidential も一度も言っていなかった。**
+
+   **founder が本文を書いた。これを正とする:**
+
+   > Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap
+   > in one transaction, with neither side publishing what moved. Confide builds the proofs the chain
+   > will not assemble for you and lets each side check the other before signing, with nobody in the
+   > middle.
+
+   1文目=156字が `short.txt` にそのまま収まる。`full.md` は見出し直下に全文、hero は
+   副題と lede に分けた（ナレーションは空白を、画面はそれを埋めるものを言う）。
+
    **さらに founder が順序の誤りを指摘（同日）。** DvP の図を hero の前に置いていた。**好みではなく
    論理の誤り** — 場面で *"Nobody has built the block"* と言う直前に、**block が settle する図を
    見せていた**。見た直後に「誰も作っていない」と言われる。加えて製品名 `Confide` が自分の図より
