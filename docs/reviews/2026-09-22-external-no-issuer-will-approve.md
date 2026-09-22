@@ -81,3 +81,74 @@ gate is real, because somebody other than the author is now standing at it.
 
 `usage-scan.sh` counts both numbers separately from today, because a script that counted only the
 extension would have reported the finding as broken on the day it was actually confirmed.
+
+---
+
+## "They appeared after the SEC order — does that mean something?"
+
+The founder's question, and the answer starts with what cannot be answered.
+
+### The hypothesis cannot be tested with this repository's measurements
+
+**Every account scan here postdates the order.** The SEC published on **2026-09-17**; the earliest
+scan committed is **2026-09-20 01:00 UTC**. There is no *before* to compare a *after* against.
+
+| scan | accounts | configured |
+|---|---|---|
+| 2026-09-20 01:00 | 329,536 | 0 |
+| 2026-09-20 11:40 | 330,266 | 0 |
+| 2026-09-21 22:03 | 384,181 | 0 |
+| 2026-09-21 22:18 | 465,520 | 0 |
+| **2026-09-22 08:26** | **469,477** | **2** |
+
+The counts climb because the scan's reach grew, not because the chain did — `SPCX.US` became
+readable on 09-22 and the sample was corrected on the way. **What is comparable across all five is
+the confidential column**, and `NVDAx` held **28 accounts over 400 bytes** in every scan up to
+09-21 22:18 and **30** on 09-22.
+
+### What the chain gives instead, and it is tighter than days
+
+Both accounts were configured **on the same night, 49 minutes apart**:
+
+| | |
+|---|---|
+| `8P31wJSd…` | **2026-09-21 23:01 UTC**, after attempts at 21:56 and 22:39 that failed `IncorrectProgramId` |
+| `5jkuoj8…` | **2026-09-21 23:50 UTC** — the account itself dates from 09-19, but the `ConfigureAccount` is that night |
+
+The scan that read **zero** ran at **22:18**, forty-three minutes before the first of them.
+
+**Four days of nothing and then two inside an hour is not the shape of a market reading a
+regulation.** A rule that changes what firms do changes it over weeks, through different issuers and
+different mints. This is one evening on one mint.
+
+### Who did it
+
+- **Two distinct wallets**, both active since **2024** — 389 and 114 transactions. Not fresh keys.
+- **Each paid its own fee.** Nothing forces them to be one person and nothing rules it out.
+- **Both transactions ran through the same program**, `L2TExMFKdjpN9kozasaurPirfHy9P8sbXoAN1qA3S95`
+  — which turns out to be **generic infrastructure**, not confidential-transfer tooling: sampled
+  transactions of it do Withdraw, Sell, Claim, Wormhole `InitEncodedVaa` and ORE, and it handled
+  **1,000 transactions in eight minutes** on the morning this was written. Two people using the same
+  relayer is two people using the same wallet app.
+
+### The nearest event in time is not the order
+
+The post went out **2026-09-21 00:37 UTC**, **about 22 and a half hours** before the first
+configure, and it names the exact thing these two accounts did. **That is a sequence. This file does
+not call it a cause**, for the same reason it does not call the SEC one: nothing here can see a
+motive, and the last claim that outran its evidence cost two artifacts that can never be corrected.
+
+### The test, and it runs itself
+
+> **If the order is the cause, the count keeps climbing** — over weeks, across other mints and other
+> issuers, from wallets with nothing in common.
+>
+> **If one prompt reached two people on one night, it stops at two.**
+
+`usage-scan.sh` stamps every run, and from today counts **configured** and **approved** separately.
+The question is therefore not settled by argument but by re-running it — the shape the founder asked
+for when they said a measurement is a baseline and not a verdict.
+
+**And the column that decides the project is still the second one.** Two knocked; `approved` is
+**0**. If that ever becomes non-zero, `cwf-form.sh` fails loudly and every surface has to be rewritten,
+because that is the day the gate opens and the argument genuinely changes.

@@ -31,16 +31,24 @@ if [ "${1:-}" = "--last" ]; then
   python3 - <<'PY'
 import json
 u = json.load(open("web/usage.json"))
-G, DIM, OFF, B = "\033[32m", "\033[2m", "\033[0m", "\033[1m"
+G, R, DIM, OFF, B = "\033[32m", "\033[31m", "\033[2m", "\033[0m", "\033[1m"
 print(f"\n  {B}IS ANYBODY THROUGH THE GATE?{OFF}  {DIM}measured {u['generated_utc']}{OFF}\n")
 for m in u["mints"]:
     if not m["accounts"]:
         print(f"  {m['symbol']:10} {m['issuer']:10} {DIM}no token accounts — nothing was ever minted{OFF}")
         continue
+    # GREEN MEANT "NOBODY IS THROUGH" AND THE COLUMN MEANT "SOMEBODY CONFIGURED ONE". After
+    # 2026-09-22 those are two questions: NVDAx printed a green 2 under a heading asking whether
+    # anybody is through the gate, which reads as the opposite of what it says.
+    c, a = m["confidential_accounts"], m.get("approved_accounts", 0)
     print(f"  {m['symbol']:10} {m['issuer']:10} {m['accounts']:>7,} accounts   "
-          f"{G}{m['confidential_accounts']}{OFF} confidential")
+          f"{R if c else G}{c}{OFF} configured   {R if a else G}{a}{OFF} approved")
 print(f"\n  {u['total_accounts']:,} token accounts, "
-      f"{B}{u['total_confidential_accounts']}{OFF} configured for confidential transfers\n")
+      f"{B}{u['total_confidential_accounts']}{OFF} configured for confidential transfers, "
+      f"{B}{u.get('total_approved_accounts', 0)}{OFF} approved by an issuer\n")
+if u["total_confidential_accounts"] and not u.get("total_approved_accounts"):
+    print(f"  {DIM}Somebody has configured one and no issuer has signed."
+          f" The gate is the second column.{OFF}\n")
 PY
   exit 0
 fi
@@ -147,6 +155,30 @@ if empty:
 print(f"\n  {total_accounts} token accounts across {len(rows)} mints, "
       f"\033[1m{total_conf}\033[0m configured for confidential transfers, "
       f"\033[1m{total_appr}\033[0m approved by an issuer\n")
+# WHAT THE LAST RUN SAID, read before this one overwrites it. Two accounts configured one on the
+# night of 2026-09-21, 49 minutes apart, and the open question --
+# docs/reviews/2026-09-22-external-no-issuer-will-approve.md -- is whether that was a regulation
+# reaching a market or one prompt reaching two people. It is answered by this number moving or not,
+# so the comparison is printed rather than remembered.
+prev = None
+if os.path.exists(OUT):
+    try:
+        prev = json.load(open(OUT))
+    except Exception:
+        prev = None
+if prev and "total_confidential_accounts" in prev:
+    pc, pa = prev["total_confidential_accounts"], prev.get("total_approved_accounts")
+    when = prev.get("generated_utc", "?")
+    if total_conf != pc:
+        print(f"  \033[31mCONFIGURED MOVED {pc} -> {total_conf}\033[0m since {when} — "
+              f"the count did not stop, and that is the answer to the open question")
+    else:
+        print(f"  \033[2mconfigured unchanged at {total_conf} since {when}\033[0m")
+    if pa is not None and total_appr != pa:
+        print(f"  \033[31mAPPROVED MOVED {pa} -> {total_appr} — an issuer has signed. Every "
+              f"surface that says the gate is shut is now wrong.\033[0m")
+    print()
+
 json.dump({"generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
            "note": "Accounts, not mints. Counts token accounts per mint and how many carry the "
                    "ConfidentialTransferAccount extension. Size is the cheap filter; the extension "
