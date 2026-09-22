@@ -225,20 +225,19 @@ NOT YET MADE — see below. Do not paste the 2:22 presentation here.
 https://psyto.github.io/confide/
 ```
 
-## Access instructions
+## Access instructions · ≤300
+
+**The 300 came from the form, not from this file.** Nothing here can read a form, so a field with no
+`≤N` on its heading is a field nothing checks — and this one had none. It grew to 735 characters and
+was discovered when the founder pasted it on 2026-09-22 and it was cut mid-URL at *"git clone
+https://githu"*. Exactly 300 went in. The limit is on the heading now, so `cwf-form.sh` enforces it.
 
 ```
-Nothing to log into. The page reads mainnet in your browser and decodes the devnet trades - no wallet, no account, no key.
-
-To hold a confidential position yourself, on a devnet issuer whose gate is shut exactly as all 1,992 real ones are and whose approval key is published:
+Nothing to log into — the page reads mainnet in your browser. For a confidential position of your own, on a devnet issuer gated as all 1,992 real ones are, its approval key published:
 
 git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh
 
-And with a counterparty, to do the trade itself - four commands, four files, and each of you decrypts the other's amount before signing:
-
-swap-offer.sh -> swap-accept.sh -> swap-settle.sh -> swap-sign.sh   (docs/TESTBED.md)
-
-Needs the Solana CLI, a Rust toolchain and a little devnet SOL. The script tries the airdrop and tells you what to do when it is throttled, which it usually is.
+Then the two-party trade: docs/TESTBED.md
 ```
 
 ## Pitch video · Public · ≤2 min · required
