@@ -1,7 +1,7 @@
 {
- "generated_utc": "2026-09-20 01:56:34 UTC",
+ "generated_utc": "2026-09-22 03:56:38 UTC",
  "note": "Which devnet swaps the page reads. The page decodes each from the chain itself; this file does not decide the outcome.",
- "confirmed_when_written": 3,
+ "confirmed_when_written": 4,
  "swaps": [
   {
    "label": "stock for stock",
@@ -24,6 +24,18 @@
     "BbqCriFfNGgy966GYpecUPfajKp6Hq7oMN4n1H5BqETm",
     "4Bu93JSs17wTrX6xFWzcNPrxq4rdLB7VYpCfFtJiekHR",
     "Bz9HdL72NyFjn2sdvPqrgxfuP7wk4EfMV7ZbocqPFJ9u"
+   ],
+   "confirmed_when_written": true
+  },
+  {
+   "label": "stock for cash, between two strangers",
+   "signature": "4t6HxA36KJP1z3BSEfCaDwRT7Em39iiHjXevwidLvLmmZF2emJ5XsSouEmuzGSxYYiawxJ1PzcXdrk8iPXa1RGvH",
+   "claim": "four files, two machines, neither party holding the other's key",
+   "accounts": [
+    "DV5CeAXosZeZ5TXRkKStX6T4a1nDPMuecU78dYZpWEE1",
+    "8pX1jgkEM1xyqfzYYLE81zV9gvt1fhoukqrfMwagroaW",
+    "DuhXRESAB46F1V6oTvjCNbEKYAeGJi4He4QPreASPaLE",
+    "i1TxkUziTgihZbcvrGfEbYPgqHq13rqeN2aAbRURiW4"
    ],
    "confirmed_when_written": true
   },

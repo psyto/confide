@@ -85,6 +85,19 @@ const testbed = run("bash", ["scripts/testbed-up.sh", "--check"], "checking the 
 const DVP = JSON.parse(readFileSync(path.join(repo, "web/dvp.json"), "utf8"));
 
 // ── guards ───────────────────────────────────────────────────────────────────────────────────────
+// The order's own conditions, read out of the file that was pinned from the SEC's release. The
+// first three scenes are about a regulation, so the only honest picture is the text of it — and
+// typing that text into this file would be the copy this repository keeps making.
+const SEC = readFileSync(path.join(repo, "docs/SEC-EXEMPTION.md"), "utf8");
+function secRow(name) {
+  const m = SEC.match(new RegExp(`^\\| \\*\\*${name}\\*\\* \\| (.+?) \\|$`, "m"));
+  if (!m) throw new Error(`docs/SEC-EXEMPTION.md no longer has the "${name}" condition`);
+  return m[1].replace(/\*\*/g, "").replace(/"/g, '"').replace(/\s+/g, " ").trim();
+}
+
+const USAGE = JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8"));
+const ACCOUNTS = USAGE.total_accounts.toLocaleString("en-US");
+
 for (const [text, re, why] of [
   [mints, /NVDAx.*Token-2022.*None/, "NVDAx no longer reads as Token-2022 with an empty auditor slot"],
   [mints, /NVDA\.US.*Token-2022.*None/, "Backpack's NVDA.US no longer reads the same way"],
@@ -92,7 +105,11 @@ for (const [text, re, why] of [
   [balance, /173000 units/, "the confidential balance did not open to the expected position"],
   // Scene 4 is the whole reveal, and it says zero. If anybody has opened a confidential account
   // since the scan, the scene is wrong and the right response is to rescan, not to record.
-  [usage, /329,536 token accounts, .*0.* configured for confidential/, "the account scan no longer reads 329,536 / zero — rerun ./scripts/usage-scan.sh"],
+  // TYPED IN TWICE, AND STALE BOTH TIMES. This said 329,536 — correct on 2026-09-17 and 465,520 four
+  // days later — so the render refused on a guard that was itself out of date. The count is read
+  // from the file that computes it, exactly as MINT_COUNT already was.
+  [usage, new RegExp(`${ACCOUNTS} token accounts, .*0.* configured for confidential`),
+   `the account scan no longer reads ${ACCOUNTS} / zero — rerun ./scripts/usage-scan.sh`],
   [swaps, /confidentialTransfer, confidentialTransfer/, "the plain swap no longer carries two confidential transfers"],
   [swaps, /public balance 0 on every one/, "a swap account's public balance is no longer zero"],
   [dvp, /4 of 4 accounts/, "one of the four accounts in the recorded trade has gone, or stopped reading zero"],
@@ -113,8 +130,9 @@ for (const [text, re, why] of [
 // ── the cut ──────────────────────────────────────────────────────────────────────────────────────
 // One entry per scene of CWF-PRESENTATION.md, in its order, with its hold. `line` is the narration,
 // carried into the manifest so LINES.md can pair each clip with what goes on it.
-const script = [...md.matchAll(/^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)/gm)]
-  .map((m) => m[3].replace(/^> ?/gm, "").trim().replace(/\n+/g, " "));
+const matched = [...md.matchAll(/^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)/gm)];
+const script = matched.map((m) => m[3].replace(/^> ?/gm, "").trim().replace(/\n+/g, " "));
+const TITLES = matched.map((m) => m[2].trim());
 if (script.length !== 10) throw new Error(`CWF-PRESENTATION.md: expected 10 scripted scenes, found ${script.length}`);
 
 // The mint count and issuer count are read at render time, not written into the page. The slot
@@ -124,27 +142,39 @@ const MINTS = JSON.parse(readFileSync(path.join(repo, "web/mints.json"), "utf8")
 const MINT_COUNT = MINTS.length.toLocaleString("en-US");
 const ISSUERS = new Set(MINTS.map((m) => m.issuer)).size;
 
+// `for` is the script heading each scene is footage FOR, and it is checked below. The pairing used
+// to be by array index alone — and the 2026-09-22 restructure kept the count at ten while replacing
+// the first three scenes, so a render would have laid "the SEC opened the market" over the old title
+// card and reported success. An index is not a binding.
 const scenes = [
   // The product, then the product working, inside the first thirty seconds. The order this
   // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
   // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
   // and §8(e) asks how the work composes with other primitives — which was the buried scene.
   {
-    file: "01-what-this-is.mp4", kind: "hero",
-    sub: "delivery versus payment, confidentially",
-    lede: "Tokenized stock. Stablecoin cash.<br><b>One transaction, or neither.</b>",
+    file: "01-the-tape.mp4", for: "the tape", kind: "evidence",
+    label: "The SEC's order, 17 September 2026.",
+    stamp: "sec.gov — press release 2026-90",
+    body: "Every trade's size is published\n  " + secRow("Every trade's size is published"),
+    emphasis: ["within 10 minutes", "the transaction size", "transaction direction"],
     total: HOLD[0],
   },
   {
-    file: "02-the-trade.mp4", kind: "dvp",
-    label: "Delivery, and payment, in the same transaction.",
-    seller: DVP.seller, buyer: DVP.buyer,
-    delivered: DVP.delivered_units, paid: DVP.paid_units,
+    file: "02-the-cap.mp4", for: "the cap", kind: "evidence",
+    label: "And there is a ceiling on what you may trade.",
+    stamp: "sec.gov — press release 2026-90",
+    body: "Size is capped\n  " + secRow("Size is capped"),
+    emphasis: ["0.25% of average daily share volume", "pauses for three months"],
     total: HOLD[1],
   },
-  { file: "03-why-bother.mp4", kind: "leak", total: HOLD[2] },
   {
-    file: "04-this-account.mp4", kind: "evidence",
+    file: "03-the-block.mp4", for: "the block", kind: "hero",
+    sub: "block trades have always settled away from the tape",
+    lede: "The SEC has now built the tape for tokenized equity.<br><b>Nobody has built the block.</b>",
+    total: HOLD[2],
+  },
+  {
+    file: "04-this-account.mp4", for: "this account", kind: "evidence",
     label: "A real account on Solana, right now.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
@@ -156,20 +186,20 @@ const scenes = [
     },
     total: HOLD[3],
   },
-  { file: "05-already-shipped.mp4", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
+  { file: "05-already-shipped.mp4", for: "already solved, already switched off", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
   {
-    file: "06-so-i-counted.mp4", kind: "evidence",
+    file: "06-so-i-counted.mp4", for: "so I counted", kind: "evidence",
     label: "So I stopped reading the settings and counted the accounts.",
     // Not "just now", and the badge says so. Every other pane in this cut is a command run
     // moments before the recording; this scan reads every token account of every mint and takes
     // minutes, so it is the stored measurement and the screen carries its date.
     stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
     body: slice(usage, /AAPLx/, /token accounts,/),
-    emphasis: ["329,536", "0 configured for confidential transfers"],
+    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
     total: HOLD[5],
   },
   {
-    file: "07-not-only-equities.mp4", kind: "evidence",
+    file: "07-not-only-equities.mp4", for: "and it is not only equities", kind: "evidence",
     label: "And it was never a story about tokenized stocks.",
     body: slice(cash, /program\s+confidential/, /Four issuers/),
     emphasis: ["PYUSD", "USDG", "EMPTY"],
@@ -179,26 +209,29 @@ const scenes = [
     // Why not an exchange — the question a Solana judge asks first, and the film had no answer.
     // Three steps and no numbers: inventing a pool to illustrate it would be the one thing this
     // repository does not do.
-    file: "08-why-not-an-exchange.mp4", kind: "missing",
+    file: "08-why-not-an-exchange.mp4", for: "why not just use an exchange", kind: "missing",
     label: "So why not just trade it on an exchange?",
     items: [
       "A pool's reserves are <b>public state</b>.",
       "A trade moves them by <b>exactly the amount traded</b>.",
       "Subtract two consecutive states and you have the size. <b>Every time, whatever the token can do.</b>",
+      "And the exemption <b>requires an AMM</b> — the only US venue that may operate is built this way.",
     ],
-    lead: 3.5, step: 6,
+    // step was 6 and four items then ran 28 s against the script's 24 — the picture was deciding the
+    // length. The script decides it: 4 x 5 + 3.5 lead lands inside the hold pace.py derived.
+    lead: 3.5, step: 5,
     total: HOLD[7],
   },
   {
-    file: "09-what-confide-is.mp4", kind: "evidence",
+    file: "09-what-confide-is.mp4", for: "so what Confide actually is", kind: "evidence",
     label: "The chain will not assemble that trade for you.",
     body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
     emphasis: ["confidentialTransferWithFee"],
     total: HOLD[8],
   },
   {
-    file: "10-what-is-missing.mp4", kind: "runnable",
-    label: "Nobody outside this repository has used any of it. What is left is not unknown.",
+    file: "10-what-i-got-wrong.mp4", for: "what I got wrong, and what nobody has used", kind: "runnable",
+    label: "A review found the safety step was not checking. Nobody outside this repository has used any of it.",
     command: "./scripts/testbed-join.sh",
     body: slice(testbed, /THE STANDING TESTBED/, /the testbed is as published/),
     emphasis: ["autoApproveNewAccounts is still false", "the testbed is as published"],
@@ -207,6 +240,15 @@ const scenes = [
     total: HOLD[9],
   },
 ].map((s, i) => ({ ...s, line: script[i] }));
+
+// THE BINDING between narration and footage. Names, not positions.
+scenes.forEach((s, i) => {
+  if (s.for !== TITLES[i]) {
+    throw new Error(
+      `scene ${i + 1} of the script is "${TITLES[i]}" and the footage here is for "${s.for}" — ` +
+      `CWF-PRESENTATION.md was restructured and this scene has no picture yet`);
+  }
+});
 
 // ── record ───────────────────────────────────────────────────────────────────────────────────────
 const browser = await puppeteer.launch({

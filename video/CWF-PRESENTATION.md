@@ -1,8 +1,14 @@
 # The submission presentation — structure and script
 
-**Rough cut. Not for publication.** Its only job is to find out whether the story holds before the
-week the video has to exist. If a scene cannot be shown with something that already runs, the
-problem is the story, not the footage — and this is the cheap moment to learn that.
+**This is the script the published cut's voice was given** — `scripts/fix-captions.sh` checks the
+delivered captions against this file, not against [`voiceover.md`](voiceover.md), which belongs to
+the deleted 09-15 cut. The header used to say *"rough cut, not for publication"*, written before it
+was published and left standing afterwards.
+
+**Restructured 2026-09-22, and the delivered video no longer matches it.** `Confide_Stocklana_20260920.mp4`
+speaks the previous order and one figure the chain has since moved past. Re-recording needs the
+founder's voice, so until that happens the published file and this script say different things, and
+the file is what a judge sees.
 
 Target **~170 s**, inside the 2–3 minute allowance, so there is room to slow down rather than cut.
 Pacing budget is words over clip length minus 0.6 s of tail, the convention
@@ -35,7 +41,27 @@ What the draft had that the published cut does not, and which stays: conceding t
 refusal is correct, and saying out loud what is missing. Those are worth more here than they were
 there, because **viability and traction are judged at this hackathon and were not at the last one.**
 
-## The shape — reordered 2026-09-20, and this is the second restructure today
+## The shape — restructured 2026-09-22, the market first, against a recorded decision
+
+**The third restructure, and it reverses the second, so the reason is written down rather than
+assumed.** The founder's call, 2026-09-22: the narrative had changed and the strongest facts were
+not being pitched. Two were missing from the cut entirely — **the SEC order**, and **a defect in my
+own work found by somebody else.**
+
+**The counter-argument, which is real and is in this repository already.** The 09-20 reorder put the
+product first on the grounds recorded below: §8 of the Official Rules opens on **Functionality**,
+and traction is last of the web seven and absent from the Rules. That still holds. What it does not
+support is *market last* — [`CRITERIA.md`](../docs/cwf-2026/CRITERIA.md) says in its own words
+**"No weights. No stated reading order."**, and the web list's first two are **Founder + Market Fit**
+and **Insight**. Both orders are defensible from the same two lists.
+
+**What decided it was not the criteria but what is now true.** On 2026-09-17 a regulator built the
+lit venue for tokenized equity and left the block trade outside it. That is the strongest external
+fact this project will ever get, it dates the opportunity, and it was one sentence in scene 3 of a
+ten-scene cut. Functionality did not lose its place — it is scene 9 and the whole evidence table in
+[`../_submission/full.md`](../_submission/full.md); it lost only the claim to go first.
+
+### The reasoning the 09-20 reorder rested on, kept because it is still true
 
 The founder asked why the product does not appear until halfway, and whether a judge should be
 assumed to reach it. **They should not**, and the order this replaces was resting on a premise this
@@ -65,60 +91,49 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what this is | 8 | 17 | 138 | the title card |
-| 2 | the trade | 23 | 52 | 139 | the exchange |
-| 3 | why anyone would bother | 14 + 2 | 31 | 139 | a position climbing across a quarter, watched |
+| 1 | the tape | 16 | 36 | 140 | the order's own conditions, quoted, with `sec.gov` in the address bar |
+| 2 | the cap | 14 | 30 | 134 | the tier table — 75 symbols, 0.25% of average daily volume |
+| 3 | the block | 11 + 2 | 24 | 138 | the sentence, alone |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
-| 5 | already solved, already switched off | 15 | 33 | 138 | the mint scan finishing; the auditor slot empty |
-| 6 | so I counted | 10 + 2 | 22 | 140 | the account scan running to its total |
-| 7 | and it is not only equities | 15 | 32 | 133 | PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit |
-| 8 | why not just use an exchange | 26 | 58 | 137 | the argument in three steps — public state, moved by exactly the traded amount, subtracted |
-| 9 | so what Confide actually is | 25 | 55 | 135 | the two instruction names in one transaction, then the record account the oversized proof had to be staged through |
-| 10 | what is missing | 19 | 41 | 134 | the conditions table, then a command and the page URL |
-| | | **175 s** | **364** | | |
+| 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
+| 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
+| 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
+| 8 | why not just use an exchange | 24 | 54 | 138 | reserves moving by the traded amount |
+| 9 | so what Confide actually is | 26 | 58 | 137 | the four commands, then the settled transaction and four balances reading `0` |
+| 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
+| | | **173 s** | **360** | | |
 
 ## The script
 
-### 1 — what this is
+### 1 — the tape
 
-> Confide settles tokenized stock against a stablecoin in a single transaction, and neither side
-> publishes what moved.
+> Last week the SEC opened the market for tokenized stock. Its only venue publishes the price, the
+> size and the direction of every trade you make, within ten minutes. Nobody attacked anything.
+> That is the rule.
 
-*Shows:* the title card. **The product, not the problem.** The card this replaces stated a finding —
-that nobody has ever opened one of these accounts — and a viewer who stops after ten seconds took
-away a fact about somebody else rather than a thing that exists.
+*Shows:* the order's own conditions, quoted, with `sec.gov` in the address bar. **The problem
+stated as a rule, not as a risk.** The previous opening led with what Confide is, which answers
+"what is this" to a viewer who has not yet been given a reason to care. This one is about the
+viewer's own trades, and it is checkable in one click.
 
-### 2 — the trade
+### 2 — the cap
 
-> Delivery, and payment, in one transaction — and the only people who can read either number are
-> the two making the trade. Neither side could have happened without the other, which is the only
-> thing a clearing house is for, and there isn't one. Confide holds nobody's assets and stands
-> between nobody.
+> And on a name like Apple or NVIDIA, a quarter of one percent of one day's volume is all you may
+> trade. A desk is capped out before it starts.
 
-*Shows:* the exchange **inside a sealed container** — two parties, stock crossing one way and cash
-the other, an empty middle, and the four zeroes the chain shows everybody else **outside** it.
+*Shows:* the tier table — 75 symbols, 0.25% of average daily volume. **The second half of the
+problem, and the one that cannot be worked around.** Publication you might live with; a cap you
+cannot.
 
-**The first version of this scene drew a trade that looked entirely public.** Every figure was in
-plain sight and confidentiality was one small line underneath, which is backwards: those numbers
-are exactly what nobody outside is supposed to have. The picture has to show them **enclosed**, so
-it does — and the narration now says it too, because it did not.
+### 3 — the block · +2 s silence
 
-**This scene used to be ninety seconds in.** It was first a list of instruction names, which shows
-that two transfers happened and not that a trade did; then a table, which showed the trade but read
-as output; and now a picture, at the front.
+> Block trades have always settled away from the tape.
+>
+> The SEC has now built the tape for tokenized equity. Nobody has built the block.
 
-**And the line under it said the wrong thing.** It read *"no venue, no custodian, no clearing house
-— and no program of ours"*, which was meant as *nobody stands in the middle* and reads as *we built
-nothing.* A judge could close the tab there and be right to. The empty middle is what Confide
-**removes**; scene 9 is what it **is**.
-
-### 3 — why anyone would bother · +2 s silence
-
-> So why hide it. If you hold tokenized stocks on Solana, everyone can see what you hold. Nobody
-> attacked anything — the chain simply publishes it, the moment each purchase settles.
-
-*Shows:* a position climbing across a quarter, watched. **Second person, and the second sentence is
-the one that has to land** — this is the default behaviour, not an incident.
+*Shows:* the sentence, alone. **This is the thesis and it had no place in the previous cut.** Thirty
+seconds in, the viewer knows what is missing from the world and that nothing here has been claimed
+yet.
 
 ### 4 — this account · +5 s silence
 
@@ -127,80 +142,63 @@ the one that has to land** — this is the default behaviour, not an incident.
 > It holds a hundred and seventy-three thousand shares.
 
 *Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
-strongest ten seconds available, and still is.
+strongest ten seconds available, and still is — unchanged from the published cut, which earned it.
 
 ### 5 — already solved, already switched off
 
-> Nearly two thousand of them, from three issuers with nothing to do with each other. Every one
-> leaves the auditor key empty, and every one needs the issuer's signature to open an account.
+> Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with
+> nothing to do with each other, confidential transfers switched on. Every one leaves the auditor
+> key empty, and every one needs the issuer's signature to open an account.
 
-*Shows:* the mint scan finishing; the auditor slot empty. **Three independent issuers reaching the
-same dead end is the line** — one company being careful is a story about that company.
+*Shows:* the slot scan, the empty auditor column. **Two issuers arriving independently at the same
+dead end is not caution, it is the substrate** — the line the published cut found, kept.
 
 ### 6 — so I counted · +2 s silence
 
-> So I stopped reading the settings and counted. Three hundred and twenty-nine thousand accounts,
-> across Apple, NVIDIA, SpaceX and Anthropic.
+> So I stopped reading the settings and counted. Nearly half a million accounts, across Apple,
+> NVIDIA, SpaceX and Anthropic.
 >
 > Not one.
 
-*Shows:* the account scan running to its total. **The reveal** — every other measurement in this
-project is about how the mints are configured. This one is about whether anybody got through, and
-the answer is that the door has never been opened.
+*Shows:* the scan running to its total, then `0`. **Not an exact figure, deliberately.** The
+published cut says "three hundred and twenty-nine thousand" and was wrong four days later by the
+chain simply growing.
 
 ### 7 — and it is not only equities
 
-> That dollar has the same empty auditor slot and the same locked door. Two regulated issuers, two
-> different asset classes, the same dead end. This was never a story about tokenized stocks.
+> PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset
+> classes, one dead end. Nobody chose this.
 
-*Shows:* PYUSD's and USDG's configuration next to a tokenized stock's, the matching fields lit.
-**Market size, argued by evidence rather than asserted.**
+*Shows:* PYUSD and USDG on the identical configuration. **Ten seconds, and it moves the finding
+from an equities story to a substrate one.**
 
 ### 8 — why not just use an exchange
 
-> You cannot do this on one. A pool's reserves are public, and a trade moves them by exactly the
-> amount traded — so anything settled against a pool publishes the size, whatever the token can do.
-> It has to be two parties, directly. That is not a gap here; it is why this is shaped as it is.
+> You cannot do this on one, and that is now written down. A pool's reserves are public, and a trade
+> moves them by exactly the amount traded — so anything settled against a pool publishes the size,
+> whatever the token can do. The exemption requires an AMM. It has to be two parties, directly.
 
-*Shows:* the argument in three steps — public state, moved by exactly the traded amount,
-subtracted. **No numbers, because none are needed and inventing a pool to illustrate it would be
-the one thing this repository does not do.**
-
-**The question a Solana judge asks first, and the film did not answer it.** This slot used to hold
-the project's own history — a month spent on a loan before the trade — which is insight about the
-builder and not about the product. A structural limit that explains the shape is worth more than a
-confession, and [`../docs/cwf-2026/COMPOSITION.md`](../docs/cwf-2026/COMPOSITION.md) is where it
-is derived.
+*Shows:* reserves moving by the traded amount. **The structural argument, and the order agrees with
+it** — the scene used to make this case alone and now has the rule standing behind it.
 
 ### 9 — so what Confide actually is
 
-> The chain will not assemble that trade for you. The proofs do not fit in a transaction, and on a
-> mint that charges a fee one of them does not fit at all. Confide builds them, puts them on chain,
-> and hands each side the other's amount to decrypt before signing. That is the product.
+> The chain will not assemble that trade. The proofs do not fit in one transaction, and on a mint
+> that charges a fee one of them does not fit at all. Confide builds them, puts them on chain, and
+> hands each side the other's amount to decrypt before signing. Four files, two machines, neither
+> holding the other's key.
 
-*Shows:* the two instruction names in one transaction, then the record account the oversized proof
-had to be staged through.
+*Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
+product arrives ninety seconds in, as the answer to a question the viewer already has.**
 
-**The founder asked what Confide does, what it makes possible and why it is needed, and the film
-answered only the middle one.** This scene used to present the engineering as a curiosity — *look
-how awkward this was* — when it is the answer to the first question. It is also the scene for
-§8(a), functionality, and §8(e), how the work composes with other primitives.
+### 10 — what I got wrong, and what nobody has used
 
-### 10 — what is missing
+> I called that last step the safety step. A review found it was signing something it had never
+> looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run.
+> Nobody outside this repository has used any of this.
 
-> Nobody outside this repository has used any of it. But what is left is not unknown: each obstacle
-> is a condition you can check, and for the two that decide the market, the work on the far side is
-> already running.
-
-*Shows:* the conditions table, then a command and the page URL. **Traction is stated inside the
-close rather than given a scene** — honest either way, and a scene of its own made the ending
-apologetic.
-
-**Two words were corrected here before this was ever spoken.** The draft said *"every obstacle has
-a number on it"*, and the issuer gate does not — it is an operations decision, not a threshold. And
-it said the work on the far side of *each* obstacle is done, which is true of the issuer gate and
-of the venue and **not** of matching or of proving a floor for an ordinary holder. A line a judge
-can push over is worse than a weaker line that holds.
+*Shows:* the check refusing, then passing. **Ending on a defect I did not find myself.** Traction is
+the weakest fact and the first a judge checks, so it costs five seconds and buys the rest.
 
 ## The sections below describe the SUPERSEDED cut
 

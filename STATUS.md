@@ -219,6 +219,35 @@ Kamino の市場所有者へ ask を投げれば、初回に報告できる会�
 
 ## 未決（founder の手でしか動かない）
 
+0h. **⚠ 提出物の背骨を入れ替えた（2026-09-22、founder の判断）。動画の再収録が残っている。**
+
+   founder の指摘: *「ナラティブが変わっているので、小手先の更新ではなく構成を含め全体を見直すべき。
+   アピールすべきところをアピールできていない」* — そのとおりだった。**一番強い外部事実が
+   3節目の1文**に埋まり、**他人に見つけられた自分の欠陥は一行も書いていなかった。**
+
+   **新しい背骨: SEC 先行。** *Block trades have always settled away from the tape. The SEC has now
+   built the tape for tokenized equity. Nobody has built the block.* — これは
+   [`docs/SEC-EXEMPTION.md`](docs/SEC-EXEMPTION.md) に前からあって、**どの提出物にも入っていなかった。**
+
+   | 成果物 | 状態 |
+   |---|---|
+   | [`_submission/full.md`](_submission/full.md) | 全面改稿。4,994/5,000字。SEC → 誰も作っていない理由 → 動く証拠 → **間違えた主張** → 作っていないもの |
+   | [`_submission/short.txt`](_submission/short.txt) | 157字×2、新しい背骨 |
+   | [`video/CWF-PRESENTATION.md`](video/CWF-PRESENTATION.md) | 10場面を書き直し、173秒。**場面4の間合い（"holds nothing" → 173,000）は一字も変えていない** |
+   | `video/presentation.mp4` | 無音ラフカットは再レンダリング済み、173.1秒 |
+   | [`video/DELIVERED-20260920.md`](video/DELIVERED-20260920.md) | **新規。公開中の動画が何を喋っているかの凍結記録** — 台本だけ先に進んだので、これが無いと記録が消えていた |
+
+   **09-20 の並べ替え（製品先行）を反転させたので、反論も文書に残してある** — `CRITERIA.md` は
+   **「No weights. No stated reading order.」**で、§8 は Functionality 始まり、web の7項目は
+   Founder + Market Fit と Insight 始まり。**どちらの順も同じ2つのリストから正当化できる。**
+   決めたのは基準ではなく、9/17 に起きたこと。
+
+   | やること | |
+   |---|---|
+   | **動画の再収録** | 音声生成は founder の手。台本は出来ていて尺も出ている。`CHECKIN_DOC` は不要、`node video/record-presentation.js` は済み |
+   | **Stocklana に貼り直す** | `full.md` と `short.txt`。**09-25 13:00 PDT で凍結**。貼ったら `./scripts/pasted.sh stocklana-full` と `stocklana-short` |
+   | **再収録後** | `DELIVERED-20260920.md` を実際に納品した台本で置き換える（凍結記録なので、合わせて書き換えない） |
+
 0g. **CWF check-in 2 — 台本はある、収録がまだ。窓は 09-25 08:00 PDT に開き 09-28 08:00 PDT に閉じる。**
 
    [`video/CHECKIN-2.md`](video/CHECKIN-2.md) を 2026-09-22 に書いた。58秒・127語・3シーン。

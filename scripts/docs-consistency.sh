@@ -164,7 +164,10 @@ done
 # times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
 # from the recorder's plan. This reads them off the delivery.
 if [ -f video/Confide_Stocklana_20260920.mp4 ]; then
-  ./scripts/video-chapters.sh video/Confide_Stocklana_20260920.mp4 2>/dev/null \
+  # TITLES comes from the FROZEN delivered narration, not from CWF-PRESENTATION.md. That file was
+  # restructured on 2026-09-22 and the cut was not re-recorded, so its scene titles no longer match
+  # the voice on the delivery — and this check is about what a judge opens, not about the next cut.
+  TITLES=video/DELIVERED-20260920.md ./scripts/video-chapters.sh video/Confide_Stocklana_20260920.mp4 2>/dev/null \
   | diff -q - <(python3 -c "
 import re
 s = open('_submission/youtube.md', encoding='utf-8').read()
@@ -535,6 +538,76 @@ for b in bad:
     print("      " + b)
 sys.exit(1 if bad else 0)
 PYK
+
+echo
+echo "  THE SEC ORDER — the pitch's spine against the pinned primary source"
+# full.md now OPENS on this order, so every figure in it has to come from the file that was pinned
+# from the SEC's own release — docs/SEC-EXEMPTION.md, which has already been corrected three times.
+# A pitch whose first paragraph is wrong about a published rule is disposed of in one line.
+python3 - <<'PYS' && ok "every SEC figure in the submissions matches docs/SEC-EXEMPTION.md" || bad "a submission quotes the SEC order in a way the pinned source does not support"
+import re, sys, pathlib
+src = pathlib.Path("docs/SEC-EXEMPTION.md").read_text(encoding="utf-8")
+# Each fact, and the phrase in the pinned file that has to still carry it.
+FACTS = [
+    ("2026-09-17",  "the date the order issued"),
+    ("10 minutes",  "the publication deadline"),
+    ("0.25%",       "the Tier 1 volume cap"),
+    ("2031-09-17",  "the expiry, which is the term"),
+]
+missing = [w for f, w in FACTS if f not in src for w in [f]]
+bad = [("docs/SEC-EXEMPTION.md no longer states %s — the pinned source moved under the pitch" % m)
+       for m in missing]
+
+# And nothing may claim the exemption covers Confide, or that it is beyond regulation. The pinned
+# file rules on this explicitly: say "not a venue", never "outside the SEC's purview".
+FORBIDDEN = ["outside the SEC's purview", "outside the SEC's jurisdiction",
+             "outside SEC jurisdiction", "not regulated by the SEC"]
+for f in ["_submission/full.md", "_submission/short.txt", "_submission/cwf-form.md",
+          "docs/cwf-2026/x-post.txt", "README.md", "video/CWF-PRESENTATION.md"]:
+    q = pathlib.Path(f)
+    if not q.exists():
+        continue
+    body = q.read_text(encoding="utf-8")
+    for phrase in FORBIDDEN:
+        if phrase.lower() in body.lower():
+            bad.append("%s says \"%s\" — docs/SEC-EXEMPTION.md rules that out" % (f, phrase))
+    # A quoted cap or deadline must be the one the order sets.
+    for m in re.finditer(r"(\d+(?:\.\d+)?)%\s*of\s*average daily", body):
+        if m.group(1) != "0.25":
+            bad.append("%s caps Tier 1 at %s%% of ADV; the order says 0.25%%" % (f, m.group(1)))
+    for m in re.finditer(r"within\s+(\w+)\s+minutes", body):
+        if m.group(1).lower() not in ("ten", "10"):
+            bad.append("%s says fills publish within %s minutes; the order says ten" % (f, m.group(1)))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYS
+
+echo
+echo "  THE DEVNET TRADES — prose against web/swaps.json"
+# full.md said "three devnet trades" and the site's og:description said "Three real devnet trades"
+# after a fourth was pinned. Two hand-maintained copies of a number the file next to them computes,
+# and the page itself was right the whole time because it renders from swaps.json and counts nothing.
+python3 - <<'PYT' && ok "every quoted devnet-trade count matches web/swaps.json" || bad "a quoted trade count disagrees with web/swaps.json"
+import json, re, sys, pathlib
+n = len(json.load(open("web/swaps.json"))["swaps"])
+WORDS = {"one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10}
+pat = re.compile(r"(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:real\s+)?devnet trades", re.I)
+bad = []
+for f in ["_submission/full.md", "_submission/short.txt", "web/index.html", "README.md",
+          "docs/cwf-2026/x-post.txt", "_submission/cwf-form.md"]:
+    q = pathlib.Path(f)
+    if not q.exists():
+        continue
+    for m in pat.finditer(q.read_text(encoding="utf-8")):
+        g = m.group(1).lower()
+        got = int(g) if g.isdigit() else WORDS[g]
+        if got != n:
+            bad.append("%s says %s devnet trades; web/swaps.json pins %d" % (f, m.group(1), n))
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYT
 
 echo
 echo "  THE SPOKEN LENGTH — STATUS.md's script figures against the scripts"
