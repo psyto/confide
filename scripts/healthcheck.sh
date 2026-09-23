@@ -13,7 +13,7 @@ cd "$(dirname "$0")/.."
 MAINNET="${MAINNET:-https://api.mainnet-beta.solana.com}"
 DEVNET="${DEVNET:-https://api.devnet.solana.com}"
 PAGE="${PAGE:-https://psyto.github.io/confide}"
-VIDEO="${VIDEO:-C86U3R0IgiU}"
+VIDEO="${VIDEO:-du0Twt_c9wQ}"
 
 RECEIPTS=6a1Kd8Yo5U9wMXUtMnU1PZF8xy6wJ6zWyMr7uKNAHytv
 ACCOUNT=Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P

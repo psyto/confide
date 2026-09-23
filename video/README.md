@@ -1,6 +1,20 @@
 # video
 
-## `Confide_Stocklana_20260922.mp4` — **published: https://youtu.be/C86U3R0IgiU**
+## `Confide_Stocklana_20260923.mp4` — **published: https://youtu.be/du0Twt_c9wQ**
+
+The current cut, **2:32**, and the one every surface points at. Narrated from the restructured
+script: the wordmark from the first frame, the category named out loud in scene 3, Token-2022 named
+in scene 5, the issuance and the gate refusing in 7 and 8, and an ending that hands the viewer a
+command instead of a disclosure. `./scripts/spoken-check.sh video/Confide_Stocklana_20260923.mp4`
+compares the voice against the script it was given.
+
+**Upload `captions-20260923.srt`, not the embedded track.** The ASR dropped the whole of scene 5 —
+57.3s to 78.2s, voice present at -21.4 dB — and hears the project's own name as *"confined"*.
+
+`web/poster.jpg` is a frame from this file: the two cards of scene 1, at 9s, after the reveal. It
+is the og:image on every link preview, and it was a frame of the 09-20 cut until 2026-09-23.
+
+## `Confide_Stocklana_20260922.mp4` — superseded, published as `C86U3R0IgiU`
 
 The delivered cut is **2:28**, 1920x1080, AAC stereo, with a caption track. The founder generated the voice and
 recomposited to it, so the file is 148.6s against the silent master's 177.1s — the two clocks
@@ -49,8 +63,11 @@ accounts"*, measured 09-17 and 465,520 four days later. Its narration was frozen
 `DELIVERED-20260920.md`, which this cut's `DELIVERED-20260922.md` replaces, the way that file said
 it should be.
 
-**Uploaded 2026-09-22 as `C86U3R0IgiU`**, and every surface that names the current video was moved
-to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`, `scripts/healthcheck.sh` and `STATUS.md`.
+**Uploaded 2026-09-22 as `C86U3R0IgiU`, superseded 2026-09-23 by
+[`du0Twt_c9wQ`](https://youtu.be/du0Twt_c9wQ)** — the restructured cut, 2:32. Every surface that
+names the current video was moved to it: `README.md`, `web/index.html`, `docs/DURABILITY.md`,
+`scripts/healthcheck.sh` and `STATUS.md`. `docs-consistency.sh` derives the id from those files and
+fails if they disagree, so the move is one edit or none.
 `web/poster.jpg` is a frame from this file rather than from the old one, and the caption under it
 stopped calling it "the earlier walkthrough".
 

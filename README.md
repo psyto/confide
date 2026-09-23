@@ -5,7 +5,7 @@ swap in one transaction**, with neither side publishing what moved. Confide buil
 zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
 before signing — **with nobody in the middle**.
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch, 2:32**](https://youtu.be/C86U3R0IgiU) · no wallet, no API key, no install
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch, 2:32**](https://youtu.be/du0Twt_c9wQ) · no wallet, no API key, no install
 
 ---
 

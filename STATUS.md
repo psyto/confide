@@ -516,7 +516,8 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
    | やること | |
    |---|---|
-   ~~**投稿**~~ → **完了。`https://youtu.be/C86U3R0IgiU`（2026-09-22）。**
+   ~~**投稿**~~ → **完了。`https://youtu.be/du0Twt_c9wQ`（2026-09-23、再構成カット）。
+   `C86U3R0IgiU` は 09-22 の版。**
    `gilIzns5joM` は **404 を返す**ので、旧版は削除ずみ。「1つの問いに1つの答え」は
    `healthcheck.sh` が毎回測る。全面（`README.md`・`web/index.html`・`docs/DURABILITY.md`・
    `video/README.md`・`healthcheck.sh`）を新 ID に差し替えた。
@@ -839,8 +840,9 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    抜けではなく、提出時に出てくる欄。出たときに使うもの:
    - リンク3本、いずれも生存確認済み（2026-09-15、全て HTTP 200）:
      `https://github.com/psyto/confide` / `https://psyto.github.io/confide/` /
-     `https://youtu.be/C86U3R0IgiU`。**動画は `C86U3R0IgiU` が現行**で、`p1aQuEnzhQk`・`KQsRwP8HTs0`・
-     `ZuhLvH5MFgE` は旧版。**2026-09-21、founder が旧3本を削除。3本とも 404 を返す。**
+     `https://youtu.be/du0Twt_c9wQ`。**動画は `du0Twt_c9wQ` が現行**（2026-09-23 投稿）で、
+     `C86U3R0IgiU`（09-22）・`p1aQuEnzhQk`・`KQsRwP8HTs0`・`ZuhLvH5MFgE` は旧版。
+     **2026-09-21、founder が旧3本を削除。3本とも 404 を返す。**
      以前ここには「旧 URL も 200 を返すので、貼り間違えても壊れて見えない」と書いてあった。**逆になった**
      ——貼り間違えると見えて壊れる。ただし**これを散文で持たない**: `scripts/healthcheck.sh` が
      `video/README.md` に載る全 ID の消滅と現行の生存を毎回測る（現行を旧側に置く壊し方は除外規則に
