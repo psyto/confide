@@ -25,6 +25,13 @@
   .sub{color:var(--dim);font-size:18px;margin-bottom:36px}
   .lede{font-size:26px;line-height:1.5;max-width:980px}
   .lede b{color:var(--bold);font-weight:600}
+  /* A SENTENCE, NOT A TITLE CARD. The turn scene borrowed `hero`, and `hero` always prints
+     <h1>Confide</h1> — so the name appeared a second time 45 seconds in and the film looked like it
+     had restarted. A scene that is one sentence needs a renderer that draws one sentence. */
+  .say-only{max-width:1200px}
+  .say-only .line{font-size:34px;line-height:1.5;color:var(--fg);font-weight:500;max-width:1160px}
+  .say-only .line b{color:var(--bold);font-weight:700}
+  .say-only .kicker{font-size:17px;color:var(--dim);margin-bottom:30px;letter-spacing:.01em}
   /* A REGULATION IS NOT TERMINAL OUTPUT. The first cut of this scene put the order's wording into
      the `pre` pane above -- 13.5px, monospace, `white-space:pre` -- so a sentence of English ran off
      the right edge and was cut mid-word. This is the same information at reading size, wrapped,
@@ -207,6 +214,13 @@ async function order(s){
    +'</div>');
   await sleep(80); await reveal(els,340); await out(rest(s,t0));
 }
+async function statement(s){
+  const t0=performance.now();
+  const els=put('<div class="say-only">'
+   +(s.kicker?'<div class="kicker fade">'+s.kicker+'</div>':'')
+   +'<div class="line fade">'+s.say+'</div></div>');
+  await sleep(80); await reveal(els,340); await out(rest(s,t0));
+}
 async function hero(s){
   const t0=performance.now();
   const els=put('<div><h1 class="fade">Confide</h1>'
@@ -381,7 +395,8 @@ window.__play=async()=>{
   const t0=performance.now();
   for(const s of SCENES){
     console.log("CONFIDE_SCENE "+s.kind+" "+((performance.now()-t0)/1000).toFixed(1));
-    if(s.kind==="order")await order(s);
+    if(s.kind==="statement")await statement(s);
+    else if(s.kind==="order")await order(s);
     else if(s.kind==="hero")await hero(s);
     else if(s.kind==="leak")await leak(s);
     else if(s.kind==="slot")await slot(s);

@@ -1,72 +1,72 @@
 [
  {
-  "file": "01-the-tape.mp4",
+  "file": "01-this-account.mp4",
   "start": 0,
-  "end": 21,
+  "end": 19,
+  "seconds": 19,
+  "line": "This is a real account on Solana, right now. Anyone can look it up. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares of tokenized stock."
+ },
+ {
+  "file": "02-nobody-allowed.mp4",
+  "start": 19,
+  "end": 38,
+  "seconds": 19,
+  "line": "Every tokenized stock on Solana can do that. All 1,992 of them, from three issuers with nothing to do with each other. So I counted the accounts actually using it. Across nearly half a million: two have tried, and none has been allowed."
+ },
+ {
+  "file": "03-confide.mp4",
+  "start": 38,
+  "end": 53,
+  "seconds": 15,
+  "line": "That is what Confide is for. It builds the zero-knowledge proofs Solana will not assemble for you, and lets each side read the other's amount before signing. Nobody stands in the middle."
+ },
+ {
+  "file": "04-the-trade.mp4",
+  "start": 53,
+  "end": 68,
+  "seconds": 15,
+  "line": "Two holders exchange a position for cash in a single transaction. Either both sides settle or neither does. Nobody watching learns the size, the price it implies, or that either of them held anything."
+ },
+ {
+  "file": "05-why-shut.mp4",
+  "start": 68,
+  "end": 87,
+  "seconds": 19,
+  "line": "Not an oversight. Those same mints let the issuer freeze every transfer, move any holder's tokens, and run their own code on each one. The one thing they left off reads everyone's balance, forever, or nothing at all. No setting is right."
+ },
+ {
+  "file": "06-why-now.mp4",
+  "start": 87,
+  "end": 108,
   "seconds": 21,
-  "line": "Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It only covers trading through an automated market maker — where every trade you make is published. The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal."
+  "line": "Last week the SEC gave tokenized stock five years of relief in the United States. Then you read the conditions: trading only through an automated market maker, where the size and direction of every trade you make is published within ten minutes. A desk cannot go there."
  },
  {
-  "file": "02-the-block.mp4",
-  "start": 21,
-  "end": 35,
+  "file": "07-the-turn.mp4",
+  "start": 108,
+  "end": 122,
   "seconds": 14,
-  "line": "Block trades have always settled away from the tape. The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has."
+  "line": "So the first trade through that door is not a swap between two holders. It is an issuance — because the issuer is the one who can open the account."
  },
  {
-  "file": "03-nobody-can-open.mp4",
-  "start": 35,
-  "end": 52,
-  "seconds": 17,
-  "line": "Every tokenized stock here already ships confidential balances — all 1,992, from three issuers with nothing to do with each other. And every one of them is gated. An account cannot exist until the issuer signs for it."
- },
- {
-  "file": "04-so-i-counted.mp4",
-  "start": 52,
-  "end": 66,
-  "seconds": 14,
-  "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Two have configured one. None is approved."
- },
- {
-  "file": "05-the-turn.mp4",
-  "start": 66,
-  "end": 81,
-  "seconds": 15,
-  "line": "Which means the first trade through that gate is not a swap between two holders. It is an issuance, because the party who can open the account is one of the two."
- },
- {
-  "file": "06-the-gate.mp4",
-  "start": 81,
-  "end": 96,
-  "seconds": 15,
-  "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it — account not approved for confidential transfers. One instruction later, the same transaction settles."
- },
- {
-  "file": "07-this-account.mp4",
-  "start": 96,
-  "end": 112,
-  "seconds": 16,
-  "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
- },
- {
-  "file": "08-every-trade-after.mp4",
-  "start": 112,
-  "end": 130,
-  "seconds": 18,
-  "line": "The allocation and any trade after it are the same two instructions. Confide builds the proofs the chain will not assemble, and hands each side the other's amount to decrypt before signing. Four files, two machines, nobody in the middle."
+  "file": "08-the-gate.mp4",
+  "start": 122,
+  "end": 134.1,
+  "seconds": 12.1,
+  "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it. One instruction later, the same transaction settles."
  },
  {
   "file": "09-why-not-an-exchange.mp4",
-  "start": 130,
-  "end": 151,
-  "seconds": 21,
-  "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size, whatever the token can do. The exemption requires an AMM."
+  "start": 134.1,
+  "end": 154.1,
+  "seconds": 20,
+  "line": "You cannot do this on one, and that is written down. The exemption covers trading executed by an automated market maker, and every fill's size goes on a public tape within ten minutes. A condition of the venue, not a property of one pool."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 151,
-  "end": 171,
+  "start": 154.1,
+  "end": 174.1,
   "seconds": 20,
-  "line": "I called that last step the safety step. A review found it was signing something it never looked at. The fix compares the two, byte for byte, and caught another bug on its first run. Nobody outside this repository has used any of this."
+  "line": "I called one of those checks the safety step. A review found it was signing something it never looked at. The fix compares the two, byte for byte, and caught another bug on its first run. Nobody outside this repository has used any of this."
  }
 ]

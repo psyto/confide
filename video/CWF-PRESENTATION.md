@@ -91,120 +91,119 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | the tape | 21 | 47 | 138 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
-| 2 | the block | 12 + 2 | 26 | 137 | the name, and under it |
-| 3 | nobody can open the door | 17 | 38 | 139 | the slot scan, the empty auditor column, `autoApproveNewAccounts false` on every row |
-| 4 | so I counted | 12 + 2 | 26 | 137 | the scan running to its total, then the two columns |
-| 5 | so the first trade is an issuance | 15 | 32 | 133 | the sentence, alone |
-| 6 | the gate, both ways | 15 | 32 | 133 | the refused transaction and its error, then the same allocation settling |
-| 7 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
-| 8 | and every trade after it | 18 | 40 | 138 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
-| 9 | why not just use an exchange | 21 | 46 | 135 | the order's publication condition beside a reserve moving by the traded amount |
-| 10 | what I got wrong, and what nobody has used | 20 | 44 | 136 | the check refusing, then passing |
-| | | **171 s** | **354** | | |
+| 1 | this account | 14 + 5 | 31 | 139 | `spl-token balance` returning `0`, then the confidential balance |
+| 2 | and nobody has been allowed one | 19 | 43 | 140 | the scan running to its total, then the two columns |
+| 3 | Confide | 15 | 32 | 133 | the name, and a plain definition under it |
+| 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
+| 5 | why the door is shut | 19 | 42 | 137 | the slot scan, the empty auditor column |
+| 6 | why now | 21 | 47 | 138 | the order's condition at reading size, with the cap beside it and `sec.gov` on the badge |
+| 7 | so the first trade is an issuance | 14 | 30 | 134 | the sentence, alone — |
+| 8 | the gate, both ways | 12 | 25 | 132 | the refused transaction and its error, then the same allocation settling |
+| 9 | why not just use an exchange | 20 | 44 | 136 | the order's publication condition beside a reserve moving by the traded amount |
+| 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the check refusing, then passing |
+| | | **174 s** | **373** | | |
 
 ## The script
 
-### 1 — the tape
+### 1 — this account · +5 s silence
 
-> Last week the SEC gave tokenized stock five years of relief. Then you read the conditions. It
-> only covers trading through an automated market maker — where every trade you make is published.
-> The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal.
-
-*Shows:* the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on
-the badge. **Relief, then the catch — and the numbers stay on the card.** The voice carries the
-turn; the screen carries 0.25% and ten minutes, so neither has to do both.
-
-### 2 — the block · +2 s silence
-
-> Block trades have always settled away from the tape.
+> This is a real account on Solana, right now. Anyone can look it up. The chain says it holds
+> nothing.
 >
-> The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has.
+> It holds a hundred and seventy-three thousand shares of tokenized stock.
 
-*Shows:* the name, and under it **which of the two halves comes first** — issuance, because it is
-the only trade the gate lets through, then every trade after it on the same two instructions. **The
-hero used to say "a stock-to-stablecoin swap", which names the mechanism and not the first use.** A
-viewer with the sound off should learn from this frame that one comes before the other, and why.
+*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** It
+opens the film now, because it is the one thing in it that needs no vocabulary at all — no tape, no
+block trade, no delivery-versus-payment. A judge who has never heard of any of this knows in
+sixteen seconds what is being claimed, and can check it.
 
-### 3 — nobody can open the door
+### 2 — and nobody has been allowed one
 
-> Every tokenized stock here already ships confidential balances — all 1,992, from three issuers
-> with nothing to do with each other. And every one of them is gated. An account cannot exist until
-> the issuer signs for it.
+> Every tokenized stock on Solana can do that. All 1,992 of them, from three issuers with nothing to
+> do with each other. So I counted the accounts actually using it. Across nearly half a million: two
+> have tried, and none has been allowed.
 
-*Shows:* the slot scan, the empty auditor column, `autoApproveNewAccounts false` on every row.
-**The problem, before anything is offered as an answer to it.** This used to be scene 5, after the
-product had already been demonstrated — which put the demo in front of the reason for it.
+*Shows:* the scan running to its total, then the two columns. **The scene that has to come second.**
+Opening on the account alone invites *"that is just Token-2022"* — and it would be right. This says
+so first, and turns it into the finding: the capability is everywhere and nobody is through.
 
-### 4 — so I counted · +2 s silence
+### 3 — Confide
 
-> So I stopped reading the settings and counted. Nearly half a million accounts, across Apple,
-> NVIDIA, SpaceX and Anthropic.
->
-> Two have configured one. None is approved.
+> That is what Confide is for. It builds the zero-knowledge proofs Solana will not assemble for you,
+> and lets each side read the other's amount before signing. Nobody stands in the middle.
 
-*Shows:* the scan running to its total, then the two columns. **This line said "Not one" and was
-true when the cut was recorded** — the count moved seventy-three minutes later. Not a figure
-drifting: the finding inverting. The replacement is stronger — somebody tried, and the gate held.
+*Shows:* the name, and a plain definition under it. **The hero carried "issuance first — the only
+trade the gate lets through", and that was written when it sat after the gate scene.** Here the
+viewer has not met the gate yet, so the sentence would be about something they have not been shown.
+The ordering claim moves to scene 7, where it is earned.
 
-### 5 — so the first trade is an issuance
+### 4 — the trade
 
-> Which means the first trade through that gate is not a swap between two holders. It is an
-> issuance, because the party who can open the account is one of the two.
-
-*Shows:* the sentence, alone. **The turn the film now hangs on, and it was missing.** Nine scenes
-described a shut gate and then demonstrated a trade that needs it open; a judge who knows
-Token-2022 asks how, and had no answer until this scene existed.
-
-### 6 — the gate, both ways
-
-> An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the
-> chain refuses it — account not approved for confidential transfers. One instruction later, the
-> same transaction settles.
-
-*Shows:* the refused transaction and its error, then the same allocation settling. **The gate had
-been described for nine scenes and never once shown stopping anything.** Both transactions are on
-chain ([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
-
-### 7 — this account · +5 s silence
-
-> This is a real account on Solana, right now. The chain says it holds nothing.
->
-> It holds a hundred and seventy-three thousand shares.
-
-*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
-strongest ten seconds available, unchanged, and it lands better here: it is what the allocation the
-viewer has just watched produces.
-
-### 8 — and every trade after it
-
-> The allocation and any trade after it are the same two instructions. Confide builds the proofs
-> the chain will not assemble, and hands each side the other's amount to decrypt before signing.
-> Four files, two machines, nobody in the middle.
+> Two holders exchange a position for cash in a single transaction. Either both sides settle or
+> neither does. Nobody watching learns the size, the price it implies, or that either of them held
+> anything.
 
 *Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
-chain shows everyone else. **Issuance is not a second product — it is this, with the issuer as one
-party**, and the film says so here rather than leaving a judge to work it out.
+chain shows everyone else. **After the name, never before it** — the correction from 09-22 stands:
+this is Confide's own trade, and a picture of the product before the product is named leaves a
+viewer asking whose it is.
+
+### 5 — why the door is shut
+
+> Not an oversight. Those same mints let the issuer freeze every transfer, move any holder's tokens,
+> and run their own code on each one. The one thing they left off reads everyone's balance, forever,
+> or nothing at all. No setting is right.
+
+*Shows:* the slot scan, the empty auditor column. **The diagnosis, and it answers the question
+scene 2 raises** — why would three unrelated issuers all decline the same thing?
+
+### 6 — why now
+
+> Last week the SEC gave tokenized stock five years of relief in the United States. Then you read
+> the conditions: trading only through an automated market maker, where the size and direction of
+> every trade you make is published within ten minutes. A desk cannot go there.
+
+*Shows:* the order's condition at reading size, with the cap beside it and `sec.gov` on the badge.
+**This used to open the film.** It is the strongest external fact available and the wrong thing to
+lead with: it is about the world rather than about what is on screen, it costs the most vocabulary,
+and the order concerns US NMS stock while the 1,992 measured above are issued outside it. As the
+sixth scene it answers *why now* for a viewer who already knows what *this* is.
+
+### 7 — so the first trade is an issuance
+
+> So the first trade through that door is not a swap between two holders. It is an issuance —
+> because the issuer is the one who can open the account.
+
+*Shows:* the sentence, alone — **not the title card.** This scene borrowed the hero renderer, which
+always prints the project's name, so "Confide" appeared a second time forty-five seconds in and the
+film looked like it had restarted.
+
+### 8 — the gate, both ways
+
+> An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the
+> chain refuses it. One instruction later, the same transaction settles.
+
+*Shows:* the refused transaction and its error, then the same allocation settling. **The gate had
+been described all film and never once shown stopping anything.** Both transactions are on chain
+([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
 
 ### 9 — why not just use an exchange
 
 > You cannot do this on one, and that is written down. The exemption covers trading executed by an
-> automated market maker, and every fill's size goes on a public tape within ten minutes. Not a
-> property of any one pool — a condition of the venue.
+> automated market maker, and every fill's size goes on a public tape within ten minutes. A
+> condition of the venue, not a property of one pool.
 
-*Shows:* the order's publication condition beside a reserve moving by the traded amount.
-**The two legs, in the order that survives.** This scene used to lead with the structural one — a
-pool's reserves reveal the size — and add the rule as an afterthought. Blockworks measured that
-**over 60% of Backpack's Solana volume goes through proprietary AMMs**, which quote from external
-stock data rather than from reserves, so the structural leg lands on the minority case. The
-regulatory leg does not care how the AMM prices: on a sanctioned venue every fill's size is
-published, whatever quotes it.
+*Shows:* the order's publication condition beside a reserve moving by the traded amount. **The
+regulatory leg leads.** Blockworks measured that over 60% of Backpack's Solana volume goes through
+proprietary AMMs, which quote from external stock data rather than from reserves — so the
+structural leg lands on the minority case
+([`../docs/cwf-2026/THIRD-PARTY-MEASUREMENTS.md`](../docs/cwf-2026/THIRD-PARTY-MEASUREMENTS.md)).
 
 ### 10 — what I got wrong, and what nobody has used
 
-> I called that last step the safety step. A review found it was signing something it never looked
-> at. The fix compares the two, byte for byte, and caught another bug on its first run. Nobody
-> outside this repository has used any of this.
+> I called one of those checks the safety step. A review found it was signing something it never
+> looked at. The fix compares the two, byte for byte, and caught another bug on its first run.
+> Nobody outside this repository has used any of this.
 
 *Shows:* the check refusing, then passing. **Ending on a defect I did not find myself**, and on the
 weakest fact, which is the first one a judge checks.

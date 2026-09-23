@@ -178,70 +178,8 @@ if (!SEC.includes("2031-09-17")) {
 }
 
 const scenes = [
-  // The product, then the product working, inside the first thirty seconds. The order this
-  // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
-  // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
-  // and §8(e) asks how the work composes with other primitives — which was the buried scene.
   {
-    // The condition, at reading size. It used to be poured into the `pre` pane -- 13.5px monospace,
-    // white-space:pre -- so an English sentence ran off the right edge and was cut mid-word. The
-    // words on screen are short; every value in them is checked against the pinned order below.
-    file: "01-the-tape.mp4", for: "the tape", kind: "order",
-    label: "The SEC's order, 17 September 2026.",
-    stamp: "sec.gov — press release 2026-90",
-    grant: "Tokenized stock: five years of relief.",
-    quote: '<span class="but">But only through an AMM — where</span> <em>every trade you make is '
-         + 'published</em>: the size, the direction, <em>within ten minutes</em>.',
-    rule: ["0.25%", "of average daily volume is all you may trade in a Tier 1 name. "
-                  + "<b>Exceed it twice and the symbol pauses for three months.</b>"],
-    total: HOLD[0],
-  },
-  {
-    // ISSUANCE FIRST, THEN EVERYTHING AFTER IT. The hero used to say "a stock-to-stablecoin swap",
-    // which names the mechanism and not the first use — and the film then demonstrated that swap
-    // before establishing that nobody can open an account to do it with. A sound-off viewer should
-    // learn the order here.
-    file: "02-the-block.mp4", for: "the block", kind: "hero",
-    sub: "confidential delivery-versus-payment for tokenized stocks on Solana",
-    lede: "<b>Issuance first</b> — the only trade the gate lets through —<br>then <b>every trade "
-        + "after it</b>, on the same two instructions.",
-    total: HOLD[1],
-  },
-  { file: "03-nobody-can-open.mp4", for: "nobody can open the door", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[2] },
-  {
-    file: "04-so-i-counted.mp4", for: "so I counted", kind: "evidence",
-    label: "So I stopped reading the settings and counted the accounts.",
-    // Not "just now", and the badge says so. Every other pane in this cut is a command run
-    // moments before the recording; this scan reads every token account of every mint and takes
-    // minutes, so it is the stored measurement and the screen carries its date.
-    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
-    body: slice(usage, /AAPLx/, /token accounts,/),
-    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
-    total: HOLD[3],
-  },
-  {
-    // THE TURN, and it had no scene. Nine scenes described a shut gate and then showed a trade that
-    // needs it open; a judge who knows Token-2022 asks how, and the film had no answer.
-    file: "05-the-turn.mp4", for: "so the first trade is an issuance", kind: "hero",
-    sub: "the party who can open the account is one of the two",
-    lede: "The first trade through that gate is not a swap between two holders.<br>"
-        + "<b>It is an issuance.</b>",
-    total: HOLD[4],
-  },
-  {
-    // THE GATE, CLOSING AND THEN OPENING. The film described the gate for nine scenes and never
-    // showed it stop anything. This is the same allocation twice: refused by the live program, then
-    // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
-    // so the refusal on screen is the one anybody can look up rather than a drawing of one.
-    file: "06-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
-    label: "The same allocation, before and after the issuer signed.",
-    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
-        + slice(issued, /issuance: the same allocation/, /compute units/),
-    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
-    total: HOLD[5],
-  },
-  {
-    file: "07-this-account.mp4", for: "this account", kind: "evidence",
+    file: "01-this-account.mp4", for: "this account", kind: "evidence",
     label: "A real account on Solana, right now.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
@@ -251,12 +189,34 @@ const scenes = [
       emphasis: ["173000 units"],
       label: "The same account. This is what it holds.",
     },
-    total: HOLD[6],
+    total: HOLD[0],
+  },
+  {
+    file: "02-nobody-allowed.mp4", for: "and nobody has been allowed one", kind: "evidence",
+    label: "So I stopped reading the settings and counted the accounts.",
+    // Not "just now", and the badge says so. Every other pane in this cut is a command run
+    // moments before the recording; this scan reads every token account of every mint and takes
+    // minutes, so it is the stored measurement and the screen carries its date.
+    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
+    body: slice(usage, /AAPLx/, /token accounts,/),
+    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
+    total: HOLD[1],
+  },
+  {
+    // THE PLAIN DEFINITION, BACK. It said "Issuance first — the only trade the gate lets through",
+    // which was written when this sat after the gate scene. Here the viewer has not met the gate,
+    // so that sentence would be about something they have not been shown. The ordering claim is
+    // scene 7's job, where it is earned.
+    file: "03-confide.mp4", for: "Confide", kind: "hero",
+    sub: "confidential delivery-versus-payment for tokenized stocks on Solana",
+    lede: "Two holders trade a position for cash in <b>one transaction</b>,<br>"
+        + "and <b>neither publishes what moved</b>.",
+    total: HOLD[2],
   },
   {
     // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
     // decision -- and it is the only picture that carries the product without a word of explanation.
-    file: "08-every-trade-after.mp4", for: "and every trade after it", kind: "dvp",
+    file: "04-the-trade.mp4", for: "the trade", kind: "dvp",
     // SPOKEN AND SHOWN, which this file's rules otherwise forbid. It is the sentence that says what
     // Confide does, and a judge skimming with the sound off would otherwise take away the outcome
     // and never the product. One exception in 177 seconds.
@@ -265,6 +225,47 @@ const scenes = [
          + "<b>each side check the other before signing</b>.",
     seller: DVP.seller, buyer: DVP.buyer,
     delivered: DVP.delivered_units, paid: DVP.paid_units,
+    total: HOLD[3],
+  },
+  { file: "05-why-shut.mp4", for: "why the door is shut", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
+  // The product, then the product working, inside the first thirty seconds. The order this
+  // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
+  // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
+  // and §8(e) asks how the work composes with other primitives — which was the buried scene.
+  {
+    // The condition, at reading size. It used to be poured into the `pre` pane -- 13.5px monospace,
+    // white-space:pre -- so an English sentence ran off the right edge and was cut mid-word. The
+    // words on screen are short; every value in them is checked against the pinned order below.
+    file: "06-why-now.mp4", for: "why now", kind: "order",
+    label: "The SEC's order, 17 September 2026.",
+    stamp: "sec.gov — press release 2026-90",
+    grant: "Tokenized stock: five years of relief.",
+    quote: '<span class="but">But only through an AMM — where</span> <em>every trade you make is '
+         + 'published</em>: the size, the direction, <em>within ten minutes</em>.',
+    rule: ["0.25%", "of average daily volume is all you may trade in a Tier 1 name. "
+                  + "<b>Exceed it twice and the symbol pauses for three months.</b>"],
+    total: HOLD[5],
+  },
+  {
+    // THE TURN, and it had no scene. Nine scenes described a shut gate and then showed a trade that
+    // needs it open; a judge who knows Token-2022 asks how, and the film had no answer.
+    file: "07-the-turn.mp4", for: "so the first trade is an issuance", kind: "statement",
+    kicker: "the party who can open the account is one of the two",
+    // THE SCREEN IS NOT THE SCRIPT. This carried the narration almost word for word, which this
+    // file's own rule forbids — the voice says why, so the screen says only what.
+    say: "Not a swap between two holders.<br><b>An issuance.</b>",
+    total: HOLD[6],
+  },
+  {
+    // THE GATE, CLOSING AND THEN OPENING. The film described the gate for nine scenes and never
+    // showed it stop anything. This is the same allocation twice: refused by the live program, then
+    // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
+    // so the refusal on screen is the one anybody can look up rather than a drawing of one.
+    file: "08-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
+    label: "The same allocation, before and after the issuer signed.",
+    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
+        + slice(issued, /issuance: the same allocation/, /compute units/),
+    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
     total: HOLD[7],
   },
   {
