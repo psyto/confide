@@ -76,6 +76,7 @@ const swaps = run("bash", ["scripts/swap-status.sh", "plain"], "reading the swap
 // read live, and beside it the two columns the parties wrote down at the time, because the amounts
 // are confidential and nothing on chain can recover them afterwards.
 const dvp = run("bash", ["scripts/dvp-show.sh"], "reading the delivery-versus-payment", DEVNET);
+const issued = run("bash", ["scripts/swap-status.sh", "plain"], "reading the issuance pair back off devnet", DEVNET);
 const feeSwap = run("bash", ["scripts/swap-status.sh", "fee"], "reading the with-fee swap back off devnet", DEVNET);
 const cash = run("bash", ["scripts/cash-scan.sh"], "reading the stablecoins on mainnet", MAINNET);
 const testbed = run("bash", ["scripts/testbed-up.sh", "--check"], "checking the standing devnet issuer", DEVNET);
@@ -250,10 +251,15 @@ const scenes = [
     total: HOLD[5],
   },
   {
-    file: "07-not-only-equities.mp4", for: "and it is not only equities", kind: "evidence",
-    label: "And it was never a story about tokenized stocks.",
-    body: slice(cash, /program\s+confidential/, /Four issuers/),
-    emphasis: ["PYUSD", "USDG", "EMPTY"],
+    // THE GATE, CLOSING AND THEN OPENING. The film described the gate for nine scenes and never
+    // showed it stop anything. This is the same allocation twice: refused by the live program, then
+    // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
+    // so the refusal on screen is the one anybody can look up rather than a drawing of one.
+    file: "07-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
+    label: "The same allocation, before and after the issuer signed.",
+    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
+        + slice(issued, /issuance: the same allocation/, /compute units/),
+    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
     total: HOLD[6],
   },
   {

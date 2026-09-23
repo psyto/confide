@@ -37,35 +37,35 @@
  {
   "file": "06-so-i-counted.mp4",
   "start": 91,
-  "end": 103,
-  "seconds": 12,
-  "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Not one."
+  "end": 105,
+  "seconds": 14,
+  "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Two have configured one. None is approved."
  },
  {
-  "file": "07-not-only-equities.mp4",
-  "start": 103,
-  "end": 114,
-  "seconds": 11,
-  "line": "PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset classes, one dead end. Nobody chose this."
+  "file": "07-the-gate.mp4",
+  "start": 105,
+  "end": 120,
+  "seconds": 15,
+  "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it — account not approved for confidential transfers. One instruction later, the same transaction settles."
  },
  {
   "file": "08-why-not-an-exchange.mp4",
-  "start": 114,
-  "end": 133,
+  "start": 120,
+  "end": 139,
   "seconds": 19,
   "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM."
  },
  {
   "file": "09-why-it-is-hard.mp4",
-  "start": 133,
-  "end": 155.1,
-  "seconds": 22.1,
-  "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, neither side ever holding the other's key."
+  "start": 139,
+  "end": 156.1,
+  "seconds": 17.1,
+  "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 155.1,
-  "end": 177.1,
+  "start": 156.1,
+  "end": 178.1,
   "seconds": 22,
   "line": "I called that last step the safety step. A review found it was signing something it had never looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run. Nobody outside this repository has used any of this."
  }

@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-09-23 01:05:30 UTC",
+ "generated_utc": "2026-09-23 01:35:00 UTC",
  "note": "Which devnet swaps the page reads. The page decodes each from the chain itself; this file does not decide the outcome.",
  "confirmed_when_written": 6,
  "swaps": [
@@ -31,9 +31,12 @@
    "label": "issuance: REFUSED, the issuer had not signed for the account",
    "signature": "5fqZLgbj3Sijft68iT9U3N8MNEitte4aLrPU6VdcQVytxAb389ZJSJMfHs68tLNYDwaUqSuA11agG7sXmP2HEV5G",
    "claim": "the same allocation, sent before approval \u2014 Custom(24), Account not approved for confidential transfers",
+   "expect_err": true,
    "accounts": [
-    "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF",
-    "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"
+    "29Uo4cEPou6DKnKyf1z5wcCnQUCPr9diBE6h1KgiFQJE",
+    "2QrgF3eKFBHxxBqwJ3okbksw9ciSG1czMgY9c3Zhp5zR",
+    "6gmFsn15Mu1hGYRcHVeRv9YaJFSrJvsPxk4MY8V95ePc",
+    "F59tWkVWeg65N6D2XAgr8mdhEoUBXuKqz86Nvqt36zik"
    ],
    "confirmed_when_written": true,
    "err_when_written": {
@@ -50,8 +53,10 @@
    "signature": "29coq95v2k4G2PBdcf42EtraqppMC4nk7QFsgHvMc9gbeCNPjPTYnM6kpza3EkeoeLuugUuPjaW32HefgNWCgxCf",
    "claim": "20,000 shares from treasury against $3,500,000 \u2014 auditor slot EMPTY throughout",
    "accounts": [
-    "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF",
-    "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"
+    "29Uo4cEPou6DKnKyf1z5wcCnQUCPr9diBE6h1KgiFQJE",
+    "2QrgF3eKFBHxxBqwJ3okbksw9ciSG1czMgY9c3Zhp5zR",
+    "6gmFsn15Mu1hGYRcHVeRv9YaJFSrJvsPxk4MY8V95ePc",
+    "F59tWkVWeg65N6D2XAgr8mdhEoUBXuKqz86Nvqt36zik"
    ],
    "confirmed_when_written": true
   },

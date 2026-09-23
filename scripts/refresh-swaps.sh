@@ -38,11 +38,17 @@ SWAPS = [
   "signature": "5fqZLgbj3Sijft68iT9U3N8MNEitte4aLrPU6VdcQVytxAb389ZJSJMfHs68tLNYDwaUqSuA11agG7sXmP2HEV5G",
   "claim": "the same allocation, sent before approval — Custom(24), Account not approved for confidential transfers",
   "expect_err": True,
-  "accounts": ["9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF", "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"]},
+  "accounts": ["29Uo4cEPou6DKnKyf1z5wcCnQUCPr9diBE6h1KgiFQJE",
+               "2QrgF3eKFBHxxBqwJ3okbksw9ciSG1czMgY9c3Zhp5zR",
+               "6gmFsn15Mu1hGYRcHVeRv9YaJFSrJvsPxk4MY8V95ePc",
+               "F59tWkVWeg65N6D2XAgr8mdhEoUBXuKqz86Nvqt36zik"]},
  {"label": "issuance: the same allocation, after the issuer signed",
   "signature": "29coq95v2k4G2PBdcf42EtraqppMC4nk7QFsgHvMc9gbeCNPjPTYnM6kpza3EkeoeLuugUuPjaW32HefgNWCgxCf",
   "claim": "20,000 shares from treasury against $3,500,000 — auditor slot EMPTY throughout",
-  "accounts": ["9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF", "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"]},
+  "accounts": ["29Uo4cEPou6DKnKyf1z5wcCnQUCPr9diBE6h1KgiFQJE",
+               "2QrgF3eKFBHxxBqwJ3okbksw9ciSG1czMgY9c3Zhp5zR",
+               "6gmFsn15Mu1hGYRcHVeRv9YaJFSrJvsPxk4MY8V95ePc",
+               "F59tWkVWeg65N6D2XAgr8mdhEoUBXuKqz86Nvqt36zik"]},
  {"label": "stock for cash, between two strangers",
   "signature": "4t6HxA36KJP1z3BSEfCaDwRT7Em39iiHjXevwidLvLmmZF2emJ5XsSouEmuzGSxYYiawxJ1PzcXdrk8iPXa1RGvH",
   "claim": "four files, two machines, neither party holding the other's key",
@@ -77,7 +83,7 @@ for s in SWAPS:
     # Custom(24). Counting it as dead would have hidden the day it started succeeding, which is the
     # day the gate stopped holding.
     err = t["meta"]["err"] if t else None
-    if s.pop("expect_err", False):
+    if s.get("expect_err"):
         want = json.dumps(err) if err else ""
         s["confirmed_when_written"] = bool(t) and '"Custom": 24' in want
         s["err_when_written"] = err

@@ -34,8 +34,18 @@ for s in cfg["swaps"]:
     print(f"    instructions   {len(kinds)}  {', '.join(kinds)}")
     print(f"    programs       {', '.join(p[:8]+'…' for p in progs)}")
     print(f"    compute units  {t['meta']['computeUnitsConsumed']:,}")
-    print(f"    error          {t['meta']['err'] or 'none'}")
-    if t["meta"]["err"]: bad += 1
+    # ONE ENTRY IS SUPPOSED TO HAVE FAILED. The issuance pair is the same allocation sent before and
+    # after the issuer signed, and the refusal IS the finding: it must still fail with Custom(24).
+    # Counting it as a problem said "the swaps no longer read the way the page says" about the one
+    # that reads exactly as it should.
+    err = t["meta"]["err"]
+    if s.get("expect_err"):
+        want = '"Custom": 24' in json.dumps(err) if err else False
+        print(f"    error          {RED}{err}{OFF}  {'(expected)' if want else '(NOT the expected one)'}")
+        if not want: bad += 1
+    else:
+        print(f"    error          {err or 'none'}")
+        if err: bad += 1
     zero, ata = True, True
     for a in s["accounts"]:
         v = rpc("getAccountInfo", [a, {"encoding":"jsonParsed"}])

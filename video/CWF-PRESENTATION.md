@@ -96,12 +96,12 @@ never reads the screen.
 | 3 | the trade | 21 | 46 | 135 | the sentence that says what Confide does — |
 | 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
-| 6 | so I counted | 10 + 2 | 21 | 134 | the scan running to its total, then `0` |
-| 7 | and it is not only equities | 11 | 24 | 138 | PYUSD and USDG on the identical configuration |
+| 6 | so I counted | 12 + 2 | 26 | 137 | the scan running to its total, then the two columns |
+| 7 | the gate, both ways | 15 | 32 | 133 | the refused transaction and its error, then the same signature settling |
 | 8 | why not just use an exchange | 19 | 41 | 134 | reserves moving by the traded amount |
-| 9 | why it is hard | 22 | 48 | 135 | the four commands, then the settled transaction and four balances reading `0` |
+| 9 | why it is hard | 17 | 37 | 135 | the four commands, then the settled transaction and four balances reading `0` |
 | 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **177 s** | **366** | | |
+| | | **178 s** | **368** | | |
 
 ## The script
 
@@ -177,19 +177,24 @@ dead end is not caution, it is the substrate** — the line the published cut fo
 > So I stopped reading the settings and counted. Nearly half a million accounts, across Apple,
 > NVIDIA, SpaceX and Anthropic.
 >
-> Not one.
+> Two have configured one. None is approved.
 
-*Shows:* the scan running to its total, then `0`. **Not an exact figure, deliberately.** The
-published cut says "three hundred and twenty-nine thousand" and was wrong four days later by the
-chain simply growing.
+*Shows:* the scan running to its total, then the two columns. **This line said "Not one" and was
+true when the cut was recorded — the count moved seventy-three minutes later.** It is not a figure
+drifting, it is the finding inverting, and the submission invites a judge to run the same command.
+The replacement is stronger anyway: somebody tried, and the gate held.
 
-### 7 — and it is not only equities
+### 7 — the gate, both ways
 
-> PayPal's dollar has the same empty auditor slot and the same locked door. Four issuers, two asset
-> classes, one dead end. Nobody chose this.
+> An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the
+> chain refuses it — account not approved for confidential transfers. One instruction later, the
+> same transaction settles.
 
-*Shows:* PYUSD and USDG on the identical configuration. **Ten seconds, and it moves the finding
-from an equities story to a substrate one.**
+*Shows:* the refused transaction and its error, then the same signature settling. **This replaces
+the stablecoin scene**, which was the weakest thing in the film per second and was cut from the
+written submission for the same reason. The gate is the whole argument and it had never been shown
+closing — only described. Both transactions are on chain
+([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
 
 ### 8 — why not just use an exchange
 
@@ -203,8 +208,7 @@ it** — the scene used to make this case alone and now has the rule standing be
 ### 9 — why it is hard
 
 > The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is
-> too large to send at all — it goes on chain in a record account first. Four files, two machines,
-> neither side ever holding the other's key.
+> too large to send at all — it goes on chain in a record account first.
 
 *Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
 product arrives ninety seconds in, as the answer to a question the viewer already has.**
