@@ -138,6 +138,24 @@ const ISSUANCE = (() => {
   return { size: m[1] + "-share", settled: settled.signature, refused: refused.signature };
 })();
 
+// Scene 5's three issuer powers, named as the extensions that grant them and counted from the
+// inventory rather than asserted. If an issuer drops one of these the scene is wrong, and the
+// number beside it is the thing that would say so.
+const SLOT_ROLES = (() => {
+  const slots = JSON.parse(readFileSync(path.join(repo, "web/slots.json"), "utf8"));
+  const want = [["pausableConfig", "freeze a transfer"],
+                ["permanentDelegate", "seize a holder's tokens"],
+                ["transferHook", "run their own code"]];
+  return want.map(([ext, does]) => {
+    const n = slots.extensions[ext];
+    if (n !== slots.mints) {
+      throw new Error(`web/slots.json says ${n} of ${slots.mints} mints carry ${ext} — scene 5 `
+        + `says the issuer has all three powers on every one of them`);
+    }
+    return { ext, does, n: n.toLocaleString("en-US") };
+  });
+})();
+
 // Scene 10 claims a repair in this repository's own code, which is the claim a judge can check
 // fastest. So the claim is read from the file that implements it.
 const SIGN = readFileSync(path.join(repo, "scripts/swap-sign.sh"), "utf8");
@@ -274,7 +292,16 @@ const scenes = [
     delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[3],
   },
-  { file: "05-why-shut.mp4", for: "why the door is shut", kind: "privacyGap", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
+  {
+    // THE SCREEN STOPPED REPEATING THE VOICE. The card listed "Freeze a transfer / Move a holder's
+    // tokens / Run custom logic" while the narration said the same three things in the same order
+    // -- the one thing this file's rules forbid. The voice keeps the plain English; the screen
+    // carries the extension names instead, which a Solana judge reads instantly and can check
+    // against the mints themselves. Every count below is read from web/slots.json, which
+    // ./scripts/slot-roles.sh prints and docs-consistency.sh already checks.
+    file: "05-why-shut.mp4", for: "why the door is shut", kind: "privacyGap",
+    mints: MINT_COUNT, issuers: ISSUERS, controls: SLOT_ROLES, total: HOLD[4],
+  },
   // The product, then the product working, inside the first thirty seconds. The order this
   // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
   // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
@@ -327,9 +354,15 @@ const scenes = [
     total: HOLD[8],
   },
   {
-    file: "10-what-i-got-wrong.mp4", for: "what I got wrong, and what nobody has used", kind: "proofCheck",
+    file: "10-what-i-got-wrong.mp4", for: "what I got wrong, and what you can run", kind: "proofCheck",
     label: "A review caught a check that did not inspect what it signed.",
     detail: "Rebuilds the transaction and compares it byte for byte",
+    // THE VOICE INVITES AND THE SCREEN DISCLOSES. The film used to end on "nobody outside this
+    // repository has used any of this" — true, and the last thing a judge heard before writing
+    // their note. The disclosure did not move off the film, it moved off the END: it is here, in
+    // type a judge reads, while the narration closes on the command.
+    command: "./scripts/testbed-join.sh",
+    traction: "No pilot, no user, no issuer asked. Nobody outside this repository has run any of it.",
     // The card claims a repair, so it shows the call that is the repair — checked below, because a
     // claim about this repository's own code is the one a judge can check fastest.
     evidence: line(SIGN, /swap-tx -- verify/, "the rebuild-and-compare call") + "\n"

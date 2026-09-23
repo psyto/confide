@@ -10,7 +10,7 @@ speaks the previous order and one figure the chain has since moved past. Re-reco
 founder's voice, so until that happens the published file and this script say different things, and
 the file is what a judge sees.
 
-Target **~170 s**, inside the 2–3 minute allowance, so there is room to slow down rather than cut.
+Target **~175 s**, inside the 2–3 minute allowance, so there is room to slow down rather than cut.
 Pacing budget is words over clip length minus 0.6 s of tail, the convention
 [`segments/LINES.md`](segments/LINES.md) already uses. Anything over 180 wpm is reading without
 pauses.
@@ -95,13 +95,13 @@ never reads the screen.
 | 2 | and nobody has been allowed one | 19 | 43 | 140 | three figures at one size — the mints, the accounts that have asked, the accounts an issuer has approved — over the scan's own total line |
 | 3 | Confide | 17 | 38 | 139 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
-| 5 | why the door is shut | 19 | 42 | 137 | the slot scan, the empty auditor column |
+| 5 | why the door is shut | 21 | 46 | 135 | the slot scan, the empty auditor column |
 | 6 | why now | 21 | 47 | 138 | the order's condition at reading size, with the cap beside it and `sec.gov` on the badge |
 | 7 | so the first trade is an issuance | 14 | 30 | 134 | the sentence, alone — |
 | 8 | the gate, both ways | 12 | 25 | 132 | refused and settled side by side, with `swap-status.sh`'s own two error lines under them — `{'Custom': 24} (expected)` and `none`. The size in the title is read out of the record of the run, not typed |
-| 9 | why not just use an exchange | 20 | 44 | 136 | the reserve as |
-| 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the assumption that failed beside the repair, over the line of `scripts/swap-sign.sh` that performs it |
-| | | **172 s** | **370** | | |
+| 9 | why not just use an exchange | 17 | 37 | 135 |  |
+| 10 | what I got wrong, and what you can run | 25 | 55 | 135 | the assumption that failed beside the repair, the command, and the line of `scripts/swap-sign.sh` that performs it |
+| | | **176 s** | **377** | | |
 
 ## The script
 
@@ -162,11 +162,18 @@ viewer asking whose it is.
 
 ### 5 — why the door is shut
 
-> Not an oversight. Those same mints let the issuer freeze every transfer, move any holder's tokens,
-> and run their own code on each one. The one thing they left off reads everyone's balance, forever,
-> or nothing at all. No setting is right.
+> Token-2022 gives the issuer plenty: freeze a transfer, seize a holder's tokens, run their own
+> code. Its confidential-transfer extension has exactly one auditor key, and that key reads
+> everybody or nobody. No setting shows one balance to one regulator — so all 1,992 left it empty.
 
-*Shows:* the slot scan, the empty auditor column. **The diagnosis, and it answers the question
+*Shows:* the slot scan, the empty auditor column. **Rewritten 2026-09-23, for two reasons.** It
+opened on *"Not an oversight"* — an oversight of what? The thing it referred back to was three
+scenes earlier, and the viewer had been shown the product and a trade since. And *"the one thing
+they left off reads everyone's balance"* parses as though the thing does the reading, which is true
+only if it is set. **It is also the only place the technology can be named.** Checked across the
+whole script on 2026-09-23: *Token-2022* and *confidential transfer* were spoken **nowhere in the
+film** — and the strongest measured fact in this submission is a Token-2022 fact. A Solana judge
+who never hears the name cannot place the work, and the mints scene is where the name is earned. **The diagnosis, and it answers the question
 scene 2 raises** — why would three unrelated issuers all decline the same thing?
 
 ### 6 — why now
@@ -203,11 +210,13 @@ been described all film and never once shown stopping anything.** Both transacti
 
 ### 9 — why not just use an exchange
 
-> You cannot do this on one, and that is written down. The exemption covers trading executed by an
-> automated market maker, and every fill's size goes on a public tape within ten minutes. A
-> condition of the venue, not a property of one pool.
+> And you cannot do this on an exchange. The exemption covers trading executed by an automated
+> market maker, where every fill's size goes on a public tape within ten minutes. That is the
+> venue, not one pool.
 
-*Shows:* the reserve as **R**, the fill as **q**, the state after as **R − q**, on a dashed card
+*Shows:* **the line opened *"You cannot do this on one"*, and "one" was an exchange the sentence
+had not mentioned yet** — the same referent problem as scenes 5 and 10, found while fixing those.
+The reserve as **R**, the fill as **q**, the state after as **R − q**, on a dashed card
 that says it is arithmetic and not an observed pool. **No pool is invented** — a drawn number would
 sit in the same type as the measured ones and a judge could not tell them apart. **The
 regulatory leg leads.** Blockworks measured that over 60% of Backpack's Solana volume goes through
@@ -215,14 +224,24 @@ proprietary AMMs, which quote from external stock data rather than from reserves
 structural leg lands on the minority case
 ([`../docs/cwf-2026/THIRD-PARTY-MEASUREMENTS.md`](../docs/cwf-2026/THIRD-PARTY-MEASUREMENTS.md)).
 
-### 10 — what I got wrong, and what nobody has used
+### 10 — what I got wrong, and what you can run
 
-> I called one of those checks the safety step. A review found it was signing something it never
-> looked at. The fix compares the two, byte for byte, and caught another bug on its first run.
-> Nobody outside this repository has used any of this.
+> One thing I got wrong: a review found the check I called the safety step was signing something it
+> had never compared. It is fixed, and every review is committed. This is all devnet, and you can
+> run it yourself: one command opens a confidential position on an issuer gated exactly as all
+> 1,992 are.
 
-*Shows:* the assumption that failed beside the repair, over the line of `scripts/swap-sign.sh`
-that performs it. **Ending on a defect I did not find myself**, and on the
+*Shows:* the assumption that failed beside the repair, the command, and the line of
+`scripts/swap-sign.sh` that performs it. **The ending changed on 2026-09-23.** It closed on *"nobody
+outside this repository has used any of this"* — true, disclosed, and the last thing a judge heard
+before writing their note. *"One of those checks"* also referred to a set of checks the film had
+never established, and *"compares the two"* to two things it had never named.
+
+**The honesty stays and moves off the end.** The correction is still the first half of the scene,
+and the traction disclosure is now **on the screen**, in the card, where it is read rather than
+left ringing: the voice invites, the screen discloses. The film ends on the one thing a judge can
+do without asking anybody: `./scripts/testbed-join.sh`, on a standing devnet issuer whose approval
+key is published and whose gate is shut exactly as it is on all 1,992. **Ending on a defect I did not find myself**, and on the
 weakest fact, which is the first one a judge checks.
 
 ## The sections below describe the SUPERSEDED cut

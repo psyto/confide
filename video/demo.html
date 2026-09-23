@@ -188,6 +188,11 @@
   .gap-stage{display:grid;grid-template-columns:1fr 270px 1fr;gap:24px;align-items:stretch;margin-top:34px}
   .gap-stage .capability{padding:25px;border:1px solid var(--line);border-radius:16px;background:rgba(12,17,27,.84)}
   .capability .tiny{font-size:14px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}.capability strong{display:block;font-size:28px;color:var(--bold);margin-top:19px;line-height:1.2}
+  .exts{margin-top:17px}
+  .exts .ext{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .exts .ext:last-child{border-bottom:0}
+  .exts code{font:600 18px ui-monospace,Menlo,monospace;color:var(--bold)}
+  .exts span{font:13px ui-monospace,Menlo,monospace;color:var(--dim)}
   .gap-stage .missing-key{border:1px dashed rgba(240,192,90,.68);border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:rgba(82,63,20,.12)}
   .missing-key .keyhole{font-size:56px;color:var(--yel);line-height:1}.missing-key b{font-size:18px;color:var(--yel);margin-top:15px}.missing-key span{font-size:14px;color:var(--dim);margin-top:5px}
   .gate-flow{display:grid;grid-template-columns:1fr 104px 1fr;align-items:center;gap:20px;margin-top:32px}.gate-card{min-height:240px;border:1px solid var(--line);border-radius:18px;padding:27px 29px;background:rgba(12,17,27,.86)}
@@ -206,7 +211,11 @@
   .amm.illustrative{border-style:dashed;border-color:rgba(240,192,90,.34)}
   .amm .disclaim{font-size:15px;color:var(--yel);margin-top:4px;letter-spacing:.02em}
   .reserve .v.sym{font-size:30px;letter-spacing:.02em}
-  .check{margin-top:33px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.check .step{border-left:3px solid var(--red);padding:19px 23px;background:rgba(59,20,30,.26);border-radius:0 12px 12px 0}.check .step.fixed{border-color:var(--grn);background:rgba(18,66,49,.25)}.check .tag{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim)}.check strong{display:block;font-size:25px;line-height:1.25;color:var(--bold);margin-top:7px}.check .fixed strong{color:var(--grn)}
+  .invite{margin-top:20px;border:1px solid rgba(99,207,131,.30);border-radius:14px;padding:15px 24px;background:rgba(18,66,49,.16)}
+  .invite .cmd{font-size:26px}
+  .invite .run{font-size:15.5px;color:var(--dim);margin-top:7px;max-width:1040px}
+  .source .tell{color:var(--yel)}
+  .check{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.check .step{border-left:3px solid var(--red);padding:15px 23px;background:rgba(59,20,30,.26);border-radius:0 12px 12px 0}.check .step.fixed{border-color:var(--grn);background:rgba(18,66,49,.25)}.check .tag{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim)}.check strong{display:block;font-size:23px;line-height:1.25;color:var(--bold);margin-top:6px}.check .fixed strong{color:var(--grn)}
 </style>
 <div id="mark">Confide<span>confidential delivery-versus-payment on Solana</span></div>
 <div id="stage"></div>
@@ -525,10 +534,12 @@ async function privacyGap(s){
   const t0=performance.now();
   const els=put('<div class="visual"><div class="eyebrow fade">The missing permission</div>'
     +'<h2 class="fade">'+s.mints+' tokenized-stock mints have confidential transfers. The privacy setting does not.</h2>'
-    +'<div class="gap-stage"><div class="capability fade"><div class="tiny">issuer controls</div><strong>Freeze a transfer<br>Move a holder’s tokens<br>Run custom logic</strong></div>'
+    +'<div class="gap-stage"><div class="capability fade"><div class="tiny">issuer controls, on every one</div>'
+    +'<div class="exts">'+s.controls.map(c=>'<div class="ext"><code>'+c.ext+'</code><span>'+c.n+'</span></div>').join("")+'</div></div>'
     +'<div class="missing-key fade"><div class="keyhole">⌁</div><b>NO SELECTIVE AUDIT KEY</b><span>all balances, or none</span></div>'
     +'<div class="capability fade"><div class="tiny">holder choice</div><strong>Show a lender enough<br>Show an auditor enough<br>Keep the market blind</strong></div></div>'
-    +'<div class="source fade">same empty auditor slot across '+s.issuers+' independent issuers</div></div>');
+    +'<div class="source fade">Token-2022 confidential transfers · the same empty auditor slot across '
+    +s.issuers+' independent issuers</div></div>');
   await sleep(80); await reveal(els,340); await out(rest(s,t0));
 }
 async function issuerGate(s){
@@ -564,8 +575,11 @@ async function proofCheck(s){
   const els=put('<div class="visual"><div class="eyebrow fade">What changed after review</div><h2 class="fade">'+s.label+'</h2><div class="check">'
     +'<div class="step fade"><div class="tag">the failed assumption</div><strong>Signed a value it had not inspected</strong></div>'
     +'<div class="step fixed fade"><div class="tag">the repair</div><strong>'+s.detail+'</strong></div></div>'
+    +'<div class="invite fade"><div class="cmd"><span class="p">$</span> '+s.command+'</div>'
+    +'<div class="run">opens a confidential position on a devnet issuer gated as all 1,992 are — '
+    +'its approval key published. Nothing needed from us.</div></div>'
     +ev(s.evidence,s.from)
-    +'<div class="source fade">open source testbed · <b>'+s.url+'</b></div></div>');
+    +'<div class="source fade"><span class="tell">'+s.traction+'</span> · <b>'+s.url+'</b></div></div>');
   await sleep(80); await reveal(els,430); await out(rest(s,t0));
 }
 window.__play=async()=>{
