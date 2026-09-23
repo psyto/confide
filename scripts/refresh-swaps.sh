@@ -34,6 +34,15 @@ SWAPS = [
                "BbqCriFfNGgy966GYpecUPfajKp6Hq7oMN4n1H5BqETm",
                "4Bu93JSs17wTrX6xFWzcNPrxq4rdLB7VYpCfFtJiekHR",
                "Bz9HdL72NyFjn2sdvPqrgxfuP7wk4EfMV7ZbocqPFJ9u"]},
+ {"label": "issuance: REFUSED, the issuer had not signed for the account",
+  "signature": "5fqZLgbj3Sijft68iT9U3N8MNEitte4aLrPU6VdcQVytxAb389ZJSJMfHs68tLNYDwaUqSuA11agG7sXmP2HEV5G",
+  "claim": "the same allocation, sent before approval — Custom(24), Account not approved for confidential transfers",
+  "expect_err": True,
+  "accounts": ["9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF", "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"]},
+ {"label": "issuance: the same allocation, after the issuer signed",
+  "signature": "29coq95v2k4G2PBdcf42EtraqppMC4nk7QFsgHvMc9gbeCNPjPTYnM6kpza3EkeoeLuugUuPjaW32HefgNWCgxCf",
+  "claim": "20,000 shares from treasury against $3,500,000 — auditor slot EMPTY throughout",
+  "accounts": ["9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF", "9vzuvH7XKa4GSPtJvB7VNUcXLPrAMGqiZL5QmYTBGVCF"]},
  {"label": "stock for cash, between two strangers",
   "signature": "4t6HxA36KJP1z3BSEfCaDwRT7Em39iiHjXevwidLvLmmZF2emJ5XsSouEmuzGSxYYiawxJ1PzcXdrk8iPXa1RGvH",
   "claim": "four files, two machines, neither party holding the other's key",
@@ -63,7 +72,20 @@ alive = 0
 for s in SWAPS:
     t = rpc("getTransaction", [s["signature"],
                                {"encoding": "jsonParsed", "maxSupportedTransactionVersion": 0}])
-    s["confirmed_when_written"] = bool(t) and t["meta"]["err"] is None
+    # ONE ENTRY IS SUPPOSED TO HAVE FAILED. The issuance pair is the same allocation sent before and
+    # after the issuer signed, and the first one is the finding: it must be on chain AND must carry
+    # Custom(24). Counting it as dead would have hidden the day it started succeeding, which is the
+    # day the gate stopped holding.
+    err = t["meta"]["err"] if t else None
+    if s.pop("expect_err", False):
+        want = json.dumps(err) if err else ""
+        s["confirmed_when_written"] = bool(t) and '"Custom": 24' in want
+        s["err_when_written"] = err
+        if bool(t) and not s["confirmed_when_written"]:
+            print("  %s no longer fails with Custom(24): %s" % (s["signature"][:12], want),
+                  file=sys.stderr)
+    else:
+        s["confirmed_when_written"] = bool(t) and err is None
     alive += 1 if s["confirmed_when_written"] else 0
     time.sleep(0.3)
 

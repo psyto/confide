@@ -69,7 +69,7 @@ second bug of mine. Every review request and its reply are committed:
 
 ## Try it — two minutes, nothing needed from me
 
-**https://psyto.github.io/confide/** decodes the four devnet trades in your own browser. Then open a
+**https://psyto.github.io/confide/** decodes the six devnet trades in your own browser. Then open a
 confidential position yourself, on a devnet issuer gated as all 1,992 are, its approval key
 published: `git clone https://github.com/psyto/confide && ./scripts/testbed-join.sh`
 
