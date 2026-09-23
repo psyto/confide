@@ -52,7 +52,7 @@ allowed.
 
 14
 00:00:28,322 --> 00:00:30,562
-That is what confined is for.
+That is what Confide is for.
 
 15
 00:00:30,562 --> 00:00:32,801

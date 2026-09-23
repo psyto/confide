@@ -12,12 +12,24 @@
 # runs continuously within one.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SRC="${1:-video/Confide_Stocklana_20260922.mp4}"
-TITLES="${TITLES:-video/DELIVERED-20260922.md}"
+SRC="${1:-video/Confide_Stocklana_20260923.mp4}"
+# The 09-23 cut was re-recorded from CWF-PRESENTATION.md, so the script and the voice agree again
+# and the titles come from the script. Earlier cuts need their frozen narration passed in --
+# TITLES=video/DELIVERED-20260922.md for the 09-22 delivery, whose scenes the script has since
+# replaced.
+TITLES="${TITLES:-video/CWF-PRESENTATION.md}"
 # SRT= reads a CORRECTED track instead of the file's own. The embedded one is ASR, and scene titles
 # are placed by matching a scene's opening words: "Salana already shipped" does not match "Solana
 # already shipped", so the chapter for that scene could not be placed at all. The corrected track is
 # what gets uploaded, so it is what the chapters should be read from.
+# And when it is not given, the corrected track for THIS cut is used if it exists. Running the
+# command bare failed on 2026-09-23 with "could not place scene 'Confide'", because the embedded
+# ASR hears the project's own name as "confined" -- a footgun for anyone who reads the usage line
+# and not the paragraph above it.
+if [ -z "${SRT:-}" ]; then
+  CAND="video/captions-$(basename "$SRC" | sed -n 's/.*_\([0-9]\{8\}\)\.mp4/\1/p').srt"
+  [ -f "$CAND" ] && SRT="$CAND"
+fi
 if [ -n "${SRT:-}" ]; then cat "$SRT"; else
   "${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt -
 fi \

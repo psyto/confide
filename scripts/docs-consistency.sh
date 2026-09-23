@@ -178,12 +178,14 @@ done
 # And the chapters against the file they describe. The published Stocklana cut carried chapter
 # times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
 # from the recorder's plan. This reads them off the delivery.
-if [ -f video/Confide_Stocklana_20260922.mp4 ]; then
-  # TITLES comes from the FROZEN delivered narration, not from CWF-PRESENTATION.md. That file was
-  # restructured on 2026-09-22 and the cut was not re-recorded, so its scene titles no longer match
-  # the voice on the delivery — and this check is about what a judge opens, not about the next cut.
-  SRT=video/captions-20260922.srt TITLES=video/DELIVERED-20260922.md \
-  ./scripts/video-chapters.sh video/Confide_Stocklana_20260922.mp4 2>/dev/null \
+if [ -f video/Confide_Stocklana_20260923.mp4 ]; then
+  # TITLES used to come from the FROZEN delivered narration: CWF-PRESENTATION.md was restructured
+  # on 2026-09-22 while the cut stayed as recorded, so the script's scene titles no longer matched
+  # the voice on the delivery. The 09-23 cut WAS re-recorded from that script, so the two agree
+  # again and the check reads the script — which is the arrangement this was always supposed to be.
+  # SRT is the corrected track, because it is the one that gets uploaded.
+  SRT=video/captions-20260923.srt TITLES=video/CWF-PRESENTATION.md \
+  ./scripts/video-chapters.sh video/Confide_Stocklana_20260923.mp4 2>/dev/null \
   | diff -q - <(python3 -c "
 import re
 s = open('_submission/youtube.md', encoding='utf-8').read()

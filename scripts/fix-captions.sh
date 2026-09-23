@@ -31,6 +31,12 @@ fixes = [
     # the whole minute, so this is the one that matters most and the one nobody would query.
     (r'\\bCamino\\b', 'Kamino'),
     (r'\\bCaminos\\b', 'Kamino'),
+    # 2026-09-23: the project's own name, in all three cuts of the day. The transcriber hears
+    # \"That is what Confide is for\" as \"that is what confined is for\" -- and it was the one
+    # thing spoken-check.sh could flag and not settle, because a machine cannot tell a mishearing
+    # from a mispronunciation. Scoped to the phrase: \"confined\" is an ordinary English word and
+    # a blanket rule would rewrite it wherever a later script happens to use it.
+    (r'(?i)\\bwhat\\s+confined\\s+is\\s+for\\b', 'what Confide is for'),
     (r'zero\\s+knowledge', 'zero-knowledge'),
     # Was lowercase-only, and in the 09-22 delivery the phrase opens a sentence, so it missed.
     (r'(?i)confidential(\\s+)transfer(\\s+)switched', r'Confidential\\1transfers\\2switched'),
