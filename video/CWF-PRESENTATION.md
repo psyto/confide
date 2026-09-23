@@ -95,13 +95,13 @@ never reads the screen.
 | 2 | and nobody has been allowed one | 19 | 43 | 140 | three figures at one size — the mints, the accounts that have asked, the accounts an issuer has approved — over the scan's own total line |
 | 3 | Confide | 17 | 38 | 139 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
-| 5 | why the door is shut | 21 | 46 | 135 | the slot scan, the empty auditor column |
+| 5 | why the door is shut | 20 | 45 | 139 | the slot scan, the empty auditor column |
 | 6 | why now | 21 | 47 | 138 | the order's condition at reading size, with the cap beside it and `sec.gov` on the badge |
 | 7 | so the first trade is an issuance | 14 | 30 | 134 | the sentence, alone — |
 | 8 | the gate, both ways | 12 | 25 | 132 | refused and settled side by side, with `swap-status.sh`'s own two error lines under them — `{'Custom': 24} (expected)` and `none`. The size in the title is read out of the record of the run, not typed |
 | 9 | why not just use an exchange | 17 | 37 | 135 |  |
 | 10 | what I got wrong, and what you can run | 25 | 55 | 135 | the assumption that failed beside the repair, the command, and the line of `scripts/swap-sign.sh` that performs it |
-| | | **171 s** | **377** | | |
+| | | **170 s** | **376** | | |
 
 ## The script
 
@@ -165,13 +165,19 @@ viewer asking whose it is.
 
 > Token-2022 gives the issuer plenty: freeze a transfer, seize a holder's tokens, run their own
 > code. Its confidential-transfer extension has exactly one auditor key, and that key reads
-> everybody or nobody. No setting shows one balance to one regulator — so all 1,992 left it empty.
+> everybody or nobody. No setting shows one balance to one regulator — so all left it empty.
 
 *Shows:* the slot scan, the empty auditor column. **Rewritten 2026-09-23, for two reasons.** It
 opened on *"Not an oversight"* — an oversight of what? The thing it referred back to was three
 scenes earlier, and the viewer had been shown the product and a trade since. And *"the one thing
 they left off reads everyone's balance"* parses as though the thing does the reading, which is true
-only if it is set. **It is also the only place the technology can be named.** Checked across the
+only if it is set. **The founder dropped "1,992" from the last clause when recording on 2026-09-23**, and the script
+follows the delivered audio rather than the other way round — but note what it costs: *"so all left
+it empty"* leaves **all** with nothing to point at in the voice. The number is still on the card
+and in the headline, so a watching judge has it; a listening one does not. *"So every issuer left
+it empty"* would carry the antecedent without a number to read aloud.
+
+**This is also the only place the technology can be named.** Checked across the
 whole script on 2026-09-23: *Token-2022* and *confidential transfer* were spoken **nowhere in the
 film** — and the strongest measured fact in this submission is a Token-2022 fact. A Solana judge
 who never hears the name cannot place the work, and the mints scene is where the name is earned. **The diagnosis, and it answers the question

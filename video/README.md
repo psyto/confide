@@ -228,6 +228,29 @@ tokenized stock, *"bite for bite"* for byte), so neither test is exact-match:
   moves a word; it does not delete it from a 370-word film. This is what caught `stablecoins`.
 - **per-scene sequence similarity**, printed for every scene and failed under 0.80.
 
+**And it says when it cannot see.** The transcriber drops whole stretches — sixteen seconds of the
+09-22 cut, and the entire scene 5 of 09-23 — with the voice present the whole time. The first
+version read that as a missing scene: it scored scene 5 at **10.8%**, listed nine of its words as
+never spoken, and would have sent the founder to re-record twenty seconds that were already right.
+So every transcript gap over six seconds is **measured in the audio**, and a scene inside a gap
+that carries speech is reported as unreadable rather than as wrong:
+
+```
+  the transcript stops for a while in 1 place(s):
+      57.3s to   76.9s   the voice IS here, -21.5 dB mean — the transcriber lost it
+  ? 5. why the door is shut    not in the transcript
+```
+
+Broken on purpose by muting that exact window in a copy of the file, which flips the line to
+`SILENT — nothing was said here` and the scene back to a failure. A gap that is genuinely quiet is
+still a missing line.
+
+**What it cannot catch:** one word dropped from inside a scene, when that word appears elsewhere in
+the film. `1,992` was cut from scene 5's last clause on 09-23 and the per-scene ratio only fell to
+0.97, well inside tolerance, because the number is spoken in scenes 2 and 10. It is a coarse
+instrument on purpose — tightening it to per-scene word presence would fail constantly on ASR
+noise.
+
 Broken both ways before being trusted: it fails the delivered file on exactly scenes 3 and 4, and
 passes a transcript built from the script itself with the real track's mishearings left in.
 
