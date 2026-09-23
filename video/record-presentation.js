@@ -197,36 +197,51 @@ const scenes = [
     total: HOLD[0],
   },
   {
-    // The title card, and it comes BEFORE the diagram. The first cut had it third: "nobody has built
-    // the block" landed on a viewer who had just watched one settle, and the product was not named
-    // until after its own picture. The gap is opened here and filled in the next scene.
+    // ISSUANCE FIRST, THEN EVERYTHING AFTER IT. The hero used to say "a stock-to-stablecoin swap",
+    // which names the mechanism and not the first use — and the film then demonstrated that swap
+    // before establishing that nobody can open an account to do it with. A sound-off viewer should
+    // learn the order here.
     file: "02-the-block.mp4", for: "the block", kind: "hero",
-    // THE PLAIN SENTENCE, PUT BACK. The published cut opened with "Confide settles tokenized stock
-    // against a stablecoin in a single transaction, and neither side publishes what moved" and the
-    // restructure dropped it without replacing it -- so for fifty seconds the only statement of what
-    // this IS was the word "block", which is trade jargon, and a diagram captioned "cash".
-    //
-    // The narration says the gap; the screen says what fills it. Neither reads the other.
     sub: "confidential delivery-versus-payment for tokenized stocks on Solana",
-    lede: "A stock-to-stablecoin swap in <b>one transaction</b>,<br>with <b>neither side publishing what moved</b>.",
+    lede: "<b>Issuance first</b> — the only trade the gate lets through —<br>then <b>every trade "
+        + "after it</b>, on the same two instructions.",
     total: HOLD[1],
   },
+  { file: "03-nobody-can-open.mp4", for: "nobody can open the door", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[2] },
   {
-    // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
-    // decision -- and it is the only picture that carries the product without a word of explanation.
-    file: "03-the-trade.mp4", for: "the trade", kind: "dvp",
-    // SPOKEN AND SHOWN, which this file's rules otherwise forbid. It is the sentence that says what
-    // Confide does, and a judge skimming with the sound off would otherwise take away the outcome
-    // and never the product. One exception in 177 seconds.
-    say: true,
-    label: "Confide <b>builds the proofs the chain will not assemble</b> for you, and lets "
-         + "<b>each side check the other before signing</b>.",
-    seller: DVP.seller, buyer: DVP.buyer,
-    delivered: DVP.delivered_units, paid: DVP.paid_units,
-    total: HOLD[2],
+    file: "04-so-i-counted.mp4", for: "so I counted", kind: "evidence",
+    label: "So I stopped reading the settings and counted the accounts.",
+    // Not "just now", and the badge says so. Every other pane in this cut is a command run
+    // moments before the recording; this scan reads every token account of every mint and takes
+    // minutes, so it is the stored measurement and the screen carries its date.
+    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
+    body: slice(usage, /AAPLx/, /token accounts,/),
+    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
+    total: HOLD[3],
   },
   {
-    file: "04-this-account.mp4", for: "this account", kind: "evidence",
+    // THE TURN, and it had no scene. Nine scenes described a shut gate and then showed a trade that
+    // needs it open; a judge who knows Token-2022 asks how, and the film had no answer.
+    file: "05-the-turn.mp4", for: "so the first trade is an issuance", kind: "hero",
+    sub: "the party who can open the account is one of the two",
+    lede: "The first trade through that gate is not a swap between two holders.<br>"
+        + "<b>It is an issuance.</b>",
+    total: HOLD[4],
+  },
+  {
+    // THE GATE, CLOSING AND THEN OPENING. The film described the gate for nine scenes and never
+    // showed it stop anything. This is the same allocation twice: refused by the live program, then
+    // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
+    // so the refusal on screen is the one anybody can look up rather than a drawing of one.
+    file: "06-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
+    label: "The same allocation, before and after the issuer signed.",
+    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
+        + slice(issued, /issuance: the same allocation/, /compute units/),
+    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
+    total: HOLD[5],
+  },
+  {
+    file: "07-this-account.mp4", for: "this account", kind: "evidence",
     label: "A real account on Solana, right now.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
@@ -236,37 +251,27 @@ const scenes = [
       emphasis: ["173000 units"],
       label: "The same account. This is what it holds.",
     },
-    total: HOLD[3],
-  },
-  { file: "05-already-shipped.mp4", for: "already solved, already switched off", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
-  {
-    file: "06-so-i-counted.mp4", for: "so I counted", kind: "evidence",
-    label: "So I stopped reading the settings and counted the accounts.",
-    // Not "just now", and the badge says so. Every other pane in this cut is a command run
-    // moments before the recording; this scan reads every token account of every mint and takes
-    // minutes, so it is the stored measurement and the screen carries its date.
-    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
-    body: slice(usage, /AAPLx/, /token accounts,/),
-    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
-    total: HOLD[5],
-  },
-  {
-    // THE GATE, CLOSING AND THEN OPENING. The film described the gate for nine scenes and never
-    // showed it stop anything. This is the same allocation twice: refused by the live program, then
-    // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
-    // so the refusal on screen is the one anybody can look up rather than a drawing of one.
-    file: "07-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
-    label: "The same allocation, before and after the issuer signed.",
-    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
-        + slice(issued, /issuance: the same allocation/, /compute units/),
-    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
     total: HOLD[6],
+  },
+  {
+    // RESTORED. Dropped as collateral damage in the 2026-09-22 restructure rather than by any
+    // decision -- and it is the only picture that carries the product without a word of explanation.
+    file: "08-every-trade-after.mp4", for: "and every trade after it", kind: "dvp",
+    // SPOKEN AND SHOWN, which this file's rules otherwise forbid. It is the sentence that says what
+    // Confide does, and a judge skimming with the sound off would otherwise take away the outcome
+    // and never the product. One exception in 177 seconds.
+    say: true,
+    label: "Confide <b>builds the proofs the chain will not assemble</b> for you, and lets "
+         + "<b>each side check the other before signing</b>.",
+    seller: DVP.seller, buyer: DVP.buyer,
+    delivered: DVP.delivered_units, paid: DVP.paid_units,
+    total: HOLD[7],
   },
   {
     // Why not an exchange — the question a Solana judge asks first, and the film had no answer.
     // Three steps and no numbers: inventing a pool to illustrate it would be the one thing this
     // repository does not do.
-    file: "08-why-not-an-exchange.mp4", for: "why not just use an exchange", kind: "missing",
+    file: "09-why-not-an-exchange.mp4", for: "why not just use an exchange", kind: "missing",
     label: "So why not just trade it on an exchange?",
     items: [
       "A pool's reserves are <b>public state</b>.",
@@ -277,13 +282,6 @@ const scenes = [
     // step was 6 and four items then ran 28 s against the script's 24 — the picture was deciding the
     // length. The script decides it: 4 x 5 + 3.5 lead lands inside the hold pace.py derived.
     lead: 3.5, step: 5,
-    total: HOLD[7],
-  },
-  {
-    file: "09-why-it-is-hard.mp4", for: "why it is hard", kind: "evidence",
-    label: "The proofs do not fit in one transaction.",
-    body: slice(feeSwap, /stock for cash, on a mint/, /the 4 accounts/),
-    emphasis: ["confidentialTransferWithFee"],
     total: HOLD[8],
   },
   {
@@ -296,6 +294,7 @@ const scenes = [
     note: "The gate is shut, as it is on all " + MINT_COUNT + ". The key that opens it is published.",
     total: HOLD[9],
   },
+
 ].map((s, i) => ({ ...s, line: script[i] }));
 
 // THE BINDING between narration and footage. Names, not positions.

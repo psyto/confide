@@ -14,59 +14,59 @@
   "line": "Block trades have always settled away from the tape. The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has."
  },
  {
-  "file": "03-the-trade.mp4",
+  "file": "03-nobody-can-open.mp4",
   "start": 35,
-  "end": 56,
-  "seconds": 21,
-  "line": "So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side check the other before signing — with nobody in the middle. Fifty thousand tokenized shares against eight point seven five million in stablecoin, in a single transaction."
+  "end": 52,
+  "seconds": 17,
+  "line": "Every tokenized stock here already ships confidential balances — all 1,992, from three issuers with nothing to do with each other. And every one of them is gated. An account cannot exist until the issuer signs for it."
  },
  {
-  "file": "04-this-account.mp4",
-  "start": 56,
-  "end": 72,
-  "seconds": 16,
-  "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
- },
- {
-  "file": "05-already-shipped.mp4",
-  "start": 72,
-  "end": 91,
-  "seconds": 19,
-  "line": "Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with nothing to do with each other, confidential transfers switched on. Every one leaves the auditor key empty, and every one needs the issuer's signature to open an account."
- },
- {
-  "file": "06-so-i-counted.mp4",
-  "start": 91,
-  "end": 105,
+  "file": "04-so-i-counted.mp4",
+  "start": 52,
+  "end": 66,
   "seconds": 14,
   "line": "So I stopped reading the settings and counted. Nearly half a million accounts, across Apple, NVIDIA, SpaceX and Anthropic. Two have configured one. None is approved."
  },
  {
-  "file": "07-the-gate.mp4",
-  "start": 105,
-  "end": 120,
+  "file": "05-the-turn.mp4",
+  "start": 66,
+  "end": 81,
+  "seconds": 15,
+  "line": "Which means the first trade through that gate is not a swap between two holders. It is an issuance, because the party who can open the account is one of the two."
+ },
+ {
+  "file": "06-the-gate.mp4",
+  "start": 81,
+  "end": 96,
   "seconds": 15,
   "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it — account not approved for confidential transfers. One instruction later, the same transaction settles."
  },
  {
-  "file": "08-why-not-an-exchange.mp4",
-  "start": 120,
-  "end": 139,
-  "seconds": 19,
-  "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM."
+  "file": "07-this-account.mp4",
+  "start": 96,
+  "end": 112,
+  "seconds": 16,
+  "line": "This is a real account on Solana, right now. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares."
  },
  {
-  "file": "09-why-it-is-hard.mp4",
-  "start": 139,
-  "end": 156.1,
-  "seconds": 17.1,
-  "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first."
+  "file": "08-every-trade-after.mp4",
+  "start": 112,
+  "end": 130,
+  "seconds": 18,
+  "line": "The allocation and any trade after it are the same two instructions. Confide builds the proofs the chain will not assemble, and hands each side the other's amount to decrypt before signing. Four files, two machines, nobody in the middle."
+ },
+ {
+  "file": "09-why-not-an-exchange.mp4",
+  "start": 130,
+  "end": 151,
+  "seconds": 21,
+  "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size, whatever the token can do. The exemption requires an AMM."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 156.1,
-  "end": 178.1,
-  "seconds": 22,
-  "line": "I called that last step the safety step. A review found it was signing something it had never looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run. Nobody outside this repository has used any of this."
+  "start": 151,
+  "end": 171,
+  "seconds": 20,
+  "line": "I called that last step the safety step. A review found it was signing something it never looked at. The fix compares the two, byte for byte, and caught another bug on its first run. Nobody outside this repository has used any of this."
  }
 ]

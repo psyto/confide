@@ -92,16 +92,16 @@ never reads the screen.
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
 | 1 | the tape | 21 | 47 | 138 | the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on the badge |
-| 2 | the block | 12 + 2 | 26 | 137 | the name, and under it what this actually is — *tokenized stock against a stablecoin, one transaction, neither amount published.* |
-| 3 | the trade | 21 | 46 | 135 | the sentence that says what Confide does — |
-| 4 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
-| 5 | already solved, already switched off | 19 | 42 | 137 | the slot scan, the empty auditor column |
-| 6 | so I counted | 12 + 2 | 26 | 137 | the scan running to its total, then the two columns |
-| 7 | the gate, both ways | 15 | 32 | 133 | the refused transaction and its error, then the same signature settling |
-| 8 | why not just use an exchange | 19 | 41 | 134 | reserves moving by the traded amount |
-| 9 | why it is hard | 17 | 37 | 135 | the four commands, then the settled transaction and four balances reading `0` |
-| 10 | what I got wrong, and what nobody has used | 22 | 48 | 135 | the check refusing, then passing |
-| | | **178 s** | **368** | | |
+| 2 | the block | 12 + 2 | 26 | 137 | the name, and under it |
+| 3 | nobody can open the door | 17 | 38 | 139 | the slot scan, the empty auditor column, `autoApproveNewAccounts false` on every row |
+| 4 | so I counted | 12 + 2 | 26 | 137 | the scan running to its total, then the two columns |
+| 5 | so the first trade is an issuance | 15 | 32 | 133 | the sentence, alone |
+| 6 | the gate, both ways | 15 | 32 | 133 | the refused transaction and its error, then the same allocation settling |
+| 7 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
+| 8 | and every trade after it | 18 | 40 | 138 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
+| 9 | why not just use an exchange | 21 | 46 | 135 | reserves moving by the traded amount |
+| 10 | what I got wrong, and what nobody has used | 20 | 44 | 136 | the check refusing, then passing |
+| | | **171 s** | **354** | | |
 
 ## The script
 
@@ -112,12 +112,8 @@ never reads the screen.
 > The size. The direction. Within ten minutes. Nobody attacked anything. That is the deal.
 
 *Shows:* the order's condition at reading size, wrapped, with the cap beside it and `sec.gov` on
-the badge. **Relief, then the catch — and the numbers stay on the card.** The first version read
-out the conditions in order, which is accurate and is not a story: a viewer who does not already
-know what a TSV is has nothing to hold on to. The voice carries the turn and the screen carries
-0.25% and ten minutes, so neither has to do both. **Two scenes became one.** The first cut spent thirty seconds on regulation text before
-anything moved, in a monospace pane that ran off the right edge mid-word — a document rendered as
-if it were terminal output. The rule earns one scene, not two.
+the badge. **Relief, then the catch — and the numbers stay on the card.** The voice carries the
+turn; the screen carries 0.25% and ten minutes, so neither has to do both.
 
 ### 2 — the block · +2 s silence
 
@@ -125,54 +121,22 @@ if it were terminal output. The rule earns one scene, not two.
 >
 > The SEC has now built the tape for tokenized equity. Nobody has built the block. Confide has.
 
-*Shows:* the name, and under it what this actually is — *tokenized stock against a stablecoin, one
-transaction, neither amount published.* **That sentence was in the published cut and the
-restructure dropped it**, so for the first fifty seconds the only statement of what Confide does
-was the word *block*, which is trade jargon, over a diagram captioned *cash*. The narration says
-the gap and the screen says what fills it, which is the rule this file already has.
-**This is also where the product is named, so it comes before the picture of it** — and the voice
-now says the name here rather than leaving it to the screen. *"Nobody has built the block. Confide
-has."* is two words added to make the answer land while the name is the largest thing on the frame;
-a viewer listening without watching used to hear the gap stated and the name withheld for another
-fourteen seconds. The first cut put the diagram here and the title card after — so
-*"nobody has built the block"* landed on a viewer who had just watched one settle, and the name
-arrived third. The gap has to be open before anything fills it.
+*Shows:* the name, and under it **which of the two halves comes first** — issuance, because it is
+the only trade the gate lets through, then every trade after it on the same two instructions. **The
+hero used to say "a stock-to-stablecoin swap", which names the mechanism and not the first use.** A
+viewer with the sound off should learn from this frame that one comes before the other, and why.
 
-### 3 — the trade
+### 3 — nobody can open the door
 
-> So here is one. Confide builds the proofs the chain will not assemble for you, and lets each side
-> check the other before signing — with nobody in the middle. Fifty thousand tokenized shares
-> against eight point seven five million in stablecoin, in a single transaction.
+> Every tokenized stock here already ships confidential balances — all 1,992, from three issuers
+> with nothing to do with each other. And every one of them is gated. An account cannot exist until
+> the issuer signs for it.
 
-*Shows:* the sentence that says what Confide does — **spoken and on screen, which the rule above
-otherwise forbids** — over the delivery-versus-payment diagram, both sides moving, sealed, and the
-four zeroes the chain shows everyone else. One exception in 177 seconds, because a judge skimming
-with the sound off would otherwise take away the outcome and never the product. **This is where the film says what Confide does, and it used to say it
-at scene 9** — two minutes in, by which point a viewer knew the outcome and not the product. The
-answer to *"nobody has built the block"* has to be the picture and the product together.
-**The answer to the sentence before it**, and the one picture that
-carries the product without a word of explanation. It was dropped in the 09-22 restructure as
-collateral damage rather than by any decision.
+*Shows:* the slot scan, the empty auditor column, `autoApproveNewAccounts false` on every row.
+**The problem, before anything is offered as an answer to it.** This used to be scene 5, after the
+product had already been demonstrated — which put the demo in front of the reason for it.
 
-### 4 — this account · +5 s silence
-
-> This is a real account on Solana, right now. The chain says it holds nothing.
->
-> It holds a hundred and seventy-three thousand shares.
-
-*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
-strongest ten seconds available, and still is — unchanged from the published cut, which earned it.
-
-### 5 — already solved, already switched off
-
-> Solana already shipped what that needs. Nearly two thousand tokenized stocks, three issuers with
-> nothing to do with each other, confidential transfers switched on. Every one leaves the auditor
-> key empty, and every one needs the issuer's signature to open an account.
-
-*Shows:* the slot scan, the empty auditor column. **Two issuers arriving independently at the same
-dead end is not caution, it is the substrate** — the line the published cut found, kept.
-
-### 6 — so I counted · +2 s silence
+### 4 — so I counted · +2 s silence
 
 > So I stopped reading the settings and counted. Nearly half a million accounts, across Apple,
 > NVIDIA, SpaceX and Anthropic.
@@ -180,47 +144,65 @@ dead end is not caution, it is the substrate** — the line the published cut fo
 > Two have configured one. None is approved.
 
 *Shows:* the scan running to its total, then the two columns. **This line said "Not one" and was
-true when the cut was recorded — the count moved seventy-three minutes later.** It is not a figure
-drifting, it is the finding inverting, and the submission invites a judge to run the same command.
-The replacement is stronger anyway: somebody tried, and the gate held.
+true when the cut was recorded** — the count moved seventy-three minutes later. Not a figure
+drifting: the finding inverting. The replacement is stronger — somebody tried, and the gate held.
 
-### 7 — the gate, both ways
+### 5 — so the first trade is an issuance
+
+> Which means the first trade through that gate is not a swap between two holders. It is an
+> issuance, because the party who can open the account is one of the two.
+
+*Shows:* the sentence, alone. **The turn the film now hangs on, and it was missing.** Nine scenes
+described a shut gate and then demonstrated a trade that needs it open; a judge who knows
+Token-2022 asks how, and had no answer until this scene existed.
+
+### 6 — the gate, both ways
 
 > An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the
 > chain refuses it — account not approved for confidential transfers. One instruction later, the
 > same transaction settles.
 
-*Shows:* the refused transaction and its error, then the same signature settling. **This replaces
-the stablecoin scene**, which was the weakest thing in the film per second and was cut from the
-written submission for the same reason. The gate is the whole argument and it had never been shown
-closing — only described. Both transactions are on chain
-([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
+*Shows:* the refused transaction and its error, then the same allocation settling. **The gate had
+been described for nine scenes and never once shown stopping anything.** Both transactions are on
+chain ([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
 
-### 8 — why not just use an exchange
+### 7 — this account · +5 s silence
+
+> This is a real account on Solana, right now. The chain says it holds nothing.
+>
+> It holds a hundred and seventy-three thousand shares.
+
+*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** The
+strongest ten seconds available, unchanged, and it lands better here: it is what the allocation the
+viewer has just watched produces.
+
+### 8 — and every trade after it
+
+> The allocation and any trade after it are the same two instructions. Confide builds the proofs
+> the chain will not assemble, and hands each side the other's amount to decrypt before signing.
+> Four files, two machines, nobody in the middle.
+
+*Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
+chain shows everyone else. **Issuance is not a second product — it is this, with the issuer as one
+party**, and the film says so here rather than leaving a judge to work it out.
+
+### 9 — why not just use an exchange
 
 > You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade
-> moves them by exactly the amount traded — so anything settled against one publishes the size. The
-> exemption requires an AMM.
+> moves them by exactly the amount traded — so anything settled against one publishes the size,
+> whatever the token can do. The exemption requires an AMM.
 
 *Shows:* reserves moving by the traded amount. **The structural argument, and the order agrees with
-it** — the scene used to make this case alone and now has the rule standing behind it.
-
-### 9 — why it is hard
-
-> The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is
-> too large to send at all — it goes on chain in a record account first.
-
-*Shows:* the four commands, then the settled transaction and four balances reading `0`. **The
-product arrives ninety seconds in, as the answer to a question the viewer already has.**
+it.**
 
 ### 10 — what I got wrong, and what nobody has used
 
-> I called that last step the safety step. A review found it was signing something it had never
-> looked at. The fix compares the two, byte for byte — and caught a bug of mine on its first run.
-> Nobody outside this repository has used any of this.
+> I called that last step the safety step. A review found it was signing something it never looked
+> at. The fix compares the two, byte for byte, and caught another bug on its first run. Nobody
+> outside this repository has used any of this.
 
-*Shows:* the check refusing, then passing. **Ending on a defect I did not find myself.** Traction is
-the weakest fact and the first a judge checks, so it costs five seconds and buys the rest.
+*Shows:* the check refusing, then passing. **Ending on a defect I did not find myself**, and on the
+weakest fact, which is the first one a judge checks.
 
 ## The sections below describe the SUPERSEDED cut
 

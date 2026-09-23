@@ -245,6 +245,34 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
 ## 未決（founder の手でしか動かない）
 
+0p. **動画を Confidential Issuance で組み直した（2026-09-23）。提出文と同じ順になった。**
+
+   founder の指摘: *動画がほぼ DvP のままで、発行は1画面でさりげなく触れているだけ。*
+   そのとおりだった。**動画と `full.md` が別の話を冒頭でしていた** — 本文は
+   「門が閉じている → 通れる唯一の取引が発行 → 開いた後は二次の DvP」なのに、動画は
+   9場面が DvP で発行は7場面目に1つ。審査員が動画を見てから本文を読むと冒頭が食い違う。
+
+   | | 旧 | 新 |
+   |---|---|---|
+   | 2 hero | *"a stock-to-stablecoin swap"* — **仕組みの名前で、最初の用途ではない** | **Issuance first** — 門が通す唯一の取引 — **then every trade after it**, on the same two instructions |
+   | 3 | （5場面目にあった）門の走査 | **nobody can open the door** — 答えを出す前に問題を置く |
+   | 4 | so I counted | 同（"Not one" → **two configured, none approved**） |
+   | **5** | — | **so the first trade is an issuance**（**この turn が無かった**） |
+   | 6 | — | the gate, both ways（拒否 → 決済） |
+   | 7 | 4場面目にあった | this account（**間合いは不変**。配分の結果として、ここの方が効く） |
+   | 8 | 3場面目の DvP | **and every trade after it** — *発行は second product ではなく、発行体を当事者にした同じもの* |
+
+   **171秒**（2〜3分枠内）。無音マスターはレンダリング済み、10クリップに分割ずみ。
+
+   **組み直しの最中に、名前による束縛が2回捕まえた** — 場面3の名前違いと、配列の余分なカンマで
+   入った空要素。**添字で対応させていたら、どちらも黙って違う映像に声が乗っていた。**
+
+   | やること | |
+   |---|---|
+   | **音声を作って再収録** | founder の手。台本・尺・無音マスターは確定 |
+   | **差し替えて投稿** | `healthcheck.sh` が新旧を見る |
+   | **09-25 13:00 PDT** | Stocklana の凍結 |
+
 0o. **⚠ 公開中の Stocklana 動画が、いま偽のことを声に出して言っている。再収録が要る。**
 
    場面6のナレーションは **"Not one."** — 承認ずみが一つも無い、ではなく**設定ずみが一つも無い**の意。
