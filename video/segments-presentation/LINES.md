@@ -63,7 +63,7 @@ The allocation and any trade after it are the same two instructions. Confide bui
 
 ## `09-why-not-an-exchange.mp4` — why not just use an exchange
 
-You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size, whatever the token can do. The exemption requires an AMM.
+You cannot do this on one, and that is written down. The exemption covers trading executed by an automated market maker, and every fill's size goes on a public tape within ten minutes. Not a property of any one pool — a condition of the venue.
 
 ## `10-what-i-got-wrong.mp4` — what I got wrong, and what nobody has used
 

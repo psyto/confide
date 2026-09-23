@@ -99,7 +99,7 @@ never reads the screen.
 | 6 | the gate, both ways | 15 | 32 | 133 | the refused transaction and its error, then the same allocation settling |
 | 7 | this account | 11 + 5 | 23 | 133 | `spl-token balance` returning `0`, then the confidential balance |
 | 8 | and every trade after it | 18 | 40 | 138 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
-| 9 | why not just use an exchange | 21 | 46 | 135 | reserves moving by the traded amount |
+| 9 | why not just use an exchange | 21 | 46 | 135 | the order's publication condition beside a reserve moving by the traded amount |
 | 10 | what I got wrong, and what nobody has used | 20 | 44 | 136 | the check refusing, then passing |
 | | | **171 s** | **354** | | |
 
@@ -188,12 +188,17 @@ party**, and the film says so here rather than leaving a judge to work it out.
 
 ### 9 — why not just use an exchange
 
-> You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade
-> moves them by exactly the amount traded — so anything settled against one publishes the size,
-> whatever the token can do. The exemption requires an AMM.
+> You cannot do this on one, and that is written down. The exemption covers trading executed by an
+> automated market maker, and every fill's size goes on a public tape within ten minutes. Not a
+> property of any one pool — a condition of the venue.
 
-*Shows:* reserves moving by the traded amount. **The structural argument, and the order agrees with
-it.**
+*Shows:* the order's publication condition beside a reserve moving by the traded amount.
+**The two legs, in the order that survives.** This scene used to lead with the structural one — a
+pool's reserves reveal the size — and add the rule as an afterthought. Blockworks measured that
+**over 60% of Backpack's Solana volume goes through proprietary AMMs**, which quote from external
+stock data rather than from reserves, so the structural leg lands on the minority case. The
+regulatory leg does not care how the AMM prices: on a sanctioned venue every fill's size is
+published, whatever quotes it.
 
 ### 10 — what I got wrong, and what nobody has used
 
