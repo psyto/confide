@@ -13,10 +13,10 @@ time it did worse than mishear: it **dropped the whole of scene 5**, 57.3s to 78
 present at -21.4 dB throughout. `fix-captions.sh` corrects the words and `caption-gap.py` writes the
 missing scene back from the script.
 
-## Title — 91 / 100 characters
+## Title — 86 / 100 characters
 
 ```
-Confide — the SEC opened tokenized stock. Nobody can trade size on a tape that publishes it
+Confide — swap tokenized stocks for stablecoins on Solana, without publishing the size
 ```
 
 ## Description — 4999 / 5000 characters
@@ -107,10 +107,17 @@ Original work except where declared: aperture-core and aperture-receipts (Apache
   measurement, and said nothing about the gate refusing on chain — which is the newest work in the
   submission and the only place a viewer sees the thing the film is about actually stop something.
 
-- **The first title was the punchline without the setup.** It read *"50,000 shares for $8.75m in
-  one transaction, and the chain shows zero"* — zero *what*, to somebody who has not seen the
-  video? The 09-20 title fixed that and then became a claim about the trade rather than about why
-  the trade has to exist; this one leads with the regulation, as the film does.
+- **The title has failed twice in the same way, and the second time was mine.** The first read
+  *"50,000 shares for $8.75m in one transaction, and the chain shows zero"* — zero *what*, to
+  somebody who has not seen the video? The 09-23 draft read *"the SEC opened tokenized stock.
+  Nobody can trade size on a tape that publishes it"*, which leads with the argument and asks a
+  stranger to already hold two pieces of desk language: **trade size** as a verb phrase, and **the
+  tape**. The description has room to set those up and a title does not. It also never said what
+  Confide does.
+
+  This one names the product, both assets, the chain and the claim, in words that need nothing
+  before them. **A title is read by somebody scanning a list, not by somebody who has watched the
+  film.**
 
 - The description says **zero** about traction because there is none, and says so plainly.
 - It names what cannot be done as plainly as what can: the real gate, matching, price, and pools.

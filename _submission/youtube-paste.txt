@@ -1,6 +1,6 @@
 TITLE
 =====
-Confide — the SEC opened tokenized stock. Nobody can trade size on a tape that publishes it
+Confide — swap tokenized stocks for stablecoins on Solana, without publishing the size
 
 
 DESCRIPTION
