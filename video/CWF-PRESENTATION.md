@@ -91,16 +91,16 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | this account | 10 + 5 | 22 | 140 | `spl-token balance` returning `0`, then the confidential balance, under a caption that tells the viewer to go and check |
-| 2 | and nobody has been allowed one | 19 | 43 | 140 | the scan running to its total, then the two columns |
+| 1 | this account | 10 + 5 | 22 | 140 | two cards — what the chain shows, and what the holder can open — with `spl-token balance`'s own line printed under the first, and the confidential line held back and printed under the second when it arrives |
+| 2 | and nobody has been allowed one | 19 | 43 | 140 | three figures at one size — the mints, the accounts that have asked, the accounts an issuer has approved — over the scan's own total line |
 | 3 | Confide | 15 | 32 | 133 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
 | 5 | why the door is shut | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | why now | 21 | 47 | 138 | the order's condition at reading size, with the cap beside it and `sec.gov` on the badge |
 | 7 | so the first trade is an issuance | 14 | 30 | 134 | the sentence, alone — |
-| 8 | the gate, both ways | 12 | 25 | 132 | the refused transaction and its error, then the same allocation settling |
-| 9 | why not just use an exchange | 20 | 44 | 136 | the order's publication condition beside a reserve moving by the traded amount |
-| 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the check refusing, then passing |
+| 8 | the gate, both ways | 12 | 25 | 132 | refused and settled side by side, with `swap-status.sh`'s own two error lines under them — `{'Custom': 24} (expected)` and `none`. The size in the title is read out of the record of the run, not typed |
+| 9 | why not just use an exchange | 20 | 44 | 136 | the reserve as |
+| 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the assumption that failed beside the repair, over the line of `scripts/swap-sign.sh` that performs it |
 | | | **170 s** | **364** | | |
 
 ## The script
@@ -111,8 +111,9 @@ never reads the screen.
 >
 > It holds a hundred and seventy-three thousand shares of tokenized stock.
 
-*Shows:* `spl-token balance` returning `0`, then the confidential balance, under a caption that
-tells the viewer to go and check. **Leave the gap.** The setup moved out of the narration and onto
+*Shows:* two cards — what the chain shows, and what the holder can open — with `spl-token
+balance`'s own line printed under the first, and the confidential line held back and printed under
+the second when it arrives. **Leave the gap.** The setup moved out of the narration and onto
 the screen, so the reveal lands four seconds earlier — it is the only thing holding a cold viewer
 until the name, and the name is now on the frame from the first second anyway. It
 opens the film because it is the one thing in it that needs no vocabulary at all — no tape, no
@@ -125,7 +126,9 @@ opening scene what is being claimed, and can check it.
 > do with each other. So I counted the accounts actually using it. Across nearly half a million: two
 > have tried, and none has been allowed.
 
-*Shows:* the scan running to its total, then the two columns. **The scene that has to come second.**
+*Shows:* three figures at one size — the mints, the accounts that have asked, the accounts an
+issuer has approved — over the scan's own total line. **`2 asked` and `0 approved` are the same
+size**: somebody tried and still nobody is through, and that is the whole scene. **The scene that has to come second.**
 Opening on the account alone invites *"that is just Token-2022"* — and it would be right. This says
 so first, and turns it into the finding: the capability is everywhere and nobody is through.
 
@@ -185,7 +188,9 @@ film looked like it had restarted.
 > An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the
 > chain refuses it. One instruction later, the same transaction settles.
 
-*Shows:* the refused transaction and its error, then the same allocation settling. **The gate had
+*Shows:* refused and settled side by side, with `swap-status.sh`'s own two error lines under
+them — `{'Custom': 24}  (expected)` and `none`. The size in the title is read out of the record of
+the run, not typed. **The gate had
 been described all film and never once shown stopping anything.** Both transactions are on chain
 ([`../docs/cwf-2026/ISSUANCE-RUNS.md`](../docs/cwf-2026/ISSUANCE-RUNS.md)).
 
@@ -195,7 +200,9 @@ been described all film and never once shown stopping anything.** Both transacti
 > automated market maker, and every fill's size goes on a public tape within ten minutes. A
 > condition of the venue, not a property of one pool.
 
-*Shows:* the order's publication condition beside a reserve moving by the traded amount. **The
+*Shows:* the reserve as **R**, the fill as **q**, the state after as **R − q**, on a dashed card
+that says it is arithmetic and not an observed pool. **No pool is invented** — a drawn number would
+sit in the same type as the measured ones and a judge could not tell them apart. **The
 regulatory leg leads.** Blockworks measured that over 60% of Backpack's Solana volume goes through
 proprietary AMMs, which quote from external stock data rather than from reserves — so the
 structural leg lands on the minority case
@@ -207,7 +214,8 @@ structural leg lands on the minority case
 > looked at. The fix compares the two, byte for byte, and caught another bug on its first run.
 > Nobody outside this repository has used any of this.
 
-*Shows:* the check refusing, then passing. **Ending on a defect I did not find myself**, and on the
+*Shows:* the assumption that failed beside the repair, over the line of `scripts/swap-sign.sh`
+that performs it. **Ending on a defect I did not find myself**, and on the
 weakest fact, which is the first one a judge checks.
 
 ## The sections below describe the SUPERSEDED cut

@@ -207,6 +207,51 @@ One of those commands reads **somebody else's repository**: `kamino-verdict.sh`,
 because scene 5 is a quotation from Kamino Lend and they can change it without telling us. When that
 happens the recording should fail, not narrate a line that is no longer there.
 
+### The cards, and the output under them
+
+The submission cut draws its conclusions as cards — two balances, three figures, refused beside
+settled — because a first-time judge reads a picture and does not read a terminal. **Under each card
+is the line of output the card concluded from**, verbatim, in the monospace it was emitted in, with
+the command that produced it named beneath. Design on top, evidence underneath.
+
+That shape exists because the first visual pass removed the panes and kept only the cards, and the
+difference turned out to matter more than it looks: what this submission has that others do not is
+that its figures are measured and the render refuses when they stop being true. A card alone is an
+assertion. A card over its own stdout is a claim a judge can check in the time it takes to read it.
+
+Two things enforce it:
+
+- **Every figure on screen is traced to something this render read.** `put()` reports the numbers it
+  is about to draw and the recorder tests each against the stdout of every command it ran and the
+  files those commands are checked against. A figure that appears in none of them was typed by
+  somebody, and on screen it is indistinguishable from a measurement. This check exists because one
+  scene drew a pool — `1,000,000 shares`, `− 50,000`, `950,000 shares` — in the same type as
+  `469,477`. It now fires on exactly those two numbers and passes the repaired scene.
+- **Scene 9 has no measurement in it at all**, because its claim is arithmetic rather than an
+  observation. It is drawn in letters — `R`, `q`, `R − q` — on a dashed card that says so.
+
+### Nothing is promoted until it has been looked at
+
+Each scene is recorded on its own, cut to the page's own clock, and checked; then the assembly is
+checked again; and only then is the file moved to `presentation.mp4`. The order matters — an earlier
+version wrote the .mp4 first and checked afterwards, so a render that failed its own guards still
+left a finished-looking film on disk with the right name.
+
+What the checks are, and why each one exists:
+
+| | |
+|---|---|
+| **no white frames** | the screen recorder emits its first frame before the page paints, and `concat` keeps it. A delivered cut had **seven pure-white frames** against a background of luminance 12 — six of its nine cuts flashed. `ffprobe` says that file is clean, because it is not a container property. Every frame of every clip and of the assembly is measured. |
+| **each clip is the page's own length** | raw captures run about a second long. That passed a per-clip 2 s tolerance and then *accumulated*: ten clips totalling 179.97 s for a 170 s script. Each clip is now cut to the measurement, so the sum is the script by construction. |
+| **the assembly is the script** | ±0.5 s, measured from the concatenated file rather than from the sum of intentions. |
+| **no figure is unsourced** | above. |
+| **nothing overprints the wordmark** | below. |
+
+The per-scene loop also earns its keep: a run died at scene 10 with `Protocol error
+(Runtime.callFunctionOn): Target closed` and the identical rerun finished clean — intermittent,
+roughly one run in three here. A scene that fails gets a fresh page and one more attempt rather than
+costing three minutes of recapture.
+
 ### The wordmark, and why it is in the corner
 
 For its first thirty-eight seconds the film did not say whose it was. The name arrived with the

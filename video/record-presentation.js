@@ -10,10 +10,12 @@
 // narration's own word counts. They are not repeated here — two places holding the same number is
 // how the Stocklana cut ended up with a manifest describing a different edit.
 //
-// Every terminal pane is the stdout of a command run moments before the recording starts, four of
-// them reaching mainnet or devnet, and each is guarded on the line that carries its claim. A video
-// that still renders after the thing it demonstrates stopped working is the failure worth
-// engineering against — which is not hypothetical here: scene 5's claim is a quotation from
+// The cut draws conclusions as cards and prints the output it concluded from underneath them. Every
+// figure on screen comes from a command run moments before the recording starts — four of them
+// reaching mainnet or devnet — or from a file checked against one, and each is guarded on the line
+// that carries its claim. Scene 9 is the one scene with no measurement in it, because its claim is
+// arithmetic; it is drawn in letters and says so. A video that still renders after the thing it
+// demonstrates stopped working is the failure worth engineering against — which is not hypothetical here: scene 5's claim is a quotation from
 // someone else's repository, and they can change it without telling us.
 import path from "node:path";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -24,8 +26,14 @@ import { PuppeteerScreenRecorder } from "puppeteer-screen-recorder";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(dir, "..");
+// ONE NAME. The visual pass wrote presentation-improved.mp4 while split.sh and
+// docs-consistency.sh both read presentation.mp4, and the file the founder was handed was called
+// a third thing -- so re-running the recorder and then splitting would have cut the OLD film.
+// This is staged under .presentation-render and only moved into place once every check has run.
 const outFile = path.join(dir, "presentation.mp4");
+const stagedFile = path.join(dir, ".presentation-render", "staged.mp4");
 const segDir = path.join(dir, "segments-presentation");
+const renderDir = path.join(dir, ".presentation-render");
 const FFMPEG = process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg";
 const FFPROBE = process.env.FFPROBE_PATH || FFMPEG.replace(/ffmpeg$/, "ffprobe");
 const KEYS = process.env.CONFIDE_KEYS || path.join(repo, "account-keys.json");
@@ -54,6 +62,13 @@ function run(cmd, args, label, rpc) {
   }).replace(/\s+$/, "");
 }
 const plain = (t) => t.replace(/\x1b\[[0-9;]*m/g, "");
+// One line of a pane, verbatim, for the evidence strip under a card. Throws when the line is gone,
+// which is the point: the card concludes something and this is the output it concluded from.
+function line(text, re, why) {
+  const found = text.split("\n").map(plain).find((l) => re.test(l));
+  if (!found) throw new Error(`refusing to record — ${why}: no line matched ${re}`);
+  return found.replace(/^\s+/, "").replace(/\s+$/, "");
+}
 function slice(text, from, to) {
   const lines = text.split("\n");
   const a = lines.findIndex((l) => from.test(plain(l)));
@@ -105,6 +120,28 @@ function secRow(name) {
   return m[1].replace(/\*\*/g, "").replace(/"/g, '"').replace(/\s+/g, " ").trim();
 }
 
+// THE ISSUANCE, out of the record of the run rather than out of a sentence. The visual pass put
+// "The same 20,000-share allocation" on screen as a literal: the value was right and nothing
+// checked it, which is how every stale number in this repository started.
+const ISSUANCE = (() => {
+  const swaps = JSON.parse(readFileSync(path.join(repo, "web/swaps.json"), "utf8")).swaps;
+  const settled = swaps.find((s) => /issuance: the same allocation/.test(s.label));
+  const refused = swaps.find((s) => /issuance: REFUSED/.test(s.label));
+  if (!settled || !refused) throw new Error("web/swaps.json no longer records both issuance sends");
+  const m = settled.claim.match(/([\d,]+) shares/);
+  if (!m) throw new Error(`web/swaps.json's issuance claim no longer gives a size: ${settled.claim}`);
+  const custom = refused.err_when_written?.InstructionError?.[1]?.Custom;
+  if (custom !== 24) {
+    throw new Error(`the refused issuance recorded Custom(${custom}), not Custom(24) — scene 8 `
+      + `says the gate refused it for not being approved`);
+  }
+  return { size: m[1] + "-share", settled: settled.signature, refused: refused.signature };
+})();
+
+// Scene 10 claims a repair in this repository's own code, which is the claim a judge can check
+// fastest. So the claim is read from the file that implements it.
+const SIGN = readFileSync(path.join(repo, "scripts/swap-sign.sh"), "utf8");
+
 const USAGE = JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8"));
 const ACCOUNTS = USAGE.total_accounts.toLocaleString("en-US");
 const CONFIGURED = USAGE.total_confidential_accounts;
@@ -144,6 +181,12 @@ for (const [text, re, why] of [
   [cash, /USDC.*Token \(legacy\)/, "USDC is no longer legacy SPL — scene 8 contrasts them"],
   [cash, /the same key holds the confidential authority on both/, "PYUSD and USDG no longer share one authority, and scene 8 says they do"],
   [testbed, /the testbed is as published/, "the standing devnet issuer has been changed — scene 9 points people at it"],
+  // Scene 8's two cards, against the two transactions read back off devnet.
+  [issued, /issuance: REFUSED/, "the refused issuance is no longer on chain — scene 8 shows it refusing"],
+  [issued, /'Custom': 24.*\(expected\)/, "the refusal is no longer Custom(24) — scene 8 names that error"],
+  [issued, /issuance: the same allocation, after the issuer signed/, "the settled issuance is gone — scene 8 shows the same allocation settling"],
+  // Scene 10's card says the repair rebuilds and compares. This is that call.
+  [SIGN, /swap-tx -- verify/, "scripts/swap-sign.sh no longer rebuilds and compares — scene 10 says it does"],
 ]) {
   if (!re.test(plain(text))) throw new Error(`refusing to record — ${why}`);
 }
@@ -179,27 +222,31 @@ if (!SEC.includes("2031-09-17")) {
 
 const scenes = [
   {
-    file: "01-this-account.mp4", for: "this account", kind: "evidence",
-    label: "Look it up. The chain will tell you this account is empty.",
-    body: slice(balance, /public balance/, /public balance/),
-    emphasis: ["0"],
-    then: {
-      at: 6,
-      body: slice(balance, /confidential\s+\d/, /confidential\s+\d/),
-      emphasis: ["173000 units"],
-      label: "The same account. This is what it holds.",
-    },
+    file: "01-this-account.mp4", for: "this account", kind: "positionReveal",
+    label: "A real Solana account. Publicly, it looks empty.",
+    account: ACCOUNT,
+    units: "173,000",
+    // The card is the headline and these two lines are the output it reads. The second is withheld
+    // with the card, because the scene's five seconds of silence are the whole point of the scene.
+    evidence: line(balance, /public balance/, "the account's public balance"),
+    heldEvidence: line(balance, /confidential\s+\d/, "the account's confidential balance"),
+    from: "./scripts/read-balance.sh — run moments before this recording",
+    at: 6,
     total: HOLD[0],
   },
   {
-    file: "02-nobody-allowed.mp4", for: "and nobody has been allowed one", kind: "evidence",
-    label: "So I stopped reading the settings and counted the accounts.",
-    // Not "just now", and the badge says so. Every other pane in this cut is a command run
-    // moments before the recording; this scan reads every token account of every mint and takes
-    // minutes, so it is the stored measurement and the screen carries its date.
-    stamp: "measured " + JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
-    body: slice(usage, /AAPLx/, /token accounts,/),
-    emphasis: [ACCOUNTS, "0 configured for confidential transfers"],
+    file: "02-nobody-allowed.mp4", for: "and nobody has been allowed one", kind: "adoption",
+    label: "The capability exists. Adoption does not.",
+    stocks: MINT_COUNT,
+    issuers: ISSUERS,
+    accounts: ACCOUNTS,
+    configured: CONFIGURED,
+    approved: APPROVED,
+    evidence: line(usage, /token accounts,/, "the scan's total"),
+    from: "./scripts/usage-scan.sh — every token account of every mint that has holders",
+    // The scan reads every token account of every mint and takes minutes, so the date stays on
+    // screen even though the display now leads with the conclusion instead of raw terminal rows.
+    measured: JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8")).generated_utc,
     total: HOLD[1],
   },
   {
@@ -227,7 +274,7 @@ const scenes = [
     delivered: DVP.delivered_units, paid: DVP.paid_units,
     total: HOLD[3],
   },
-  { file: "05-why-shut.mp4", for: "why the door is shut", kind: "slot", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
+  { file: "05-why-shut.mp4", for: "why the door is shut", kind: "privacyGap", mints: MINT_COUNT, issuers: ISSUERS, total: HOLD[4] },
   // The product, then the product working, inside the first thirty seconds. The order this
   // replaces put the trade ninety seconds in, on a premise CRITERIA.md retracted on 2026-09-19:
   // traction is last of the seven and absent from the Official Rules, §8 opens on Functionality,
@@ -261,38 +308,34 @@ const scenes = [
     // showed it stop anything. This is the same allocation twice: refused by the live program, then
     // settled after one instruction. The pane is swap-status.sh's own reading of both transactions,
     // so the refusal on screen is the one anybody can look up rather than a drawing of one.
-    file: "08-the-gate.mp4", for: "the gate, both ways", kind: "evidence",
-    label: "The same allocation, before and after the issuer signed.",
-    body: slice(issued, /issuance: REFUSED/, /error/) + "\n\n"
-        + slice(issued, /issuance: the same allocation/, /compute units/),
-    emphasis: ["Custom': 24", "(expected)", "confidentialTransfer, confidentialTransferWithFee"],
+    file: "08-the-gate.mp4", for: "the gate, both ways", kind: "issuerGate",
+    // The size came back as a typed literal — correct, and guarded by nothing. It is read out of
+    // the record of the run instead, and ISSUANCE is checked against the chain below.
+    label: `The same ${ISSUANCE.size} allocation, before and after issuer approval.`,
+    whyRefused: "Custom(24) — the issuer had not signed for the account.",
+    evidence: line(issued, /'Custom': 24/, "the refusal") + "\n"
+            + line(issued, /error\s+none/, "the settlement"),
+    from: "./scripts/swap-status.sh — both transactions read back off devnet",
     total: HOLD[7],
   },
   {
     // Why not an exchange — the question a Solana judge asks first, and the film had no answer.
     // Three steps and no numbers: inventing a pool to illustrate it would be the one thing this
     // repository does not do.
-    file: "09-why-not-an-exchange.mp4", for: "why not just use an exchange", kind: "missing",
-    label: "So why not just trade it on an exchange?",
-    items: [
-      "A pool's reserves are <b>public state</b>.",
-      "A trade moves them by <b>exactly the amount traded</b>.",
-      "Subtract two consecutive states and you have the size. <b>Every time, whatever the token can do.</b>",
-      "And the exemption <b>requires an AMM</b> — the only US venue that may operate is built this way.",
-    ],
-    // step was 6 and four items then ran 28 s against the script's 24 — the picture was deciding the
-    // length. The script decides it: 4 x 5 + 3.5 lead lands inside the hold pace.py derived.
-    lead: 3.5, step: 5,
+    file: "09-why-not-an-exchange.mp4", for: "why not just use an exchange", kind: "ammLeak",
+    label: "Why a public AMM cannot conceal a block trade",
     total: HOLD[8],
   },
   {
-    file: "10-what-i-got-wrong.mp4", for: "what I got wrong, and what nobody has used", kind: "runnable",
-    label: "A review found the safety step was not checking. Nobody outside this repository has used any of it.",
-    command: "./scripts/testbed-join.sh",
-    body: slice(testbed, /THE STANDING TESTBED/, /the testbed is as published/),
-    emphasis: ["autoApproveNewAccounts is still false", "the testbed is as published"],
+    file: "10-what-i-got-wrong.mp4", for: "what I got wrong, and what nobody has used", kind: "proofCheck",
+    label: "A review caught a check that did not inspect what it signed.",
+    detail: "Rebuilds the transaction and compares it byte for byte",
+    // The card claims a repair, so it shows the call that is the repair — checked below, because a
+    // claim about this repository's own code is the one a judge can check fastest.
+    evidence: line(SIGN, /swap-tx -- verify/, "the rebuild-and-compare call") + "\n"
+            + line(testbed, /the testbed is as published/, "the standing devnet issuer"),
+    from: "scripts/swap-sign.sh — the step the review found was not checking",
     url: "github.com/psyto/confide",
-    note: "The gate is shut, as it is on all " + MINT_COUNT + ". The key that opens it is published.",
     total: HOLD[9],
   },
 
@@ -313,10 +356,11 @@ const browser = await puppeteer.launch({
   defaultViewport: { width: 1280, height: 720, deviceScaleFactor: 1.5 },
   args: ["--no-sandbox", "--hide-scrollbars", "--window-size=1280,720", "--force-device-scale-factor=1.5"],
 });
-const page = await browser.newPage();
+let page = await browser.newPage();
 const marks = [];
 const overlaps = [];
-page.on("console", (m) => {
+const figures = [];
+const onConsole = (m) => {
   const t = m.text();
   if (!t.startsWith("CONFIDE_")) return;
   process.stderr.write(`• page: ${t}\n`);
@@ -326,42 +370,187 @@ page.on("console", (m) => {
   if (total) marks.push(parseFloat(total[1]));
   const over = t.match(/^CONFIDE_OVERLAP (.+) (\d+)$/);
   if (over) overlaps.push(`"${over[1]}" reaches ${over[2]}px into the wordmark`);
-});
+  const figs = t.match(/^CONFIDE_FIGURES ([^\t]+)\t(.+)$/);
+  if (figs) for (const n of figs[2].split(" ")) figures.push({ scene: figs[1], n });
+};
+page.on("console", onConsole);
 page.on("pageerror", (e) => { throw e; });
 await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
-await page.evaluate((s) => window.__load(s), scenes);
+await page.evaluate((s) => {
+  document.body.classList.add("presentation");
+  window.__load(s);
+}, scenes);
 
-const recorder = new PuppeteerScreenRecorder(page, {
-  fps: 30, videoFrame: { width: 1920, height: 1080 }, aspectRatio: "16:9", ffmpeg_Path: FFMPEG,
-});
-await recorder.start(outFile);
-const seconds = await page.evaluate(() => window.__play());
-await recorder.stop();
+// Long Chromium recordings intermittently interleave broken H.264 packets on this host. A scene
+// is already an intentional editorial boundary, so record and validate each one independently,
+// then concatenate the verified clips. This also makes one bad scene recoverable without asking a
+// viewer to sit through a new three-minute capture.
+// THE FRAMES NOBODY LOOKED AT. Recording each scene separately and concatenating is worth keeping
+// -- one bad scene becomes recoverable, and each clip is verified on its own -- but as delivered it
+// put SEVEN PURE-WHITE FRAMES into a film whose background sits at luminance 12. Six of the nine
+// cuts flashed white. `ffprobe` cannot see that: it is not a container property, and the file
+// "probes cleanly". It is visible to anyone watching, at every scene change.
+//
+// Two causes, both here rather than in the page:
+//
+//   the flash   the screen recorder emits its first frame before the page has painted the new
+//               scene, and concat keeps it. So the first frame of every clip is measured, and
+//               dropped when it is white.
+//   the drift   each raw capture runs about a second past the page's own clock. That passed the
+//               per-clip 2 s check and then ACCUMULATED: ten clips totalling 179.97 s against a
+//               170 s script, which the old aggregate check would have caught only after the file
+//               had already been written and handed over. Each clip is now cut to the page's
+//               measurement exactly, so the sum is the script by construction.
+//
+// Nothing is promoted to video/presentation.mp4 until every clip, and then the assembly, has been
+// measured again from its own frames.
+const FPS = 30;
+function meanLuma(file, at) {
+  const buf = execFileSync(FFMPEG, ["-v", "error", "-ss", String(at), "-i", file, "-frames:v", "1",
+    "-vf", "scale=64:36,format=gray", "-f", "rawvideo", "-"], { maxBuffer: 1 << 22 });
+  if (!buf.length) return 0;
+  let sum = 0;
+  for (const b of buf) sum += b;
+  return sum / buf.length;
+}
+// Every frame, not a sample. A single white frame is 1/30 of a second and is exactly what got out.
+function whiteFrames(file) {
+  const out = execFileSync(FFMPEG, ["-v", "error", "-i", file, "-vf",
+    "scale=64:36,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-", "-f", "null", "-"],
+    { encoding: "utf8", maxBuffer: 1 << 26 });
+  const times = [];
+  let pts = null;
+  for (const l of out.split("\n")) {
+    const p = l.match(/pts_time:([0-9.]+)/);
+    if (p) { pts = parseFloat(p[1]); continue; }
+    const y = l.match(/lavfi\.signalstats\.YAVG=([0-9.]+)/);
+    if (y && parseFloat(y[1]) > 200 && pts !== null) times.push(pts);
+  }
+  return times;
+}
+function probe(file) {
+  return parseFloat(execFileSync(FFPROBE, ["-v", "error", "-show_entries", "format=duration",
+    "-of", "csv=p=0", file], { encoding: "utf8" }).trim());
+}
+
+mkdirSync(renderDir, { recursive: true });
+const durations = [];
+for (const scene of scenes) {
+  const raw = path.join(renderDir, scene.file + ".raw.mp4");
+  const segmentFile = path.join(renderDir, scene.file);
+  // THE FAILURE THE PER-SCENE LOOP IS FOR, and it is real: on 2026-09-23 a ten-scene run died at
+  // scene 10 with `Protocol error (Runtime.callFunctionOn): Target closed` and the identical rerun
+  // finished clean. Intermittent, roughly one run in three here. Recording per scene is what makes
+  // it recoverable, so recover from it rather than making the founder re-run three minutes of
+  // capture: a fresh page, once, and the scene again.
+  let seconds;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await page.evaluate((s) => window.__load([s]), scene);
+      const recorder = new PuppeteerScreenRecorder(page, {
+        fps: FPS, videoFrame: { width: 1920, height: 1080 }, aspectRatio: "16:9", ffmpeg_Path: FFMPEG,
+      });
+      await recorder.start(raw);
+      seconds = await page.evaluate(() => window.__play());
+      await recorder.stop();
+      break;
+    } catch (e) {
+      if (attempt > 1) throw e;
+      process.stderr.write(`  ! ${scene.file}: ${e.message.split("\n")[0]} — new page, once more\n`);
+      page = await browser.newPage();
+      page.on("console", onConsole);
+      page.on("pageerror", (err) => { throw err; });
+      await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
+      await page.evaluate(() => document.body.classList.add("presentation"));
+    }
+  }
+  const rawLen = probe(raw);
+  if (Math.abs(rawLen - seconds) > 2) {
+    throw new Error(`${scene.file} captured ${rawLen.toFixed(1)}s for ${seconds.toFixed(1)}s of `
+      + `page time — the recorder could not keep up`);
+  }
+  // Drop the unpainted first frame when there is one, then cut to the page's own measurement.
+  const lead = meanLuma(raw, 0) > 200 ? 1 / FPS : 0;
+  if (rawLen - lead < seconds - 0.05) {
+    throw new Error(`${scene.file} is ${rawLen.toFixed(2)}s and the page held ${seconds.toFixed(2)}s`
+      + ` — there is nothing to cut to`);
+  }
+  execFileSync(FFMPEG, ["-v", "error", "-ss", String(lead), "-i", raw, "-t", seconds.toFixed(3),
+    "-vf", "scale=in_range=full:out_range=tv,format=yuv420p",
+    "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-crf", "20", "-preset", "slow",
+    "-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
+    segmentFile, "-y"]);
+  const cut = probe(segmentFile);
+  if (Math.abs(cut - seconds) > 0.2) {
+    throw new Error(`${scene.file} cut to ${cut.toFixed(2)}s, not the ${seconds.toFixed(2)}s the `
+      + `page held`);
+  }
+  const white = whiteFrames(segmentFile);
+  if (white.length) {
+    throw new Error(`${scene.file} has ${white.length} white frame(s) at `
+      + `${white.map((w) => w.toFixed(2)).join(", ")}s. The film's background is luminance 12; `
+      + `these are 255, and they flash at the cut. ${lead ? "The lead frame was already dropped."
+        : "The lead frame was not white, so this is not the capture's first frame."}`);
+  }
+  process.stderr.write(`  ✓ ${scene.file}  ${cut.toFixed(2)}s${lead ? "  (dropped a white lead frame)" : ""}\n`);
+  durations.push({ seconds, probed: cut });
+}
 await browser.close();
 
-process.stderr.write("• re-encoding for the web …\n");
+const concat = path.join(renderDir, "concat.txt");
+writeFileSync(concat, scenes.map((s) => `file '${path.join(renderDir, s.file)}'`).join("\n") + "\n");
+process.stderr.write("• assembling verified scenes …\n");
+mkdirSync(path.dirname(stagedFile), { recursive: true });
 execFileSync(FFMPEG, [
-  "-v", "error", "-i", outFile,
+  "-v", "error", "-f", "concat", "-safe", "0", "-i", concat,
   "-vf", "scale=in_range=full:out_range=tv,format=yuv420p",
   "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-crf", "20", "-preset", "slow",
   "-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
-  "-movflags", "+faststart", outFile + ".tmp.mp4", "-y",
+  "-movflags", "+faststart", stagedFile, "-y",
 ]);
-execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
 
-if (marks.length !== scenes.length + 1) {
-  throw new Error(`expected ${scenes.length + 1} scene marks, got ${marks.length}`);
+// EVERY CHECK BELOW RUNS ON THE STAGED FILE. The version this replaces promoted the .mp4 first and
+// checked afterwards, so a render that failed its own guards still left a finished-looking film on
+// disk with the right name — which is how a file nobody could reproduce ended up being the one the
+// founder had. Nothing is moved into place until all of this passes.
+const seconds = durations.reduce((sum, item) => sum + item.seconds, 0);
+const probed = probe(stagedFile);
+const asked = HOLD.reduce((a, b) => a + b, 0);
+if (Math.abs(probed - asked) > 0.5) {
+  throw new Error(`refusing to promote — the assembly is ${probed.toFixed(2)}s and the script asks `
+    + `for ${asked}s. The clips are cut to the page's own clock, so a gap here means the concat `
+    + `added or lost something.`);
+}
+// And once more on the whole film, because the flashes were at the JOINS and a per-clip check
+// cannot see a join. This is the check that would have caught the seven frames that shipped.
+const whiteInFilm = whiteFrames(stagedFile);
+if (whiteInFilm.length) {
+  throw new Error(`refusing to promote — ${whiteInFilm.length} white frame(s) at `
+    + `${whiteInFilm.map((w) => w.toFixed(2)).join(", ")}s. Against a background of luminance 12 `
+    + `these flash at the cut, and no container-level probe can see them.`);
+}
+// WHERE DID THAT NUMBER COME FROM? Each figure the page drew, against everything this render
+// actually read: the stdout of the commands above, and the files those commands are checked against.
+// A figure that appears in none of them was typed by somebody, and on screen it is indistinguishable
+// from a measurement. `1,000,000 shares` and `950,000 shares` shipped this way.
+const CORPUS = [mints, balance, usage, swaps, dvp, issued, feeSwap, cash, testbed, SEC,
+  readFileSync(path.join(repo, "web/usage.json"), "utf8"),
+  readFileSync(path.join(repo, "web/swaps.json"), "utf8"),
+  readFileSync(path.join(repo, "web/dvp.json"), "utf8"),
+  MINT_COUNT, ACCOUNTS, String(CONFIGURED), String(APPROVED), ISSUANCE.size,
+  DVP.delivered_units.toLocaleString("en-US"), DVP.paid_units.toLocaleString("en-US"),
+].join("\n");
+const unsourced = figures.filter((f) => !CORPUS.includes(f.n));
+if (unsourced.length) {
+  const by = [...new Set(unsourced.map((f) => `${f.n} (scene "${f.scene}")`))];
+  throw new Error(
+    `refusing to promote — a figure on screen is in nothing this render read:\n    ` +
+    by.join("\n    ") +
+    `\n  On screen it sits in the same type as the measured numbers and a judge cannot tell them ` +
+    `apart. Either read it from a command, or draw the claim without a number.`,
+  );
 }
 
-// The marks are the PAGE's clock and the cuts are made against the FILE's. They agree only while
-// the recorder keeps up, and on a loaded machine it does not: one render came out 296s for 171.6s
-// of page time, so every boundary in the manifest pointed at the wrong scene and split.sh
-// cheerfully produced ten clips paired with ten wrong lines. Nothing noticed, because nothing was
-// comparing the two clocks.
-const probed = parseFloat(
-  execFileSync(FFPROBE, ["-v", "error", "-show_entries", "format=duration",
-                         "-of", "csv=p=0", outFile], { encoding: "utf8" }).trim(),
-);
 // The wordmark is fixed and the stage is centred, so a pane that grew since the last render puts
 // two strings of text in the same pixels and nothing in the browser objects. The page measures it.
 if (overlaps.length) {
@@ -381,18 +570,23 @@ if (drift > 2) {
     `wrong scene. Close what else is running and record again.`,
   );
 }
-// Where the scenes actually landed, not where they were asked to. split.sh reads this.
-const manifest = scenes.map((sc, i) => ({
+// Where the scenes actually landed, built from every independently verified clip.
+let offset = 0;
+const manifest = scenes.map((sc, i) => {
+  const start = offset;
+  offset += durations[i].probed;
+  return ({
   file: sc.file,
-  start: +marks[i].toFixed(2),
-  end: +marks[i + 1].toFixed(2),
-  seconds: +(marks[i + 1] - marks[i]).toFixed(2),
+  start: +start.toFixed(2),
+  end: +offset.toFixed(2),
+  seconds: +durations[i].probed.toFixed(2),
   line: sc.line,
-}));
+  });
+});
+execFileSync("mv", [stagedFile, outFile]);
 mkdirSync(segDir, { recursive: true });
 writeFileSync(path.join(segDir, "manifest.json"), JSON.stringify(manifest, null, 1) + "\n");
 
-process.stderr.write(`\n✓ ${outFile}  (${seconds.toFixed(1)}s)\n`);
-const asked = HOLD.reduce((a, b) => a + b, 0);
-process.stderr.write(`  the script asks for ${asked}s; the render held ${seconds.toFixed(1)}s\n`);
+process.stderr.write(`\n✓ ${outFile}  (${probed.toFixed(1)}s)\n`);
+process.stderr.write(`  the script asks for ${asked}s; the assembly is ${probed.toFixed(2)}s\n`);
 for (const m of manifest) process.stderr.write(`   ${m.file}  ${m.seconds}s\n`);

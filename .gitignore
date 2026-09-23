@@ -17,3 +17,6 @@ auditor-key.json
 # line of defence in case it is ever put back here by mistake.
 keys/issuer-mint-authority.json
 keys/issuer.yml
+
+# Staging for video/record-presentation.js. Nothing here is promoted until every check passes.
+video/.presentation-render/
