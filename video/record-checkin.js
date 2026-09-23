@@ -60,8 +60,15 @@ const table = (() => {
 })();
 const usage = JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8"));
 const mints = JSON.parse(readFileSync(path.join(repo, "web/mints.json"), "utf8"));
-if (usage.total_confidential_accounts !== 0)
-  throw new Error("a confidential account now exists — the narration says zero");
+// THE CLAIM MOVED FROM ONE COUNT TO THE NEXT, and this guard did not. It required zero CONFIGURED
+// accounts; on 2026-09-22 two configured one and neither was approved, so it would have refused to
+// record a check-in whose narration already says exactly that. What every current script claims is
+// that nobody is THROUGH the gate — that is the approved count, and that is what is guarded.
+if (usage.total_approved_accounts !== 0)
+  throw new Error(`an issuer has approved ${usage.total_approved_accounts} account(s) — the gate is `
+    + `open and every script that says it is shut is now wrong`);
+process.stderr.write(`• gate: ${usage.total_confidential_accounts} configured, `
+  + `${usage.total_approved_accounts} approved (${usage.generated_utc})\n`);
 
 // ── serve web/ so scene 1 drives the same files the site publishes ───────────────────────────────
 const server = spawn("python3", ["-m", "http.server", String(PORT)], {

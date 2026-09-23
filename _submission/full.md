@@ -21,14 +21,14 @@ Every tokenized stock on Solana already ships the feature this needs: **all 1,99
 with confidential transfers **on** and the auditor slot **empty** — every mint checked, not sampled.
 
 **They did not miss it** — the same 1,992 run `permanentDelegate`, `pausableConfig` and a transfer
-hook. Token-2022 has **one** disclosure model: a key that reads everyone's everything, forever. Fill
-it and every holder is permanently readable; leave it null and nobody can prove anything.
-**No setting is correct.**
+hook. Token-2022's only disclosure model is **mint-wide**: an auditor key reads every transfer made
+while it is set, and cannot be scoped to one holder, one counterparty or one amount.
+**Fill it and everybody is readable; leave it null and the chain offers nothing.**
 
-So I stopped reading settings and counted accounts. **469,477 of them. Two have configured a
-confidential account. Zero are approved** (`./scripts/usage-scan.sh`) — both on `NVDAx`, one the
-night of 21 September after two failed attempts. Somebody is knocking. **Neither can receive a
-confidential transfer until Backed signs, and Backed has not.**
+So I counted accounts — **469,477 across the six mints that have holders. Two have configured a
+confidential account. Zero are approved** (`./scripts/usage-scan.sh`, 22 September), both on
+`NVDAx`. **Neither can receive a confidential transfer until an issuer approves it, and as of that
+scan neither was approved.**
 
 These mints are issued outside the US and are not NMS stock; the order is about the market being
 built, not them.

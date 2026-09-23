@@ -51,15 +51,15 @@
  {
   "file": "08-why-not-an-exchange.mp4",
   "start": 114,
-  "end": 133.1,
-  "seconds": 19.1,
+  "end": 133,
+  "seconds": 19,
   "line": "You cannot do this on one, and now that is written down. A pool's reserves are public, and a trade moves them by exactly the amount traded — so anything settled against one publishes the size. The exemption requires an AMM."
  },
  {
   "file": "09-why-it-is-hard.mp4",
-  "start": 133.1,
+  "start": 133,
   "end": 155.1,
-  "seconds": 22,
+  "seconds": 22.1,
   "line": "The proofs do not fit in one transaction. On a mint that charges a fee there are five, and one is too large to send at all — it goes on chain in a record account first. Four files, two machines, neither side ever holding the other's key."
  },
  {

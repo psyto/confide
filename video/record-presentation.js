@@ -106,6 +106,12 @@ function secRow(name) {
 
 const USAGE = JSON.parse(readFileSync(path.join(repo, "web/usage.json"), "utf8"));
 const ACCOUNTS = USAGE.total_accounts.toLocaleString("en-US");
+const CONFIGURED = USAGE.total_confidential_accounts;
+const APPROVED = USAGE.total_approved_accounts;
+if (APPROVED !== 0) {
+  throw new Error(`an issuer has approved ${APPROVED} account(s) — the gate is open and every scene `
+    + `that says it is shut is now wrong`);
+}
 
 for (const [text, re, why] of [
   [mints, /NVDAx.*Token-2022.*None/, "NVDAx no longer reads as Token-2022 with an empty auditor slot"],
@@ -117,8 +123,13 @@ for (const [text, re, why] of [
   // TYPED IN TWICE, AND STALE BOTH TIMES. This said 329,536 — correct on 2026-09-17 and 465,520 four
   // days later — so the render refused on a guard that was itself out of date. The count is read
   // from the file that computes it, exactly as MINT_COUNT already was.
-  [usage, new RegExp(`${ACCOUNTS} token accounts, .*0.* configured for confidential`),
-   `the account scan no longer reads ${ACCOUNTS} / zero — rerun ./scripts/usage-scan.sh`],
+  // Was `.*0.* configured`, which is the count that moved. The scene's claim is that nobody is
+  // THROUGH the gate, so the guard reads the approved count and both numbers come from the file
+  // rather than from a pattern that happened to match a zero somewhere in the line.
+  [usage, new RegExp(`${ACCOUNTS} token accounts, ${CONFIGURED} configured for confidential`
+                     + ` transfers, ${APPROVED} approved`),
+   `the scan no longer reads ${ACCOUNTS} / ${CONFIGURED} configured / ${APPROVED} approved`
+   + ` — rerun ./scripts/usage-scan.sh`],
   [swaps, /confidentialTransfer, confidentialTransfer/, "the plain swap no longer carries two confidential transfers"],
   [swaps, /public balance 0 on every one/, "a swap account's public balance is no longer zero"],
   [dvp, /4 of 4 accounts/, "one of the four accounts in the recorded trade has gone, or stopped reading zero"],
