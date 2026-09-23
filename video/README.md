@@ -207,6 +207,34 @@ One of those commands reads **somebody else's repository**: `kamino-verdict.sh`,
 because scene 5 is a quotation from Kamino Lend and they can change it without telling us. When that
 happens the recording should fail, not narrate a line that is no longer there.
 
+### Does the voice read the current script?
+
+The audio is generated outside this repository and dropped back in, so nothing here could tell
+whether the voice is reading the script that is checked into it. On 2026-09-23 it was not:
+`Confide_Stocklana_20260923.mp4` was narrated from the script **as it stood a few hours earlier**.
+Eight scenes matched. Scene 3 was missing *": confidential delivery-versus-payment for tokenized
+stocks"* and scene 4 still said *"for cash"* rather than *"for stablecoins"* — the only two lines
+that had changed, which is precisely why listening to it would not have found them.
+
+```bash
+./scripts/spoken-check.sh video/Confide_Stocklana_20260923.mp4
+```
+
+It reads the file's **own ASR caption track** — what a machine heard the voice say — and compares
+it with the script. ASR mishears constantly (*"confined"* for Confide, *"token I stock"* for
+tokenized stock, *"bite for bite"* for byte), so neither test is exact-match:
+
+- **a distinctive word of the script that appears nowhere in the whole transcript.** A mishearing
+  moves a word; it does not delete it from a 370-word film. This is what caught `stablecoins`.
+- **per-scene sequence similarity**, printed for every scene and failed under 0.80.
+
+Broken both ways before being trusted: it fails the delivered file on exactly scenes 3 and 4, and
+passes a transcript built from the script itself with the real track's mishearings left in.
+
+It cannot check pronunciation. It reported that the word *Confide* appears nowhere in that
+transcript — the ASR heard *"confined"* — and only a person listening can say which of the two was
+wrong.
+
 ### The cards, and the output under them
 
 The submission cut draws its conclusions as cards — two balances, three figures, refused beside
