@@ -2,70 +2,70 @@
  {
   "file": "01-this-account.mp4",
   "start": 0,
-  "end": 15.03,
-  "seconds": 15.03,
+  "end": 10.03,
+  "seconds": 10.03,
   "line": "A real account on Solana. The chain says it holds nothing. It holds a hundred and seventy-three thousand shares of tokenized stock."
  },
  {
   "file": "02-nobody-allowed.mp4",
-  "start": 15.03,
-  "end": 34.07,
+  "start": 10.03,
+  "end": 29.07,
   "seconds": 19.03,
   "line": "Every tokenized stock on Solana can do that. All 1,992 of them, from three issuers with nothing to do with each other. So I counted the accounts actually using it. Across nearly half a million: two have tried, and none has been allowed."
  },
  {
   "file": "03-confide.mp4",
-  "start": 34.07,
-  "end": 51.1,
+  "start": 29.07,
+  "end": 46.1,
   "seconds": 17.03,
   "line": "That is what Confide is for: confidential delivery-versus-payment for tokenized stocks. It builds the zero-knowledge proofs the chain will not assemble for you, and lets each side read the other's amount before signing. Nobody stands in the middle."
  },
  {
   "file": "04-the-trade.mp4",
-  "start": 51.1,
-  "end": 66.13,
+  "start": 46.1,
+  "end": 61.13,
   "seconds": 15.03,
   "line": "Two holders exchange a position for stablecoins in a single transaction. Either both sides settle or neither does. Nobody watching learns the size, the price it implies, or that either of them held anything."
  },
  {
   "file": "05-why-shut.mp4",
-  "start": 66.13,
-  "end": 87.17,
+  "start": 61.13,
+  "end": 82.17,
   "seconds": 21.03,
   "line": "Token-2022 gives the issuer plenty: freeze a transfer, seize a holder's tokens, run their own code. Its confidential-transfer extension has exactly one auditor key, and that key reads everybody or nobody. No setting shows one balance to one regulator — so all 1,992 left it empty."
  },
  {
   "file": "06-why-now.mp4",
-  "start": 87.17,
-  "end": 108.2,
+  "start": 82.17,
+  "end": 103.2,
   "seconds": 21.03,
   "line": "Last week the SEC gave tokenized stock five years of relief in the United States. Then you read the conditions: trading only through an automated market maker, where the size and direction of every trade you make is published within ten minutes. A desk cannot go there."
  },
  {
   "file": "07-the-turn.mp4",
-  "start": 108.2,
-  "end": 122.23,
+  "start": 103.2,
+  "end": 117.23,
   "seconds": 14.03,
   "line": "So the first trade through that door is not a swap between two holders. It is an issuance — because the issuer is the one who can open the account."
  },
  {
   "file": "08-the-gate.mp4",
-  "start": 122.23,
-  "end": 134.27,
+  "start": 117.23,
+  "end": 129.27,
   "seconds": 12.03,
   "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it. One instruction later, the same transaction settles."
  },
  {
   "file": "09-why-not-an-exchange.mp4",
-  "start": 134.27,
-  "end": 151.3,
+  "start": 129.27,
+  "end": 146.3,
   "seconds": 17.03,
   "line": "And you cannot do this on an exchange. The exemption covers trading executed by an automated market maker, where every fill's size goes on a public tape within ten minutes. That is the venue, not one pool."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 151.3,
-  "end": 176.33,
+  "start": 146.3,
+  "end": 171.33,
   "seconds": 25.03,
   "line": "One thing I got wrong: a review found the check I called the safety step was signing something it had never compared. It is fixed, and every review is committed. This is all devnet, and you can run it yourself: one command opens a confidential position on an issuer gated exactly as all 1,992 are."
  }

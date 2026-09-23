@@ -91,7 +91,7 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | this account | 10 + 5 | 22 | 140 | two cards — what the chain shows, and what the holder can open — with `spl-token balance`'s own line printed under the first, and the confidential line held back and printed under the second when it arrives |
+| 1 | this account | 10 | 22 | 140 | two cards — what the chain shows, and what the holder can open — with `spl-token balance`'s own line printed under the first, and the confidential line held back and printed under the second when it arrives |
 | 2 | and nobody has been allowed one | 19 | 43 | 140 | three figures at one size — the mints, the accounts that have asked, the accounts an issuer has approved — over the scan's own total line |
 | 3 | Confide | 17 | 38 | 139 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
@@ -101,11 +101,11 @@ never reads the screen.
 | 8 | the gate, both ways | 12 | 25 | 132 | refused and settled side by side, with `swap-status.sh`'s own two error lines under them — `{'Custom': 24} (expected)` and `none`. The size in the title is read out of the record of the run, not typed |
 | 9 | why not just use an exchange | 17 | 37 | 135 |  |
 | 10 | what I got wrong, and what you can run | 25 | 55 | 135 | the assumption that failed beside the repair, the command, and the line of `scripts/swap-sign.sh` that performs it |
-| | | **176 s** | **377** | | |
+| | | **171 s** | **377** | | |
 
 ## The script
 
-### 1 — this account · +5 s silence
+### 1 — this account
 
 > A real account on Solana. The chain says it holds nothing.
 >
@@ -113,11 +113,12 @@ never reads the screen.
 
 *Shows:* two cards — what the chain shows, and what the holder can open — with `spl-token
 balance`'s own line printed under the first, and the confidential line held back and printed under
-the second when it arrives. **Leave the gap.** The setup moved out of the narration and onto
-the screen, so the reveal lands four seconds earlier — it is the only thing holding a cold viewer
-until the name, and the name is now on the frame from the first second anyway. It
-opens the film because it is the one thing in it that needs no vocabulary at all — no tape, no
-block trade, no delivery-versus-payment. A judge who has never heard of any of this knows from the
+the second when it arrives. **The five seconds of silence are gone, by the founder's decision on
+2026-09-23.** The scene used to hold for five seconds after the last word so the reveal could land
+in the quiet; it now ends when the narration does. **The reveal itself stays** — it is a picture
+beat rather than dead air, and the green card still waits until the voice reaches it. This opens
+the film because it is the one thing in it that needs no vocabulary at all — no tape, no block
+trade, no delivery-versus-payment. A judge who has never heard of any of this knows from the
 opening scene what is being claimed, and can check it.
 
 ### 2 — and nobody has been allowed one

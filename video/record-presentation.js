@@ -245,11 +245,14 @@ const scenes = [
     account: ACCOUNT,
     units: "173,000",
     // The card is the headline and these two lines are the output it reads. The second is withheld
-    // with the card, because the scene's five seconds of silence are the whole point of the scene.
+    // until the narration reaches it -- "It holds a hundred and seventy-three thousand shares"
+    // starts about five seconds in, and the picture should arrive with the words rather than
+    // after them. The scene used to hold five silent seconds past the last word; the founder cut
+    // that on 2026-09-23, so the reveal moved from 6 s to 5 s to stay inside a 10 s scene.
     evidence: line(balance, /public balance/, "the account's public balance"),
     heldEvidence: line(balance, /confidential\s+\d/, "the account's confidential balance"),
     from: "./scripts/read-balance.sh — run moments before this recording",
-    at: 6,
+    at: 5,
     total: HOLD[0],
   },
   {

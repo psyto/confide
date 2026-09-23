@@ -485,11 +485,15 @@ async function close(s){
    +'<div class="sub fade" style="margin:0">github.com/psyto/confide &middot; Apache-2.0</div></div>');
   await sleep(80); await reveal(els,420); await out(rest(s,t0));
 }
-// THE FILM'S ONE WITHHELD BEAT, and the visual pass spent it. The script is `10 + 5 s silence`:
-// the chain says nothing, a gap, and then the number. Drawing both cards through one reveal() put
-// 173,000 on screen at 1.3 s, so the narration's "it holds a hundred and seventy-three thousand
-// shares" arrived at a screen that had already said it -- the shape this repository keeps being
-// told off for. The second card now waits for `s.at`, as the pane it replaced did.
+// THE FILM'S ONE WITHHELD BEAT, and the visual pass spent it. Drawing both cards through one
+// reveal() put 173,000 on screen at 1.3 s, so the narration's "it holds a hundred and seventy-three
+// thousand shares" arrived at a screen that had already said it -- the shape this repository keeps
+// being told off for. The second card waits for `s.at`, as the pane it replaced did.
+//
+// What is NOT here any more is the silence. The scene used to hold five seconds past the last word
+// so the number could sit in the quiet; the founder cut that on 2026-09-23 and the scene now ends
+// when the voice does. The reveal survives it: a card arriving late is a picture beat, and holding
+// a still frame with nothing on the track is dead air.
 // Verbatim stdout, under the card that concludes from it. Absent `lines`, nothing is drawn --
 // the scenes that never had a pane do not grow an empty box.
 const ev=(lines,from,held)=>!lines?"":'<div class="evidence fade"><div class="ev">'

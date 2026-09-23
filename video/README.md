@@ -11,7 +11,7 @@ Checked against the delivered file rather than assumed:
 | | |
 |---|---|
 | every line present | all ten scenes, in order — **verified from the audio, not the transcript** |
-| **the reveal survives** | the picture holds `public balance 0` through 55.0s and reads `173000 units` by 55.8s, with a 0.57s gap in the voice at 53.8s. Same structure as the cut that shipped, whose gap there was 0.62s. The script budgets five seconds of silence; a delivery paced to the voice has never had them, in either cut |
+| **the reveal survives** | the picture holds `public balance 0` through 55.0s and reads `173000 units` by 55.8s, with a 0.57s gap in the voice at 53.8s. Same structure as the cut that shipped, whose gap there was 0.62s. The script budgeted five seconds of silence here and **a delivery paced to the voice never had them, in either cut** — which is why the founder cut the budget on 2026-09-23. The reveal is a picture beat and survived without it both times |
 | no dropped line | the longest silence is **1.44s at 98.5s**, between *"Nobody chose this"* and *"You cannot do this on one"*. Longer than any pause in the 09-20 cut, which had none over a second, and far short of the five a missing line would leave |
 | every claim still live | `swap-status.sh`, `testbed-up.sh --check`, `usage-scan.sh --last`, `healthcheck.sh` |
 
