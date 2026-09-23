@@ -207,6 +207,25 @@ One of those commands reads **somebody else's repository**: `kamino-verdict.sh`,
 because scene 5 is a quotation from Kamino Lend and they can change it without telling us. When that
 happens the recording should fail, not narrate a line that is no longer there.
 
+### The wordmark, and why it is in the corner
+
+For its first thirty-eight seconds the film did not say whose it was. The name arrived with the
+hero, which meant the hero spent itself answering *who is this* instead of *what is this* — and a
+judge who stopped watching before then left with nothing to attach the argument to. So `#mark` is a
+fixed element outside `#stage`, present from the first frame: the name and, beside it, the
+proposition. **Identity now costs no screen time**, and a judge who leaves at twenty seconds still
+leaves knowing what the thing is.
+
+It steps aside for exactly one scene. `hero()` sets `body.hero`, which fades the mark out, because
+a corner bug repeating the same sentence 34px under a 52px one is the film saying it twice.
+
+The mark is `position:fixed` and the stage is centred, so a scene tall enough grows up underneath it
+and the two overprint — with no reflow, no overflow and no error, because the mark is out of flow.
+Every pane in this cut is the stdout of a command, and commands grow. So `put()` measures the stage
+against the mark on every scene and logs `CONFIDE_OVERLAP`, and **both recorders refuse to write a
+manifest when it appears**. Broken on purpose at 20 pane lines to confirm it fails, and at 8 to
+confirm it does not.
+
 `evidence` grew a second pane, `then`, which replaces the text inside the same frame partway
 through. Two scenes are built on a withheld line — *"the chain says it holds nothing"* … *"it holds
 a hundred and seventy-three thousand"* — and cutting to a new scene for the second half throws away

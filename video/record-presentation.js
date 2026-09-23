@@ -180,7 +180,7 @@ if (!SEC.includes("2031-09-17")) {
 const scenes = [
   {
     file: "01-this-account.mp4", for: "this account", kind: "evidence",
-    label: "A real account on Solana, right now.",
+    label: "Look it up. The chain will tell you this account is empty.",
     body: slice(balance, /public balance/, /public balance/),
     emphasis: ["0"],
     then: {
@@ -315,6 +315,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 const marks = [];
+const overlaps = [];
 page.on("console", (m) => {
   const t = m.text();
   if (!t.startsWith("CONFIDE_")) return;
@@ -323,6 +324,8 @@ page.on("console", (m) => {
   if (scene) marks.push(parseFloat(scene[1]));
   const total = t.match(/^CONFIDE_SECONDS ([0-9.]+)/);
   if (total) marks.push(parseFloat(total[1]));
+  const over = t.match(/^CONFIDE_OVERLAP (.+) (\d+)$/);
+  if (over) overlaps.push(`"${over[1]}" reaches ${over[2]}px into the wordmark`);
 });
 page.on("pageerror", (e) => { throw e; });
 await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
@@ -359,6 +362,16 @@ const probed = parseFloat(
   execFileSync(FFPROBE, ["-v", "error", "-show_entries", "format=duration",
                          "-of", "csv=p=0", outFile], { encoding: "utf8" }).trim(),
 );
+// The wordmark is fixed and the stage is centred, so a pane that grew since the last render puts
+// two strings of text in the same pixels and nothing in the browser objects. The page measures it.
+if (overlaps.length) {
+  throw new Error(
+    `refusing to write a manifest — a scene has grown up underneath the wordmark:\n    ` +
+    overlaps.join("\n    ") +
+    `\n  The pane is longer than it was. Shorten the slice, or move the mark.`,
+  );
+}
+
 const drift = Math.abs(probed - seconds);
 process.stderr.write(`• page clock ${seconds.toFixed(1)}s, file ${probed.toFixed(1)}s\n`);
 if (drift > 2) {

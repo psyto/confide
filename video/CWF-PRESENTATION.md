@@ -91,7 +91,7 @@ never reads the screen.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | this account | 14 + 5 | 31 | 139 | `spl-token balance` returning `0`, then the confidential balance |
+| 1 | this account | 10 + 5 | 22 | 140 | `spl-token balance` returning `0`, then the confidential balance, under a caption that tells the viewer to go and check |
 | 2 | and nobody has been allowed one | 19 | 43 | 140 | the scan running to its total, then the two columns |
 | 3 | Confide | 15 | 32 | 133 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
@@ -101,21 +101,23 @@ never reads the screen.
 | 8 | the gate, both ways | 12 | 25 | 132 | the refused transaction and its error, then the same allocation settling |
 | 9 | why not just use an exchange | 20 | 44 | 136 | the order's publication condition beside a reserve moving by the traded amount |
 | 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the check refusing, then passing |
-| | | **174 s** | **373** | | |
+| | | **170 s** | **364** | | |
 
 ## The script
 
 ### 1 — this account · +5 s silence
 
-> This is a real account on Solana, right now. Anyone can look it up. The chain says it holds
-> nothing.
+> A real account on Solana. The chain says it holds nothing.
 >
 > It holds a hundred and seventy-three thousand shares of tokenized stock.
 
-*Shows:* `spl-token balance` returning `0`, then the confidential balance. **Leave the gap.** It
-opens the film now, because it is the one thing in it that needs no vocabulary at all — no tape, no
-block trade, no delivery-versus-payment. A judge who has never heard of any of this knows in
-sixteen seconds what is being claimed, and can check it.
+*Shows:* `spl-token balance` returning `0`, then the confidential balance, under a caption that
+tells the viewer to go and check. **Leave the gap.** The setup moved out of the narration and onto
+the screen, so the reveal lands four seconds earlier — it is the only thing holding a cold viewer
+until the name, and the name is now on the frame from the first second anyway. It
+opens the film because it is the one thing in it that needs no vocabulary at all — no tape, no
+block trade, no delivery-versus-payment. A judge who has never heard of any of this knows from the
+opening scene what is being claimed, and can check it.
 
 ### 2 — and nobody has been allowed one
 

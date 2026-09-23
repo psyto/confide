@@ -12,6 +12,10 @@
     font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
     display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased}
   #stage{width:1160px}
+  #mark{position:fixed;left:58px;top:44px;font-size:19px;font-weight:700;letter-spacing:-.01em;
+    color:var(--bold);opacity:.55;transition:opacity .45s ease}
+  body.hero #mark{opacity:0}
+  #mark span{font-weight:400;color:var(--dim);margin-left:10px;letter-spacing:0}
   .fade{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
   .fade.on{opacity:1;transform:none}
   .cap{color:var(--dim);font-size:15px;margin-bottom:26px}
@@ -142,6 +146,7 @@
   .cmd .p{color:var(--dim)}
   .url{font-family:ui-monospace,Menlo,monospace;font-size:26px;color:var(--cyn)}
 </style>
+<div id="mark">Confide<span>confidential delivery-versus-payment on Solana</span></div>
 <div id="stage"></div>
 <script>
 const stage=document.getElementById("stage");
@@ -187,7 +192,17 @@ function ansi(line,em){
   out=out.split(MA).join('<span class="y">').split(MB).join("</span>");
   return out||"&nbsp;";
 }
-const put=h=>{stage.innerHTML=h;return [...stage.querySelectorAll(".fade")]};
+let CUR="";
+// THE MARK IS FIXED AND THE STAGE IS CENTRED, so a tall enough scene grows up underneath the
+// wordmark and the two overprint. Nothing in the page would notice: the mark is out of flow, so
+// there is no reflow, no overflow, and no error -- just two strings of text in the same pixels for
+// fifteen seconds. Every pane here is the output of a command, and commands grow. So the page
+// measures it and says so, and the recorder refuses on it.
+const put=h=>{stage.innerHTML=h;
+  const st=stage.getBoundingClientRect(), mk=document.getElementById("mark").getBoundingClientRect();
+  if(!document.body.classList.contains("hero") && st.top < mk.bottom+8)
+    console.log("CONFIDE_OVERLAP "+CUR+" "+Math.round(mk.bottom+8-st.top));
+  return [...stage.querySelectorAll(".fade")]};
 async function reveal(els,step){for(const e of els){e.classList.add("on");await sleep(step||140)}}
 async function out(hold){await sleep(hold*1000);
   [...stage.querySelectorAll(".fade")].forEach(e=>e.classList.remove("on"));await sleep(450)}
@@ -223,10 +238,12 @@ async function statement(s){
 }
 async function hero(s){
   const t0=performance.now();
+  document.body.classList.add("hero");
   const els=put('<div><h1 class="fade">Confide</h1>'
    +'<div class="sub fade">'+(s.sub||'hold tokenized stocks without publishing your position')+'</div>'
    +'<div class="lede fade">'+s.lede+'</div></div>');
   await sleep(80); await reveal(els,320); await out(rest(s,t0));
+  document.body.classList.remove("hero");
 }
 async function leak(s){
   const t0=performance.now();
@@ -394,6 +411,7 @@ async function close(s){
 window.__play=async()=>{
   const t0=performance.now();
   for(const s of SCENES){
+    CUR=s.for||s.kind;
     console.log("CONFIDE_SCENE "+s.kind+" "+((performance.now()-t0)/1000).toFixed(1));
     if(s.kind==="statement")await statement(s);
     else if(s.kind==="order")await order(s);

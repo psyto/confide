@@ -152,6 +152,7 @@ const page = await browser.newPage();
 // against the previous cut's boundaries — silently, producing a clip named for one scene and
 // containing another. Recording them here is what makes the manifest a product of the render.
 const marks = [];
+const overlaps = [];
 page.on("console", (m) => {
   const t = m.text();
   if (!t.startsWith("CONFIDE_")) return;
@@ -160,6 +161,10 @@ page.on("console", (m) => {
   if (scene) marks.push(parseFloat(scene[1]));
   const total = t.match(/^CONFIDE_SECONDS ([0-9.]+)/);
   if (total) marks.push(parseFloat(total[1]));
+  // demo.html gained a fixed wordmark, and this cut draws on the same page. A pane that grows up
+  // underneath it overprints silently, so the page says so and both recorders refuse.
+  const over = t.match(/^CONFIDE_OVERLAP (.+) (\d+)$/);
+  if (over) overlaps.push(`"${over[1]}" reaches ${over[2]}px into the wordmark`);
 });
 await page.goto("file://" + path.join(dir, "demo.html"), { waitUntil: "load" });
 await page.evaluate((s) => window.__load(s), scenes);
@@ -190,6 +195,9 @@ execFileSync(process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg", [
 execFileSync("mv", [outFile + ".tmp.mp4", outFile]);
 // The manifest the cutting and narration scripts read. Written from where the scenes landed, not
 // from where they were asked to.
+if (overlaps.length) {
+  throw new Error(`a scene has grown up underneath the wordmark:\n    ` + overlaps.join("\n    "));
+}
 if (marks.length !== scenes.length + 1) {
   throw new Error(`expected ${scenes.length + 1} scene marks, got ${marks.length}`);
 }
