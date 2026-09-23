@@ -1,9 +1,9 @@
-# Confide
+# Confide — private block trades for tokenized stocks
 
-**Confidential delivery-versus-payment for tokenized stocks on Solana** — a **stock-to-stablecoin
-swap in one transaction**, with neither side publishing what moved. Confide builds the
-zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
-before signing — **with nobody in the middle**.
+**Confidential delivery-versus-payment on Solana.** Exchange tokenized stock for stablecoin in
+**one atomic transaction**. Each side verifies the other's encrypted amount before signing, and
+everyone else sees **nothing that moved** — no size, no price, no position. Confide builds the
+zero-knowledge proofs the chain will not assemble for you, **with nobody in the middle**.
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch, 2:32**](https://youtu.be/du0Twt_c9wQ) · no wallet, no API key, no install
 

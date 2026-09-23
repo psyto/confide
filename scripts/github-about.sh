@@ -31,10 +31,10 @@ elif appr == 1:
     through = "one is approved"
 else:
     through = f"{appr:,} are approved"
-d = ("Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin "
-     "swap in one transaction, with neither side publishing what moved. All {m:,} tokenized-equity "
-     "mints ship it, auditor slot empty; of {a:,} live accounts {asked} for one "
-     "and {through} — so the first trade is an issuance.").format(
+d = ("Private block trades for tokenized stocks: confidential delivery-versus-payment on Solana. "
+     "Stock for stablecoin in one atomic transaction, neither side publishing what moved. All "
+     "{m:,} such mints ship it, auditor slot empty; of {a:,} live accounts {asked} for one and "
+     "{through} — so the first trade is an issuance.").format(
         m=s["mints"], a=u["total_accounts"], asked=asked, through=through)
 # 350 is GitHub's limit; the margin is deliberate. The first version came out at exactly 350 and
 # would have failed the day any of these numbers gained a digit.
