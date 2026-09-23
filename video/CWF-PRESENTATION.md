@@ -93,7 +93,7 @@ never reads the screen.
 |---|---|---|---|---|---|
 | 1 | this account | 10 + 5 | 22 | 140 | two cards — what the chain shows, and what the holder can open — with `spl-token balance`'s own line printed under the first, and the confidential line held back and printed under the second when it arrives |
 | 2 | and nobody has been allowed one | 19 | 43 | 140 | three figures at one size — the mints, the accounts that have asked, the accounts an issuer has approved — over the scan's own total line |
-| 3 | Confide | 15 | 32 | 133 | the name, and a plain definition under it |
+| 3 | Confide | 17 | 38 | 139 | the name, and a plain definition under it |
 | 4 | the trade | 15 | 34 | 142 | the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the chain shows everyone else |
 | 5 | why the door is shut | 19 | 42 | 137 | the slot scan, the empty auditor column |
 | 6 | why now | 21 | 47 | 138 | the order's condition at reading size, with the cap beside it and `sec.gov` on the badge |
@@ -101,7 +101,7 @@ never reads the screen.
 | 8 | the gate, both ways | 12 | 25 | 132 | refused and settled side by side, with `swap-status.sh`'s own two error lines under them — `{'Custom': 24} (expected)` and `none`. The size in the title is read out of the record of the run, not typed |
 | 9 | why not just use an exchange | 20 | 44 | 136 | the reserve as |
 | 10 | what I got wrong, and what nobody has used | 20 | 45 | 139 | the assumption that failed beside the repair, over the line of `scripts/swap-sign.sh` that performs it |
-| | | **170 s** | **364** | | |
+| | | **172 s** | **370** | | |
 
 ## The script
 
@@ -134,18 +134,25 @@ so first, and turns it into the finding: the capability is everywhere and nobody
 
 ### 3 — Confide
 
-> That is what Confide is for. It builds the zero-knowledge proofs Solana will not assemble for you,
-> and lets each side read the other's amount before signing. Nobody stands in the middle.
+> That is what Confide is for: confidential delivery-versus-payment for tokenized stocks. It builds
+> the zero-knowledge proofs the chain will not assemble for you, and lets each side read the other's
+> amount before signing. Nobody stands in the middle.
 
-*Shows:* the name, and a plain definition under it. **The hero carried "issuance first — the only
+*Shows:* the name, and a plain definition under it. **The one place the narration reads the screen,
+and the second deliberate exception in the film.** Checked across all ten scenes on 2026-09-23: the
+words *confidential*, *delivery-versus-payment* and *stablecoin* were spoken **nowhere in 170
+seconds**. The mechanism was fully narrated and the category was not, so a judge listening while
+skimming heard a good explanation of a thing that was never named — the name lived only in a 19px
+corner mark. It is said once, here, where the screen already says it, and the plain-English sentence
+that follows earns it. **The hero carried "issuance first — the only
 trade the gate lets through", and that was written when it sat after the gate scene.** Here the
 viewer has not met the gate yet, so the sentence would be about something they have not been shown.
 The ordering claim moves to scene 7, where it is earned.
 
 ### 4 — the trade
 
-> Two holders exchange a position for cash in a single transaction. Either both sides settle or
-> neither does. Nobody watching learns the size, the price it implies, or that either of them held
+> Two holders exchange a position for stablecoins in a single transaction. Either both sides settle
+> or neither does. Nobody watching learns the size, the price it implies, or that either of them held
 > anything.
 
 *Shows:* the delivery-versus-payment diagram, both sides moving, sealed, and the four zeroes the
