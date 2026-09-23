@@ -37,6 +37,7 @@ founder の Alchemy エンドポイントを**環境変数としてのみ**使�
 | `scripts/wire-check.sh` | クライアントとプログラムの口座数。テストは配線を通らない |
 | `scripts/kamino-verdict.sh` | klend の pin した行がまだその内容か |
 | `python3 video/pace.py` | 動画の尺表が台本の語数と合っているか |
+| `scripts/github-about.sh [--apply]` | **GitHub の About。** repo の外にある唯一の面で、2026-09-23 まで 329,536 と *zero are confidential* を掲げていた。数字は計測から導出する |
 | `scripts/spoken-check.sh <納品mp4>` | **声が今の台本を読んでいるか。** 音声は repo の外で作られて戻ってくるので、ここだけが2つを突き合わせる |
 
 ## Codex

@@ -651,6 +651,26 @@ sys.exit(1 if bad else 0)
 PYC
 
 echo
+echo "  THE GITHUB ABOUT — the one surface that is not a file in here"
+# It is the most-read sentence about this project and it lived outside every check, because no
+# check reads GitHub. On 2026-09-23 it still said "Of 329,536 live accounts, zero are confidential":
+# an account count from 17 September, two measurements stale, beside a claim false since the 22nd.
+# Skipped rather than failed when gh is missing or the network is not there -- this file has to
+# pass on a plane.
+if command -v gh >/dev/null 2>&1 && LIVE=$(gh repo view "${REPO:-psyto/confide}" --json description -q .description 2>/dev/null); then
+  WANT=$(./scripts/github-about.sh)
+  if [ "$LIVE" = "$WANT" ]; then
+    ok "the repository's About line is what the measurements say"
+  else
+    echo "      live: $LIVE"
+    echo "      want: $WANT"
+    bad "the GitHub About has drifted — ./scripts/github-about.sh --apply"
+  fi
+else
+  echo "      ${dim}gh is unavailable or offline — not checked${off}"
+fi
+
+echo
 echo "  THE UNASKED QUESTION — a measurement is not a prediction"
 # 2026-09-22, and it came from outside this repository: a reader replied to the post that "no issuer
 # will approve one is a bit early if you haven't asked any issuers yet." They were right. What is
