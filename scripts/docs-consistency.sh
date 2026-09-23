@@ -588,7 +588,41 @@ u = json.load(open("web/usage.json"))
 conf, appr = u["total_confidential_accounts"], u["total_approved_accounts"]
 FROZEN = ("docs/reviews/", "x-post.txt", "WHERE-THE-POSITIONS-ARE", "WHAT-THE-WEEK-CHANGED",
           "DELIVERED-", "CHECKIN-1.md", "segments-checkin/")
-pat = re.compile(r"\b(zero|0|none)\b[^.\n]{0,30}configured for confidential", re.I)
+# ONE PHRASING IS NOT THE CLAIM. This asked for the literal words "configured for confidential"
+# near a zero, and on 2026-09-23 README.md said the same thing as "**0** | of them are confidential.
+# **Nobody has ever opened one.**" -- in a headline table, twelve lines above a pasted scan reading
+# "2 configured", in the file a judge opens first. The check reported a tick. web/index.html said
+# it twice more, POST.md once, short-alternatives.txt once. Five surfaces, four wordings, one
+# pattern that matched none of them.
+#
+# So the shape is caught instead of the words: a sentence that puts a nothing-word beside a
+# confidential account and does NOT mention approval is making the old claim, whatever it calls it.
+# "Two asked and none was approved" is the true one and always says approv-.
+# The first broadening went the other way and matched any sentence with a zero and the word
+# confidential in it -- six false hits, including "$0 is reachable" about Kamino. So: the claim
+# shapes, named, each one testable.
+PATS = [re.compile(p, re.I) for p in (
+    r"\b(?:zero|0|none)\b[^.\n]{0,40}\b(?:are|is)\s+confidential",
+    r"\b(?:zero|0|none)\b[^.\n]{0,30}configured for confidential",
+    r"\b(?:zero|0|none)\b[^.\n]{0,30}confidential accounts?\b",
+    r"\b(?:nobody|no one|not one|no account)\b[^.\n]{0,40}\b(?:ever\s+)?(?:opened|configured)\b",
+)]
+# AND THE CHECK IS CHECKED. These are the five wordings that were live in this repository on
+# 2026-09-23, when the pattern of the day matched exactly one of them. Any edit to PATS that stops
+# catching one of these fails here rather than in six months, silently, on a surface a judge reads.
+SPECIMENS = [
+    "| **0** | of them are confidential. **Nobody has ever opened one.**",
+    "Of 469,477 live accounts, zero are confidential.",
+    "of them are confidential. <b>Nobody has ever opened one.</b>",
+    "0 are confidential.** Nobody has ever opened one",
+    "469,477 token accounts, 0 configured for confidential transfers",
+]
+missed = [s for s in SPECIMENS if not any(p.search(s) for p in PATS)]
+if missed:
+    print("      the pattern no longer catches a claim it was written for:")
+    for s in missed:
+        print("        " + s)
+    sys.exit(1)
 bad = []
 # Text only: _submission/*.* also matches graphic.jpg, and reading it as UTF-8 is a crash rather
 # than a finding.
@@ -597,9 +631,20 @@ for f in sorted(set(glob.glob("_submission/*.md") + glob.glob("_submission/*.txt
                     + glob.glob("web/*.html") + ["README.md", "STATUS.md"])):
     if any(k in f for k in FROZEN):
         continue
-    for m in pat.finditer(pathlib.Path(f).read_text(encoding="utf-8")):
-        if conf != 0:
-            bad.append("%s says %r and %d have configured one" % (f, m.group(0)[:48], conf))
+    text = pathlib.Path(f).read_text(encoding="utf-8")
+    for pat in PATS:
+        for m in pat.finditer(text):
+            s = m.group(0)
+            if conf == 0 or re.search(r"approv", s, re.I):
+                continue
+            # A line recording its own correction is not making the claim. STATUS.md keeps the old
+            # wording beside the new one -- 'zero are confidential' -> 'two have configured one' --
+            # which is what a record is for, and the arrow is how this repository writes them.
+            line = text[text.rfind("\n", 0, m.start()) + 1:text.find("\n", m.end())]
+            if "\u2192" in line:
+                continue
+            bad.append("%s: %r — %d have configured one, so say what is 0"
+                       % (f, " ".join(s.split())[:72], conf))
 for b in bad:
     print("      " + b)
 sys.exit(1 if bad else 0)

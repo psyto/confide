@@ -1,15 +1,57 @@
 # Confide
 
-### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch**](https://youtu.be/C86U3R0IgiU) · no wallet, no API key, no install
-
 **Confidential delivery-versus-payment for tokenized stocks on Solana** — a **stock-to-stablecoin
 swap in one transaction**, with neither side publishing what moved. Confide builds the
 zero-knowledge proofs the chain will not assemble for you, and lets each side check the other
 before signing — **with nobody in the middle**.
 
+### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch, 2:32**](https://youtu.be/C86U3R0IgiU) · no wallet, no API key, no install
+
+---
+
+### Why now
+
+On **17 September 2026** the SEC gave tokenized stock five years of relief — and set the
+conditions: **AMM-executed trading only**, every fill's size, time and direction **published within
+ten minutes**, a Tier 1 name capped at **0.25% of average daily volume**. Block trades have always
+settled away from that tape, and a desk cannot go where every fill is published. Confide settles
+off it — and is **not a venue**, so the exemption neither covers it nor is needed.
+
+### Why nobody has built it
+
+**All 1,992** tokenized-equity mints on Solana already run Token-2022 with confidential transfers
+**on** and the auditor slot **empty** — every mint checked, not sampled. They did not miss it: the
+same 1,992 carry `permanentDelegate`, `pausableConfig` and a transfer hook. Token-2022's only
+disclosure model is **mint-wide** — one auditor key, reading every transfer made while it is set,
+scoped to nobody. Everybody readable, or nobody. **So every issuer left it empty** — and a
+confidential account cannot receive anything until its issuer signs for it.
+
+### Which makes the first trade an issuance
+
+Of **469,477** live accounts, **two** have asked for a confidential balance and **none** has been
+approved. So the party who can open the account is one of the two parties to the trade — and the
+first trade through that gate is **not a swap between holders. It is an issuance.**
+
+---
+
 ## What runs today — a trade that settles without publishing either side
 
-**Two parties exchange confidential positions in one transaction.** Run it yourself with
+**The gate, both ways — the first trade, which is an issuance.** The same 20,000-share allocation
+against $3,500,000, sent twice. `./scripts/issue-e2e.sh`
+
+```
+  issuance: REFUSED, the issuer had not signed for the account
+    error          {'InstructionError': [0, {'Custom': 24}]}  (expected)
+  issuance: the same allocation, after the issuer signed
+    error          none                       2 signatures   59,804 compute units
+```
+
+One instruction from the issuer stands between the two. The **auditor slot is empty throughout** —
+the issuer is the sender and needs no key to read what they sent.
+[`5fqZLgbj…`](https://explorer.solana.com/tx/5fqZLgbj3Sijft68iT9U3N8MNEitte4aLrPU6VdcQVytxAb389ZJSJMfHs68tLNYDwaUqSuA11agG7sXmP2HEV5G?cluster=devnet) refused ·
+[`29coq95v…`](https://explorer.solana.com/tx/29coq95v2k4G2PBdcf42EtraqppMC4nk7QFsgHvMc9gbeCNPjPTYnM6kpza3EkeoeLuugUuPjaW32HefgNWCgxCf?cluster=devnet) settled
+
+**Then between two strangers, sharing nothing but public keys.** Run it yourself with
 `MODE=dvp ./scripts/swap-e2e.sh`; these three are on devnet now.
 
 ```
@@ -30,13 +72,14 @@ the price it implies.
 | stock for cash | [`4gzku3FW…`](https://explorer.solana.com/tx/4gzku3FWoRzhNr24gUTBquxEPwq9L5nqZrmtrCHWjzMBjaDyiapTj6zrBtGLTcRvzPzhexuJfdgxdqafu5Jhhovs?cluster=devnet) — 29,849 CU |
 | stock for cash, on a mint shaped like **PYUSD** | [`5ZrJPGRL…`](https://explorer.solana.com/tx/5ZrJPGRLHKzzR1us4KF3kf9z5hSgvQLabHKQbkMmCSkGEGXAkC8QA7JtnMhsVBsCJzrW5a75s9LJsxaaKsqesZug?cluster=devnet) — carries `confidentialTransfer` **and** `confidentialTransferWithFee` in one transaction |
 
-## The three numbers
+## The numbers
 
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
 | **469,477** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
-| **0** | of them are confidential. **Nobody has ever opened one.** |
+| **2** | have asked for a confidential balance — both on `NVDAx` |
+| **0** | have been approved. **Nobody is through the gate.** |
 
 Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
 on every mint, and no issuer has signed for an account yet — **so there is no incumbent here and

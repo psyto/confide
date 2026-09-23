@@ -113,9 +113,9 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
 > empty on every one.
 >
-> I counted the accounts. **469,477 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC.
-> 0 are confidential.** Nobody has ever opened one — the issuer has
-> to sign, and none has.
+> I counted the accounts. **469,477 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC. Two have
+> asked for a confidential balance, both on NVDAx. 0 have been approved** — the issuer has to sign,
+> and none has.
 >
 > Same story outside equities: PYUSD and USDG, same gate, same empty slot.
 >

@@ -9,7 +9,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/" />
 <meta property="og:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
-<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Six real devnet trades, decoded in your browser. Of 469,477 live accounts, zero are confidential." />
+<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Six real devnet trades, decoded in your browser. Of 469,477 live accounts, two have asked for a confidential balance and none has been approved." />
 <meta property="og:image" content="https://psyto.github.io/confide/poster.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
@@ -79,6 +79,10 @@ pre{white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,Menlo,mon
 a{color:var(--cyn);text-decoration:none}a:hover{text-decoration:underline}
 footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:14px}
 .muted{color:var(--dim)}
+/* Named for what they mean, not for a colour. `.z` was already taken and already GREEN
+   (`.three .big.z`), so reusing it here would have painted "refused on chain" the colour of a
+   success and styled nothing at all in this context. */
+b.bad{color:var(--red)}b.good{color:var(--grn)}
 </style></head><body>
 <div class="wrap">
   <h1>Stock for stablecoin, in one transaction.<br>Neither side publishes what moved.</h1>
@@ -89,6 +93,12 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   <b>The chain readings on this page are live, made in your browser.</b> The mint list and the
   proof transactions are files served with the page; everything they are used to ask is asked of
   mainnet and devnet now.</div>
+  <div class="lede" style="margin-top:14px"><b>Why now.</b> On <b>17 September 2026</b> the SEC gave
+  tokenized stock five years of relief &mdash; and set the conditions: AMM-executed trading only,
+  every fill's size, time and direction published <b>within ten minutes</b>, a Tier 1 name capped at
+  <b>0.25% of average daily volume</b>. A desk cannot go where every fill is published. Confide
+  settles off that tape, and is <b>not a venue</b>, so the exemption neither covers it nor is
+  needed.</div>
   <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
   <a href="#do-it">run it yourself on devnet</a> ·
   Apache-2.0 · nothing here needs a wallet or an API key</div>
@@ -99,9 +109,11 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
        INSIDE this section, which was the heaviest on the page at 265 words. Everything a judge
        needs is now above the divider below; everything that earns it is under. -->
   <section>
-    <h2>A trade that settles without publishing either side.</h2>
-    <div class="lede">Three real devnet transactions, <b>fetched and decoded here by your
-    browser</b>.</div>
+    <h2>The gate refusing, the gate opening, and a trade nobody can read.</h2>
+    <div class="lede"><b id="swapCount">Real</b> devnet transactions, <b>fetched and decoded
+    here by your browser</b> &mdash; including the same allocation sent twice, once
+    <b class="bad">refused on chain</b> because the issuer had not signed for the account, and once
+    <b class="good">settled</b> after one instruction from the issuer.</div>
     <div id="swaps"><div class="muted">reading devnet…</div></div>
   </section>
 
@@ -111,8 +123,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
       confidential balances &mdash; every one of them</div></div>
       <div class="panel"><div class="big" id="heroAccounts">469,477</div><div class="cap2">live token
       accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC</div></div>
-      <div class="panel"><div class="big z">0</div><div class="cap2">of them are confidential.
-      <b>Nobody has ever opened one.</b></div></div>
+      <div class="panel"><div class="big z">0</div><div class="cap2">have been approved.
+      <b>Two have asked; no issuer has signed.</b></div></div>
     </div>
     <div class="note">Read from mainnet and counted by <span class="mono">scripts/usage-scan.sh</span>.
     The feature is shipped on every mint and gated on every mint, and no issuer has signed for an
@@ -352,6 +364,11 @@ async function readSwaps(){
   let cfg; try{ cfg=await (await fetch("swaps.json")).json(); }
   catch(e){ box.innerHTML='<div class="muted">swaps.json is missing — run ./scripts/refresh-swaps.sh</div>'; return; }
   box.innerHTML="";
+  // The heading said "Three real devnet transactions" while this loop decoded six. The count comes
+  // off the file, and the placeholder is a word rather than a number so a blocked fetch cannot
+  // leave a wrong one on the page.
+  const WORDS=["No","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+  const c=el("swapCount"); if(c) c.textContent=WORDS[cfg.swaps.length]||String(cfg.swaps.length);
   for(const w of cfg.swaps){
     const d=document.createElement("div"); d.className="panel";
     d.innerHTML='<div class="muted">reading '+short(w.signature)+'…</div>';
