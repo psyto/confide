@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # YouTube chapter marks, derived from the delivered file's own scene boundaries.
 #
-#   ./scripts/video-chapters.sh video/Confide_Stocklana_20260920.mp4
+#   ./scripts/video-chapters.sh video/Confide_Stocklana_20260923.mp4
 #
 # Not typed. The published Stocklana cut once carried chapter times belonging to a different edit
 # — the description quoted a 2:07 runtime for a file that was 1:52 — because the numbers were

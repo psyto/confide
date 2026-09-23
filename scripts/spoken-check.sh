@@ -28,9 +28,17 @@ FFMPEG="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 # reads its program from stdin -- which the heredoc had already taken. Python got the script and
 # nothing else, so the check reported "this file carries no caption track" about a file that has
 # one. The track goes to a file and the file is named as an argument.
-SRT=$(mktemp -t spoken-check)
-trap 'rm -f "$SRT"' EXIT
-"$FFMPEG" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt "$SRT" -y 2>/dev/null || true
+SRTFILE=$(mktemp -t spoken-check)
+trap 'rm -f "$SRTFILE"' EXIT
+# SRT= reads a CORRECTED track instead of the file's own, the same override video-chapters.sh
+# takes. The embedded track is raw ASR: it hears the project's name as "confined" and, on the
+# 09-23 cut, dropped twenty-one seconds of scene 5 outright. The corrected track is the one that
+# gets uploaded, so it is the one worth checking when there is one.
+if [ -n "${SRT:-}" ] && [ -f "${SRT}" ]; then
+  cp "$SRT" "$SRTFILE"
+else
+  "$FFMPEG" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt "$SRTFILE" -y 2>/dev/null || true
+fi
 
 # WHERE THE TRANSCRIBER GAVE UP. The ASR drops whole stretches: sixteen seconds of the 09-22 cut,
 # and the whole of scene 5 on 2026-09-23 -- in both cases the voice was there and the transcript
@@ -38,7 +46,7 @@ trap 'rm -f "$SRT"' EXIT
 # founder to re-record twenty seconds of perfectly good audio. So every gap over six seconds is
 # measured in the ACTUAL AUDIO, and a scene that falls inside a gap carrying speech is reported as
 # unreadable rather than as wrong.
-python3 - "$SRC" "$SRT" "$FFMPEG" <<'PY'
+python3 - "$SRC" "$SRTFILE" "$FFMPEG" <<'PY'
 import sys, re, io, os, subprocess
 sys.path.insert(0, os.path.join(os.getcwd(), "scripts", "lib"))
 import spoken

@@ -2,7 +2,7 @@
 
 ## `Confide_Stocklana_20260923.mp4` — **published: https://youtu.be/du0Twt_c9wQ**
 
-The current cut, **2:32**, and the one every surface points at. Narrated from the restructured
+The delivered cut is **2:32**, and it is the one every surface points at. Narrated from the restructured
 script: the wordmark from the first frame, the category named out loud in scene 3, Token-2022 named
 in scene 5, the issuance and the gate refusing in 7 and 8, and an ending that hands the viewer a
 command instead of a disclosure. `./scripts/spoken-check.sh video/Confide_Stocklana_20260923.mp4`
@@ -97,37 +97,17 @@ differently, and the clips were recomposited to it. The published file is the au
 anything a viewer sees — chapters especially, which come from its own subtitle track and not from
 `record.js` holds.
 
-`confide.mp4` — 2:07 silent master, rendered headlessly (Puppeteer → Chromium → ffmpeg). No screen recording, no
-narration track, no external assets, no stock footage: the diagrams are SVG and CSS in the page.
-
-```bash
-npm run record      # -> confide.mp4, reading the account out of account-keys.json
-./narrate.sh        # -> confide-narrated.mp4, the recorded voice muxed straight on
-```
-
-`narrate.sh` is the whole path for a re-render. The voice is one continuous track on the same
-timeline, so it needs no cutting; the script refuses unless the narration still falls silent at
-every scene boundary, and trims the second of blank the recorder captures past the last scene.
-
-The per-scene tools are for working on one line at a time:
-
-```bash
-./split.sh            # -> segments/
-./lift-narration.sh   # -> segments/narrated/
-./join.sh             # -> confide-narrated.mp4
-```
-
-**Prefer `narrate.sh` for anything you are going to publish.** On 2026-09-15 the concat path
-produced a file that was black from 0:45 to 1:30: `split.sh` let ffmpeg read the stdin its own loop
-was reading from, a filename arrived with its leading character missing, four clips silently stayed
-at the previous resolution, and players stop decoding where the resolution changes while the audio
-plays on. ffmpeg decoded it fine, so every check I had passed. `split.sh` now passes `-nostdin` and
-asserts one resolution across the set, but the path with no concatenation in it cannot fail that way
-at all.
-
-Re-rendering moves the pictures and leaves the narration alone, which is why those last two steps
-exist. The account address is on screen in one scene, so a re-provision makes the published video
-wrong in a way no test catches.
+**The narration path that used to live here went on 2026-09-24**, with the 09-15 cut it served.
+`narrate.sh`, `lift-narration.sh` and `join.sh` existed because the takes were never kept
+separately: the voice survived only inside an older composite, so re-rendering meant cutting it out
+and muxing it back on. The voice is now generated per script outside this repository and
+recomposited there, so there is no old composite to lift from and nothing for them to do. One
+lesson from that path is worth keeping, because it is why `split.sh` looks the way it does: on
+2026-09-15 the concat route produced a file that was black from 0:45 to 1:30 — ffmpeg read the
+stdin the loop was reading from, a filename arrived with its leading character missing, four clips
+silently stayed at the previous resolution, and players stop decoding where the resolution changes
+while the audio plays on. ffmpeg decoded it fine, so every check passed. `split.sh` now passes
+`-nostdin` and asserts one resolution across the set.
 
 It leads with what a holder gets, not with how the mechanism works. The terminal is demoted to
 evidence at the end, stamped *real output, just now*, because a video made of terminal panes reads
@@ -147,9 +127,11 @@ than trusting the timecodes in the script.
 
 ## Recording narration
 
-[`segments/`](segments) has the cut split at the scene boundaries, one clip per narration block, and
-[`join.sh`](join.sh) puts it back together once you have recorded them. Record one at a time and
-rejoin after each — missing segments fall back to the silent original.
+[`segments-presentation/`](segments-presentation) has the current cut split at the scene
+boundaries, one clip per narration block, with
+[`LINES.md`](segments-presentation/LINES.md) giving each clip's line, its length and the pace that
+implies. Record against those, then check the result with
+`./scripts/spoken-check.sh <delivered.mp4>` before uploading.
 
 ## The terminal in it is not a transcription
 

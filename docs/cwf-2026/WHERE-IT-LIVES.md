@@ -75,7 +75,7 @@ Solana* — with a measurement instead of a feature list:
 
 ## The tool
 
-`RPC=<endpoint> ./scripts/holders.sh <SYMBOL>` — supply, the largest accounts, and **which of them
+`RPC=<endpoint> ./scripts/holders.sh <SYMBOL>` *(the script was removed 2026-09-24; what it found is the table below)* — supply, the largest accounts, and **which of them
 are the issuer's own keys**, separated. Its first version did not separate them and called 88.5% in
 twenty accounts "distributed", which is how a claim about holders nearly reached the submission on
 the strength of a supply figure.

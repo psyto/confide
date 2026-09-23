@@ -14,7 +14,10 @@ FFPROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
 FFMPEG="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 # The file that is actually published. It moved on 2026-09-20 and the check kept passing against
 # the old one, because it verifies that a claim matches A file rather than THE file.
-PUB="${PUB:-video/Confide_Stocklana_20260922.mp4}"
+PUB="${PUB:-video/Confide_Stocklana_20260923.mp4}"
+# The caption file for the CURRENT video, not whichever one was published first. This guarded
+# video/captions.srt — the 09-15 cut's track — and went on passing after the upload changed.
+CAPS="${CAPS:-video/captions-20260923.srt}"
 
 fail=0
 ok()  { printf '  \033[32m✓\033[0m %s\n' "$1"; }
@@ -37,27 +40,19 @@ if [ -f "$PUB" ]; then
 
   # Flatten before matching: cue text is double-spaced and a phrase can straddle two cues, so a
   # literal grep reports the line missing when it is there. The bug this script exists to catch.
-  python3 -c "
-import re, sys
-t = open('/tmp/.dc.srt', encoding='utf-8').read()
-t = ' '.join(l.strip() for l in t.split(chr(10)) if l.strip() and '-->' not in l and not l.strip().isdigit())
-t = re.sub(r'\\s+', ' ', t)
-# The lines a sound-off viewer cannot lose. Written for the 09-20 cut: the one that was here
-# guarded a seizure line, and that scene does not exist in this film — it kept passing on the old
-# file and failed the moment the check was pointed at the one that is published.
-missing = [n for n, p in [
-    ('the rule', r'within\\s+10\\s+minutes'),
-    ('the gap', r'Nobody\\s+has\\s+built\\s+the\\s+block'),
-    ('what Confide is', r'builds\\s+the\\s+proofs'),
-    ('the empty middle', r'nobody\\s+in\\s+the\\s+middle'),
-    ('the moment', r'173,000\\s+shares'),
-    ('the count', r'accounts\\s+across\\s+Apple'),
-] if not re.search(p, t, re.I)]
-print(', '.join(missing))
-sys.exit(1 if missing else 0)
-" > /tmp/.dc.missing \
-    && ok "every line a sound-off viewer needs is in the captions" \
-    || bad "missing from the captions: $(cat /tmp/.dc.missing) — sound-off viewers lose it"
+  # THE SCRIPT'S OWN WORDS, not a list of them typed again. This was six phrases written for the
+  # 09-20 cut -- "Nobody has built the block", "builds the proofs", "nobody in the middle" -- and
+  # the 09-23 narration says none of them, so it failed the moment the check stopped looking at the
+  # superseded file. spoken-check.sh already compares the delivered track against
+  # CWF-PRESENTATION.md scene by scene and needs nothing typed, so it does this job instead.
+  # Note what this does and does not prove. It reads the CORRECTED track -- the one that gets
+  # uploaded -- so it verifies that track against the script. It cannot verify the VOICE for a
+  # scene caption-gap authored: that text came from the script, so it matches it by construction.
+  # Checking what was actually said needs the embedded track: ./scripts/spoken-check.sh "$PUB".
+  SRT="$CAPS" ./scripts/spoken-check.sh "$PUB" >/tmp/.dc.spoken 2>&1 \
+    && ok "the caption track that gets uploaded reads the current script, scene by scene" \
+    || { sed -n '3,40p' /tmp/.dc.spoken | sed 's/^/     /'
+         bad "the delivered captions do not read the current script — ./scripts/spoken-check.sh $PUB"; }
 
   # Silence is a property of the audio. Reading caption gaps is how this was got wrong.
   # A DROPPED LINE, not a breath. This was d=1 and the 09-22 delivery has a 1.4s beat between two
@@ -77,15 +72,12 @@ else
   bad "$PUB is missing"
 fi
 
-# The caption file for the CURRENT video, not whichever one was published first. This guarded
-# video/captions.srt — the 09-15 cut's track — and went on passing after the upload changed.
-CAPS="${CAPS:-video/captions-20260922.srt}"
 if [ -f "$CAPS" ]; then
   for w in Salana Nvidia "stable coin" "Everyone leaves"; do
     grep -q "$w" "$CAPS" && bad "$CAPS still says $w"
   done
   ./scripts/fix-captions.sh "$PUB" 2>/dev/null \
-    | python3 scripts/caption-gap.py "$PUB" video/DELIVERED-20260922.md 2>/dev/null \
+    | python3 scripts/caption-gap.py "$PUB" video/CWF-PRESENTATION.md 2>/dev/null \
     | diff -q - "$CAPS" >/dev/null \
     && ok "$CAPS is what fix-captions.sh produces from the published file" \
     || bad "$CAPS has drifted from its generator"
@@ -107,8 +99,8 @@ echo
 echo "  THE CUT — the manifest against the clips on disk"
 # Every cut, not just the first one. This checked video/segments alone while two more cuts were
 # added next to it, so the check-in and the presentation were cut, split and committed with nothing
-# measuring them at all.
-for seg in video/segments video/segments-checkin video/segments-presentation; do
+# measuring them at all. video/segments itself went on 2026-09-24 with the rest of the 09-15 cut.
+for seg in video/segments-checkin video/segments-presentation; do
   SEG="$seg" python3 - <<'PY' && ok "${seg#video/}: manifest, clips and LINES.md name the same set" \
                               || bad "${seg#video/}: manifest, clips and LINES.md disagree"
 import json, os, sys

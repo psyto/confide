@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Correct the auto-generated caption track against the script, without touching the audio.
 #
-#   ./scripts/fix-captions.sh video/Confide_Stocklana_20260915.mp4 > video/captions.srt
+#   ./scripts/fix-captions.sh video/Confide_Stocklana_20260923.mp4 > video/captions-20260923.srt
 #   ./scripts/fix-captions.sh video/Confide_CWF_Chech-in-1_20260921.mp4 > video/checkin-1-20260921.srt
 #
 # The captions in the delivered file are ASR: they hear the voice and write what they heard. The
@@ -10,7 +10,7 @@
 # Upload the result to YouTube as the caption track, which overrides whatever it generated.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SRC="${1:-video/Confide_Stocklana_20260915.mp4}"
+SRC="${1:-video/Confide_Stocklana_20260923.mp4}"
 "${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}" -nostdin -v error -i "$SRC" -map 0:s:0 -f srt - \
 | python3 -c "
 import sys, re

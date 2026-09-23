@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Cut a recording into one clip per narration block.
 #
-#   ./video/split.sh                 # confide.mp4       -> segments/
 #   ./video/split.sh checkin         # checkin-1.mp4     -> segments-checkin/
 #   ./video/split.sh presentation    # presentation.mp4  -> segments-presentation/
+#
+# The `main` mode went on 2026-09-24 with the 09-15 cut it split: confide.mp4, segments/ and the
+# lift-the-voice-off-the-old-composite path are all gone, because the voice is now generated per
+# script outside this repository and there is no old composite to lift from.
 #
 # One splitter for both cuts rather than a copy per cut. The copy is what this file is guarding
 # against everywhere else; it would be odd to make one here.
@@ -16,12 +19,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 FF="${FFMPEG_PATH:-/opt/homebrew/bin/ffmpeg}"
 PROBE="${FFPROBE_PATH:-/opt/homebrew/bin/ffprobe}"
-case "${1:-main}" in
-  main)    SRC=video/confide.mp4;      SEG=video/segments;               MAKE="cd video && npm run record";;
+case "${1:-presentation}" in
   checkin) SRC=video/checkin-1.mp4;    SEG=video/segments-checkin;       MAKE="node video/record-checkin.js";;
   presentation)
            SRC=video/presentation.mp4; SEG=video/segments-presentation;  MAKE="node video/record-presentation.js";;
-  *) echo "usage: split.sh [main|checkin|presentation]" >&2; exit 2;;
+  *) echo "usage: split.sh [checkin|presentation]" >&2; exit 2;;
 esac
 
 [ -f "$SRC" ] || { echo "missing $SRC — run: $MAKE" >&2; exit 1; }
@@ -77,8 +79,3 @@ case "$SEG" in
   video/segments-checkin)      python3 video/lines.py checkin;;
   video/segments-presentation) python3 video/lines.py presentation;;
 esac
-
-if [ "$SEG" = video/segments ]; then
-  echo "  narrated/ is not touched. Those clips carry the recorded voice over the PREVIOUS render;"
-  echo "  re-run ./video/lift-narration.sh to put that voice back onto these."
-fi
