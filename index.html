@@ -9,7 +9,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://psyto.github.io/confide/" />
 <meta property="og:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
-<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Six real devnet trades, decoded in your browser. Of 469,477 live accounts, zero are confidential." />
+<meta property="og:description" content="A stock-to-stablecoin swap in one transaction, neither side publishing what moved. Six real devnet trades, decoded in your browser. Of 469,477 live accounts, two have asked for a confidential balance and none has been approved." />
 <meta property="og:image" content="https://psyto.github.io/confide/poster.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Confide — a stock-to-stablecoin swap, neither side publishing what moved" />
@@ -20,8 +20,9 @@
 :root{--bg:#08090d;--fg:#c9d1de;--dim:#59647a;--bold:#f4f7fb;--red:#ef6b73;--grn:#63cf83;
  --yel:#f0c05a;--cyn:#5cc0cf;--line:#1b2030;--panel:#0b0e15}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
- -webkit-font-smoothing:antialiased;padding:64px 24px 96px}
+body{background:radial-gradient(ellipse 62% 50% at 84% 3%,rgba(39,117,137,.17),transparent 68%),
+ radial-gradient(ellipse 46% 38% at 4% 18%,rgba(36,126,84,.12),transparent 74%),var(--bg);color:var(--fg);font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;padding:24px 24px 96px}
 .wrap{max-width:960px;margin:0 auto}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 h1{font-size:44px;font-weight:700;letter-spacing:-.02em;color:var(--bold);line-height:1.18;margin-bottom:14px}
@@ -79,29 +80,77 @@ pre{white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,Menlo,mon
 a{color:var(--cyn);text-decoration:none}a:hover{text-decoration:underline}
 footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:14px}
 .muted{color:var(--dim)}
+details.more{margin:34px 0;border:1px solid var(--line);border-radius:12px;padding:0 20px;background:rgba(12,17,27,.5)}
+details.more>summary{cursor:pointer;padding:18px 0;color:var(--fg);font-size:15px;line-height:1.6}
+details.more>summary::marker{color:var(--dim)}
+details.more[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details.more section{border:0;padding-left:0;padding-right:0}
+/* Named for what they mean, not for a colour. `.z` was already taken and already GREEN
+   (`.three .big.z`), so reusing it here would have painted "refused on chain" the colour of a
+   success and styled nothing at all in this context. */
+b.bad{color:var(--red)}b.good{color:var(--grn)}
+/* The page used to open like a proof log. These pieces establish the product outcome and a path to
+   trying it before the reader chooses whether to inspect the chain evidence. */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 28px}
+.brand{font-weight:700;color:var(--bold);letter-spacing:-.01em;font-size:18px}.brand span{font-weight:400;color:var(--dim);margin-left:8px;font-size:14px}
+.nav{display:flex;gap:20px;font-size:14px}.nav a{color:var(--dim)}.nav a:hover{color:var(--cyn);text-decoration:none}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr);gap:40px;align-items:center;padding:42px 0 58px}
+.eyebrow{color:var(--cyn);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:13px}
+.hero h1{font-size:52px;line-height:1.05;margin-bottom:20px;max-width:620px}.hero .lede{font-size:20px;line-height:1.55;margin-bottom:24px}
+.cta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:12px 17px;background:var(--grn);color:#07120c;font-size:14px;font-weight:700;text-decoration:none}.btn:hover{background:#88dda0;text-decoration:none}.btn.ghost{background:transparent;border:1px solid #34445b;color:var(--bold)}.btn.ghost:hover{border-color:var(--cyn);color:var(--cyn)}
+.hero-note{font-size:13px;color:var(--dim);margin-top:14px}.trade-visual{position:relative;border:1px solid #243147;border-radius:18px;padding:23px;background:linear-gradient(145deg,rgba(16,29,42,.94),rgba(11,14,22,.87));box-shadow:0 24px 70px rgba(0,0,0,.24);overflow:hidden}.trade-visual:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-135px;top:-140px;background:radial-gradient(circle,rgba(92,192,207,.21),transparent 68%)}
+.visual-label{position:relative;color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.09em}.trade-line{position:relative;display:grid;grid-template-columns:1fr 46px 1fr;gap:10px;align-items:center;margin-top:19px}.trade-side{border:1px solid var(--line);border-radius:12px;background:rgba(8,11,17,.68);padding:17px}.trade-side .who{color:var(--dim);font-size:12px}.trade-side .asset{font-size:25px;font-weight:700;color:var(--bold);line-height:1.15;margin-top:8px}.trade-side .detail{font-size:13px;color:var(--dim);margin-top:3px}.trade-arrow{color:var(--yel);font-size:25px;text-align:center}.sealed{position:relative;margin-top:18px;border:1px solid rgba(99,207,131,.40);border-radius:11px;padding:12px 14px;background:rgba(29,104,71,.12);color:var(--grn);font-size:13px}.sealed b{color:var(--bold)}.chain-view{position:relative;display:flex;justify-content:space-between;align-items:end;margin-top:16px;border-top:1px solid var(--line);padding-top:15px}.chain-view span{font-size:13px;color:var(--dim)}.chain-view b{font:600 32px ui-monospace,monospace;color:var(--grn);line-height:1}
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:25px}.product-card{border:1px solid var(--line);background:rgba(11,14,21,.68);border-radius:13px;padding:20px}.product-card .num{color:var(--cyn);font:600 15px ui-monospace,monospace}.product-card h3{font-size:18px;line-height:1.3;color:var(--bold);margin:14px 0 8px}.product-card p{color:var(--dim);font-size:14px;line-height:1.55}.product-card b{color:var(--fg)}
+.market{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}.market .lede{margin-bottom:0}.leak{border:1px solid rgba(239,107,115,.30);border-radius:14px;padding:21px;background:linear-gradient(145deg,rgba(59,20,30,.33),rgba(12,15,23,.78))}.leak .small{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.reserve{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:13px 0;font:500 17px ui-monospace,monospace}.reserve:last-child{border:0}.reserve .before{color:var(--cyn)}.reserve .after{color:var(--yel)}.leak strong{display:block;color:var(--red);font-size:18px;line-height:1.35;margin-top:15px}
+.try{display:flex;gap:24px;align-items:center;justify-content:space-between;border:1px solid rgba(99,207,131,.30);border-radius:15px;padding:25px 27px;background:linear-gradient(105deg,rgba(22,72,52,.30),rgba(10,16,22,.62))}.try h2{font-size:24px;margin-bottom:6px}.try p{font-size:15px;color:var(--dim);max-width:630px}.try .cta-row{flex:none}
+.evidence-kicker{margin-top:72px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:14px}.evidence-kicker b{color:var(--fg)}
+@media(max-width:720px){body{padding:18px 18px 64px}.topbar{padding-bottom:18px}.brand span,.nav{display:none}.hero,.market{grid-template-columns:1fr;gap:26px}.hero{padding:26px 0 42px}.hero h1{font-size:40px}.product-grid{grid-template-columns:1fr}.try{display:block;padding:23px}.try .cta-row{margin-top:18px}.trade-line{grid-template-columns:1fr 32px 1fr}.trade-side{padding:13px}.trade-side .asset{font-size:20px}.cards,.three,.grid2{grid-template-columns:1fr}.three{gap:12px}}
 </style></head><body>
 <div class="wrap">
-  <h1>Stock for stablecoin, in one transaction.<br>Neither side publishes what moved.</h1>
-  <div class="lede"><b>Confidential delivery-versus-payment for tokenized stocks on Solana</b>
-  &mdash; a <b>stock-to-stablecoin swap in one transaction</b>, with neither side publishing what
-  moved. Confide builds the zero-knowledge proofs the chain will not assemble for you, and lets
-  each side check the other's amount before signing &mdash; with nobody in the middle.
-  <b>The chain readings on this page are live, made in your browser.</b> The mint list and the
-  proof transactions are files served with the page; everything they are used to ask is asked of
-  mainnet and devnet now.</div>
-  <div class="sub"><a href="https://github.com/psyto/confide" target="_blank">GitHub</a> ·
-  <a href="#do-it">run it yourself on devnet</a> ·
-  Apache-2.0 · nothing here needs a wallet or an API key</div>
+  <header class="topbar">
+    <a class="brand" href="#top">Confide<span>private settlement for tokenized stocks</span></a>
+    <nav class="nav" aria-label="Page sections"><a href="#why">Why now</a><a href="#how">How it works</a><a href="#evidence">Evidence</a></nav>
+  </header>
 
+  <main id="top">
+  <section class="hero" style="margin-top:0;border:0;padding-top:20px">
+    <div>
+      <div class="eyebrow">Confidential delivery versus payment on Solana</div>
+      <h1>Private block trades for tokenized stocks.</h1>
+      <div class="lede">Exchange tokenized stock for stablecoin in <b>one atomic transaction</b>.
+      The two parties can verify the encrypted legs before signing, while everyone else sees
+      <b>nothing that moved</b>.</div>
+      <div class="cta-row"><a class="btn" href="#walkthrough">Watch the product walkthrough</a>
+      <a class="btn ghost" href="#do-it">Try it on devnet</a></div>
+      <div class="hero-note">No wallet or API key is needed to inspect the live evidence below.</div>
+    </div>
+    <div class="trade-visual" aria-label="Illustration of a private stock-to-stablecoin trade">
+      <div class="visual-label">A Confide settlement</div>
+      <div class="trade-line"><div class="trade-side"><div class="who">SELLER DELIVERS</div><div class="asset">50,000 shares</div><div class="detail">tokenized stock</div></div><div class="trade-arrow">⇄</div><div class="trade-side"><div class="who">BUYER DELIVERS</div><div class="asset">$8.75m</div><div class="detail">stablecoin</div></div></div>
+      <div class="sealed"><b>Both legs are encrypted.</b> Each party checks the other amount before signing.</div>
+      <div class="chain-view"><span>what the public ledger shows</span><b>0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0</b></div>
+    </div>
+  </section>
 
-  <!-- The first ninety seconds, and nothing else. This page was 1,128 words — five and a half
-       minutes of reading — and a measurement of it said a reader's first ninety seconds ran out
-       INSIDE this section, which was the heaviest on the page at 265 words. Everything a judge
-       needs is now above the divider below; everything that earns it is under. -->
-  <section>
-    <h2>A trade that settles without publishing either side.</h2>
-    <div class="lede">Three real devnet transactions, <b>fetched and decoded here by your
-    browser</b>.</div>
+  <section id="why">
+    <div class="market"><div><div class="eyebrow">Why now</div><h2>Public AMMs publish the size of every fill.</h2><div class="lede">The SEC's 2026 relief for tokenized stock permits AMM-executed trading, but requires a public tape. For a desk, publishing size and direction within ten minutes makes the venue unusable for a block trade.</div><div class="note">Confide does not match buyers and sellers or operate a venue. It settles a trade the two parties have already agreed.</div></div><div class="leak"><div class="small">A public AMM reserve</div><div class="reserve"><span class="before">1,000,000 shares</span><span>before</span></div><div class="reserve"><span class="after">950,000 shares</span><span>after</span></div><strong>Subtract two public states: the 50,000-share trade is visible.</strong></div></div>
+  </section>
+
+  <section id="how">
+    <div class="eyebrow">How it works</div><h2>A private settlement layer, not another exchange</h2>
+    <div class="product-grid"><article class="product-card"><div class="num">01</div><h3>Agree off chain</h3><p>The parties choose their counterparty and price separately. <b>Confide never operates an order book.</b></p></article><article class="product-card"><div class="num">02</div><h3>Check before signing</h3><p>Each side reads the other's encrypted amount and verifies the proof context for itself.</p></article><article class="product-card"><div class="num">03</div><h3>Settle or cancel</h3><p>Stock and cash transfer in one Solana transaction. If either leg fails, neither side settles.</p></article></div>
+  </section>
+
+  <section class="try" id="do-it"><div><h2>See the trade work on devnet</h2><p>A standing test issuer lets you open a confidential position and swap it with another account. The real-mint issuer approval remains the work that needs an issuer.</p></div><div class="cta-row"><a class="btn" href="#trades">See live transactions</a><a class="btn ghost" href="https://github.com/psyto/confide" target="_blank" rel="noopener">View on GitHub</a></div></section>
+
+  <div class="evidence-kicker" id="evidence"><b>Live proof, for reviewers.</b> The sections below decode real mainnet and devnet data in your browser. They support the product claim above; they are not required to understand it.</div>
+
+  <section id="devnet-notes">
+    <h2 id="trades">Watch the gate open, then watch the trade settle.</h2>
+    <div class="lede"><b id="swapCount">Real</b> devnet transactions, <b>fetched and decoded
+    here by your browser</b> &mdash; including the same allocation sent twice: once
+    <b class="bad">refused on chain</b> because the issuer had not signed for the account, and once
+    <b class="good">settled</b> after one instruction from the issuer.</div>
     <div id="swaps"><div class="muted">reading devnet…</div></div>
   </section>
 
@@ -111,8 +160,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
       confidential balances &mdash; every one of them</div></div>
       <div class="panel"><div class="big" id="heroAccounts">469,477</div><div class="cap2">live token
       accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC</div></div>
-      <div class="panel"><div class="big z">0</div><div class="cap2">of them are confidential.
-      <b>Nobody has ever opened one.</b></div></div>
+      <div class="panel"><div class="big z">0</div><div class="cap2">have been approved.
+      <b>Two have asked; no issuer has signed.</b></div></div>
     </div>
     <div class="note">Read from mainnet and counted by <span class="mono">scripts/usage-scan.sh</span>.
     The feature is shipped on every mint and gated on every mint, and no issuer has signed for an
@@ -120,7 +169,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </section>
 
   <section>
-    <h2 id="do-it">Go and do it yourself. Two minutes, devnet, nobody's permission.</h2>
+    <h2>Run the devnet testbed yourself</h2>
     <div class="lede">There is a standing issuer on devnet whose gate is shut exactly as all 1,992
     are &mdash; and whose approval key is <b>published in the repository</b>. So you can open a
     confidential position the chain reports as zero — and, since 2026-09-22, <b>trade it with
@@ -157,7 +206,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
        all - which is worse than no video block at all. So the clickable region is a plain figure with
        our own same-origin poster, and it always draws. Clicking swaps in the player. The URL appears
        twice below, once as a link and once as plain text, so a reader keeps it even if the link goes. -->
-  <figure id="vid"
+  <figure id="walkthrough"
      style="display:block;position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin:30px 0 0;
             border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;cursor:pointer">
     <img src="poster.jpg" alt="Walkthrough: the same position seen four ways - the market sees nothing, a lender sees only that it covers the loan, the auditor and the holder see the number. Click to play."
@@ -172,8 +221,8 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </figure>
   <div class="note"><b>The presentation</b>, 2:22 &mdash; the trade, the count, and what is left.
   Click the frame, or
-  <a href="https://youtu.be/C86U3R0IgiU" target="_blank" rel="noopener">watch on YouTube</a>
-  (youtu.be/C86U3R0IgiU). Every terminal pane in it is the stdout of a command run
+  <a href="https://youtu.be/du0Twt_c9wQ" target="_blank" rel="noopener">watch on YouTube</a>
+  (youtu.be/du0Twt_c9wQ). Every terminal pane in it is the stdout of a command run
   moments before the recording; two of them reach mainnet and devnet.</div>
 
   <section style="border:0;padding:0;margin:0">
@@ -196,7 +245,7 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
   </section>
 
   <section>
-    <h2>The count, mint by mint</h2>
+    <h2 id="count">The count, mint by mint</h2>
     <div class="lede">Every token account on each of these mints, and how many carry the extension
     that makes a balance confidential.</div>
     <div class="panel" id="usage"><div class="muted">reading usage.json…</div></div>
@@ -205,6 +254,32 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     browser tab. Size is only the cheap filter: the first pass found seven large accounts on Apple
     xStock and <b>every one was large for an unrelated extension</b>, so the check reads the
     extension list. <b>There is no incumbent here and nothing to be late to.</b></div>
+  </section>
+
+  <!-- THE TURN, and the page did not have it. Nine sections described a gate that is shut and then
+       showed a trade that needs it open; the word "issuance" appeared nowhere on the rendered page
+       while it was the spine of every other surface. -->
+  <section>
+    <h2 id="turn">Which makes the first trade an issuance.</h2>
+    <div class="lede">A confidential account cannot receive anything until its issuer signs for it,
+    and <b>none has</b>. So the party who can open the account is <b>one of the two parties to the
+    trade</b> &mdash; and the first trade through that gate is not a swap between holders.
+    <b>It is an issuance.</b></div>
+    <div class="note">Both halves are on devnet and decoded at the top of this page: the same
+    20,000-share allocation against $3,500,000, <b class="bad">refused</b> before the issuer signed
+    &mdash; <span class="mono">Custom(24), Account not approved for confidential transfers</span>
+    &mdash; and <b class="good">settled</b> after one instruction from the issuer. The auditor slot
+    is empty throughout: the issuer is the sender and needs no key to read what they sent.</div>
+  </section>
+
+  <section>
+    <h2>Why not just use an exchange?</h2>
+    <div class="lede">You cannot. A pool's reserves are <b>public state</b>, and a trade moves them
+    by <b>exactly the amount traded</b> &mdash; subtract two consecutive states and you have the
+    size, every time, whatever the token itself can do. It has to be two parties, directly.</div>
+    <div class="note">Not a gap in this, but why it is shaped as it is. And the SEC wrote the same
+    thing down on 17 September: the relief covers <b>AMM-executed trading only</b>, which is the one
+    venue that cannot conceal a fill.</div>
   </section>
 
   <section>
@@ -231,6 +306,15 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     <div class="panel" id="confide"></div>
   </section>
 
+  <!-- PROGRESSIVE DISCLOSURE, and it is the founder's rule for every surface: get the concept
+       across fast, and let whoever wants the detail ask for it. These two are real, live and
+       parked -- they wait on a lending market that can price a balance it cannot read -- and they
+       were costing a judge several hundred words before "What is not built". Inside a <details>
+       the JavaScript still runs and fills them; the reader chooses when to look. -->
+  <details class="more">
+    <summary><b>The other half, parked</b> &mdash; a lender pricing collateral it cannot read, and
+    a quarterly position report that cannot be tidied afterwards. Both live on devnet, both waiting
+    on a venue.</summary>
   <section>
     <h2>A lender can check your collateral without seeing it.</h2>
     <div class="note" style="margin:0 0 18px"><b>The half that waits on a venue.</b> Everything
@@ -277,7 +361,28 @@ footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--line);color:v
     <span class="mono">scripts/committee.sh</span> — five separate processes, and the holder's
     exited in September. Nothing about the position is on chain: a hash and two dates.</div>
   </section>
+  </details>
 
+  <!-- Every other surface discloses this -- the film, _submission/full.md, the YouTube description.
+       This page ran to 1,740 words without it. -->
+  <section>
+    <h2 id="missing">What is not built.</h2>
+    <div class="lede"><b>The gate on a real mint.</b> The issuer above is a devnet testbed whose
+    approval key is mine. On <span class="mono">NVDAx</span>, two accounts have asked and none is
+    approved &mdash; and whether an issuer <i>would</i> sign is not measured here, because nobody
+    has asked one.</div>
+    <div class="lede" style="margin-top:14px"><b>Matching.</b> Settlement is done; finding the other
+    side is not. Bringing buyers and sellers together is the exchange definition at Rule 3b-16, so
+    it stays off. Price is agreed off chain.</div>
+    <div class="lede" style="margin-top:14px"><b>The lending half is parked</b>, above &mdash; it
+    waits on a market that can price a balance it cannot read.
+    <b>And traction is zero:</b> no pilot, no user, no issuer asked, and nobody outside the
+    repository has run any of it.</div>
+    <div class="note">Every figure on this page came off a chain and one command reproduces each.
+    Devnet resets; <span class="mono">scripts/healthcheck.sh</span> re-checks every claim.</div>
+  </section>
+
+  </main>
   <footer>
     <a href="https://github.com/psyto/confide" target="_blank">github.com/psyto/confide</a> ·
     built on <a href="https://github.com/psyto/aperture" target="_blank">aperture</a> ·
@@ -352,6 +457,11 @@ async function readSwaps(){
   let cfg; try{ cfg=await (await fetch("swaps.json")).json(); }
   catch(e){ box.innerHTML='<div class="muted">swaps.json is missing — run ./scripts/refresh-swaps.sh</div>'; return; }
   box.innerHTML="";
+  // The heading said "Three real devnet transactions" while this loop decoded six. The count comes
+  // off the file, and the placeholder is a word rather than a number so a blocked fetch cannot
+  // leave a wrong one on the page.
+  const WORDS=["No","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+  const c=el("swapCount"); if(c) c.textContent=WORDS[cfg.swaps.length]||String(cfg.swaps.length);
   for(const w of cfg.swaps){
     const d=document.createElement("div"); d.className="panel";
     d.innerHTML='<div class="muted">reading '+short(w.signature)+'…</div>';
@@ -600,10 +710,10 @@ async function runProofs(){
 
 // Click swaps the poster for the player. If the player itself is blocked, the URL is in the
 // caption underneath as plain text, so the walkthrough is still reachable by hand.
-document.getElementById("vid").addEventListener("click", e => {
+document.getElementById("walkthrough").addEventListener("click", e => {
   const a = e.currentTarget;
   const f = document.createElement("iframe");
-  f.src = "https://www.youtube.com/embed/C86U3R0IgiU?autoplay=1";
+  f.src = "https://www.youtube.com/embed/du0Twt_c9wQ?autoplay=1";
   f.title = "Confide"; f.allowFullscreen = true;
   f.allow = "autoplay; encrypted-media; picture-in-picture";
   f.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0";
