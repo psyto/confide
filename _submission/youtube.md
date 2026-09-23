@@ -19,12 +19,14 @@ missing scene back from the script.
 Confide — swap tokenized stocks for stablecoins on Solana, without publishing the size
 ```
 
-## Description — 4999 / 5000 characters
+## Description — 4997 / 5000 characters
 
 ```
-A real Solana account reports a balance of zero. It holds 173,000 shares of tokenized stock.
+Confide settles a tokenized-stock trade against stablecoins in ONE Solana transaction, and neither side publishes what moved. On devnet today.
 
-On 17 September the SEC gave tokenized stock five years of relief — and set the conditions: AMM-executed trading only, every fill's size, time and direction published within ten minutes, a Tier 1 name capped at 0.25% of average daily volume. Block trades have always settled away from that tape. Nobody had built the block. Confide settles it off the tape, and is not a venue, so the exemption neither covers it nor is needed.
+A real Solana account reports a balance of zero. It holds 173,000 shares of tokenized stock — and nobody has been allowed to open one.
+
+On 17 September the SEC gave tokenized stock five years of relief, and set the conditions: AMM-executed trading only, every fill's size, time and direction published within ten minutes, a Tier 1 name capped at 0.25% of daily volume. Block trades have always settled away from that tape. Nobody had built the block. Confide is not a venue, so the exemption neither covers it nor is needed.
 
 ▶ Decode the trades in a browser: https://psyto.github.io/confide/
 ▶ Code, Apache-2.0: https://github.com/psyto/confide
@@ -50,35 +52,35 @@ THE MEASUREMENT NOBODY HAD MADE
 
 All 1,992 tokenized-equity mints on Solana, from three unrelated issuers, run Token-2022 with confidential transfers ON and the auditor key EMPTY. Every mint checked, not sampled.
 
-They did not miss it. The same 1,992 carry permanentDelegate, pausableConfig and a transfer hook — the issuer can freeze a transfer, seize a holder's tokens, run their own code. Token-2022's only disclosure model is mint-wide: one auditor key, reading every transfer made while it is set, scoped to nobody. Everybody readable, or nobody. So every issuer left it empty.
+They did not miss it. The same 1,992 carry permanentDelegate, pausableConfig and a transfer hook — the issuer can freeze a transfer, seize a holder's tokens, run their own code. Token-2022's only disclosure model is mint-wide: one auditor key, reading every transfer while it is set, scoped to nobody. Everybody readable, or nobody. So every issuer left it empty.
 
-Then the half nobody counted: has anybody USED it? 469,477 live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC. TWO have configured a confidential account, both on NVDAx. ZERO are approved — neither can receive one until the issuer signs, and no issuer has.
+Then the half nobody counted: has anybody USED it? 469,477 live token accounts across Apple, NVIDIA, SpaceX and AMC. TWO have configured a confidential account, both on NVDAx. ZERO are approved — neither can receive one until the issuer signs.
 
-Not only equities: PYUSD and USDG land on the identical configuration; USDC cannot do it at all.
+Not only equities: PYUSD and USDG land on the same configuration.
 
 WHICH MAKES THE FIRST TRADE AN ISSUANCE
 
-The party who can open a confidential account is one of the two parties to the trade — so the first trade through that gate is not a swap between two holders. It is an issuance.
+The party who can open a confidential account is one of the two parties to the trade — so the first trade through that gate is not a swap between holders. It is an issuance.
 
 On devnet today: an issuer allocates 20,000 shares against $3,500,000 of stablecoin. Sent before the issuer had signed for the account, the chain REFUSED it — Custom(24), "Account not approved for confidential transfers". One instruction later, the same transaction SETTLED.
 
-Then between two strangers sharing nothing but public keys: 50,000 shares against $8,750,000, one transaction. Neither published the size, the price it implies, or that they held anything. All four accounts still report zero.
+Then between two strangers sharing nothing but public keys: 50,000 shares against $8,750,000, one transaction. Neither published the size, the price it implies, or that they held anything. All four accounts still read zero.
 
 WHAT CONFIDE ACTUALLY DOES
 
-Delivery versus payment is what a clearing house exists for: neither side goes first, so finance inserts a central counterparty, margin and a day of lag. A Solana transaction is all-or-nothing, so the transaction IS the clearing house. Confide holds nobody's assets.
+Delivery versus payment is what a clearing house exists for: neither side goes first, so finance inserts a central counterparty, margin and a day of lag. A Solana transaction is all-or-nothing, so the transaction IS the clearing house, and Confide holds nobody's assets.
 
-The work is everything around that. Confidential transfers need zero-knowledge proofs too large for a transaction, so they are verified into context accounts first and cited by address; on a fee-charging mint that leg takes a different instruction and five proofs instead of three, one staged through a record account. Before signing, each side decrypts the other's amount out of the verified context, rebuilds the transaction and compares it byte for byte.
+The work is around that. Confidential transfers need zero-knowledge proofs too large for a transaction, so they are verified into context accounts first and cited by address; on a fee-charging mint that leg takes a different instruction and five proofs instead of three, one staged through a record account. Before signing, each side decrypts the other's amount out of the verified context, rebuilds the transaction and compares it byte for byte.
 
 WHY NOT AN EXCHANGE, AND WHAT I GOT WRONG
 
-You cannot use one. A pool's reserves are public state and a trade moves them by exactly the amount traded — subtract two states and you have the size, whatever the token can do. It has to be two parties, directly, and the SEC wrote the same down: the relief covers AMM-executed trading only.
+You cannot use one. A pool's reserves are public state and a trade moves them by exactly the amount traded — subtract two states and you have the size, whatever the token can do. It has to be two parties, directly. The SEC wrote the same down.
 
-I also called one of these checks the safety step. A review found it was signing an object it had never compared to the one it showed you. That rebuild-and-compare is the fix, and it caught a second bug on its first run. Every review is committed under docs/reviews/.
+I also called one of these checks the safety step. A review found it was signing an object it had never compared to the one it showed you. The rebuild-and-compare is the fix, and caught a second bug on its first run. Every review is committed under docs/reviews/.
 
 GO AND DO IT YOURSELF
 
-A standing devnet issuer is gated exactly as all 1,992 are, its approval key published. So you can open a confidential position and hold something the chain reports as zero:
+A standing devnet issuer is gated exactly as all 1,992 are, its approval key published. So you can open a confidential position and hold something the chain reads as zero:
 
   git clone https://github.com/psyto/confide
   ./scripts/testbed-join.sh
@@ -87,9 +89,9 @@ Needs the Solana CLI, Rust and some devnet SOL.
 
 WHAT IS NOT BUILT
 
-The gate on a real mint: the demo's issuer is a devnet testbed whose approval key is mine. Matching is unsolved — settlement is done, finding the counterparty is not, and that is the exchange definition at Rule 3b-16, so it stays off. Price is agreed off chain. No pilot, no user, no issuer asked.
+The gate on a real mint: the demo's issuer is a testbed whose approval key is mine. Matching is unsolved — settlement is done, finding the counterparty is not, and that is the exchange definition at Rule 3b-16, so it stays off. Price is agreed off chain. No pilot, no user, no issuer asked.
 
-Every figure came off the chain and one command reproduces each. Devnet resets; ./scripts/healthcheck.sh re-checks them.
+Every figure came off the chain, and one command reproduces each. Devnet resets; healthcheck.sh re-checks them.
 
 BUILT ON
 
@@ -97,6 +99,17 @@ Original work except where declared: aperture-core and aperture-receipts (Apache
 ```
 
 ## Notes
+
+- **The product was below the fold.** The description opened on the account that reads zero and
+  did not name Confide until **character 418 of 4,999** — and YouTube collapses the description at
+  about 157, so what a judge scanning a list actually saw was a hook and half a sentence about the
+  SEC. When the name did arrive it was in a clause saying what Confide *is not*: *"not a venue, so
+  the exemption neither covers it nor is needed."*
+
+  **This is the hero-at-38-seconds problem in text**, and it was fixed in the film a day earlier by
+  putting the wordmark on the first frame. The first line now states the product and fits inside
+  the fold with room to spare; the account hook is the second line, where it still does its work.
+  A description is skimmed by somebody deciding whether to press play.
 
 - **Rewritten 2026-09-23 for the restructured cut.** The previous copy was written for
   `Confide_Stocklana_20260920.mp4` and had gone stale in the way that is hardest to notice: every
