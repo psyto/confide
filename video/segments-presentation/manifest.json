@@ -30,42 +30,42 @@
  {
   "file": "05-why-shut.mp4",
   "start": 61.13,
-  "end": 81.17,
-  "seconds": 20.03,
-  "line": "Token-2022 gives the issuer plenty: freeze a transfer, seize a holder's tokens, run their own code. Its confidential-transfer extension has exactly one auditor key, and that key reads everybody or nobody. No setting shows one balance to one regulator — so all left it empty."
+  "end": 82.17,
+  "seconds": 21.03,
+  "line": "Token-2022 gives the issuer plenty: freeze a transfer, seize a holder's tokens, run their own code. Its confidential-transfer extension has exactly one auditor key, and that key reads everybody or nobody. No setting shows one balance to one regulator — so every issuer left it empty."
  },
  {
   "file": "06-why-now.mp4",
-  "start": 81.17,
-  "end": 102.2,
+  "start": 82.17,
+  "end": 103.2,
   "seconds": 21.03,
   "line": "Last week the SEC gave tokenized stock five years of relief in the United States. Then you read the conditions: trading only through an automated market maker, where the size and direction of every trade you make is published within ten minutes. A desk cannot go there."
  },
  {
   "file": "07-the-turn.mp4",
-  "start": 102.2,
-  "end": 116.23,
+  "start": 103.2,
+  "end": 117.23,
   "seconds": 14.03,
   "line": "So the first trade through that door is not a swap between two holders. It is an issuance — because the issuer is the one who can open the account."
  },
  {
   "file": "08-the-gate.mp4",
-  "start": 116.23,
-  "end": 128.27,
+  "start": 117.23,
+  "end": 129.27,
   "seconds": 12.03,
   "line": "An issuer allocates twenty thousand shares. Sent before the issuer signed for the account, the chain refuses it. One instruction later, the same transaction settles."
  },
  {
   "file": "09-why-not-an-exchange.mp4",
-  "start": 128.27,
-  "end": 145.3,
+  "start": 129.27,
+  "end": 146.3,
   "seconds": 17.03,
   "line": "And you cannot do this on an exchange. The exemption covers trading executed by an automated market maker, where every fill's size goes on a public tape within ten minutes. That is the venue, not one pool."
  },
  {
   "file": "10-what-i-got-wrong.mp4",
-  "start": 145.3,
-  "end": 170.33,
+  "start": 146.3,
+  "end": 171.33,
   "seconds": 25.03,
   "line": "One thing I got wrong: a review found the check I called the safety step was signing something it had never compared. It is fixed, and every review is committed. This is all devnet, and you can run it yourself: one command opens a confidential position on an issuer gated exactly as all 1,992 are."
  }

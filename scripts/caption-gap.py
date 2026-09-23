@@ -19,7 +19,9 @@ than a guess:
   3. exactly one scene of the script is missing from the transcript, so there is no question which
      words belong in the hole.
 """
-import re, subprocess, sys, io
+import re, subprocess, sys, io, os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
+import spoken
 
 FFMPEG = "/opt/homebrew/bin/ffmpeg"
 GAP = 6.0
@@ -31,9 +33,6 @@ def sec(t):
 def stamp(x):
     ms = int(round(x * 1000))
     return "%02d:%02d:%02d,%03d" % (ms // 3600000, ms // 60000 % 60, ms // 1000 % 60, ms % 1000)
-
-def norm(s):
-    return " ".join(re.sub(r"[^a-z0-9]+", " ", s.lower()).split())
 
 src, doc = sys.argv[1], sys.argv[2]
 srt = sys.stdin.read()
@@ -62,11 +61,19 @@ if float(m.group(1)) < -45:
     sys.exit("  %.1f-%.1fs is silent (%s dB) — that gap is the film's, not the transcriber's" % (g0, g1, m.group(1)))
 
 # 3. Exactly one scene must be missing, so the words are not a choice.
+#
+# This used to ask whether a scene's first five words appeared in the transcript as a literal
+# substring, and on 2026-09-23 that made it refuse a file it could have fixed: the transcriber
+# hears Confide as "confined" and writes "twenty thousand" as 20,000, so two scenes that were
+# plainly there looked gone and the tool reported three holes where there was one. The comparison
+# now lives in scripts/lib/spoken.py, which spoken-check.sh asks the same question of -- they gave
+# different answers about the same file while each had its own copy of the idea.
 md = io.open(doc, encoding="utf-8").read()
-scenes = [(t.strip(), " ".join(re.sub(r"^> ?", "", b, flags=re.M).split()))
-          for _, t, b in re.findall(r"^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^> ?.*\n)+)", md, re.M)]
-heard = norm(" ".join(c[2] for c in cues))
-missing = [(t, b) for t, b in scenes if " ".join(norm(b).split()[:5]) not in heard]
+scenes = [(t, b) for _, t, b in spoken.scenes_of(md)]
+heard_w = spoken.norm(" ".join(c[2] for c in cues))
+vocab = spoken.vocabulary(heard_w)
+missing = [(t, b) for t, b in scenes
+           if spoken.presence(spoken.norm(b), heard_w, vocab)[0] < spoken.ABSENT]
 if len(missing) != 1:
     sys.exit("  %d scenes are missing from the transcript, not 1 — %s"
              % (len(missing), ", ".join(t for t, _ in missing) or "none"))

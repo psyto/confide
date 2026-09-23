@@ -156,6 +156,20 @@ const SLOT_ROLES = (() => {
   });
 })();
 
+// "SO EVERY ISSUER LEFT IT EMPTY" — scene 5's closing clause, and the one claim in this film that
+// is made only in the voice. It replaced "so all 1,992 left it empty" because "all" had nothing to
+// point at once the number came out; what it gains in sense it would lose again the day an issuer
+// fills the slot, so the render reads the inventory and refuses rather than narrating it.
+(() => {
+  const by = JSON.parse(readFileSync(path.join(repo, "web/slots.json"), "utf8")).by_issuer;
+  const filled = by.filter((i) => i.auditor !== "EMPTY");
+  if (filled.length) {
+    throw new Error(`refusing to record — ${filled.map((i) => i.issuer).join(", ")} no longer `
+      + `leaves the auditor slot empty, and scene 5 says every issuer does. `
+      + `Rerun ./scripts/slot-scan.sh and rewrite the line.`);
+  }
+})();
+
 // Scene 10 claims a repair in this repository's own code, which is the claim a judge can check
 // fastest. So the claim is read from the file that implements it.
 const SIGN = readFileSync(path.join(repo, "scripts/swap-sign.sh"), "utf8");

@@ -228,6 +228,14 @@ tokenized stock, *"bite for bite"* for byte), so neither test is exact-match:
   moves a word; it does not delete it from a 370-word film. This is what caught `stablecoins`.
 - **per-scene sequence similarity**, printed for every scene and failed under 0.80.
 
+**One question, one answer.** `caption-gap.py` asks the same thing this does — *is this scene in
+that transcript?* — to decide which words belong in a hole. They each had their own idea of it and
+gave different answers about the same file on 2026-09-23: `caption-gap.py` matched a scene's first
+five words as a literal substring, so *Confide* heard as **confined** and *twenty thousand* written
+as **20,000** made two present scenes look gone. It reported three holes where there was one and
+refused to fill any. The comparison now lives in
+[`../scripts/lib/spoken.py`](../scripts/lib/spoken.py) and both tools ask it.
+
 **And it says when it cannot see.** The transcriber drops whole stretches — sixteen seconds of the
 09-22 cut, and the entire scene 5 of 09-23 — with the voice present the whole time. The first
 version read that as a missing scene: it scored scene 5 at **10.8%**, listed nine of its words as
@@ -243,7 +251,10 @@ that carries speech is reported as unreadable rather than as wrong:
 
 Broken on purpose by muting that exact window in a copy of the file, which flips the line to
 `SILENT — nothing was said here` and the scene back to a failure. A gap that is genuinely quiet is
-still a missing line.
+still a missing line. `caption-gap.py`'s three preconditions were broken the same way: a second
+scene's cues removed (*"2 gaps over 6s — more than one needs a person"*), the window muted
+(*"57.3-78.2s is silent (-91.0 dB) — that gap is the film's, not the transcriber's"*), and a track
+with no hole left in it, which passes through byte for byte.
 
 **What it cannot catch:** one word dropped from inside a scene, when that word appears elsewhere in
 the film. `1,992` was cut from scene 5's last clause on 09-23 and the per-scene ratio only fell to

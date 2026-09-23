@@ -39,7 +39,9 @@ trap 'rm -f "$SRT"' EXIT
 # measured in the ACTUAL AUDIO, and a scene that falls inside a gap carrying speech is reported as
 # unreadable rather than as wrong.
 python3 - "$SRC" "$SRT" "$FFMPEG" <<'PY'
-import sys, re, io, difflib, subprocess
+import sys, re, io, os, subprocess
+sys.path.insert(0, os.path.join(os.getcwd(), "scripts", "lib"))
+import spoken
 
 srt = io.open(sys.argv[2], encoding="utf-8").read() if len(sys.argv) > 2 else ""
 if not srt.strip():
@@ -76,38 +78,12 @@ if cues:
             gaps.append((lo, hi, mean_db(lo, hi - lo)))
 
 script = io.open("video/CWF-PRESENTATION.md", encoding="utf-8").read()
-scenes = re.findall(r"^### (\d+) — ([^·\n]+?)\s*(?:·[^\n]*)?$\n\n((?:^>.*\n)+)", script, re.M)
+scenes = spoken.scenes_of(script)
 if not scenes:
     raise SystemExit("video/CWF-PRESENTATION.md: no scripted scenes found")
 
-# The voice says numbers as words and the transcript writes digits, and neither is wrong. Both
-# sides are reduced to the same vocabulary before anything is compared.
-NUM = {"a hundred and seventy-three thousand": "173000", "twenty thousand": "20000",
-       "ten minutes": "10 minutes", "five years": "5 years",
-       "1,992": "1992", "173,000": "173000", "20,000": "20000", "half a million": "half a million"}
-def norm(s):
-    s = s.lower()
-    for a, b in NUM.items():
-        s = s.replace(a, b)
-    # THE APOSTROPHE IS NOT A WORD. The script writes "the other's amount" and the transcriber
-    # writes "the others amount"; that is one character and it was reported as a line never spoken.
-    s = s.replace("\u2019", "").replace("'", "").replace("\u2014", " ").replace("\u2013", " ")
-    s = re.sub(r"[^a-z0-9\- ]", " ", s)
-    return [w for w in re.split(r"\s+", s) if w]
-
-heard_w = norm(heard)
-heard_set = set(heard_w)
-# Hyphenated compounds reach the transcript as separate words as often as not.
-for w in list(heard_set):
-    heard_set.update(w.split("-"))
-# AND A COMPOUND IS NOT TWO WORDS. "stablecoins" came back as "stable coins", and the check called
-# the script's own word unspoken. Adjacent pairs are joined so a split compound still matches.
-heard_set.update(a + b for a, b in zip(heard_w, heard_w[1:]))
-
-# A word worth failing over: long enough to be distinctive, and not a number the voice may phrase
-# differently. Short words drift through ASR constantly and mean nothing on their own.
-def distinctive(w):
-    return len(w) >= 7 and not w.isdigit()
+heard_w = spoken.norm(heard)
+vocab = spoken.vocabulary(heard_w)
 
 print()
 print(f"  {bold}WHAT THE FILM SAYS, AGAINST THE SCRIPT{off}  {dim}{sys.argv[1]}{off}")
@@ -123,26 +99,13 @@ if gaps:
 
 bad = 0
 unreadable = 0
-for n, title, body in scenes:
-    said = re.sub(r"\s+", " ", re.sub(r"^> ?", "", body, flags=re.M)).strip()
-    want = norm(said)
-    # Where this scene's words sit in the transcript: the best-matching run, so a scene is
-    # compared with its own stretch of the film rather than with all of it.
-    sm = difflib.SequenceMatcher(None, heard_w, want, autojunk=False)
-    blocks = [b for b in sm.get_matching_blocks() if b.size]
-    if blocks:
-        lo = min(b.a for b in blocks); hi = max(b.a + b.size for b in blocks)
-        window = heard_w[lo:hi]
-    else:
-        window = []
-    ratio = difflib.SequenceMatcher(None, window, want, autojunk=False).ratio()
-    missing = [w for w in want if distinctive(w) and w not in heard_set
-               and not any(p in heard_set for p in w.split("-"))]
+for n, title, said in scenes:
+    ratio, missing = spoken.presence(spoken.norm(said), heard_w, vocab)
     # A SCENE THE TRANSCRIPT NEVER SAW IS NOT A SCENE THAT IS WRONG. The first version of this
     # check scored scene 5 at 10.8% and listed nine of its words as "never spoken anywhere in the
     # film" — while the audio across that window measured -21.4 dB, the loudest stretch in the
     # file. It would have sent the founder to re-record twenty seconds that were already right.
-    if ratio < 0.5 and any(g[2] is not None and g[2] > -45 for g in gaps):
+    if ratio < spoken.ABSENT and any(g[2] is not None and g[2] > -45 for g in gaps):
         unreadable += 1
         print(f"  {dim}?{off} {n:>2}. {title:<42} {dim}not in the transcript{off}")
         print(f"       {dim}the transcriber dropped this stretch and the voice is in it. This check")
@@ -158,8 +121,7 @@ for n, title, body in scenes:
         print(f"       {red}never spoken anywhere in the film:{off} " + ", ".join(dict.fromkeys(missing)))
     elif not ok:
         bad += 1
-        d = [w for w in want if w not in window]
-        print(f"       {red}the scene has drifted{off} — missing: " + " ".join(d[:14]))
+        print(f"       {red}the scene has drifted{off} — only {ratio*100:.0f}% of its words matched")
 print()
 if unreadable:
     print(f"  {dim}{unreadable} scene(s) could not be checked — see above.{off}")

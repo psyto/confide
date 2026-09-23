@@ -1,0 +1,287 @@
+1
+00:00:00,240 --> 00:00:02,679
+A real account on Solana. The
+
+2
+00:00:02,679 --> 00:00:05,160
+chain says it holds nothing.
+
+3
+00:00:05,160 --> 00:00:08,000
+It holds 173,000
+
+4
+00:00:08,000 --> 00:00:09,920
+shares of tokenized stock.
+
+5
+00:00:10,161 --> 00:00:12,320
+Every tokenized stock on Solana
+
+6
+00:00:12,320 --> 00:00:15,680
+can do that. All 1,992
+
+7
+00:00:15,680 --> 00:00:17,481
+of them from three issuers with
+
+8
+00:00:17,481 --> 00:00:19,401
+nothing to do with each other.
+
+9
+00:00:19,401 --> 00:00:20,881
+So, I counted the accounts
+
+10
+00:00:20,881 --> 00:00:22,640
+actually using it.
+
+11
+00:00:22,640 --> 00:00:25,281
+Across nearly half a million, two
+
+12
+00:00:25,281 --> 00:00:27,241
+have tried, and none has been
+
+13
+00:00:27,241 --> 00:00:28,001
+allowed.
+
+14
+00:00:28,322 --> 00:00:30,562
+That is what confined is for.
+
+15
+00:00:30,562 --> 00:00:32,801
+Confidential delivery versus payment
+
+16
+00:00:32,801 --> 00:00:35,242
+for tokenized stocks. It builds
+
+17
+00:00:35,242 --> 00:00:36,762
+the zero-knowledge proofs the
+
+18
+00:00:36,762 --> 00:00:38,681
+chain will not assemble for you
+
+19
+00:00:38,681 --> 00:00:40,162
+and lets each side read the
+
+20
+00:00:40,162 --> 00:00:42,082
+the other's amount before signing.
+
+21
+00:00:42,082 --> 00:00:43,722
+Nobody stands in the middle.
+
+22
+00:00:43,963 --> 00:00:45,923
+Two holders exchange a position
+
+23
+00:00:45,923 --> 00:00:47,642
+for stablecoins in a single
+
+24
+00:00:47,642 --> 00:00:49,683
+transaction. Either both sides
+
+25
+00:00:49,683 --> 00:00:52,043
+settle or neither does. Nobody
+
+26
+00:00:52,043 --> 00:00:53,843
+watching learns the size, the
+
+27
+00:00:53,843 --> 00:00:55,923
+price it implies or that either
+
+28
+00:00:55,923 --> 00:00:57,283
+of them held anything.
+
+29
+00:00:57,283 --> 00:00:59,689
+Token-2022 gives the issuer plenty: freeze
+
+30
+00:00:59,898 --> 00:01:02,304
+a transfer, seize a holder's tokens,
+
+31
+00:01:02,513 --> 00:01:04,919
+run their own code. Its confidential-transfer
+
+32
+00:01:05,128 --> 00:01:07,534
+extension has exactly one auditor key,
+
+33
+00:01:07,744 --> 00:01:10,149
+and that key reads everybody or
+
+34
+00:01:10,359 --> 00:01:12,765
+nobody. No setting shows one balance
+
+35
+00:01:12,974 --> 00:01:15,380
+to one regulator — so every
+
+36
+00:01:15,589 --> 00:01:17,995
+issuer left it empty.
+
+37
+00:01:18,204 --> 00:01:20,885
+Last week, the SEC gave tokenized
+
+38
+00:01:20,885 --> 00:01:22,885
+stock five years of relief in the
+
+39
+00:01:22,885 --> 00:01:25,124
+United States. Then, you read the
+
+40
+00:01:25,124 --> 00:01:27,564
+conditions. Trading only through an
+
+41
+00:01:27,564 --> 00:01:29,285
+automated market maker, where the
+
+42
+00:01:29,285 --> 00:01:31,245
+size and direction of every trade
+
+43
+00:01:31,245 --> 00:01:33,125
+you make is published within 10
+
+44
+00:01:33,125 --> 00:01:36,005
+minutes. A desk cannot go there.
+
+45
+00:01:36,246 --> 00:01:37,886
+So, the first trade through that
+
+46
+00:01:37,886 --> 00:01:39,965
+door is not a swap between two
+
+47
+00:01:39,965 --> 00:01:42,526
+holders. It is an issuance because
+
+48
+00:01:42,526 --> 00:01:44,006
+the issuer is the one who can
+
+49
+00:01:44,006 --> 00:01:45,286
+open the account.
+
+50
+00:01:45,567 --> 00:01:48,726
+An issuer allocates 20,000 shares
+
+51
+00:01:48,726 --> 00:01:50,606
+sent before the issuer signed for
+
+52
+00:01:50,606 --> 00:01:53,367
+the account, the chain refuses it.
+
+53
+00:01:53,367 --> 00:01:55,287
+One instruction later, the same
+
+54
+00:01:55,287 --> 00:01:56,927
+transaction settles.
+
+55
+00:01:57,208 --> 00:01:58,767
+And you cannot do this on an
+
+56
+00:01:58,767 --> 00:02:01,048
+exchange. The exemption covers
+
+57
+00:02:01,048 --> 00:02:03,088
+trading executed by an automated
+
+58
+00:02:03,088 --> 00:02:05,728
+market maker where every fill size
+
+59
+00:02:05,728 --> 00:02:07,647
+goes on a public tape within 10
+
+60
+00:02:07,647 --> 00:02:10,328
+minutes. That is the venue, not
+
+61
+00:02:10,328 --> 00:02:11,408
+one pool.
+
+62
+00:02:11,409 --> 00:02:13,689
+One thing I got wrong. A review
+
+63
+00:02:13,689 --> 00:02:15,088
+found the check I called the
+
+64
+00:02:15,088 --> 00:02:17,168
+safety step was signing something
+
+65
+00:02:17,168 --> 00:02:19,168
+it had never compared. It is
+
+66
+00:02:19,168 --> 00:02:20,849
+fixed and every review is
+
+67
+00:02:20,849 --> 00:02:23,409
+committed. This is all devnet and
+
+68
+00:02:23,409 --> 00:02:25,208
+you can run it yourself. One
+
+69
+00:02:25,208 --> 00:02:26,889
+command opens a confidential
+
+70
+00:02:26,889 --> 00:02:28,608
+position on an issue were gated
+
+71
+00:02:28,608 --> 00:02:32,209
+exactly as all 1,992
+
+72
+00:02:32,209 --> 00:02:32,809
+are.
