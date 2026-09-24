@@ -1,7 +1,21 @@
-# Chosen (short.txt) — what it is, then the concept it replaces. 159 characters.
+# Chosen (short.txt) — the use case, then the trade. 163 characters. Adopted 2026-09-24, the same
+# line the README title and the GitHub About took that morning: it names what this is FOR before it
+# names the mechanism, which is the order a judge scanning 131 projects needs. "Confidential" stays
+# in it as the category, because a reader who takes "private" as "anonymous" asks the wrong question
+# about an auditor slot. It is also full.md's lede sentence, and docs-consistency.sh checks that the
+# two are one line rather than two copies of it. Every line it replaced is kept below.
+Private block trades for tokenized stocks: a confidential stock-to-stablecoin swap that settles in one Solana transaction, with neither side publishing what moved.
+
+# Retired 2026-09-24 — the category, then the trade. 156 characters. Written by the founder on
+# 2026-09-22 (f61b53d); sound, and the wording the delivered film still speaks. It leads on the
+# mechanism, so in a list it says what Confide IS before what it is for.
+Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved.
+
+# Retired 2026-09-22 — what it is, then the concept it replaces. 159 characters. Sound, but it
+# leads on the mechanism, and it never says "confidential".
 A stock-to-stablecoin swap that settles in one Solana transaction with neither side publishing the amount — delivery versus payment, with nobody in the middle.
 
-# What this replaces, and why it was wrong twice over:
+# What the 2026-09-20 rewrite replaced, and why that one was wrong twice over:
 #
 #   "1,869 tokenized stocks on Solana ship with privacy nobody can use — Confide makes it usable:
 #    hold your position without publishing it, and still prove what you must."
@@ -24,7 +38,7 @@ A stock-to-stablecoin swap that settles in one Solana transaction with neither s
 # judged, which is exactly how "1,869" survived above. If a number ever does go in here it goes
 # in as "more than 330,000", which survives drift in both directions -- the same rule STATUS.md
 # now carries for the video narration.
-Of 469,477 live tokenized-stock accounts on Solana, two have asked for a confidential balance and none has been approved. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
+Of 490,673 live tokenized-stock accounts on Solana, three have asked for a confidential balance and none has been approved. Confide settles a stock-to-stablecoin swap in one transaction, publishing neither amount.
 
 # B — shortest. Loses "delivery versus payment", which is the frame that makes a finance reader
 # understand immediately what institution is being removed.

@@ -74,7 +74,7 @@ If the primitive is missing and the issuer will not add it, then what is worth b
 that does not need the issuer's permission to be true:
 
 - **the compatibility verdict**, reproducible from someone else's pinned source
-- **the capacity computation** — $24.0m deposited and $86.2m of borrowing already authorised across
+- **the capacity computation** — $24.1m deposited and $85.5m of borrowing already authorised across
   Kamino's tokenized-equity reserves, **$0 of it reachable while a position stays confidential** —
   computed from Kamino's own caps, LTVs and prices, with nobody's agreement required
 - **the mechanism that removes one of the blocking conditions**, running end to end on devnet

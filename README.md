@@ -28,7 +28,7 @@ confidential account cannot receive anything until its issuer signs for it.
 
 ### Which makes the first trade an issuance
 
-Of **469,477** live accounts, **two** have asked for a confidential balance and **none** has been
+Of **490,673** live accounts, **three** have asked for a confidential balance and **none** has been
 approved. So the party who can open the account is one of the two parties to the trade — and the
 first trade through that gate is **not a swap between holders. It is an issuance.**
 
@@ -77,8 +77,8 @@ the price it implies.
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
-| **469,477** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
-| **2** | have asked for a confidential balance — both on `NVDAx` |
+| **490,673** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
+| **3** | have asked for a confidential balance — two on `NVDAx`, one on `AAPLx` |
 | **0** | have been approved. **Nobody is through the gate.** |
 
 Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
@@ -209,18 +209,18 @@ locked; it does not say whether anyone walked through. So count the accounts:
 
 ```
 $ ./scripts/usage-scan.sh
-  AAPLx      Backed       73822 accounts     7 over 400 bytes   0 configured   0 approved
-  NVDAx      Backed      189173 accounts    30 over 400 bytes   2 configured   0 approved
-  SPACEX     PreStocks    17870 accounts     6 over 400 bytes   0 configured   0 approved
-  ANTHROPIC  PreStocks    70869 accounts    29 over 400 bytes   0 configured   0 approved
-  AMC.US     Backpack     13344 accounts     4 over 400 bytes   0 configured   0 approved
-  SPCX.US    Backpack    104399 accounts    27 over 400 bytes   0 configured   0 approved
+  AAPLx      Backed       72562 accounts     7 over 400 bytes   1 configured   0 approved
+  NVDAx      Backed      206488 accounts    31 over 400 bytes   2 configured   0 approved
+  SPACEX     PreStocks    17839 accounts     6 over 400 bytes   0 configured   0 approved
+  ANTHROPIC  PreStocks    74917 accounts    36 over 400 bytes   0 configured   0 approved
+  AMC.US     Backpack     13343 accounts     4 over 400 bytes   0 configured   0 approved
+  SPCX.US    Backpack    105524 accounts    27 over 400 bytes   0 configured   0 approved
 
-  469477 token accounts across 6 mints, 2 configured for confidential transfers, 0 approved by an issuer
+  490673 token accounts across 6 mints, 3 configured for confidential transfers, 0 approved by an issuer
 ```
 
 Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
-nobody has asked. There is no incumbent here and nothing to be late to.
+no issuer has signed. There is no incumbent here and nothing to be late to.
 
 The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
 a single global auditor key that decrypts **everything, for everyone, forever** — and for a
@@ -304,7 +304,7 @@ lender needs now run on devnet — the check, and the seizure.
 > against or liquidated. **1,992 of 1,992** tokenized-equity mints clear every other condition.
 >
 > And Kamino already lends against these. **19 live reserves** at LTVs from 30 % to 73 %. At the
-> reserves' own prices that is **$24.0 m of tokenized stock deposited** and **$86.2 m of borrowing
+> reserves' own prices that is **$24.1 m of tokenized stock deposited** and **$85.5 m of borrowing
 > their caps already authorise** — of which **$0 is reachable while a position stays confidential**.
 > SpaceX has a reserve too: `SPCX.US`, Active, 40 % LTV, 15,000 cap. **Every position in all of
 > them is public**, and that is the only way in.

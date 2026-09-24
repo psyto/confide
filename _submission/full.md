@@ -1,8 +1,8 @@
 # The SEC built the tape for tokenized equity. Nobody built the block.
 
-**Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in
-one transaction, with neither side publishing what moved.** Confide builds the proofs the chain will
-not assemble for you and lets each side check the other before signing, with nobody in the middle.
+**Private block trades for tokenized stocks: a confidential stock-to-stablecoin swap that settles in
+one Solana transaction, with neither side publishing what moved.** Confide builds the proofs the
+chain will not assemble and lets each side check the other before signing, with nobody in the middle.
 
 **Block trades have always settled away from the tape.** On **2026-09-17** the SEC gave tokenized
 stock five years of relief — then set the conditions. It covers trading **executed by an AMM**,
@@ -24,9 +24,9 @@ hook. Token-2022's only disclosure model is **mint-wide**: an auditor key reads 
 while it is set, and cannot be scoped to one holder, one counterparty or one amount. **Fill it and
 everybody is readable; leave it null and the chain offers nothing.**
 
-So I counted accounts — **469,477 across the six mints that have holders. Two have configured a
-confidential account. Zero are approved** (`./scripts/usage-scan.sh`, 22 September), both on
-`NVDAx`. **Neither can receive a confidential transfer until an issuer approves it.**
+So I counted accounts — **490,673 across the six mints that have holders. Three have configured a
+confidential account. Zero are approved** (`./scripts/usage-scan.sh`, 24 September) — two on
+`NVDAx`, one new on `AAPLx`. **None can receive one until an issuer approves it.**
 
 **Which makes the first trade through that gate an issuance, not a swap between two holders** — the
 party who can open the account is one of the two. These mints are issued outside the US and are not
@@ -56,8 +56,8 @@ first run. Every review request and reply is committed: [`docs/reviews/`](docs/r
   `NVDAx` two accounts have asked and none is approved.
 - **Matching.** Settlement is done; finding the other side is not — bringing buyers and sellers
   together is the exchange definition at Rule 3b-16, so it stays off.
-- **The lending half is parked.** Kamino runs 19 live markets in these tokens — **$24.0m deposited,
-  $86.2m authorised, $0 reachable confidentially** (`constraints.rs:187`). A lender who cannot read
+- **The lending half is parked.** Kamino runs 19 live markets in these tokens — **$24.1m deposited,
+  $85.5m authorised, $0 reachable confidentially** (`constraints.rs:187`). A lender who cannot read
   a balance cannot price it.
 - **Traction is zero.** No pilot, no user, no issuer asked.
 

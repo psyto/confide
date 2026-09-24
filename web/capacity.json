@@ -1,9 +1,9 @@
 {
  "generated_from": "scripts/capacity.sh",
- "generated_at": "2026-09-22 08:21:53 UTC",
- "held_usd": 23967746,
- "stock_borrowed_out_usd": 156939,
- "authorised_capacity_usd": 86182142,
+ "generated_at": "2026-09-24 04:33:13 UTC",
+ "held_usd": 24109287,
+ "stock_borrowed_out_usd": 163177,
+ "authorised_capacity_usd": 85511865,
  "reachable_confidentially_usd": 0,
  "reserves_priced": 15,
  "reserves_total": 19,

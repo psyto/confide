@@ -54,11 +54,24 @@ for head, body in secs:
 # about the wrong thing. On 2026-09-22 two did, and the honest headline became "two configured,
 # zero approved" -- so the guard now asks what the form actually says against both numbers, and
 # only the approved count is allowed to be the zero.
+#
+# THE WORD WAS HARD-CODED. Written on the day the count was two, it accepted `two|<conf>` -- so it
+# would have gone on passing a form that still said "two" forever, and on 2026-09-24, when a third
+# account configured one on AAPLx, it REJECTED the corrected word "three". A check that passes the
+# stale text and fails the current one is worse than no check. The accepted spellings are now
+# derived from the count itself.
+WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+def spellings(n):
+    s = {str(n)}
+    if n < len(WORDS):
+        s.add(WORDS[n])
+    return s
 brief = next((b.strip() for h, b in secs if h.startswith("Brief description")), "")
 if brief:
     if appr == 0 and not re.search(r"zero are approved|0 are approved|none (?:is|are) approved", brief, re.I):
         bad.append("no account is approved and the brief description does not say so")
-    if conf and not re.search(r"\b(two|%d)\b[^.]{0,40}configured" % conf, brief, re.I):
+    if conf and not re.search(r"\b(%s)\b[^.]{0,40}configured"
+                              % "|".join(sorted(spellings(conf))), brief, re.I):
         bad.append("%d accounts have configured one; the brief description does not say how many" % conf)
     if appr != 0:
         bad.append("%d accounts are APPROVED — the gate has been opened, and every surface says it has not" % appr)

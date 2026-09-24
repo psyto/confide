@@ -259,7 +259,7 @@ fi
 # The short description is a SUBMITTED field, and the one it replaced carried a mint count from
 # before a third issuer existed. Prose checks elsewhere skip it because it is not markdown.
 python3 - <<'PY' && ok "_submission/short.txt matches the mint count and names the wedge" || bad "_submission/short.txt has drifted — it is a submitted field"
-import json, re, sys
+import json, re, sys, pathlib
 t = open("_submission/short.txt", encoding="utf-8").read()
 want = str(len(json.load(open("web/mints.json"))))
 bad = []
@@ -268,6 +268,39 @@ for m in re.finditer(r"\b([1-9][\d,]{3,})\b", t):
         bad.append("%s is neither the mint count nor the account count" % m.group(1))
 if not re.search(r"stock-to-stablecoin|stablecoin swap", t, re.I):
     bad.append("it does not name the wedge")
+# PASTED TWICE. On 2026-09-21 `bca61dc` -- a commit about YouTube caption tracks, whose message
+# says nothing about this file -- appended a second verbatim copy of the sentence. It rode along
+# in every repaste after that: `pasted.json` records 315 characters for a field whose text is 156.
+# The checks here read the numbers and the wedge, and a paragraph repeated word for word passes
+# both. What is checked is the shape: no block of this file is another block again.
+blocks = [b.strip() for b in t.split("\n\n") if b.strip()]
+if len(blocks) != len(set(blocks)):
+    bad.append("a paragraph appears twice — this file is the paste source for one field")
+# THE RECORD OF WHICH LINE WAS CHOSEN DRIFTED FROM THE LINE. short-alternatives.txt heads its
+# first block "Chosen (short.txt)" and then quotes it; on 2026-09-22 `f61b53d` replaced the
+# sentence here and left that block quoting the retired one, so the file that exists to say WHY
+# this wording won was describing a wording that had lost. It is the copy-in-two-places failure,
+# and the second place is the one nobody re-reads.
+alt = pathlib.Path("_submission/short-alternatives.txt").read_text(encoding="utf-8")
+chosen = [l.strip() for l in alt.split("\n")]
+try:
+    i = next(n for n, l in enumerate(chosen) if l.startswith("# Chosen (short.txt)"))
+    quoted = next(l for l in chosen[i + 1:] if l and not l.startswith("#"))
+    if quoted != blocks[0]:
+        bad.append("short-alternatives.txt's \"Chosen\" block is not the line in short.txt")
+except StopIteration:
+    bad.append("short-alternatives.txt no longer records which line was chosen")
+# ONE LINE, TWO SURFACES. full.md opens on the same sentence the short field carries, so a judge
+# who reads the list entry and then the submission meets the same words -- which is the defect the
+# founder caught in the film on 2026-09-23, where the description and the opening told different
+# stories. They were aligned by hand on 2026-09-22 and drifted apart by 2026-09-24 without anything
+# noticing. The lede is the first bold run of full.md, unwrapped, and it has to BE short.txt's line.
+full = pathlib.Path("_submission/full.md").read_text(encoding="utf-8")
+m = re.search(r"\*\*(.+?)\*\*", full, re.S)
+if not m:
+    bad.append("full.md has no bold lede to compare with short.txt")
+elif " ".join(m.group(1).split()) != blocks[0]:
+    bad.append("full.md's lede is not the line in short.txt")
 if bad:
     print("      " + "; ".join(bad)); sys.exit(1)
 PY
@@ -331,9 +364,18 @@ for f in files:
     # Only figures in an account-count context: a bare six-digit number elsewhere is a balance or
     # a compute figure, and flagging those would teach the check to cry wolf the way the mint
     # count already had to learn not to.
-    for m in re.finditer(r"([1-9][\d,]{4,}) (?:token )?accounts", t):
-        if m.group(1) not in want:
-            bad.append(f"{f}: {m.group(1)} accounts, web/usage.json says {total}")
+    # THE SUBMITTED FIELD WROTE IT ANOTHER WAY. This matched only "N accounts" and "N token
+    # accounts", so on 2026-09-24 it stayed green while `_submission/full.md` said "469,477
+    # across the six mints" and the YouTube description said "469,477 live token accounts" --
+    # both named in this very list, both a scan out of date, neither seen. The number is now
+    # followed to whatever noun phrase ends in "account(s)", and to the submission's own
+    # "across the ... mints". `accounts?(?![-\w])` keeps `100000 account-keys.json`, a command
+    # line further down README, from reading as a count.
+    for pat in (r"([1-9][\d,]{4,})(?:[ -][a-z]+){0,4}[ -]accounts?(?![-\w])",
+                r"([1-9][\d,]{4,}) across the [a-z]+ mints"):
+        for m in re.finditer(pat, t):
+            if m.group(1) not in want:
+                bad.append(f"{f}: {m.group(1)} accounts, web/usage.json says {total}")
     # And the headline: the whole claim is that the number of confidential accounts is this one.
     for m in re.finditer(r"(\d+) (?:of them )?configured for confidential", t):
         if int(m.group(1)) != conf:

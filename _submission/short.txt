@@ -1,3 +1,1 @@
-Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved.
-
-Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved.
+Private block trades for tokenized stocks: a confidential stock-to-stablecoin swap that settles in one Solana transaction, with neither side publishing what moved.
