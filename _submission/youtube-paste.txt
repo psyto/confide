@@ -1,6 +1,6 @@
 TITLE
 =====
-Confide — swap tokenized stocks for stablecoins on Solana, without publishing the size
+Confide — private block trades for tokenized stocks, settled in one Solana transaction
 
 
 DESCRIPTION

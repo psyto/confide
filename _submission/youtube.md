@@ -16,7 +16,7 @@ missing scene back from the script.
 ## Title — 86 / 100 characters
 
 ```
-Confide — swap tokenized stocks for stablecoins on Solana, without publishing the size
+Confide — private block trades for tokenized stocks, settled in one Solana transaction
 ```
 
 ## Description — 4993 / 5000 characters
