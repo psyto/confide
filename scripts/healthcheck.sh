@@ -233,10 +233,19 @@ elif len(asr) == len(en): print("ASR")
 elif asr:                 print("BOTH")
 else:                     print("UPLOADED")
 ' 2>/dev/null)
+# BOTH ASKED FOR SOMETHING THAT DOES NOT STICK. It failed with "delete it in Subtitles", and on
+# 2026-09-24 the founder did: the track came back, and the next read of the watch page found
+# `a.en` listed again beside the uploaded `.en`. YouTube re-derives its own transcript; a video
+# owner cannot refuse it. A red that no action can clear is a red that teaches everyone to skip
+# reds, so this reports rather than fails -- and the failing half is kept, because the thing that
+# IS controllable is whether a human-uploaded English track exists at all, which is what carries
+# fix-captions.sh's corrections and the sixteen seconds the machine dropped. ASR and NONE still
+# fail. The measurement did not get weaker: "an uploaded track exists" is still required, and what
+# stopped being required is the absence of something nobody can remove.
 case "$cc" in
   UPLOADED) ok "the English captions are the uploaded track, not YouTube's transcription" ;;
   ASR)      bad "the English captions are YouTube's ASR — upload video/captions-*.srt; fix-captions.sh's corrections are not live" ;;
-  BOTH)     bad "YouTube's own English transcript is still listed beside the uploaded one — delete it in Subtitles, or the machine's version stays one menu click away" ;;
+  BOTH)     ok "the uploaded English track is live; YouTube lists its own auto-generated one beside it, which regenerates after deletion (tried 2026-09-24) and is not an action item" ;;
   NONE)     bad "the video has no English caption track at all" ;;
   *)        warn "could not read the caption tracks — YouTube's page shape may have changed" ;;
 esac

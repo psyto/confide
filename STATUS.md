@@ -524,8 +524,8 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
    | 残り | |
    |---|---|
-   | **字幕を上げる** | `video/captions-20260922.srt`（68キュー）を**英語トラック**として。**自動生成のままだと場面7の16秒が空白**で、それが ASR が落とした区間 |
-   | **説明文とチャプターを貼る** | [`_submission/youtube-paste.txt`](_submission/youtube-paste.txt)。貼ったら `./scripts/pasted.sh youtube-description` |
+   | ~~**字幕を上げる**~~ | **完了。** アップロード版の英語トラックが `du0Twt_c9wQ` で生きている（`healthcheck.sh` が毎回 `captionTracks` を読む）。**自動生成トラックは消せない** — 2026-09-24 に founder が削除したが、次の読み取りで `a.en` が戻っていた。YouTube 側の挙動で、動画所有者に拒否権が無い。だから検査は「消えていること」ではなく **「人が上げたトラックが存在すること」** を要求する |
+   | ~~**説明文とチャプターを貼る**~~ | **完了**（2026-09-24、`pasted.json` に記録）。タイトルも同日 *private block trades* に変更、oembed から読み返して `_submission/youtube.md` を合わせた |
 
 0h. **⚠ 提出物の背骨を入れ替えた（2026-09-22、founder の判断）。動画の再収録が残っている。**
 
