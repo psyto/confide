@@ -42,10 +42,10 @@ founder の Alchemy エンドポイントを**環境変数としてのみ**使�
 
 ## Codex
 
-`codex` は PATH に無い。実体は `/Applications/ChatGPT.app/Contents/Resources/codex`。
+`codex` は PATH に無い。実体は `/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex`（2026-09-26 のアプリ更新で `Resources/codex` から移動した。古い方はもう無い）。
 
 ```
-/Applications/ChatGPT.app/Contents/Resources/codex exec \
+/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex exec \
   -C /Users/hiroyusai/src/confide -s read-only -o <別パス.md> "$(cat payload.md)" < /dev/null
 ```
 
