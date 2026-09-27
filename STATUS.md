@@ -458,7 +458,7 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    順序は `0g` にある — **再測定 → 貼り直し → `./scripts/pasted.sh`**、13:00 PDT の凍結まで。
 
    **残っている founder 作業は check-in 2 の収録だけ**（窓 09-25 08:00 → 09-28 08:00 PDT）。
-   台本は [`video/CHECKIN-2.md`](video/CHECKIN-2.md)、58秒。**3日ぶん足りないので 09-25 に読み直す。**
+   台本は [`video/CHECKIN-2.md`](video/CHECKIN-2.md)、59秒。**3日ぶん足りないので 09-25 に読み直す。**
 
 0j. **⚠ リポジトリの外から初めて訂正が来た（2026-09-22）。正しかった。**
 
@@ -616,7 +616,7 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
 
 0g. **CWF check-in 2 — 台本はある、収録がまだ。窓は 09-25 08:00 PDT に開き 09-28 08:00 PDT に閉じる。**
 
-   [`video/CHECKIN-2.md`](video/CHECKIN-2.md) を 2026-09-22 に書いた。59秒・128語・3シーン。
+   [`video/CHECKIN-2.md`](video/CHECKIN-2.md) を 2026-09-22 に書き、09-27 に書き直した。59秒・127語・3シーン。
    **窓が開く前に書いたのは check-in 1 と逆** — 09-22 時点で終わっている作業から書いたので、
    **09-25 に読み直すこと。** 間に何か着地したら場面1に入り、今そこにあるものが退く。
 

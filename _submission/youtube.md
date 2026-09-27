@@ -19,7 +19,7 @@ missing scene back from the script.
 Confide — private block trades for tokenized stocks, settled in one Solana transaction
 ```
 
-## Description — 4993 / 5000 characters
+## Description — 4991 / 5000 characters
 
 ```
 Confide settles a tokenized-stock trade against stablecoins in ONE Solana transaction, and neither side publishes what moved. On devnet today.
@@ -54,7 +54,7 @@ All 1,992 tokenized-equity mints on Solana, from three unrelated issuers, run To
 
 They did not miss it. The same 1,992 carry permanentDelegate, pausableConfig and a transfer hook — the issuer can freeze a transfer, seize a holder's tokens, run their own code. Token-2022's only disclosure model is mint-wide: one auditor key, reading every transfer while it is set, scoped to nobody. Everybody readable, or nobody. So every issuer left it empty.
 
-Then the half nobody counted: has anybody USED it? 490,673 live token accounts across Apple, NVIDIA, SpaceX and AMC. THREE have configured a confidential account — two on NVDAx, one on AAPLx. ZERO are approved — none until an issuer signs.
+Then the half nobody counted: has anybody USED it? 507,908 live token accounts across Apple, NVIDIA, SpaceX and AMC. TWO have configured a confidential account — one on NVDAx, one on AAPLx. ZERO are approved — none until an issuer signs.
 
 Not only equities: PYUSD and USDG land on the same configuration.
 

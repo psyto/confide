@@ -28,7 +28,7 @@ confidential account cannot receive anything until its issuer signs for it.
 
 ### Which makes the first trade an issuance
 
-Of **490,673** live accounts, **three** have asked for a confidential balance and **none** has been
+Of **507,908** live accounts, **two** have asked for a confidential balance and **none** has been
 approved. So the party who can open the account is one of the two parties to the trade — and the
 first trade through that gate is **not a swap between holders. It is an issuance.**
 
@@ -77,7 +77,7 @@ the price it implies.
 | | |
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
-| **490,673** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
+| **507,908** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
 | **3** | have asked for a confidential balance — two on `NVDAx`, one on `AAPLx` |
 | **0** | have been approved. **Nobody is through the gate.** |
 
@@ -209,14 +209,14 @@ locked; it does not say whether anyone walked through. So count the accounts:
 
 ```
 $ ./scripts/usage-scan.sh
-  AAPLx      Backed       72562 accounts     7 over 400 bytes   1 configured   0 approved
-  NVDAx      Backed      206488 accounts    31 over 400 bytes   2 configured   0 approved
-  SPACEX     PreStocks    17839 accounts     6 over 400 bytes   0 configured   0 approved
-  ANTHROPIC  PreStocks    74917 accounts    36 over 400 bytes   0 configured   0 approved
-  AMC.US     Backpack     13343 accounts     4 over 400 bytes   0 configured   0 approved
-  SPCX.US    Backpack    105524 accounts    27 over 400 bytes   0 configured   0 approved
+  AAPLx      Backed       73148 accounts     7 over 400 bytes   1 configured   0 approved
+  NVDAx      Backed      215110 accounts    29 over 400 bytes   1 configured   0 approved
+  SPACEX     PreStocks    17765 accounts     6 over 400 bytes   0 configured   0 approved
+  ANTHROPIC  PreStocks    74279 accounts    38 over 400 bytes   0 configured   0 approved
+  AMC.US     Backpack     14767 accounts     4 over 400 bytes   0 configured   0 approved
+  SPCX.US    Backpack    112839 accounts    28 over 400 bytes   0 configured   0 approved
 
-  490673 token accounts across 6 mints, 3 configured for confidential transfers, 0 approved by an issuer
+  507908 token accounts across 6 mints, 2 configured for confidential transfers, 0 approved by an issuer
 ```
 
 Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and

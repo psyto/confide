@@ -61,7 +61,7 @@ for showing a balance to somebody who needs to see it, is empty on every one of 
 So the honest answer is: **today, nobody.** And the second measurement says that is not a
 disadvantage.
 
-> **490,673 token accounts. Three have configured a confidential account — two on NVDAx, one on
+> **507,908 token accounts. Two have configured a confidential account — one on NVDAx, one on
 > AAPLx — and zero
 > are approved — the issuer has not signed.**
 > `./scripts/usage-scan.sh`, written for this question because no such count existed.
@@ -111,7 +111,7 @@ operations decision, not a roadmap item — and on the day it happens, "somebody
 confidential settlement for this" is six months away and "this already settles, here are the
 transaction signatures" is the same afternoon.
 
-**Because the measurement says the seat is empty.** 490,673 accounts, three configured and none
+**Because the measurement says the seat is empty.** 507,908 accounts, two configured and none
 approved. Building
 after the gate opens means building against whoever built before it.
 
@@ -138,7 +138,7 @@ is done, measured, and will still be true when the conditions change.
 ## 6. What is not true, said here rather than found later
 
 - **Traction is zero.** Nobody outside this repository has used any of it. No pilot, no design
-  partner, no letter of intent. The 490,673-account scan measures a market, not a customer.
+  partner, no letter of intent. The 507,908-account scan measures a market, not a customer.
 - **No issuer has been asked.** The gate is described, not negotiated. Individual outreach was
   retired as a decision, with its cost written down where it was made.
 - **Price is off chain.** Nothing here says 50,000 shares are worth $8.75m. That is what the two

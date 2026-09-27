@@ -358,8 +358,24 @@ files = ["STATUS.md", "README.md", "web/index.html", "_submission/full.md",
          "_submission/short-alternatives.txt", "_submission/youtube.md",
          "_submission/youtube-paste.txt", "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md",
          "docs/cwf-2026/COMPOSITION.md", "scripts/testbed-join.sh"]
+# A PASTED FILE IS A RECORD, NOT A SURFACE. `_submission/full.md` holds what went into Stocklana's
+# form, whose edit window shut 2026-09-25. Editing it to match a later scan would destroy the thing
+# THE SUBMITTED FIELDS compares against, so these two checks would disagree by construction and one
+# of them would have to be wrong. Skipped here and guarded there -- and the skip is PRINTED, on the
+# rule that the dangerous exemption is the silent one. The list above stays wide: a file leaves this
+# check only by being pasted, and says so when it does.
+frozen = {}
+try:
+    frozen = {v["file"]: v["pasted_utc"][:16]
+              for v in json.load(open("_submission/pasted.json")).values()}
+except Exception:
+    pass
 bad = []
 for f in files:
+    if f in frozen:
+        print("      %s: a record of what was pasted %s — checked by THE SUBMITTED FIELDS instead"
+              % (f, frozen[f]))
+        continue
     t = pathlib.Path(f).read_text(encoding="utf-8")
     # Only figures in an account-count context: a bare six-digit number elsewhere is a balance or
     # a compute figure, and flagging those would teach the check to cry wolf the way the mint
