@@ -19,7 +19,7 @@ arrives afterwards cannot be told apart from what was already there.
 **Every number below is recomputable, and they move.** Re-run `./scripts/usage-scan.sh`,
 `./scripts/capacity.sh` and `./scripts/slot-scan.sh` before posting and update from their output —
 a post quoting a figure the page contradicts is worse than no post. Current readings:
-**507,908 accounts / 2 configured / 0 approved**, and
+**518,744 accounts / 2 configured / 0 approved**, and
 **$24.1 m / $85.5 m**.
 
 ---
@@ -34,7 +34,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
 >
-> So I counted. **507,908 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
+> So I counted. **518,744 token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC.
 > Two have configured one — one on NVDAx, one on AAPLx — and 0 are approved by an issuer.** A third
 > configured one and closed it; the door never opened.
 > (`./scripts/usage-scan.sh` — and the first pass found seven accounts large enough to be one, every
@@ -96,7 +96,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 >
 > It is devnet and the tokens represent nothing. You will need the Solana CLI, a Rust toolchain and
 > a little devnet SOL — the script tries the airdrop and tells you what to do when it is throttled,
-> which it usually is. **It is the thing 507,908 live accounts have never done.** Mint
+> which it usually is. **It is the thing 518,744 live accounts have never done.** Mint
 > `7MEQEiy1…`; the approval key is in `keys/` and cannot mint, which is checked rather than claimed.
 >
 > Everything above is checkable without taking my word for it:
@@ -113,7 +113,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
 > empty on every one.
 >
-> I counted the accounts. **507,908 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC. Two
+> I counted the accounts. **518,744 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC. Two
 > have asked for a confidential balance — one on NVDAx, one on AAPLx. 0 have been approved** — the
 > issuer has to sign, and none has.
 >
