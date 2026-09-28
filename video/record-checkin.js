@@ -1,4 +1,4 @@
-// Records checkin-1.mp4 — the weekly one-minute update, three scenes, silent.
+// Records checkin-<n>.mp4 — the weekly one-minute update, three scenes, silent.
 //
 // Scene 1 is the published page actually being operated, not a picture of it: the recorder drives
 // the same URL a judge would open, types a symbol, and waits for the verdict to arrive from
@@ -20,7 +20,12 @@ import { PuppeteerScreenRecorder } from "puppeteer-screen-recorder";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(dir, "..");
-const outFile = path.join(dir, "checkin-1.mp4");
+// THE SCRIPT WAS PARAMETERISED AND THE OUTPUT WAS NOT. This was `checkin-1.mp4` while DOC
+// below already honoured CHECKIN_DOC, so recording check-in 2 would have overwritten the cut
+// submitted in week 1 and still left `checkin-2.mp4` missing -- which is the exact pairing
+// docs-consistency.sh checks. Both now come from the same number.
+const NUM = (process.env.CHECKIN_DOC || "CHECKIN-1.md").match(/(\d+)/)[1];
+const outFile = path.join(dir, `checkin-${NUM}.mp4`);
 const FFMPEG = process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg";
 const PORT = 8791;
 
@@ -112,7 +117,10 @@ await page.evaluate(() => document.getElementById("swaps").scrollIntoView({ bloc
 await sleep(Math.max(0, HOLD[0] * 1000 - (Date.now() - t0)));
 
 // ── scenes 2 and 3 — authored, over real output ──────────────────────────────────────────────────
-await page.goto("file://" + path.join(dir, "checkin.html"), { waitUntil: "load" });
+// Scenes 2 and 3 are this week's, not last week's. checkin.html stays exactly as it was so the
+// command that produced the submitted week-1 cut still reproduces it.
+const SLIDES = NUM === "1" ? "checkin.html" : `checkin-${NUM}.html`;
+await page.goto("file://" + path.join(dir, SLIDES), { waitUntil: "load" });
 await page.evaluate((d) => window.__data(d), {
   table,
   accounts: usage.total_accounts.toLocaleString("en-US"),
@@ -145,7 +153,10 @@ const manifest = files.map((file, i) => ({
   seconds: +(marks[i + 1] - marks[i]).toFixed(2),
 }));
 // Next to the clips, named the way split.sh expects, so one splitter serves both cuts.
-const segDir = path.join(dir, "segments-checkin");
+// AND PER CHECK-IN, for the same reason outFile is: this wrote week 2's marks over week 1's
+// manifest while week 1's clips stayed on disk, leaving a manifest that described a cut its own
+// clips were not from. split.sh maps `checkin` to checkin-1.mp4, so that directory stays week 1's.
+const segDir = path.join(dir, NUM === "1" ? "segments-checkin" : `segments-checkin-${NUM}`);
 mkdirSync(segDir, { recursive: true });
 writeFileSync(path.join(segDir, "manifest.json"), JSON.stringify(manifest, null, 1) + "\n");
 process.stderr.write(`\n✓ ${outFile}  (${marks[3].toFixed(1)}s)\n`);

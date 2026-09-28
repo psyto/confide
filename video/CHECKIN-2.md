@@ -62,21 +62,22 @@ they carry their own timestamp.
 
 | | scene | seconds (+ silence) | words | pace | what it shows |
 |---|---|---|---|---|---|
-| 1 | what changed | 22 | 49 | 137 | two terminals side by side, then the check refusing a transaction and passing the honest one |
-| 2 | what I learned | 18 + 1 | 39 | 134 | `refresh-mints.sh` reading three issuer APIs, beside `slot-scan.sh`'s own header claiming a census of Solana |
-| 3 | what is next | 18 | 39 | 134 | the scanner's own diff line — `CONFIGURED MOVED 3 -> 2` — then the closed account's address returning nothing |
-| | | **59 s** | **127** | | |
+| 1 | what changed | 21 | 47 | 138 | the published page decoding the devnet swaps from the chain, every account involved still reporting a public balance of 0 — the recorder waits for mainnet to answer rather than filming a still |
+| 2 | what I learned | 18 + 1 | 39 | 134 | `refresh-mints.sh`'s three issuer catalogues beside `slot-scan.sh`'s own claim of a census, and the claim struck through during the pause |
+| 3 | what is next | 18 | 39 | 134 | the account scan's own output, then `configured 3 → 2` and the line that says one account was configured, waited, and was closed |
+| | | **58 s** | **125** | | |
 
 ## The script
 
 ### 1 — what changed
 
-> Last week I said the next thing was making the swap work between strangers. It does — four
+> Last week I said the next thing was the swap working between strangers. It does — four
 > messages, two machines, neither holding the other's key. A review then found the step I called
-> the safety step was signing something it had never looked at. It compares them now.
+> the safety step was signing something it had never read. It compares them now.
 
-*Shows:* two terminals side by side, then the check refusing a transaction and passing the honest
-one. **Two beats in one scene, because the week's real subject is the next one.** The delivered
+*Shows:* the published page decoding the devnet swaps from the chain, every account involved still
+reporting a public balance of 0 — the recorder waits for mainnet to answer rather than filming a
+still. **Two beats in one scene, because the week's real subject is the next one.** The delivered
 promise and the defect found in it belong together: the thing works, and the part I was proudest of
 was wrong.
 
@@ -87,8 +88,8 @@ was wrong.
 >
 > It is not. I found that by widening the scan past my own list — nobody had to tell me.
 
-*Shows:* `refresh-mints.sh` reading three issuer APIs, beside `slot-scan.sh`'s own header claiming a
-census of Solana. **The two files in one frame are the whole finding** — a collector and a claim
+*Shows:* `refresh-mints.sh`'s three issuer catalogues beside `slot-scan.sh`'s own claim of a census,
+and the claim struck through during the pause. **The two files in one frame are the whole finding** — a collector and a claim
 that do not match, both written here, neither caught by any check, because every check in this
 repository compares files to files and none of them reads the token program. The pause is before
 "It is not."
@@ -99,8 +100,8 @@ repository compares files to files and none of them reads the token program. The
 > it. The ones still open are empty, and no issuer has approved any of them. Next: make the
 > issuance path something a stranger can run.
 
-*Shows:* the scanner's own diff line — `CONFIGURED MOVED 3 -> 2` — then the closed account's
-address returning nothing. **The scan prints that line itself**; it reads the previous run before
+*Shows:* the account scan's own output, then `configured 3 → 2` and the line that says one account
+was configured, waited, and was closed. **The scan prints that line itself**; it reads the previous run before
 overwriting it, so the movement is measured rather than remembered. Ending on somebody leaving is
 the same move as check-in 1 ending on traction: the fact that most weakens the pitch, said first.
 
