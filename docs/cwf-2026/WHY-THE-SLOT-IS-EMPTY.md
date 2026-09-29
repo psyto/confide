@@ -5,7 +5,7 @@ chain, confidential transfers are not really used — so for Solana to stay ahea
 make better use of Token-2022?
 
 **The observation is right and the diagnosis is backwards.** Issuers are not under-using
-Token-2022. They are using almost all of it, on every mint, and declining exactly one thing.
+Token-2022. They are using almost all of it, on every mint, and exactly one thing is left off.
 
 ## What every tokenized stock on Solana actually has switched on
 

@@ -200,8 +200,8 @@ exhaustive over what these three publish and is not an issuer census of Solana. 
 written to [`web/slots.json`](web/slots.json) and prose is checked against it — a hand-typed copy
 of it sat here saying `732` and `1137` and no third issuer, for weeks, without failing anything.*
 
-One issuer would be a quirk. **Three, arriving independently at the same dead end, is the shape of
-the problem.** Four of them mint by mint, with no key and no account:
+One issuer would be a quirk. **Three of them, on every mint any of them has shipped, at the same
+dead end, is the shape of the problem.** Four of them mint by mint, with no key and no account:
 `./scripts/onchain-check.sh`, and [docs/ONCHAIN.md](docs/ONCHAIN.md) for every reading behind it.
 
 **And the second half of that sentence is measured, not assumed.** Configuration says the door is

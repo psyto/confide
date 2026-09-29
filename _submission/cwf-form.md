@@ -323,7 +323,7 @@ Backed, Backpack and PreStocks ship tokenized equity on Token-2022 with confiden
 
 Kamino refuses confidential collateral and is right to: a lender who cannot read a balance cannot price it. Their program requires the extensions inactive at deposit. Correct underwriting.
 
-What is wrong is upstream of them all. Token-2022 offers one disclosure model: a single auditor key that decrypts everything, for everyone, forever — or null. Fill it and every holder is permanently readable by one party; leave it null and nobody can prove anything to anyone. Every issuer picked null. Every decision downstream is locally correct inside a design with no third option.
+What is wrong is upstream of them all. Token-2022 offers one disclosure model: a single auditor key that decrypts everything, for everyone, forever — or null. Fill it and every holder is permanently readable by one party; leave it null and nobody can prove anything to anyone. Every mint has it null. Every decision downstream is locally correct inside a design with no third option.
 
 Confide builds the third option: disclosure scoped to a recipient and a purpose.
 ```

@@ -19,8 +19,8 @@ Backpack   EMPTY   1156     US CUSIP, "a bona fide security entitlement" by the 
 PreStocks  EMPTY   8        pre-IPO companies with no public market at all
 ```
 
-One issuer leaving the slot empty is a quirk. **Three, independently, is the shape of the
-problem** — and Backpack's are the closer thing to the underlying security, so it is not that the
+One issuer leaving the slot empty is a quirk. **Three, on every mint they have shipped, is the
+shape of the problem** — and Backpack's are the closer thing to the underlying security, so it is not that the
 weaker instrument cut a corner.
 
 *This block said `732` and `1137` and named two issuers, for as long as there were two. The counts

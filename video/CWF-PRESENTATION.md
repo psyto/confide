@@ -203,7 +203,7 @@ every issuer in `web/slots.json` still has an empty auditor slot.
 whole script on 2026-09-23: *Token-2022* and *confidential transfer* were spoken **nowhere in the
 film** — and the strongest measured fact in this submission is a Token-2022 fact. A Solana judge
 who never hears the name cannot place the work, and the mints scene is where the name is earned. **The diagnosis, and it answers the question
-scene 2 raises** — why would three unrelated issuers all decline the same thing?
+scene 2 raises** — why is the slot empty on every mint of all three issuers?
 
 ### 6 — why now
 

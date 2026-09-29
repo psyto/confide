@@ -31,7 +31,7 @@ same field, read from two sides.**
     0 auto-approve, so 0 can hold a confidential position without the issuer
 ```
 
-All three issuers, independently, on every mint they have ever shipped: Backed 828, Backpack 1,156, PreStocks 8.
+All three issuers, on every mint they have ever shipped: Backed 828, Backpack 1,156, PreStocks 8.
 **There is no mint in the population that escapes the gate**, so there is no version of this that
 is solved by picking a different ticker.
 
@@ -66,6 +66,28 @@ not yet evidence.
 
 **Nobody has been asked, so this is untested.** It is recorded as a hypothesis with a date, the way
 the two positions before it were.
+
+### And the uniformity is not evidence of a decision — 2026-09-27
+
+Every surface here used to read the sameness as a choice: *three issuers, arriving independently*,
+*declining exactly one thing*, *every issuer picked null*. Codex rejected that inference on 09-23
+(a shared deployment template, SDK or issuance provider produces identical settings without anyone
+deciding), and on 09-27 the counter-argument offered against it — that
+`auto_approve_new_accounts` and `auditor_elgamal_pubkey` are required fields of `InitializeMintData`,
+so somebody passed them explicitly — turned out to prove the opposite: the struct derives
+`Pod, Zeroable` (`spl-token-2022-interface-3.1.1/src/extension/confidential_transfer/instruction.rs:502`),
+so `false` and `null` are exactly what a zeroed struct yields. **The observed configuration is the
+default.** The wording was removed from README, ONCHAIN, WHY-THE-SLOT-IS-EMPTY, FOUNDER-MARKET-FIT,
+WHAT-THE-WEEK-CHANGED, the presentation script, the CWF form and the published page; the
+measurements they sat on were not touched, because none of them ever needed a motive.
+
+What separates the two readings is provenance, not another extension census: cluster the
+mint-creation and `UpdateMint` transactions by signer, deploying program, date and instruction
+bytes, and find whether a public SDK or template emits these values. Nobody has done that.
+
+**Nothing in the pincer rests on intent.** The gate is a field's value, `$0` is Kamino's own
+refusal at `constraints.rs:187`, and neither becomes less true if every issuer got here by
+accepting a default.
 
 ## What it does not fix
 

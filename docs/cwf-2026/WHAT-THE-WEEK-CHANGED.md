@@ -108,7 +108,7 @@ inattentive — these are not issuers who ignored the extension list:
 | `transferFeeConfig`, `confidentialTransferFeeConfig` | 8 |
 | **`confidentialMintBurn`** | **0** |
 
-**Seven extensions on every single mint, configured deliberately.** The eighth is switched on and
+**Seven extensions on every single mint.** The eighth is switched on and
 walled off, and the ninth was never turned on. That is a much harder thing to explain away than a
 count of unused accounts.
 

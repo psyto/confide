@@ -892,3 +892,53 @@ README が先頭に置くものと、この文書が設計している層の関�
    **README・STATUS・DESIGN の3箇所に同じものがある**。フォームに貼る開示面なので、
    3枚同時に直すかどうかは founder の判断。事実の方は README の表の直下に測定として書いた
    （`aperture-core` は開示側5 crate・20 use sites、`confide-ct` は依存ゼロ）。
+
+## 2026-09-29 — check-in 2 を逃した。意図の主張を全面から落とした
+
+**0h. check-in 2 は提出されなかった。** 窓は **2026-09-28 08:00 PDT に閉じた**。
+`video/checkin-2.mp4` は在る（無音、ffprobe で 59.2 秒、コミット済み）。**起きなかったのは音声生成と投稿だけ。**
+台本 `video/CHECKIN-2.md` は 58 秒・125 語。**中身は失われていない** —
+場面2（母集団の訂正）も場面3（口座が1つ閉じられた）もまだ公には言われていないので、
+**week 3 の素材として生きている。窓は 10-02 に開き、10-05 08:00 PDT に閉じる。** 数字は再測定が前提。
+
+*週次 check-in を落とした扱いが CWF でどうなるかは、このリポジトリからは分からない。推測で書かない。*
+
+**0i. レコーダーは check-in 2 を録れる状態ではなかった。** `CHECKIN_DOC` は台本にだけ効いていて、
+出力は `checkin-1.mp4` 固定、manifest も `segments-checkin/` 固定だった。
+**そのまま走らせると week 1 の提出済みカットを上書きし、`checkin-2.mp4` は生まれない。**
+両方とも `CHECKIN_DOC` の番号から導くようにした。`checkin.html` は未変更なので week 1 は再現する。
+最初の書き出しは 60.2 秒で上限超過、**レコーダー自身の報告は 59.2 秒**だった。検査が ffprobe を読むので落ちた。
+
+**0j. 意図の主張を9箇所から落とした。** `README.md` / `docs/ONCHAIN.md` / `THE-PINCER.md` /
+`WHY-THE-SLOT-IS-EMPTY.md` / `FOUNDER-MARKET-FIT.md`（2件）/ `WHAT-THE-WEEK-CHANGED.md` /
+`video/CWF-PRESENTATION.md` / `web/index.html` / `_submission/cwf-form.md`。
+*arriving independently* / *declining exactly one thing* / *every issuer picked null* /
+*configured deliberately* の類。**理由は1箇所にだけ書いた** —
+[`docs/cwf-2026/THE-PINCER.md`](docs/cwf-2026/THE-PINCER.md) の「And the uniformity is not evidence
+of a decision」。`InitializeMintData` が `Pod, Zeroable` を derive するので、
+**観測された構成は構造体のゼロ値そのもの**。測定は一切触っていない。**pincer は意図に依存しない。**
+
+**0k. 09-27 の広域スキャンは、まだ証拠ではない。** Jupiter の verified list 経由で
+**CT を持つ 1,669 mint すべてが autoApprove=false・auditor 空**、うち **768 が `web/mints.json` に無い**
+（うち 450 は **Ondo = 第4の発行体**。残りは既知2社の未計上分で、内訳と mint authority は
+[`docs/reviews/2026-09-27-the-direction.md`](docs/reviews/2026-09-27-the-direction.md) に測定として置いた
+— この数字を STATUS に写すと、per-issuer の mint 数と読めて検査が正しく落ちる）。
+**パーサもスナップショットも実行出力もコミットされていないので、提出にも check-in にも使えない**
+（Codex の判定、`docs/reviews/2026-09-27-the-direction.md`）。
+**`scripts/slot-scan.sh:3` の *"every tokenized-equity mint on Solana. Not a sample."* は今日時点で偽**
+— あの一覧は3発行体の製品カタログ由来。**狭めるか、母集団を作り直すか**が未決。
+program 全体の `getProgramAccounts` は Alchemy・publicnode・api.mainnet-beta のいずれでも通らない
+（offset 165 は索引外）。言い切るには gPA を返すエンドポイントが要る。
+
+**0l. `web/usage.json` は2日で2回動いた。** 490,673 → 507,908 → **518,744**、
+configured は **3 → 2**（口座が1つ**閉じられた**。`8P31wJSdNfNy…` は消滅）、approved は 0 のまま。
+**派生数字に触る前に `generated_utc` を読むこと。** 1回動くたびに散文10面と README の転記ブロックが腐る。
+GitHub の About は 09-28 に適用済み（518,744 / 2 / none approved）。
+
+**0m. CWF の必須動画2本がまだ無い。** デモ ≤3分（*"the live product, not a slide deck"*）と
+**ピッチ ≤2分・founder が画面に出るもの**。後者は基準5 *Founder Communication* が読む唯一の面で、
+**このリポジトリの何をもってしても代替できない**。10-12 まで13日。**提出の最大の穴はここ。**
+
+**0n. `docs/cwf-2026/CLAUDE-CODE-BRIEF.md` が未追跡のまま。** founder が 09-27 朝に書いたもの。
+今日の結論（Codex の「1製品」判定、母集団の訂正、意図の推論の除去）で内容が変わっているので、
+**書き直してコミットするか、消すか**が未決。
