@@ -861,3 +861,34 @@ CWF 用の narrated presentation と demo video が未完成なこと。** 内�
    CWF の審査員には二重の意味で不利 — 誤読されれば虚偽申告に見え、正しく読まれても
    「窓内の成果」がどれか分からない。`docs/WORK-WINDOW.md` への導線を README に置くのが最小の手当て。
 5. **CWF 提出動画は2本** — 2〜3分のプレゼンと3分以内のデモ。**既存の 2分動画とは別物**で、提出時に作る。
+
+## 2026-09-29 — Codex 2件、そして founder に返す3つ
+
+レビュー全文は `docs/reviews/2026-09-29-{one-product,fmf-video-edits}-r1.md`、依頼文は
+`docs/reviews/payloads/` に同名で置いてある。
+
+**確定したこと。** **Confide は1製品** — *confidential Token-2022 settlement*（DvP）が wedge で、
+scheduled disclosure は**未完のプロトタイプ**。これは推測ではなくコードの側の事実で、
+`crates/confide-embargo/src/lib.rs:39-59` が**自分で I2 を撤回している**
+（*"a correction to an earlier version of this comment, which claimed I2 was unconditional. It is not."*）。
+`n−k+1` が withhold すれば止まり、時計は `confide-agent <share> <sealed> <now>` の引数で、
+`TimeLockPuzzle` は未実装。**「保有者が拒否しても開示は起きる」を提出物の主役に据えてはいけない。**
+
+**⚠ `DESIGN.md` を §1 から読むと必ず誤読する。** 冒頭9行に 09-20 のピボット告知があり、
+README が先頭に置くものと、この文書が設計している層の関係がそこに書いてある。読み飛ばすと
+「2製品に割れている」という誤診に着地する（実際にした）。
+
+### founder しか動かせない3つ
+
+1. **`docs-consistency.sh` が1件赤。** `_submission/cwf-form.md`（09-22 11:54 に貼って以降）と
+   `_submission/youtube-paste.txt`（09-24 06:41 以降）が動いている。**貼り直し → `./scripts/pasted.sh <field>`。**
+2. **動画の残り2シーン。** `./scripts/spoken-check.sh video/Confide_Stocklana_20260923.mp4` は
+   **10 中 8 が現行台本を 95.7–100% で読んでいる**が、**読めたシーンが1つでも落ちれば非ゼロ終了**する。
+   残るのは scene 3（88.6%、"confide" が transcript に無い／ただし ASR は *Confide* を **confined** と聞く
+   = `scripts/lib/spoken.py:11-14`、一方 `:16-19` は「際立った語の不在はそれでも意味がある」と書く）と
+   scene 5（**57.3–78.2s** を transcriber が落とし、音声は -21.4 dB で在る）。**どちらも耳が要る。**
+   経緯は `video/CWF-PRESENTATION.md` の冒頭に測定つきで書いた。
+3. **再利用表の Confide 行に `confide-ct`（swap）が入っていない。** ピボット前に書かれた表で、
+   **README・STATUS・DESIGN の3箇所に同じものがある**。フォームに貼る開示面なので、
+   3枚同時に直すかどうかは founder の判断。事実の方は README の表の直下に測定として書いた
+   （`aperture-core` は開示側5 crate・20 use sites、`confide-ct` は依存ゼロ）。

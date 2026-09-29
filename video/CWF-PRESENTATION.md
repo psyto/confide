@@ -5,6 +5,25 @@ delivered captions against this file, not against [`voiceover.md`](voiceover.md)
 the deleted 09-15 cut. The header used to say *"rough cut, not for publication"*, written before it
 was published and left standing afterwards.
 
+> **Measured 2026-09-29. The paragraph below still stands; only the file it names is stale.**
+> `Confide_Stocklana_20260920.mp4` no longer exists — it was re-recorded on 09-23.
+> `./scripts/spoken-check.sh video/Confide_Stocklana_20260923.mp4` reports **8 of 10 scenes at
+> 95.7–100% of the scripted words**, and **exits nonzero**, because one readable scene fails
+> (`scripts/spoken-check.sh:124-141`). So the delivered film still does not match this script; what
+> changed is that the gap is now two named scenes rather than a whole cut.
+>
+> - **scene 3 — 88.6%**, and the checker reports the project's own name *"never spoken anywhere in
+>   the film: confide"*. **Unresolved, and it needs an ear.** `scripts/lib/spoken.py:11-14` records
+>   that this transcriber hears *Confide* as **confined**, which would explain it; `:16-19` records
+>   that it does not delete a word from a 370-word film and leave the rest intact, *"which is why an
+>   absent distinctive word still means something"*. Both are in the repository, and they point
+>   opposite ways.
+> - **scene 5 — not checkable.** The transcriber dropped **57.3s–78.2s** and the voice is in it
+>   (-21.4 dB mean). Listen, or re-pull once YouTube has written its own captions.
+>
+> Regenerating a scene is audio, which is founder-only (`CLAUDE.md`). Lines are in
+> `video/segments-presentation/LINES.md`.
+
 **Restructured 2026-09-22, and the delivered video no longer matches it.** `Confide_Stocklana_20260920.mp4`
 speaks the previous order and one figure the chain has since moved past. Re-recording needs the
 founder's voice, so until that happens the published file and this script say different things, and

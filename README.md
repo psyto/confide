@@ -628,6 +628,20 @@ Stocklana's rules: *original work. Open-source components are fine if you say so
 | `aperture-receipts` | `psyto/aperture`, pre-existing | Apache-2.0 | content-blind on-chain receipt, native Solana program |
 | **Confide** | **this repository** | Apache-2.0 | **the embargo mechanism (I1–I3), the k-of-n sharing, the equity layer, the seizure program, the demo** |
 
+**Where the reuse actually lands, measured 2026-09-29 rather than summarised.** `aperture-core` is
+consumed by the **five crates on the disclosure side** — `confide-onchain`, `confide-embargo`,
+`confide-equity`, `confide-committee`, `confide-demo` — at 20 use sites. **`confide-ct`, the crate
+that builds and submits the two confidential-transfer legs of the trade this page opens with, has
+no `aperture` dependency and zero use sites.** So the wedge is this repository's own work end to
+end, and a reader can check that with `cargo tree` rather than take the row above on trust.
+
+*(The row above lists this repository's contribution as the embargo, the k-of-n sharing, the equity
+layer, the seizure program and the demo. It was written before the swap became the thing the page
+leads with, and `confide-ct` belongs on it. Left as-is here deliberately: the same table exists in
+`STATUS.md` and `DESIGN.md`, it is the text the founder pastes into both competition forms, and one
+of those fields is already flagged by `docs-consistency.sh` as having drifted from what was pasted.
+Changing three copies of a disclosure surface days before a deadline is a founder call.)*
+
 **Which window, because the two events do not share one.** For Stocklana, Confide is new work
 start to finish — the first commit is inside its window. For Crypto World's Fair the window opened
 2026-09-14 06:00 PT, when 48 commits already existed, so what that contest judges is
