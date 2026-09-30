@@ -23,15 +23,17 @@ ten minutes**, a Tier 1 name capped at **0.25% of average daily volume**. Block 
 settled away from that tape, and a desk cannot go where every fill is published. Confide settles
 off it — and is **not a venue**, so the exemption neither covers it nor is needed.
 
-### Why nobody has built it
+### What is on chain, and what Token-2022 does not provide
 
 **All 1,992** tokenized-equity mints from three issuers' catalogues already run Token-2022 with
 confidential transfers **on** and the auditor slot **empty** — every mint in the list checked, not
-sampled, and [the list is a catalogue rather than a census](docs/cwf-2026/THE-POPULATION.md). They did not miss it: the
+sampled, and [the list is a catalogue rather than a census](docs/cwf-2026/THE-POPULATION.md). The
 same 1,992 carry `permanentDelegate`, `pausableConfig` and a transfer hook. Token-2022's only
 disclosure model is **mint-wide** — one auditor key, reading every transfer made while it is set,
-scoped to nobody. Everybody readable, or nobody. **So every issuer left it empty** — and a
-confidential account cannot receive anything until its issuer signs for it.
+scoped to nobody. Everybody readable, or nobody; **there is no setting in between.** Why the slot is
+empty is not measured — an empty slot is also what a zero-initialised mint gets by default
+([THE-PINCER.md](docs/cwf-2026/THE-PINCER.md#and-the-uniformity-is-not-evidence-of-a-decision--2026-09-27)).
+And a confidential account cannot receive anything until its issuer signs for it.
 
 ### Which makes the first trade an issuance
 
@@ -177,7 +179,7 @@ as every tokenized stock: gate closed, auditor slot empty, and one key as confid
 permanent delegate and freeze authority on both.
 
 > PayPal's dollar ships the same unusable privacy feature behind the same door. **Four issuers, two
-> asset classes, one dead end** — the substrate, not somebody's choice.
+> asset classes, one configuration** — also the default, so it says what ships, not why.
 > [`docs/cwf-2026/COMPOSITION.md`](docs/cwf-2026/COMPOSITION.md)
 
 ### And what it cost to build, because that is the interesting part
@@ -240,11 +242,11 @@ Not "few". **Zero.** Every mint needs the issuer's signature to open a confident
 no issuer has signed. There is no incumbent here and nothing to be late to.
 
 The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
-a single global auditor key that decrypts **everything, for everyone, forever** — and for a
-regulated equity issuer no setting of that key is correct. Fill it and every holder is permanently
-readable by one party. Leave it null and no holder can demonstrate anything to anyone. So it sits
-empty, and the privacy nobody can use is why a fund holding NVDAx broadcasts its position to the
-whole market instead.
+a single mint-wide auditor key that can decrypt the amount of **every confidential transfer made
+while it is set**, and cannot be scoped to one holder or one reader. Fill it and one party reads
+every holder's transfers. Leave it null and no holder can demonstrate anything to anyone. It is null
+on every mint in the list — why is not measured, since null is also the default — and with no
+confidential account approved, a fund holding NVDAx has nowhere to hold it except in the clear.
 
 **Confide is what makes that slot usable**, and
 [the trade above](#what-runs-today--a-trade-that-settles-without-publishing-either-side) is the
@@ -297,9 +299,9 @@ logs  :
 
 ## Who uses this first
 
-**The issuer.** Backed and Backpack each switched confidential transfers on, gated who may open an
-account, and left the auditor key null — companies that mean to enable this and have no disclosure
-model to enable it *with*. Confide is that model, and nothing reaches a live mint without them.
+**The issuer.** Backed's and Backpack's mints have confidential transfers on, the approval gate shut
+and the auditor key null — why is not measured, and nobody has asked them. Confide is a disclosure
+model they could use, and nothing reaches a live mint without them.
 **The issuer is the customer here, not the obstacle** — Kraken included, having acquired Backed in
 December 2025.
 
@@ -584,7 +586,7 @@ stack, and the reuse declaration below is for eligibility, not for discounting w
 |---|---|
 | **Hold a position on-chain that reads as zero.** A live devnet account: `spl-token balance` says `0`, the confidential balance holds 173,000. Both public, both true. | `./scripts/bind-account.sh` — [explorer](https://explorer.solana.com/address/Cgv2eDNUUrgRVhkZ8mBE5UkQmkqLh3Aj3poLiqBBrX1P?cluster=devnet) |
 | **Bind a disclosure to that account**, not to a string — its own ElGamal key and its own ciphertext, re-read from chain to confirm. | `./scripts/bind-account.sh` |
-| **Fill the auditor slot.** The mirror gates new accounts exactly as NVDAx does — `autoApproveNewAccounts: false` — so the issuer has to sign for the confidential account before it can hold anything, and the demo does that rather than describing it. One field then separates the two mints, and the reason that field stays null everywhere else is that the key it holds cannot be scoped. | `./scripts/set-auditor.sh` — devnet |
+| **Fill the auditor slot.** The mirror gates new accounts exactly as NVDAx does — `autoApproveNewAccounts: false` — so the issuer has to sign for the confidential account before it can hold anything, and the demo does that rather than describing it. One field then separates the two mints: the key it holds cannot be scoped, and it is null on every live mint. | `./scripts/set-auditor.sh` — devnet |
 | **Let only chosen parties read it.** The auditor reads throughout; the market never does. | `cargo test` — I4 |
 | **Prove "this account holds at least X" — over the account's own on-chain ciphertext.** The counterparty learns one bit: not the value, not the composition, not any holding. Two proofs, because one does not exist: equality binds a commitment we can open to the account's ciphertext, then the range proof runs on the surplus. | `./scripts/prove-collateral.sh` — both accepted by Solana's live ZK ElGamal Proof Program |
 | **Bind a disclosure to a date and make it unrevisable.** The commitment is over the account's own on-chain ciphertext, so the 45 days are not merely a promise: a figure restated afterwards does not open it. | `./scripts/anchor-receipt.sh` — 147 bytes on devnet |

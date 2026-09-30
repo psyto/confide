@@ -3,7 +3,7 @@
 set -euo pipefail
 RPC="${RPC:-https://api.mainnet-beta.solana.com}"
 
-# Two issuers with nothing to do with each other, two mints each. Both use a vanity prefix.
+# Two issuers, two mints each. Both use a vanity prefix.
 #   Backed / xStocks     — Swiss-issued, own ISIN
 #   Backpack Securities  — US CUSIP, "a bona fide security entitlement" in the issuer's own words
 # Every mint from both is in web/mints.json; ./scripts/slot-scan.sh checks all of them.

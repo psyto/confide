@@ -6,8 +6,7 @@
 ## 1. xStocks are Token-2022, and confidential transfers are already switched on
 
 **Every tokenized-equity mint from three issuers' catalogues carries the extension with
-`auditorElgamalPubkey` null — all 1,992 of them, across three issuers that have nothing to do with
-each other:**
+`auditorElgamalPubkey` null — all 1,992 of them, across three issuers:**
 
 *Scope, and it belongs in the headline rather than under it:* `scripts/refresh-mints.sh` builds the
 mint list from **each issuer's own asset API**. The scan is exhaustive over that file and checked
@@ -130,7 +129,7 @@ need nothing at all.
 ## 5. A position that is held, on-chain, and invisible
 
 The mints above cannot be used for this — `autoApproveNewAccounts: false` means Backed decides who
-may open a confidential account on NVDAx, and it has not decided in our favour. So this repo
+may open a confidential account on NVDAx, and nobody has asked it to open one for us. So this repo
 provisioned a Token-2022 mint on devnet with the same extension and ran the real flow through
 `spl-token`: `create-token --enable-confidential-transfers`, `configure-confidential-transfer-account`,
 `mint`, `deposit-confidential-tokens`, `apply-pending-balance`.
@@ -187,10 +186,10 @@ a mirror that differed from NVDAx in two fields while the copy claimed one. `hea
 checks that field rather than trusting this paragraph.
 
 And that one field is the whole argument. Filling it is a single instruction — the difficulty was
-never the mechanics. The difficulty is that this key, once set, reads **every holder's every
-transfer, forever**, and cannot be scoped, delegated for a quarter, or pointed at one counterparty.
-That is why the live mints leave it null, and why filling it is only useful if something above it
-decides who sees what and when.
+never the mechanics. The difficulty is that this key, once set, can decrypt **every holder's every
+confidential transfer made while it is set**, and cannot be scoped, delegated for a quarter, or
+pointed at one counterparty. It is null on every live mint (why is not measured — see §8), and
+filling it is only useful if something above it decides who sees what and when.
 
 ## 7. An account whose key is ours
 
@@ -269,14 +268,15 @@ The issuer turned confidential transfers **on** for tokenized equities, gated ne
 accounts behind its own approval (`autoApproveNewAccounts: false`) — and left the auditor slot
 **empty**.
 
-That is not an oversight. It is the only available choice. Token-2022's disclosure model is a single
-global auditor key: **one key that decrypts everything, forever.** For a regulated equity issuer
-there is no setting of that key that is correct. Fill it and every holder's position is permanently
-readable by one party. Leave it null and no holder can demonstrate anything to anyone — so no
-regulated holder can use the feature at all.
+**Why it is empty is not measured.** `false` and `null` are also what a zero-initialised mint gets,
+so a shared template produces this configuration with nobody deciding anything
+([`THE-PINCER.md`](cwf-2026/THE-PINCER.md), 2026-09-27). What is measured is the substrate:
+Token-2022's disclosure model is a single global auditor key — **one key that decrypts every
+transfer made while it is set.** Fill it and every holder's transfers are readable by one party.
+Leave it null and no holder can demonstrate anything to anyone. There is no setting in between.
 
-So the feature is shipped, configured, and unused. Not because it is immature; because the only
-disclosure it offers is all-or-nothing.
+So the feature is shipped and unused, and the only disclosure it offers is all-or-nothing. Whether
+the second is the reason for the first is a question for an issuer, and nobody has asked one.
 
 **Confide is what makes that slot usable**: disclosure scoped by recipient, by granularity, and — the
 part nothing else has — **by schedule**. The auditor reads now. The public reads at `T`. The holder

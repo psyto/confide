@@ -29,7 +29,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **Solana shipped confidential balances for tokenized stocks. I counted the accounts. Nobody has
 > ever opened one.**
 >
-> Every tokenized-equity mint from three issuers' catalogues — **all 1,992**, from issuers with nothing to do with
+> Every tokenized-equity mint from three issuers' catalogues — **all 1,992**, from three issuers
 > each other — runs Token-2022 with confidential transfers switched **on** and the auditor key
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
@@ -43,16 +43,17 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 >
 > The reason is one field. `autoApproveNewAccounts` is **false on 1,992 of 1,992**, so a
 > confidential account cannot exist until the issuer signs for it, and no issuer has. And the only
-> disclosure model on offer is a single global auditor key that reads everyone's everything
-> forever — fill it and every holder is permanently readable by one party, leave it null and no
-> holder can prove anything to anyone. So it sits null, on every mint, at every issuer.
+> disclosure model on offer is a single mint-wide auditor key that can decrypt every confidential
+> transfer made while it is set — fill it and one party reads every holder's transfers, leave it
+> null and no holder can prove anything to anyone. It is null on every mint, at every issuer; why
+> is not measured, since null is also the default.
 >
 > **It is not an equities story.** USDC and USDT cannot move confidentially at all — legacy SPL, no
 > extensions. **PYUSD and USDG can**, and they land on the *identical* configuration: gate closed,
 > auditor slot empty, the same key holding confidential authority, permanent delegate and freeze
 > authority on both. PayPal's dollar ships the same unusable privacy feature behind the same door.
-> Four issuers, two asset classes, one dead end — **a property of the substrate, not a choice any of
-> them made.**
+> Four issuers, two asset classes, one configuration — **which is also the default, so it shows what
+> ships, not why.**
 >
 > This matters because people already lend against these tokens. Kamino runs 19 tokenized-equity
 > reserves: **$24.1 m deposited, $85.5 m of borrowing their own caps authorise, and $0 of it

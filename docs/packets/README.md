@@ -5,7 +5,7 @@
 | | why it is here | what it has | what it lacks |
 |---|---|---|---|
 | [`NVDAx`](NVDAx.md) — **the control** | shows what a market that *works* looks like | a live price, real deposits, borrowing happening now, and authorities split across four keys | nothing; it is the case where every number is real |
-| [`SPCX.US`](SPCX.US.md) — **the blocked case** | shows where the motive is undeniable: pre-IPO exposure nobody wants broadcast | the clearest reason a holder would refuse to publish | a price, any deposits, and five authorities sit in one key |
+| [`SPCX.US`](SPCX.US.md) — **the blocked case** | shows where a holder's reason not to publish is plainest: pre-IPO exposure | the clearest reason a holder would refuse to publish | a price, any deposits, and five authorities sit in one key |
 
 Leading with SpaceX alone would trade the strongest evidence for the strongest motive. Leading
 with NVDA alone would do the reverse. **The market is the aggregate below; SpaceX is why anyone

@@ -504,7 +504,7 @@ the position is confidential on both sides of the transfer the whole way.
    `InvalidInstructionData`, which reads as a client bug and is not one. The validator has to be
    started with `--clone-upgradeable-program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`.
 3. **The issuer has to approve each account, because the mirror mint is configured like NVDAx.**
-   `set-auditor` deliberately leaves `autoApproveNewAccounts` false, so a freshly configured
+   `set-auditor` leaves `autoApproveNewAccounts` false on purpose, so a freshly configured
    account is inert until approved and `Deposit` returns `ConfidentialTransferAccountNotApproved`.
    That is not an obstacle to route around — it is the issuer being the gatekeeper this project
    says they are, appearing in the flow exactly where the README says they would.

@@ -32,7 +32,7 @@ is reproducible: `./scripts/holders-scan.sh`.
 | AMC.US | Backpack | 6 | 4,230 | **0.13608** | **79.6%** | 84.4% |
 
 **The median NVDAx holder owns 0.0046 of a share.** At roughly $180 a share that is about
-**eighty cents**. Across five mints from three unrelated issuers, **80–99% of accounts with any
+**eighty cents**. Across five mints from three issuers, **80–99% of accounts with any
 balance hold less than one share**, and the top 1% holds 84–99% of everything.
 
 > **Corrected 2026-09-21, and the correction matters.** The first version of this table assumed

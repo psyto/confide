@@ -239,9 +239,10 @@ b.bad{color:var(--red)}b.good{color:var(--grn)}
   <section>
     <h2>Why no issuer's mint escapes it</h2>
     <div class="lede">1,992 tokenized stocks from three issuers' catalogues run on Token-2022 with confidential transfers
-    <b>switched on</b>. Every one of them leaves the auditor key <b>empty</b> — because the only key
-    on offer reads everyone's everything, forever, and no setting of that is correct for a regulated
-    issuer.</div>
+    <b>switched on</b>, and every one of them leaves the auditor key <b>empty</b>. The only key on
+    offer is mint-wide: it can decrypt the amount of every confidential transfer made while it is set,
+    and cannot be pointed at one holder or one reader. Why the slots are empty is not measured &mdash;
+    empty is also the default a new mint gets.</div>
     <div class="cards" id="slots"></div>
     <div class="note">Read from mainnet, just now, by your browser. <b>NVDAx</b> and <b>TSLAx</b> are
     Backed's; <b>NVDA.US</b> and <b>AAPL.US</b> are Backpack Securities'. Three issuers, the same empty

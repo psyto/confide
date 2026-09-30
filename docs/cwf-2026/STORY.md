@@ -55,7 +55,7 @@ No trust, no third party, no floor proof, and nothing revealed to anyone else.
 
 A confidential position needs a confidential account, and a confidential account needs the issuer's
 signature. `autoApproveNewAccounts` is `false` on **all 1,992** tokenized-equity mints — Backed,
-Backpack and PreStocks each arrived there independently — and the auditor slot, the one mechanism
+Backpack and PreStocks alike — and the auditor slot, the one mechanism
 for showing a balance to somebody who needs to see it, is empty on every one of them.
 
 So the honest answer is: **today, nobody.** And the second measurement says that is not a
@@ -80,9 +80,9 @@ same key on both (`2apBGMsS6ti9…`) as confidential authority, permanent delega
 authority. That the two are one issuer's is an inference from the shared key; that the
 configuration matches every equity mint is a reading.
 
-> PayPal's dollar ships the same unusable privacy feature behind the same gate. **Every regulated
-> Token-2022 issuer arrives here, whatever they are issuing** — four independent witnesses now,
-> across two asset classes.
+> PayPal's dollar ships the same unusable privacy feature behind the same gate. **Four issuers, two
+> asset classes, one configuration** — which is also the default a new mint gets, so it says what
+> ships, not why.
 
 ## 3. Every remaining obstacle is a named condition, not an unknown
 

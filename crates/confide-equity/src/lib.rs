@@ -20,9 +20,9 @@ use solana_zk_sdk::encryption::elgamal::ElGamalKeypair;
 /// A tokenized equity, as configured on Solana mainnet.
 ///
 /// `auditor_elgamal_pubkey` is `None` on every one of them. That is the whole problem: the mint
-/// has confidential transfers switched on and the only disclosure model it offers — a single
-/// global key that decrypts everything forever — has no correct setting, so the slot sits empty
-/// and the feature goes unused.
+/// has confidential transfers switched on, the only disclosure model it offers is one mint-wide key
+/// that can decrypt every confidential transfer made while it is set, and with the slot empty no
+/// holder can show anything to anyone. Why it is empty is not measured; `None` is also the default.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct XStock {
     pub symbol: &'static str,

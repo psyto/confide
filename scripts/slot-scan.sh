@@ -6,7 +6,10 @@
 #   Backed Finance (xStocks)  — Swiss-issued, own ISIN
 #   Backpack Securities       — US CUSIP, a security entitlement by the issuer's own description
 #
-# Two independent issuers reaching the same configuration is the finding. One would be a quirk.
+# Every issuer in the list carrying the same configuration is the finding. It is NOT evidence that
+# each one decided it: the empty slot and the shut gate are also the zero value of the mint's
+# confidential-transfer struct, so a shared template produces them with nobody choosing
+# (docs/cwf-2026/THE-PINCER.md, 2026-09-27).
 #
 #   ./scripts/slot-scan.sh
 #
@@ -67,7 +70,7 @@ print('\n  every one of them: confidential transfers on, no auditor key.')
 # Derived. It said "Two issuers" for as long as there were two, and PreStocks made it wrong
 # without making it fail — the exact shape of every other stale number in this repository.
 n_iss = len({m.get('issuer', '?') for m in mints})
-print('  %d issuers, independently, reaching the same dead end.' % n_iss)
+print('  %d issuers, the same configuration. Why is not measured: it is also the default.' % n_iss)
 
 # The approval gate, which is the other half of the pincer.
 #

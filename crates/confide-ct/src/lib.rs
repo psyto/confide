@@ -379,8 +379,8 @@ mod invariants {
         );
     }
 
-    /// **S2 — a seizure is readable by the auditor.** The whole project is about a slot that is
-    /// empty because filling it discloses everything to one party forever. A seizure that the
+    /// **S2 — a seizure is readable by the auditor.** The whole project is about a slot whose only
+    /// setting other than empty discloses every transfer to one party. A seizure that the
     /// auditor could not read would be a hole in exactly the disclosure Confide argues for, so the
     /// third handle is checked rather than assumed to be wired up.
     #[test]

@@ -617,6 +617,264 @@ sys.exit(1 if bad else 0)
 PY
 
 echo
+echo "  THE MOTIVE — what the issuers configured, never why"
+python3 - <<'PY' && ok "no live surface says why the auditor slot is empty" || bad "a surface claims a motive — docs/cwf-2026/THE-PINCER.md, 2026-09-27"
+import hashlib, re, subprocess, sys, pathlib
+
+# The empty auditor slot and the shut gate are also the ZERO VALUE of the mint's confidential-transfer
+# struct, so a shared template produces them with nobody deciding (THE-PINCER.md, 2026-09-27). The
+# 2026-09-29 sweep fixed nine surfaces by hand and added no check. On 09-30 the reading was still in
+# the published site, README, DESIGN, STORY, two crates' doc comments, the YouTube description, and
+# slot-scan.sh's own OUTPUT.
+#
+# The first version of this check listed phrasings, and Codex walked eleven live claims past it the
+# same day -- "each arrived there independently", "that is why the live mints leave it null",
+# "makes the abstention deliberate". A list of phrasings catches the phrasings its author thought
+# of. So the rules below are SHAPES of a claim, judged per paragraph:
+#
+#   CAUSE        the slot/key/field is empty or null, and the same paragraph gives a reason for it
+#   INDEPENDENCE "independent" said of the issuers, the mints, or a witness to the configuration
+#   INTENT       the configuration called deliberate, meant, or hard to explain away
+#   SECONDARY    the empty slot said to block the secondary market -- an issuer need nobody asked about
+#
+# The shapes are described rather than spelled where possible; THE POPULATION's first run matched
+# its own comment.
+#
+# WHAT THIS IS NOT: a proof that no surface implies a motive. It is a regression guard for the shapes
+# that have actually appeared, plus the ones they generalise to. Codex constructed paraphrases in
+# round 2 that a regular expression will always be able to miss -- "the pattern is purposeful",
+# "peer-to-peer confidential settlement remains unavailable". Reading is still the check; this makes
+# sure what was already read and fixed does not come back.
+SLOT = re.compile(r"auditor|slot|\bkey\b|\bfield\b|auditorElgamalPubkey|auditor_elgamal_pubkey", re.I)
+EMPTY = r"(?:empty|null|None|unset|inert)"
+# A reason attached to the emptiness, in the grammatical shapes it has actually taken here.
+# "... empty — because ...": needs the slot, the feature or Token-2022 named in the sentence, since
+# plenty of true sentences say an ACCOUNT is empty because of something.
+CAUSE_BECAUSE = re.compile(EMPTY + r"\b[^.]{0,80}?\bbecause\b", re.I)
+NAMES_IT = re.compile(SLOT.pattern + r"|feature|extension|Token-2022", re.I)
+# "that is why they leave it null", "so it sits empty": the shape alone is the claim, whatever "it" is.
+CAUSE_SHAPE = re.compile(
+    r"\b(?:that is why|which is why|the reason)\b[^.]{0,80}?\b(?:leave|leaves|left|stays?|sits?|keeps?)\b[^.]{0,30}?" + EMPTY +
+    r"|\bso\b(?![^.]{0,20}\bnothing\b)[^.]{0,40}?\b(?:sits?|left|leaves?|stays?|keeps?)\b[^.]{0,20}?" + EMPTY, re.I)
+# Verdicts. The strong ones are claims on their own; "not an oversight" only next to an empty slot.
+VERDICT_STRONG = re.compile(r"what the substrate (?:forces|does)|nobody chose|only available choice"
+                            r"|property of the substrate|not a choice any"
+                            r"|\bnot (?:somebody|anybody|anyone|someone)'?s? (?:choice|decision)", re.I)
+ISSUER_NAMED = re.compile(r"\bissuers?\b|Backed|Backpack|PreStocks|Paxos|PayPal|Kraken", re.I)
+# Reason FIRST: "Because one auditor sees every transfer, issuers keep the field unset." (Codex r2)
+CAUSE_FIRST = re.compile(  # needs the slot/feature named too, or "retried, because an RPC came back empty" trips it
+    r"\b(?:because|since)\b[^.]{0,120}?\b(?:keeps?|leaves?|left|stays?|sits?)\b[^.]{0,30}?" + EMPTY, re.I)
+SEPARATELY = re.compile(r"\bseparately\b|\bon their own\b|nothing to do with each other|\bunrelated\b", re.I)
+CHOICE = re.compile(r"\b(?:chose|chosen|choose|decided|choice|purposeful)\b", re.I)
+VERDICT = re.compile(r"not an oversight", re.I)
+INDEPENDENCE = re.compile(r"\bindependent(?:ly)?\b(?!\s+(?:verifiab|verifi|checkab|of\b))", re.I)
+ABOUT_ISSUERS = re.compile(r"\bissuers?\b|\bparties\b|\bwitness|\barriv", re.I)
+INTENT = re.compile(
+    r"\bdeliberate(?:ly)?\b[^.]{0,60}\b(?:abstention|empty|null|configur|left|slot)"
+    r"|\b(?:abstention|configuration|slot)\b[^.]{0,60}\bdeliberate"
+    r"|picked null|declin\w* exactly one|looking like neglect|explain away|means to enable"
+    r"|did not miss it|thought about it carefully|have not noticed Token-2022|\bmean to enable\b", re.I)
+SECONDARY = re.compile(r"blocks? the \W*secondary", re.I)
+# Exempt per SENTENCE, never per paragraph, and never a sentence that names an issuer. Two narrow
+# cases: Kamino's code, where the decision is written in the source; and OUR OWN mints (the mirror,
+# the testbed), where the reason is ours to state. Round 2 showed a bare keyword was a hiding place:
+# "Kamino shows issuers deliberately chose null" and "... not ours; their issuer deliberately left
+# the slot empty" both passed (Codex, 2026-09-30).
+EXEMPT_WHAT = re.compile(r"Kamino'?s?\b[^.]{0,40}\b(?:refus|code|program|deposit|source|reserve|rule)"
+                         r"|underwrit|constraints\.rs|klend|\blender\b|\bmirror\b|\btestbed\b|we control|our own"
+                         r"|Confide's own", re.I)
+
+
+def exempt(x):
+    return bool(EXEMPT_WHAT.search(x)) and not ISSUER_NAMED.search(x)
+
+
+def sentences(t):
+    # A sentence can end inside bold or a quote: "... like NVDAx.** `x` deliberately ..." -- the
+    # first split missed that and read two sentences as one.
+    return [x for x in re.split(r"(?<=[.!?])(?:\*{1,2}|[\"')\]])*\s+", t) if x]
+
+
+def claims(t):
+    out = []
+    ss = [x for x in sentences(t) if not exempt(x)]
+    for x in ss:
+        if NAMES_IT.search(x) and CAUSE_BECAUSE.search(x):
+            out.append("CAUSE")
+        if CAUSE_SHAPE.search(x) or VERDICT_STRONG.search(x) or (CAUSE_FIRST.search(x) and NAMES_IT.search(x)):
+            out.append("CAUSE")
+        # Near each other, not merely in one sentence: a table or a block of page code joins into one
+        # "sentence" and an issuer name 300 characters from "chosen" is not a claim.
+        for m in ISSUER_NAMED.finditer(x):
+            w = x[max(0, m.start() - 60):m.end() + 60]
+            if SEPARATELY.search(w) or CHOICE.search(w):
+                out.append("INTENT")
+                break
+        if SLOT.search(x) and re.search(EMPTY, x) and VERDICT.search(x):
+            out.append("CAUSE")
+        if INDEPENDENCE.search(x) and ABOUT_ISSUERS.search(x):
+            out.append("INDEPENDENCE")
+        if INTENT.search(x):
+            out.append("INTENT")
+        if SECONDARY.search(x):
+            out.append("SECONDARY")
+    # A verdict in the sentence after the one naming the empty slot: "... left the slot empty. That
+    # is not an oversight." Also "So it sits null." after a sentence about the key.
+    for x, y in zip(ss, ss[1:]):
+        if SLOT.search(x) and re.search(EMPTY, x + " " + y) and VERDICT.search(y):
+            out.append("CAUSE")
+        # "Shipped, configured, inert. Not because it is immature: because ..."
+        if re.search(EMPTY, x) and NAMES_IT.search(x + " " + y) and re.match(r"(?:not\s+)?because\b", y, re.I):
+            out.append("CAUSE")
+    return out
+
+
+# THE CHECK'S OWN REGRESSION FIXTURES. Every MUST_FLAG line is a sentence that was live in this
+# repository on 2026-09-30, most of them after the first version of this check called the tree clean.
+# Every MUST_PASS line is a true sentence a looser rule would have silenced. A rule change that lets
+# one through fails the run here, before it can fail silently on the tree.
+MUST_FLAG = [
+    "Every one of them leaves the auditor key empty — because the only key on offer reads everyone's everything.",
+    "That is why the live mints leave it null, and why filling it is only useful if something decides.",
+    "One field then separates the two mints, and the reason that field stays null everywhere else is that the key cannot be scoped.",
+    "Backed, Backpack and PreStocks each arrived there independently — and the auditor slot is empty.",
+    "A regulated issuer arrives at this configuration, now with a third and fourth independent witness.",
+    "And the same scan shows what they do adopt, which makes the abstention deliberate rather than inattentive.",
+    "The only model has no correct setting, so the slot sits empty and the feature goes unused.",
+    "Leave it null and no holder can prove anything. So it sits null, on every mint, at every issuer.",
+    "No setting shows one balance to one regulator — so every issuer left it empty.",
+    "The issuer left the auditor slot empty. That is not an oversight.",
+    "Four issuers, two asset classes, one dead end. Nobody chose this — it is what the substrate does.",
+    "Three independent issuers, one configuration.",
+    "The empty slot blocks the secondary market, not this one.",
+    "Shipped, configured, inert. Not because it is immature: because Token-2022 offers one model.",
+    "The issuer left the auditor slot empty. That is not an oversight. It is the only available choice.",
+    "Four issuers, two asset classes, one configuration. It is what the substrate forces.",
+    "Leaving the auditor key null was the only available choice.",
+    # round 2 -- live in the tree after round 1
+    "Backed and Backpack left the key null — companies that mean to enable this.",
+    "Four issuers, two asset classes, one dead end — a property of the substrate, not a choice any of them made.",
+    "All 1,992 of them, across three issuers that have nothing to do with each other.",
+    # round 2 -- constructed by Codex to evade round 1; covered because the shape generalises
+    "Because one auditor sees every transfer, issuers keep the field unset.",
+    "Backed, Backpack, and PreStocks made the same choice separately.",
+    "Backed's mints are not ours; their issuer deliberately left the slot empty.",
+    "Kamino shows issuers deliberately chose null.",
+    "Kamino's code refuses it, and the issuers deliberately left the slot empty.",
+    "On the testbed we control it is set; the issuer deliberately left theirs empty.",
+    "Four issuers, two asset classes, one dead end — the substrate, not somebody's choice.",
+    "Across five mints from three unrelated issuers, most accounts hold less than one share.",
+]
+MUST_PASS = [
+    "Kamino's refusal is correct underwriting, not an oversight.",
+    "It is null on every mint in the list — why is not measured, since null is also the default.",
+    "Fills the auditor slot on a mint we control. The xStock mints are not ours to configure, and their slot is empty.",
+    "It works today only while every mint in the list has the slot null.",
+    "Whether an issuer would accept that is not known; nobody has been asked.",
+    "The issuer decides who may hold a confidential balance.",
+    "Retried, because the public devnet RPC fails in ways that do not stay local: a lookup that came back empty.",
+    "| of those, holding a real balance rather than a seed | **13**, all Backed's xStocks | | available liquidity across them | **≈89,192 tokens**, plus ≈230 borrowed | | LTVs, chosen by whoever owns those markets |",
+    "The issuer has to approve each account, because the mirror mint is configured like NVDAx.**   leaves   false on purpose, so a freshly configured account is inert.",
+    "| independently verifiable | unknown |",
+    "BOTH auditor slots empty, matching all 1,992 live mints.",
+    "Token-2022 offers exactly one disclosure model, a single mint-wide auditor key.",
+    "The offsets decode to values already known independently — the liquidity mint at 128.",
+    "Token-2022 with no confidential-transfer extension at all, so there is nothing to leave empty.",
+    "Money already committed, under a rule in Kamino's own code.",
+]
+fx = [("should flag", l) for l in MUST_FLAG if not claims(l)] + \
+     [("should pass", l) for l in MUST_PASS if claims(l)]
+if fx:
+    for why, l in fx:
+        print("      the check itself is broken — %s: %s" % (why, l[:80]))
+    sys.exit(1)
+
+
+# FROZEN: published or submitted, so the claim stays and the file must not move. Pinned by content,
+# not by "still matches a pattern" -- a re-cut that changed the text would otherwise keep its
+# exemption (Codex, 2026-09-30). If one of these moves, re-read it and re-pin.
+frozen = {
+    "docs/cwf-2026/x-post.txt":                  ("52303ff47ccc00e4", "posted; the .tmpl it came from is corrected"),
+    "video/DELIVERED-20260922.md":               ("144770c310b02dae", "the record of a delivered cut"),
+    "video/captions-20260922.srt":               ("06f5db0a7a32a7af", "the caption track of that cut"),
+    "video/CWF-PRESENTATION.md":                 ("3629f0a2190a69a7", "recorded, published narration; re-recording is the founder's call"),
+    "video/captions-20260923.srt":               ("b5a4a3c6ea0d626d", "the caption track uploaded with that narration"),
+    "video/segments-presentation/LINES.md":      ("8417644637e94849", "recorded, published narration"),
+    "video/segments-presentation/manifest.json": ("76afa0a5da4f6138", "recorded, published narration"),
+    "video/voiceover.md":                        ("687f4e4e55aa7604", "narration of the published Stocklana cut"),
+    "video/captions.srt":                        ("fbe229c6d5a88c5f", "the caption track of that cut"),
+    "video/captions-20260920.srt":               ("6bed57707091ab55", "the caption track of the 09-20 cut"),
+    "_submission/full.md":                       ("209a546f3d04c2dd", "Stocklana's submitted text; the edit window shut 2026-09-25"),
+}
+# The retraction itself has to name what it retracts, and it is a live document, so it is not pinned.
+retraction = "docs/cwf-2026/THE-PINCER.md"
+skip = re.compile(r"^docs/reviews/|^STATUS\.md$|^scripts/docs-consistency\.sh$")
+
+# Same citation rule as THE POPULATION: a quoted span is a citation, not a claim, so a correction can
+# print what it corrects. Not in JSON, where quotes are syntax. Codex noted a claim can hide in quotes;
+# that is the price of letting corrections quote, and the pinned files above are where it matters.
+QUOTED = re.compile(
+    r'&ldquo;.{0,300}?&rdquo;'
+    r'|`[^`]{0,300}?`'
+    r'|["\u201c\u201d\u300c\u300d][^"\u201c\u201d\u300c\u300d]{0,300}?'
+    r'["\u201c\u201d\u300c\u300d]', re.S)
+
+files = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                       capture_output=True, text=True).stdout.split("\0")
+bad = []
+# Deleting a pinned file, or the retraction, must not pass as "nothing found" (Codex r2).
+for f in list(frozen) + [retraction]:
+    if not pathlib.Path(f).exists():
+        bad.append("%s is gone — a pinned or retraction file cannot silently disappear" % f)
+for f in filter(None, files):
+    if skip.match(f):
+        continue
+    p = pathlib.Path(f)
+    if p.suffix in (".png", ".jpg", ".jpeg", ".mp4", ".ico", ".pdf") or not p.exists():
+        continue
+    if f in frozen:
+        h = hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+        if h != frozen[f][0]:
+            bad.append("%s is pinned as frozen (%s) and has changed — re-read it, then re-pin" % (f, frozen[f][1]))
+        continue
+    try:
+        lines = p.read_text(encoding="utf-8").splitlines()
+    except (UnicodeDecodeError, OSError):
+        continue
+    # PARAGRAPHS, not lines: narration wraps a clause across two lines. A caption track splits one
+    # sentence across cues, so its text is read as one stream with cue numbers and timecodes dropped.
+    if p.suffix == ".srt":
+        lines = [" ".join(l for l in lines if l.strip() and not re.match(r"^\d+$|^\d\d:\d\d", l.strip()))]
+    paras, cur, start = [], [], 1
+    for i, l in enumerate(lines + [""], 1):
+        if l.strip() in ("", ">"):
+            if cur:
+                paras.append((start, " ".join(cur)))
+            cur = []
+            continue
+        if not cur:
+            start = i
+        cur.append(re.sub(r"^\s*(?:>\s*|#+\s*|//+!?\s*|///?\s*|\*\s+|-\s+)", "", l).strip())
+    hits = []
+    for n, text in paras:
+        t = QUOTED.sub(" ", text) if p.suffix != ".json" else text
+        c = claims(t)
+        if c:
+            hits.append((n, c[0], t))
+    if f == retraction:
+        if not hits:
+            bad.append("%s no longer names what it retracts — was the retraction removed?" % f)
+        continue
+    for n, kind, t in hits:
+        bad.append("%s:%d %s: %s" % (f, n, kind, t[:80]))
+for b in bad[:15]:
+    print("      " + b)
+if len(bad) > 15:
+    print("      ... and %d more" % (len(bad) - 15))
+sys.exit(1 if bad else 0)
+PY
+
+echo
 echo "  THE MARKET TOTALS — prose against the file that computes them"
 python3 - <<'PY' && ok "every quoted \$m figure matches web/capacity.json" || bad "a quoted \$m figure has drifted from web/capacity.json — ./scripts/capacity.sh, then fix the prose"
 import json, re, sys, pathlib

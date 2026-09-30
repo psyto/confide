@@ -22,14 +22,16 @@ unauthenticated RPC call. The ZK ElGamal Proof Program was re-enabled at epoch 9
 the substrate works. What the scan measures is narrower and enough: **not one of the 1,992 mints
 has an auditor key set**, so no holder of any of them can demonstrate a balance to anyone.
 
-Shipped, configured, inert. Not because it is immature: because Token-2022 offers exactly one
-disclosure model, a single global auditor key that decrypts everything for everyone forever, and
-**no setting of that key is correct for a regulated equity issuer.** Fill it and every holder's
-position is permanently readable by one party. Leave it null and no holder can demonstrate anything
-to anyone — which means no holder who is ever asked to prove something can use the feature at all.
+Shipped, configured, inert. Why is not measured: null is also the default a new mint gets
+([`THE-PINCER.md`](docs/cwf-2026/THE-PINCER.md), 2026-09-27). What is measured is the substrate:
+Token-2022 offers exactly one disclosure model, a single mint-wide auditor key that can decrypt the
+amount of every confidential transfer made while it is set. **No setting of it shows one number to
+one party.** Fill it and one party reads every holder's transfers. Leave it null and no holder can
+demonstrate anything to anyone — which means no holder who is ever asked to prove something can use
+the feature at all.
 
-That is why a fund holding NVDAx transacts in the clear. It is not choosing publicity; it is
-choosing the only option under which it can still answer a question.
+So a fund holding NVDAx today holds it in the clear: on the mints scanned, no confidential account
+has been approved, so there is no other way to hold it.
 
 And the questions are real and constant. An LP is owed a position report every quarter — contractual,
 universal, in essentially every LPA — and today the LP has no way to check it: the GP reports a
@@ -284,9 +286,8 @@ Two limits that are **not** non-goals — they are gaps, and the next work:
   the figure with the opening, and `confide-open` checks it opens the sealed commitment before
   printing it. A number restated in between does not.
 
-- **The issuer is the customer, not the obstacle.** `autoApproveNewAccounts: false` on the live
-  mints means Backed decides who may hold a confidential balance. They built the feature,
-  configured it, gated it, and left the key slot empty — a company that means to enable this and
-  has no disclosure model to enable it *with*. Wrapping into a mint of our own would dodge the
+- **The issuer holds the gate, and Confide works through it.** `autoApproveNewAccounts: false` on
+  the live mints means Backed decides who may hold a confidential balance. Why its key slot is empty
+  is not measured. Wrapping into a mint of our own would dodge the
   approval and is the wrong trade: a wrapped token is not what lenders take as collateral, and
   holding the backing would make us the single trusted party this layer removes.

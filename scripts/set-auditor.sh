@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fill the slot every xStock leaves empty — on a mint we control, since Backed's are not ours.
+# Fill the auditor slot on a mint we control. The xStock mints are not ours, and their slot is empty.
 #
 #   ./scripts/set-auditor.sh <mint> [keypair.json]
 #

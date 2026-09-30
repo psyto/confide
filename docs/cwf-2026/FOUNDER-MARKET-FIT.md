@@ -30,8 +30,9 @@ Both observations are about **a market too young to have built its own plumbing 
 together into one claim:
 
 > The disclosure primitive tokenized equity will need is missing, and **the party best placed to add
-> it has no reason to.** An issuer whose revenue is issuing and selling gains nothing from a
-> disclosure model; it is a cost and a liability to them. So the gap does not close by waiting.
+> it may have no reason to.** An issuer whose revenue is issuing and selling may gain nothing from a
+> disclosure model and carry its cost. That is the founder's reading (2026-09-16), not something any
+> issuer has said; if it holds, the gap does not close by waiting.
 
 This is not a claim that requires having worked in the industry. It requires reading what is on
 chain, and it is **falsifiable, which is why it is worth stating**: if an issuer shipped a
@@ -44,7 +45,7 @@ slot offers the same two bad options to everyone. **There is no correct configur
 which is why the answer to "build a better issuer" is no — see
 [`THE-PINCER.md`](THE-PINCER.md). Instead, every mint says the opposite —
 **1,992 tokenized-equity mints with confidential transfers switched on and the auditor slot empty,
-from three issuers with nothing to do with each other** (`./scripts/slot-scan.sh`, mainnet). One
+from three issuers** (`./scripts/slot-scan.sh`, mainnet). One
 issuer leaving it empty is a story about that issuer. Three, on every mint, is the market.
 
 ### 2. The founder changed their mind about the customer, in public, with a date on it
@@ -87,9 +88,9 @@ Phrased for the form. Each is checkable against the repository.
 
 **What firsthand observation led to this problem?**
 That tokenized equity is new enough that the layer around it has not been built, and that the gap is
-visible on chain: 1,992 mints ship a privacy feature with its only key left empty, because the one
-disclosure model on offer — a global key reading everyone's everything, forever — is one no holder
-should accept and no issuer should hold.
+visible on chain: 1,992 mints ship a privacy feature with its only key left empty, and the one
+disclosure model on offer — a global key reading every transfer while it is set — has no setting
+between everyone and no one. Why the key is empty is not measured; empty is also the default.
 
 **What makes this founder credible in this market?**
 Not prior access to it. What can be shown is the work: an argument whose every number is recomputable

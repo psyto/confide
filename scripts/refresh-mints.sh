@@ -11,11 +11,12 @@
 #
 # PreStocks matters more than its eight mints suggest. Backed and Backpack both tokenize LISTED
 # equity; PreStocks tokenizes companies with no public market at all — SpaceX, OpenAI, Anthropic,
-# Neuralink. A third issuer, arriving independently at the same confidential-transfer configuration
-# in a different asset class, is what turns "two issuers did the same thing" into a property of the
-# substrate rather than a coincidence between two companies.
+# Neuralink. A third issuer carrying the same confidential-transfer configuration in a different
+# asset class widens what the measurement covers. It does not show how the three got there: the
+# configuration is also the struct's zero value, so a shared template or SDK
+# would produce it with nobody deciding (docs/cwf-2026/THE-PINCER.md, 2026-09-27).
 #
-# Tessera is deliberately NOT here and its absence is the point: its T-SpaceX, T-OpenAI and
+# Tessera is left out on purpose and its absence is the point: its T-SpaceX, T-OpenAI and
 # T-Kalshi are Token-2022 with no confidential-transfer extension at all, so there is nothing to
 # leave empty and nothing Confide can say about them. Checked on mainnet 2026-09-19. Not every
 # issuer enables this — which is why the claim is about the ones that do.

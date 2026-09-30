@@ -1344,3 +1344,54 @@ CWF-PRESENTATION / DELIVERED / voiceover だけ。他は全部 `pace.py` が尺�
 **devnet 未実走。** このセッションには endpoint が無い。**次の一手は `RPC=… ./scripts/issue-e2e.sh`**
 で、見るべきものは3つ: 別鍵承認の着地エラーが `MissingRequiredSignature` か、半署名の拒否が
 どちらの形で返るか、4口座の公開残高が 0 で判定を通るか。
+
+## 2026-09-30（8）— 「なぜ空か」を語る面を全部外した。3巡目で止めた理由も書く
+
+レビュー全文 [`docs/reviews/2026-09-30-the-motive-r1.md`](docs/reviews/2026-09-30-the-motive-r1.md)・
+[`-r2.md`](docs/reviews/2026-09-30-the-motive-r2.md)、依頼文は `docs/reviews/payloads/` の同名2本。
+
+**0ay. 発端は私の回答だった。** founder に「発行体は見る・届くための設定を全部入れている。
+だから額が見えない状態を受け入れにくいのではないか」と答え、根拠に `WHY-THE-SLOT-IS-EMPTY.md:40-59` を挙げた。
+**09-27 に撤回した意図の読みそのもの**で、そのファイルの本文に残っていた。09-29 の `e64abe5` は
+「9面から外した」と書いたが、検査を足していなかった。**派生物（コミットメッセージ）を見て実物を確かめない**の型。
+
+**0az. 残っていた面（全部実ファイルで確認して直した）。** 公開サイト `web/index.html`（*"because the only key…"*）、
+README（3箇所）、YouTube 説明文、ONCHAIN §8 と :189、DESIGN（2箇所）、STORY（2箇所、うち
+*"Every regulated Token-2022 issuer arrives here"* は4発行体からの全称）、COMPOSITION、WHAT-THE-WEEK-CHANGED、
+FOUNDER-MARKET-FIT（2箇所）、POST（未投稿の下書き、3箇所）、CWF フォーム（2箇所）、
+`slot-scan.sh` の**実行時出力**、Rust の doc comment 2本、`refresh-mints.sh`、`onchain-check.sh`、`demo.html`（3箇所）、
+packets の生成器と README。**置き換えの規則は一つ: 測定は残し、動機は外す。「空は既定値でもある」**。理由は THE-PINCER の1箇所だけ。
+
+**0ba. 反対向きも同じ誤り。** 「誰も選んでいない」「substrate が強いた」も**測れていない** —— 既定値は
+誰も決めなかったことの証明にならない（Codex r2 も同意）。CWF フォームの *"a constraint nobody chose"* は
+実は Kamino の `constraints.rs:187`、**誰かが書いた規則**を指していた。
+
+**0bb. 「セカンダリーを塞ぐ」を撤回（ISSUANCE-RUNS、issue-e2e.sh）。** 技術的には投資家間スワップは通る
+（`swap-e2e.sh`）。発行体が額を見られない状態を受け入れるかは**誰にも聞いていない** —— brief §3 P1 の問い。
+
+**0bc. 監査人鍵の範囲も、書き直した文では正確にした。** 「everything, for everyone, forever を復号」→
+「**設定中に行われた秘匿移転の額**を復号できる」。brief §1 の通り残高全体ではない。
+**リポジトリ全体の掃除はしていない** —— `video/demo.html` 等に *"everyone's everything, forever"* が残る。次の項目。
+
+**0bd. 検査 THE MOTIVE（`docs-consistency.sh`）。** 1版目は言い回しの一覧で、**Codex が同じ日に11件を素通りさせた**。
+2版目は**形**で判定する（CAUSE / INDEPENDENCE / INTENT / SECONDARY、文単位＋隣接2文）。
+Codex r2 がさらに「削除すれば素通り」「Kamino / not ours を含む文は丸ごと免除」の2穴を示し、塞いだ:
+凍結11ファイルは sha256 で固定・削除も落ちる、撤回文の削除も落ちる、例外は発行体を名指す文には効かない。
+**固定テストを検査の中に埋め込んだ** —— 今日実在した文を中心に MUST_FLAG と MUST_PASS（件数は検査を読めば分かるので書かない —— 最初に書いた数は2つとも違っていた）。
+規則を1つずつ外す13通り・削除2通り・公開サイトを戻す・新ファイルに書く、**全部落ちるのを確認した**。
+（固定テスト自体が私の規則の弱さを3回捕まえた —— 「it」主語、`**` の後の文境界、表と JS の塊で遠い語を組にする誤検出。）
+
+**0be. 3巡目のレビューをかけずに止めた。理由。** Codex r2 は *"the pattern is purposeful"* のような**作文した言い換え**で
+検査を抜けてみせた。正規表現は言い換えに必ず負ける。**この検査は意味の証明ではなく、読んで直したものが戻らないための守り**
+と検査自身のコメントに書いた。次に読むのは人（と Codex）で、検査ではない。
+
+**founder の手で:**
+1. **貼り直し2件が増えた** —— CWF フォーム（未提出、元から赤）と **YouTube 説明文（公開中、今回赤になった）**。
+2. **公開サイトの再公開** —— `web/index.html` が変わったので `healthcheck.sh` は live との不一致で赤になる。
+   `./scripts/publish-site.sh --push`。公開中のサイトは撤回した文を掲げている。
+3. **CWF プレゼン動画の一節の録り直しを勧める**（Codex r1/r2 とも）。*"No setting shows one balance to one regulator —
+   so every issuer left it empty."* 判事が聞く。録り直さないなら、少なくとも訂正を添える。
+
+**次の項目（今回やっていない、別の種類）:** ①監査人鍵の範囲の言い過ぎを全面から ②公開サイトの
+*"Three have asked"* と `usage.json` の 2 の不一致 ③日付なしの 469,477（ISSUANCE-RUNS:11）
+④6銘柄の口座スキャンを 1,992 全体に広げている箇所（`issue-e2e.sh:8`、`testbed-join.sh:6`）。

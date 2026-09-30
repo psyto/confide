@@ -112,7 +112,7 @@ mk() { # mk <role> <decimals> <auditor set|none> [extra flags…]
 }
 echo
 echo "  ${bold}--- two mints, configured as the live ones are ---${off}"
-# BOTH auditor slots empty, because that is what all 1,992 live mints do. The first run of this
+# BOTH auditor slots empty, matching all 1,992 live mints. The first run of this
 # filled the equity one — copying Confide's own demo mint, which fills it deliberately to show what
 # a usable slot is worth, rather than copying the thing being mirrored. `--check` caught it.
 mk equity 8 none

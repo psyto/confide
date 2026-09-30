@@ -52,11 +52,21 @@ Both mints are created with **auditor `none`** — the configuration all 1,992 r
 is not a shortcut around the disclosure problem, it is the reason this particular flow works today:
 
 > **In primary issuance the issuer is the sender.** They can already read what they sent, so they
-> need no auditor key to see it. The empty slot blocks the **secondary** market, not this one.
+> need no auditor key to see it.
 
-It follows that the flow which runs unchanged on a mint configured the way the real ones are is
-**issuance**, and the flow that needs a disclosure mode Token-2022 does not have is **everything
-after it**.
+In the **secondary** market — investor to investor — the same empty slot means nobody but the two
+parties can read an amount, the issuer included. **Whether an issuer would accept that is not
+known**; nobody has been asked, and it is one of the founder's discovery questions
+(`CLAUDE-CODE-BRIEF.md` §3 P1). Technically the trade settles: `swap-e2e.sh` runs one between two
+approved holders.
+
+> **Corrected 2026-09-30.** This paragraph said *"the empty slot blocks the secondary market"*, and
+> that *"everything after [issuance]"* needs a disclosure mode Token-2022 does not have. Neither was
+> measured: nothing blocks the trade, and whether an issuer needs to see its amounts is a guess
+> about an issuer nobody asked.
+
+What does follow is narrower: **issuance** is the flow that runs unchanged on a mint configured the
+way the real ones are, *and* needs no answer to that question — the issuer is the sender.
 
 ## What this does not show
 

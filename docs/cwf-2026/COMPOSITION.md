@@ -102,10 +102,10 @@ freezeAuthority           2apBGMsS6ti9…    2apBGMsS6ti9…
 ```
 
 **This generalises the project's central finding past equities.** It has been *"1,992 tokenized
-equity mints ship a privacy feature nobody can use"*, which reads as two companies' decision. It is
-not: **PayPal's dollar and Paxos's Global Dollar ship the same feature with the same gate and the
-same empty auditor slot.** A regulated Token-2022 issuer, whatever they are issuing, arrives at this
-configuration — which is the substrate argument, now with a third and fourth independent witness.
+equity mints ship a privacy feature nobody can use"*. It is broader than equities: **PayPal's dollar
+and Paxos's Global Dollar ship the same feature with the same gate and the same empty auditor
+slot.** That widens what the measurement covers. It does not show why — the configuration is also
+the zero value of the mint struct ([`THE-PINCER.md`](THE-PINCER.md), 2026-09-27).
 
 **What it means for A, plainly:** a confidential stock-for-cash swap is possible on mainnet as a
 mechanism, and needs **two** issuers' approvals rather than one — the equity issuer for the stock

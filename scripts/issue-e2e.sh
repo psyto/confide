@@ -40,8 +40,10 @@
 #
 # AND THE AUDITOR SLOT STAYS EMPTY, exactly as it is on all 1,992. That is not a shortcut: in
 # primary issuance the issuer IS the sender, so they can already read what they sent and need no
-# auditor key to see it. The empty slot blocks the SECONDARY market, not this one — which is why
-# this is the flow that runs today on a mint configured the way the real ones are.
+# auditor key to see it. In the SECONDARY market -- investor to investor -- nobody but the two
+# parties could read an amount. Whether an issuer would accept that is unasked; it is a question for
+# the founder's conversations (brief §3 P1), not something this script shows. What this script
+# shows is the flow that runs today on a mint configured the way the real ones are.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 . "$(dirname "$0")/lib/chain.sh"

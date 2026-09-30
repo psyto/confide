@@ -98,8 +98,8 @@ So the finding is no longer about one extension:
 > **Token-2022 ships two confidential capabilities. Every tokenized stock from three issuers'
 > catalogues carries the first and uses none of it; not one carries the second.**
 
-**And the same scan shows what they do adopt**, which makes the abstention deliberate rather than
-inattentive — these are not issuers who ignored the extension list:
+**And the same scan shows what else is on them.** It does not show who chose any of it, or whether
+anyone considered the auditor field ([`THE-PINCER.md`](THE-PINCER.md), 2026-09-27):
 
 | extension | mints |
 |---|---|
@@ -109,8 +109,8 @@ inattentive — these are not issuers who ignored the extension list:
 | **`confidentialMintBurn`** | **0** |
 
 **Seven extensions on every single mint.** The eighth is switched on and
-walled off, and the ninth was never turned on. That is a much harder thing to explain away than a
-count of unused accounts.
+walled off, and the ninth was never turned on. That is a stronger measurement than a count of unused
+accounts. It is still not a motive.
 
 ---
 

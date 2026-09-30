@@ -246,7 +246,7 @@ swap_leg() {
   # READ THE AUDITOR OFF THE MINT, not off a file. The extracted version looked for
   # $W/auditor-$who.json, which the demonstration happened to create and the bilateral scripts
   # never do -- so a bilateral swap on a mint that DOES name an auditor would have silently proved
-  # `none` and been rejected by Token-2022. It works today only because all 1,992 tokenized-equity
+  # `none` and been rejected by Token-2022. It works today only while all 1,992 tokenized-equity
   # mints leave the slot null, which is the finding this repository is built on and a poor thing to
   # depend on. Codex found it, 2026-09-22.
   #

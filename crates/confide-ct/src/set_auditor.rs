@@ -1,11 +1,12 @@
 //! `set-auditor <keypair.json> <mint> <blockhash> [auditor_secret.json]`
 //!
-//! Fills the slot every xStock leaves empty — on a mint we control, because Backed's mints are not
-//! ours to configure. One instruction: `ConfidentialTransferInstruction::UpdateMint`.
+//! Fills the auditor slot on a mint we control. The xStock mints are not ours to configure, and
+//! their slot is empty. One instruction: `ConfidentialTransferInstruction::UpdateMint`.
 //!
 //! The point is not that setting a key is hard. It is that setting it is the *only* lever
-//! Token-2022 gives you, and it is all-or-nothing: whoever holds this key reads every holder's
-//! every transfer, forever. That is why the live mints leave it null. Confide exists so the key can
+//! Token-2022 gives you, and it is all-or-nothing: whoever holds this key can decrypt every holder's
+//! confidential transfers made while it is set. It is null on every live mint; why is not measured
+//! (docs/cwf-2026/THE-PINCER.md, 2026-09-27). Confide exists so the key can
 //! be held by something that discloses on terms instead of unconditionally.
 
 use base64::Engine;

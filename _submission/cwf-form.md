@@ -296,7 +296,7 @@ error the rest of this repository is built to prevent.
 ```
 Honestly: I do not know yet, and the measurements I have say something narrower than "people want this".
 
-What I can show. Kamino runs 19 live reserves in tokenized equity: $24.1m deposited, $85.5m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a constraint nobody chose.
+What I can show. Kamino runs 19 live reserves in tokenized equity: $24.1m deposited, $85.5m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a rule in Kamino's own code.
 
 What it does not show. 518,744 live accounts and two configured proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
 
@@ -320,11 +320,11 @@ Nothing is on mainnet. Nobody outside the repository has run any of it.
 ```
 Mostly they are not getting it wrong, and I would rather say so than manufacture a villain.
 
-Backed, Backpack and PreStocks ship tokenized equity on Token-2022 with confidential transfers on — 1,992 mints — and all leave autoApproveNewAccounts false. Not an oversight: turning it on lets anyone open an account they cannot see into.
+Backed, Backpack and PreStocks ship tokenized equity on Token-2022 with confidential transfers on — 1,992 mints — and all leave autoApproveNewAccounts false — the default, and sound: turning it on lets anyone open an account they cannot see into.
 
 Kamino refuses confidential collateral and is right to: a lender who cannot read a balance cannot price it. Their program requires the extensions inactive at deposit. Correct underwriting.
 
-What is wrong is upstream of them all. Token-2022 offers one disclosure model: a single auditor key that decrypts everything, for everyone, forever — or null. Fill it and every holder is permanently readable by one party; leave it null and nobody can prove anything to anyone. Every mint has it null. Every decision downstream is locally correct inside a design with no third option.
+What is wrong is upstream of them all. Token-2022 offers one disclosure model: a single mint-wide auditor key that can decrypt every confidential transfer made while it is set — or null. Fill it and one party reads every holder's transfers; leave it null and nobody can prove anything to anyone. Every mint has it null. Whatever put it there, the design has no third option.
 
 Confide builds the third option: disclosure scoped to a recipient and a purpose.
 ```
