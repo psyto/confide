@@ -1180,3 +1180,38 @@ step 3 は**全フィールドを照合してから、渡す額を pin から読
 —— SDK が組んだ proof context の fixture が要る（回帰被覆としては弱い） ②devnet 実走は
 **release / demo のゲート**にすべき ③`chmod 700` のエラー抑制。
 **RPC が無いので実走は依然できていない。**
+
+## 2026-09-30（4）— 公開 devnet で実走。429 ではなく slot skew で止まった
+
+**0ao. `issue-e2e.sh` を公開 devnet（`api.devnet.solana.com`）で走らせた。exit 1。**
+落ちた場所は **Address Lookup Table の作成**:
+
+```
+Error: Create failed: RPC response error -32002: Transaction simulation failed:
+  Program log: 505745647 is not a recent slot
+  Program log: Error: InvalidInstructionData
+```
+
+`scripts/lib/swap.sh:286` の `solana address-lookup-table create` が導出する slot を、
+**提出先のノードが「recent でない」と判定している。** 公開エンドポイントは複数ノードに
+負荷分散されるので、slot の見え方が食い違う。**429 ではない** —— CLAUDE.md が警告している
+レート制限より前に、別の理由で止まる。**専用エンドポイント（単一ノード）で解ける類。**
+
+**通ったところ（今日の変更が触った範囲で、実際にチェーンで確認できたこと）:**
+mint 2つを `autoApproveNewAccounts: false`・auditor EMPTY で作成、
+`configure` / `approve` / `deposit` / `apply` が3口座ぶん、
+**投資家の株口座を未承認で開くところ**（`NOT approved — the issuer has not signed for this one`）、
+発行体の脚の **6 transactions・3 contexts**。
+
+**通らなかったところ —— そしてこれが肝心。** 署名前の検査（`swap_look` に合意額を渡す形）に
+**到達していない。** 投資家の脚を組む途中で落ちたので、**今日足した比較も `SHORT=` の拒否も、
+チェーン上では一度も動いていない。** 合成データとチェーン抜きの検査21件では通っている。
+**「devnet で動く」とはまだ言えない。**
+
+devnet に残ったもの: throwaway の mint 2つ・口座数個・context 3つ（rent は
+`./scripts/swap-abandon.sh` で回収可）・ALT 1つ。資金は 65.16 → ほぼ変わらず。
+
+**次の一手は endpoint ひとつ。** `~/.zshrc` に `export CONFIDE_RPC=...` を置けば、
+agent 側は `RPC="$CONFIDE_RPC"` と書くだけで済み、**URL は会話にも repo のファイルにも現れない**
+（`SEPOLIA_RPC` で profile の変数がシェルに届くことを確認済み）。
+CLAUDE.md の「環境変数としてのみ」をそのまま満たす。
