@@ -1,4 +1,4 @@
-//! `read-balance <keys.json> <decryptable_b64> <available_b64> [decimals]`
+//! `read-balance <keys.json> <decryptable_b64> <available_b64> [decimals] [public_balance]`
 //!
 //! Decrypts an account's confidential balance with the key we generated for it. The public balance
 //! on that account reads `0`; this is what the holder sees, and nobody else.
@@ -23,6 +23,11 @@ fn main() {
         .next()
         .map(|d| d.parse().expect("decimals must be a number"))
         .unwrap_or(8);
+    // The PUBLIC balance is whatever the caller read off the chain. This binary never touches the
+    // chain, and until 2026-09-30 it printed "0 <- what the chain shows anyone" regardless -- a
+    // claim about the chain made without reading it. Now it prints what it was given, or says it
+    // was given nothing.
+    let public: Option<String> = a.next();
 
     let keys: serde_json::Value = serde_json::from_slice(&std::fs::read(&keys_path).unwrap()).unwrap();
     let ae = AeKey::try_from(&d64(keys["ae_key_b64"].as_str().unwrap())[..]).expect("ae key");
@@ -33,7 +38,7 @@ fn main() {
     let base = ae.decrypt(&ct).expect("our key opens our balance");
 
     println!("  account            {}", keys["account"].as_str().unwrap_or("?"));
-    println!("  public balance     0            <- what the chain shows anyone");
+    println!("{}", public_line(public.as_deref()));
     let whole = 10u64.pow(decimals);
     println!(
         "  confidential       {} base units  = {} units  ({} decimals)",
@@ -60,4 +65,33 @@ fn main() {
 
 fn d64(s: &str) -> Vec<u8> {
     base64::engine::general_purpose::STANDARD.decode(s).unwrap()
+}
+
+/// Line 2 of the output. Callers read line 3 by position, so this stays one line either way.
+fn public_line(public: Option<&str>) -> String {
+    match public {
+        Some(p) => format!("  public balance     {p:<12} <- what the chain shows anyone"),
+        None => "  public balance     not read     <- this tool sees only ciphertexts; \
+                 scripts/read-balance.sh reads it"
+            .to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::public_line;
+
+    #[test]
+    fn prints_the_public_balance_it_was_given() {
+        assert_eq!(public_line(Some("0")), "  public balance     0            <- what the chain shows anyone");
+        assert!(public_line(Some("173000")).contains("173000"));
+    }
+
+    #[test]
+    fn never_claims_zero_it_did_not_read() {
+        let l = public_line(None);
+        assert!(!l.contains(" 0 "), "{l}");
+        assert!(l.contains("not read"), "{l}");
+        assert!(!l.contains('\n'));
+    }
 }
