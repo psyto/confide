@@ -20,3 +20,6 @@ keys/issuer.yml
 
 # Staging for video/record-presentation.js. Nothing here is promoted until every check passes.
 video/.presentation-render/
+
+# Python bytecode (app/test_app.py imports app/server.py)
+__pycache__/
