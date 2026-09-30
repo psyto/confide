@@ -118,6 +118,16 @@ writeFileSync(path.join(dir, NAME + ".manifest.json"), JSON.stringify({
   video_per_wall_second: +clock.toFixed(4),
   settings: { window_seconds: WINDOW, shorten_over_seconds: SHORTEN_OVER, fast_forward_seconds: FF_SECONDS },
   cut_seconds: +len.toFixed(1),
+  // Where each press and each result landed in the CUT, so the narration's scene times are derived
+  // from this file (video/demo-times.py) rather than typed.
+  timeline: marks.map((m) => {
+    let out = 0, at = null;
+    for (const p of pieces) {
+      if (m.t >= p.start && m.t <= p.end) { at = out + (m.t - p.start) / p.speed; break; }
+      out += (p.end - p.start) / p.speed;
+    }
+    return { mode: m.mode, kind: m.kind, step: m.step || m.done || "", cut_seconds: at === null ? null : +at.toFixed(1) };
+  }),
   shortened: pieces.filter((p) => p.speed !== 1).map((p) => ({
     raw_from: +p.start.toFixed(2), raw_to: +p.end.toFixed(2), real_wait_seconds: +p.real.toFixed(1),
     speed: +p.speed.toFixed(1), while_waiting_after: p.after,

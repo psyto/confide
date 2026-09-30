@@ -1273,6 +1273,14 @@ echo "  THE CWF FORM — every field against the limit the form states"
   || bad "a CWF form field is over its limit or quotes a stale count — ./scripts/cwf-form.sh"
 
 echo
+echo "  THE DEMO SCRIPT'S TIMES — each scene's range against the cut it narrates"
+# video/DEMO.md names where each scene sits in demo-ops.mp4. Those ranges were typed once and went
+# stale at the first re-recording; video/demo-times.py derives them from the cut's own manifest.
+python3 video/demo-times.py --check >/dev/null 2>&1 \
+  && ok "every scene's time range in video/DEMO.md matches demo-ops.manifest.json" \
+  || bad "video/DEMO.md scene times differ from the cut — python3 video/demo-times.py"
+
+echo
 echo "  THE PRIVATE ENDPOINT — it may exist as an environment variable and nowhere else"
 # web/slots.json recorded the founder's Alchemy URL on this script's first run, key and all, into a
 # file that is committed AND published to the site. It was caught by reading the file. Nothing was
