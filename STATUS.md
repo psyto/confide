@@ -1544,3 +1544,18 @@ Bloomberg 風にはしなかった —— 板・気配値・チャートを連�
 
 **まだのもの:** ナレーション（founder）と、`video/DEMO.md` の台本をどちらかの画面の動画に合わせて書き直すこと。
 新しい画面そのものは Codex のレビューをまだ受けていない。
+
+## 2026-09-30（15）— 画面で「Confide がやったこと」を名指しする。拒否は Token-2022 と Solana のもの
+
+**founder の依頼:** Confide が使われているところをアピールしたい。→ `/ops` の各段階とブロッターの各行に
+**担当の札**（CONFIDE / TOKEN-2022 / SOLANA）を付け、発行体の列に「CONFIDE IN THIS RUN」を置いた ——
+「ルールを執行するのは Token-2022 と Solana、その周りの仕事をするのが Confide」。起きたことだけが ✓ になる。
+
+**線の引き方（STORY §1 の通り、取引の中で動くのは Confide ではない）:** 証明を作る（検証はチェーン）・署名前の検査・
+条件の固定・取引の同一性の照合・株と現金を1取引に組む ＝ **CONFIDE**。承認前の送付の拒否・承認・自己承認の拒否 ＝
+**TOKEN-2022**。片側署名の拒否 ＝ **SOLANA**。決済 ＝ **CONFIDE + TOKEN-2022**。
+**拒否を Confide の手柄にしない** —— それはチェーンの基本機能で、名乗れば言い過ぎになる。
+「PROOFS VERIFIED · CONFIDE」は検証まで Confide がしたと読めたので「PROOFS BUILT · CHAIN-VERIFIED」に直した。
+
+**`video/demo-ops.mp4` を差し替えた（2:56）** —— この画面で devnet を実走して録り直した（通常・SHORT とも通って終わった）。
+早送りした20区間は `video/demo-ops.manifest.json`。

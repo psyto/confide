@@ -43,7 +43,8 @@ const row = (cells) => { const tr = el("tr"); for (const c of cells) { const td 
 // ---- state ----
 let S;
 function reset() {
-  S = { parties: {}, mints: {}, accounts: {}, order: [], positions: {}, seq: 0, act: 1, short: false,
+  document.getElementById("did").textContent = "";
+  S = { did: new Set(), parties: {}, mints: {}, accounts: {}, order: [], positions: {}, seq: 0, act: 1, short: false,
         t1: { stages: {}, lines: [], shares: null, cash: null, built: null, sig: null, cu: null },
         t2: { stages: {}, lines: [], shares: null, cash: null, sig: null } };
   for (const id of ["queue", "mints", "public", "positions", "blotter"]) document.querySelector(`#${id} tbody`).textContent = "";
@@ -65,9 +66,8 @@ function renderMints() {
   const tb = document.querySelector("#mints tbody"); tb.textContent = "";
   for (const k of ["X", "Y"]) {
     const m = S.mints[k]; if (!m) continue;
-    tb.appendChild(row([{ text: ASSET[k] + " mint" }, { node: link("address", m.mint) }]));
-    tb.appendChild(row([{ text: "  new accounts" }, { node: tag("warn", "ISSUER APPROVAL REQUIRED") }]));
-    tb.appendChild(row([{ text: "  auditor key" }, { text: m.auditor === "empty" ? "none" : m.auditor }]));
+    const pol = el("span"); pol.appendChild(tag("warn", "APPROVAL REQUIRED")); pol.appendChild(el("span", "dim", "  auditor: " + (m.auditor === "empty" ? "none" : m.auditor)));
+    tb.appendChild(row([{ text: ASSET[k] }, { node: link("address", m.mint) }, { node: pol }]));
   }
 }
 function renderLedger() {
@@ -86,23 +86,41 @@ function renderPositions() {
   const tb = document.querySelector("#positions tbody"); tb.textContent = "";
   for (const [k, p] of Object.entries(S.positions)) tb.appendChild(row([{ text: p.holder }, { text: p.asset }, { text: p.units, cls: "num" }]));
 }
-function blot(evt, result, cls, evidence, party) {
+function blot(evt, result, cls, evidence, party, who) {
   S.seq += 1;
   const tb = document.querySelector("#blotter tbody");
   for (const r of tb.querySelectorAll("tr.fresh")) r.classList.remove("fresh");
+  const b = el("span", "by " + (who || "").split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, ""), who || "");
   const tr = row([{ text: String(S.seq), cls: "num" }, { text: String(S.act) }, { text: party || "" }, { text: evt },
-                  { node: tag(cls, result) }, evidence ? { node: evidence } : { text: "" }]);
+                  { node: tag(cls, result) }, { node: b }, evidence ? { node: evidence } : { text: "" }]);
   tr.classList.add("fresh");
   tb.prepend(tr);
   while (tb.children.length > 8) tb.lastChild.remove();
 }
 
+// ---- what Confide did, listed as it happens (only from checkpoints; nothing is pre-filled) ----
+function did(key, text) {
+  if (S.did.has(key)) return;
+  S.did.add(key);
+  const li = el("li", null, text);
+  li.prepend(el("span", "tick", "✓ "));
+  document.getElementById("did").appendChild(li);
+}
+
 // ---- tickets ----
 // Stage names say what happened at that stage, so the row reads as the story: refused, then approved.
-const T1 = [["proofs", "PROOFS VERIFIED"], ["check", "PRE-SIGN CHECK"], ["gate", "SENT BEFORE APPROVAL"], ["approve", "ISSUER APPROVES"],
+const T1 = [["proofs", "PROOFS BUILT · CHAIN-VERIFIED"], ["check", "PRE-SIGN CHECK"], ["gate", "SENT BEFORE APPROVAL"], ["approve", "ISSUER APPROVES"],
             ["sig1", "ONE SIGNATURE ONLY"], ["settle", "BOTH SIGNATURES · SETTLED"]];
 const T2 = [["pin1", "TERMS PINNED · INVESTOR"], ["pin2", "TERMS PINNED · HOLDER 2"], ["chk1", "INVESTOR CHECK"],
             ["chk2", "HOLDER 2 CHECK + BINDING"], ["settle", "BOTH SIGNATURES · SETTLED"]];
+// WHO DID IT. Nothing of Confide's runs inside the trade -- the transfers are Token-2022's, the
+// atomicity is Solana's. Confide builds the proofs, checks before signing, pins terms, binds the
+// transaction and assembles it. The refusals are Token-2022's and Solana's, and are labelled so.
+const BY = {
+  proofs: "CONFIDE", check: "CONFIDE", gate: "TOKEN-2022", approve: "TOKEN-2022", sig1: "SOLANA", settle: "CONFIDE + TOKEN-2022",
+  pin1: "CONFIDE", pin2: "CONFIDE", chk1: "CONFIDE", chk2: "CONFIDE",
+};
+const by = (k) => { const s = el("span", "by " + (BY[k] || "").split(" ")[0].toLowerCase().replace(/[^a-z0-9]/g, ""), BY[k] || ""); return s; };
 function renderTicket(n_, t, spec, title, sellerWho, buyerWho) {
   document.getElementById("placeholder").style.display = "none";
   const box = document.getElementById("ticket-" + n_);
@@ -115,7 +133,7 @@ function renderTicket(n_, t, spec, title, sellerWho, buyerWho) {
   if (t.shares && t.cash) mid.appendChild(el("div", "px", "$" + (t.cash / t.shares).toFixed(2) + "/sh\nagreed off chain"));
   legs.appendChild(a); legs.appendChild(mid); legs.appendChild(b); box.appendChild(legs);
   const st = el("div", "stages");
-  for (const [k, label] of spec) st.appendChild(el("span", "stage " + (t.stages[k] || ""), label));
+  for (const [k, label] of spec) { const s = el("span", "stage " + (t.stages[k] || ""), label); s.appendChild(by(k)); st.appendChild(s); }
   box.appendChild(st);
   if (t.lines.length) box.appendChild(el("div", "detail", t.lines.slice(-2).join("\n")));
   if (t.sig) { const d = el("div", "detail"); d.appendChild(el("span", null, "settlement ")); d.appendChild(link("tx", t.sig)); if (t.cu) d.appendChild(el("span", null, ` · ${n(t.cu)} CU · both legs in one transaction`)); box.appendChild(d); }
@@ -152,55 +170,62 @@ const H = {
   run(e) { S.short = e.mode === "short"; status(S.short ? "running · short-delivery control" : "running"); },
   waiting(e) { next(e.next); status("waiting for: " + (STEPS[e.next] ? STEPS[e.next][1] : e.next)); },
   party(e) { S.parties[e.who] = e.pubkey; },
-  mint(e) { S.mints[e.asset] = e; renderMints(); blot(ASSET[e.asset] + " mint created", "GATE SHUT", "warn", link("address", e.mint), "ISSUER"); },
+  mint(e) { S.mints[e.asset] = e; renderMints(); blot(ASSET[e.asset] + " mint created", "GATE SHUT", "warn", link("address", e.mint), "ISSUER", "TOKEN-2022"); },
   account(e) {
     if (!S.accounts[e.account]) S.order.push(e.account);
     S.accounts[e.account] = { ...(S.accounts[e.account] || {}), who: e.who, asset: e.asset, approved: e.approved };
     renderQueue(); renderLedger(); readPublic(e.account);
     blot(`${ASSET[e.asset].toLowerCase()} account configured`, e.approved === "yes" ? "APPROVED" : "NOT APPROVED",
-         e.approved === "yes" ? "ok" : "warn", link("address", e.account), HOLDER[e.who]);
+         e.approved === "yes" ? "ok" : "warn", link("address", e.account), HOLDER[e.who], "TOKEN-2022");
   },
   proofs(e) {
     S.t1.stages.proofs = "ok"; if (e.shares) S.t1.shares = e.shares; if (e.cash) S.t1.cash = e.cash;
     S.t1.lines.push("proofs built and verified by the chain's ZK program, before anyone knows if it will be allowed"); t1();
-    blot("both legs' proofs", "VERIFIED ON CHAIN", "ok", null, "ISSUER · INVESTOR");
+    blot("both legs' proofs built", "VERIFIED ON CHAIN", "ok", null, "ISSUER · INVESTOR", "CONFIDE");
+    did("proofs", "built both legs' ZK proofs — verified by the chain");
   },
   checked(e) {
     if (e.act === "2") {
       const k = e.who === "offerer" ? "chk1" : "chk2";
       S.t2.stages[k] = e.against === "pin" ? "ok" : "bad";
       S.t2.lines.push(`${HOLDER[e.who]}: compared with the terms pinned on its own side${e.bound === "yes" ? "; transaction is exactly the one checked" : ""}`);
-      t2(); blot("pre-signing check", e.against === "pin" ? "MATCHES PIN" : "NOT PINNED", e.against === "pin" ? "ok" : "warn", null, HOLDER[e.who]);
+      t2(); blot("pre-signing check", e.against === "pin" ? "MATCHES PIN" : "NOT PINNED", e.against === "pin" ? "ok" : "warn", null, HOLDER[e.who], "CONFIDE");
+      did("chk2-" + e.who, `${HOLDER[e.who].toLowerCase()} checked what it receives against its pin`);
+      if (e.bound === "yes") did("bound", "verified the transaction is exactly the one checked");
       return;
     }
     S.t1.shares = S.t1.shares || e.agreed; S.t1.stages.check = "ok";
     S.t1.lines.push(`investor decrypted ${baseToUnits(e.decrypted_base, e.decimals)} shares from the verified proof · agreed ${n(e.agreed)}`);
-    t1(); blot("pre-signing check", "MATCHES AGREED", "ok", null, "INVESTOR");
+    t1(); blot("pre-signing check", "MATCHES AGREED", "ok", null, "INVESTOR", "CONFIDE");
+    did("check", "decrypted the incoming amount and compared it with the deal, before signing");
   },
   refused(e) {
     const ev = e.sig ? link("tx", e.sig) : null;
     if (e.source === "pre_sign_check") {
       S.t1.shares = S.t1.shares || e.agreed; S.t1.stages.check = "bad";
       S.t1.lines.push(`investor decrypted ${baseToUnits(e.decrypted_base, e.decimals)} shares · agreed ${n(e.agreed)} → REFUSED, nothing signed`);
-      t1(); blot("pre-signing check", "SHORT · REFUSED", "bad", null, "INVESTOR"); return;
+      t1(); blot("pre-signing check", "SHORT · REFUSED", "bad", null, "INVESTOR", "CONFIDE");
+      did("short", "caught a short delivery before any signature existed"); return;
     }
-    if (e.what === "allocation") { S.t1.stages.gate = "bad"; S.t1.lines.push("sent to an unapproved account → refused on chain, Custom(24)"); t1(); blot("allocation sent", "REFUSED · Custom(24)", "bad", ev, "ISSUER"); return; }
+    if (e.what === "allocation") { S.t1.stages.gate = "bad"; S.t1.lines.push("sent to an unapproved account → refused on chain, Custom(24)"); t1(); blot("allocation sent", "REFUSED · Custom(24)", "bad", ev, "ISSUER", "TOKEN-2022"); return; }
     if (e.what === "self_approval") {
       for (const a of S.order) if (S.accounts[a].who === "investor" && S.accounts[a].asset === "X") S.accounts[a].refused = true;
-      renderQueue(); blot("investor approves own account", "REFUSED · not the authority", "bad", ev, "INVESTOR"); return;
+      renderQueue(); blot("investor approves own account", "REFUSED · not the authority", "bad", ev, "INVESTOR", "TOKEN-2022"); return;
     }
-    if (e.what === "half_signed") { S.t1.stages.sig1 = "bad"; S.t1.lines.push("issuer's signature only → refused in RPC preflight; never entered a block"); t1(); blot("sent with 1 of 2 signatures", "REFUSED · preflight", "bad", null, "ISSUER"); }
+    if (e.what === "half_signed") { S.t1.stages.sig1 = "bad"; S.t1.lines.push("issuer's signature only → refused in RPC preflight; never entered a block"); t1(); blot("sent with 1 of 2 signatures", "REFUSED · preflight", "bad", null, "ISSUER", "SOLANA"); }
   },
   approval(e) {
     const x = S.accounts[e.account]; if (x) x.approved = e.approved === "true" ? "yes" : "no";
     renderQueue(); renderLedger();
-    if (e.approved === "true") { S.t1.stages.approve = "ok"; S.t1.lines.push("issuer approved exactly this account"); t1(); blot("issuer approves account", "APPROVED", "ok", e.sig ? link("tx", e.sig) : null, "ISSUER"); }
+    if (e.approved === "true") { S.t1.stages.approve = "ok"; S.t1.lines.push("issuer approved exactly this account"); t1(); blot("issuer approves account", "APPROVED", "ok", e.sig ? link("tx", e.sig) : null, "ISSUER", "TOKEN-2022"); }
   },
   settled(e) {
-    if (e.act === "2") { S.t2.stages.settle = "ok"; S.t2.sig = e.sig; t2(); blot("bilateral trade", "SETTLED · 2/2", "ok", link("tx", e.sig), "INVESTOR · HOLDER 2"); return; }
+    if (e.act === "2") { S.t2.stages.settle = "ok"; S.t2.sig = e.sig; t2(); blot("bilateral trade", "SETTLED · 2/2", "ok", link("tx", e.sig), "INVESTOR · HOLDER 2", "CONFIDE + TOKEN-2022");
+      did("dvp2", "assembled the holders' trade as one transaction"); return; }
     Object.assign(S.t1, { sig: e.sig, cu: e.cu, shares: e.shares || S.t1.shares, cash: e.cash || S.t1.cash });
     S.t1.stages.sig1 = S.t1.stages.sig1 || "ok"; S.t1.stages.settle = "ok"; t1();
-    blot("allocation", "SETTLED · 2/2", "ok", link("tx", e.sig), "ISSUER · INVESTOR");
+    blot("allocation", "SETTLED · 2/2", "ok", link("tx", e.sig), "ISSUER · INVESTOR", "CONFIDE + TOKEN-2022");
+    did("dvp1", "assembled stock + cash as one transaction");
   },
   holding(e) {
     const [who, rest] = e.label.split(/,\s*/);
@@ -212,14 +237,16 @@ const H = {
   public(e) {
     const accs = e.accounts.split(","), bals = e.balances.split(",");
     accs.forEach((a, i) => { if (S.accounts[a]) S.accounts[a].pub = bals[i]; });
-    renderLedger(); blot("public balances read back", "ALL ZERO", "ok", null, "ANYONE");
+    renderLedger(); blot("public balances read back", "ALL ZERO", "ok", null, "ANYONE", "TOKEN-2022");
   },
   offer(e) {
     S.act = 2; S.t2.shares = e.shares; S.t2.cash = e.cash; S.t2.stages.pin1 = "ok";
     S.t2.lines.push(`investor offers ${n(e.shares)} shares for $${n(e.cash)} and pins the terms on its side`); t2();
-    blot("offer", "TERMS PINNED", "ok", null, "INVESTOR");
+    blot("offer", "TERMS PINNED", "ok", null, "INVESTOR", "CONFIDE");
+    did("pin1", "pinned the terms on the investor's side");
   },
-  accepted() { S.t2.stages.pin2 = "ok"; S.t2.lines.push("holder 2 reads the offer, pins it, builds the cash leg's proofs"); t2(); blot("accept", "TERMS PINNED", "ok", null, "HOLDER 2"); },
+  accepted() { S.t2.stages.pin2 = "ok"; S.t2.lines.push("holder 2 reads the offer, pins it, builds the cash leg's proofs"); t2(); blot("accept", "TERMS PINNED", "ok", null, "HOLDER 2", "CONFIDE");
+    did("pin2", "pinned them on holder 2's side; built the cash leg"); },
   done(e) { next(null); status(e.mode === "short" ? "done — the short leg was refused" : "done"); },
   process(e) { if (e.state === "failed" || e.state === "timed out") status("the script " + e.state + " — nothing here is inferred from that"); },
 };

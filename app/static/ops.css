@@ -84,3 +84,17 @@ h3 { font-size: 12px; }
 .status { max-width: 380px; }
 .placeholder { color: var(--dim); font: 13px var(--mono); border: 1px dashed var(--line); border-radius: 4px; padding: 18px; text-align: center; }
 .brand { white-space: nowrap; }
+
+/* ---- who did it: Confide's work is named, and so are the refusals it does not own ---- */
+.by { display: inline-block; font: 700 9px var(--mono); letter-spacing: .06em; padding: 1px 5px; margin-left: 6px; border-radius: 2px; vertical-align: 1px; }
+.tbl .by { font-size: 10px; margin-left: 0; }
+.by.confide { background: var(--accent); color: #041015; }
+.by.token2022 { background: #242c36; color: #aab4c0; }
+.by.solana { background: #2a2440; color: #b9a8f0; }
+h3.cf { color: var(--accent); }
+.did { list-style: none; padding: 0; margin: 2px 0 0; font: 13px var(--mono); }
+.did li { padding: 3px 0; border-bottom: 1px solid #1a212a; color: var(--ink); }
+.did .tick { color: var(--accent); font-weight: 700; }
+.did { font-size: 12.5px; }
+.did li { padding: 2px 0; }
+#mints td { padding: 3px 6px; }
