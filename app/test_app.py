@@ -290,15 +290,26 @@ class ScriptCheckpointTests(unittest.TestCase):
             self.assertNotIn("refused", [e["ev"] for e in evs], bad)
 
     def test_half_signed_refusal_only_for_a_signature_failure_on_one_of_two(self):
-        sigfail = 'send(){ echo "ERR {\\"code\\": -32003, \\"message\\": \\"Transaction signature verification failure\\"}"; }'
+        sigfail = "rpc(){ echo '{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32003,\"message\":\"Transaction signature verification failure\"}}'; }"
+        # the answer devnet actually gave on 2026-09-30: well over 300 characters, which `send` cut
+        # into unparseable JSON
+        real = json.dumps({"jsonrpc": "2.0", "id": 1, "error": {"code": -32002,
+            "message": "Transaction simulation failed: Transaction did not pass signature verification",
+            "data": {"accounts": None, "err": "SignatureFailure", "fee": None, "innerInstructions": None,
+                     "loadedAccountsDataSize": 0, "loadedAddresses": None, "logs": [], "postBalances": None,
+                     "postTokenBalances": None, "preBalances": None, "preTokenBalances": None,
+                     "replacementBlockhash": None, "returnData": None, "unitsConsumed": 0}}})
+        self.assertGreater(len(real), 300)
+        realstub = "rpc(){ cat <<'JSON'\n" + real + "\nJSON\n}"
         cargo_ok = 'cargo(){ if [ "$8" = sign ]; then cat >/dev/null; echo "  signed by ISS   1 of 2 signatures present" >&2; fi; echo tx; }'
-        code, evs = run_block(HALF, sigfail, cargo_ok)
-        self.assertEqual(code, 0)
-        self.assertIn(("refused", "half_signed"), names(evs))
+        for stub in (sigfail, realstub):
+            code, evs = run_block(HALF, stub, cargo_ok)
+            self.assertEqual(code, 0, RUN_LOG[-1][-400:])
+            self.assertIn(("refused", "half_signed"), names(evs))
         for extra, stub in (
             ('cargo(){ if [ "$8" = sign ]; then cat >/dev/null; echo "  signed by ISS   1 of 3 signatures present" >&2; fi; echo tx; }', sigfail),
-            (cargo_ok, 'send(){ echo "ERR {\\"code\\": -32002, \\"message\\": \\"sim failed\\"}"; }'),
-            (cargo_ok, 'send(){ echo SIGACCEPTED; }; confirm(){ return 0; }'),
+            (cargo_ok, "rpc(){ echo '{\"error\":{\"code\":-32002,\"message\":\"sim failed\",\"data\":{\"err\":{\"InstructionError\":[0,\"MissingRequiredSignature\"]}}}}'; }"),
+            (cargo_ok, "rpc(){ echo '{\"result\":\"SIGACCEPTED\"}'; }; confirm(){ return 0; }"),
         ):
             code, evs = run_block(HALF, stub, extra)
             self.assertNotEqual(code, 0, stub)

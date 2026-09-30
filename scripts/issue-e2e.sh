@@ -352,7 +352,14 @@ cargo run --quiet -p confide-ct --bin swap-tx -- build "$ISSUER" "$(bh)" \
 grep -aqE "signed by $ISSUER +1 of 2 signatures present" "$W/half.err" \
   || { echo "    the half-signed allocation is not 'issuer only, 1 of 2':" >&2; cat "$W/half.err" >&2; exit 1; }
 printf '    %ssigned by the issuer only — 1 of 2 signatures present%s\n' "$dim" "$off"
-half=$(send "$(cat "$W/half.b64")")
+# NOT `send`: it cuts the error to 300 characters, and the -32002 answer carries a `data` object long
+# enough that the cut JSON no longer parses -- which the verdict below then called "refused for another
+# reason" on the first devnet run (2026-09-30). The whole body is read here.
+half=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sendTransaction\",\"params\":[\"$(cat "$W/half.b64")\",{\"encoding\":\"base64\",\"preflightCommitment\":\"confirmed\"}]}" \
+  | python3 -c "
+import sys, json
+r = json.load(sys.stdin)
+print('ERR ' + json.dumps(r['error']) if 'error' in r else r['result'])")
 # Exactly two shapes are accepted, both of which mean "a signature failed verification", and nothing
 # looser: an earlier `*Signature*` pattern would have passed any refusal that happened to use the word.
 #   current Agave:  -32002, simulation failed, data.err == "SignatureFailure"

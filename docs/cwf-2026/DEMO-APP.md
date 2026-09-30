@@ -122,7 +122,9 @@ every `cargo` binary the script calls):
 - asserting the exact checkpoint sequence for the normal run, the `SHORT` run and act 2.
 
 Until they exist, the whole-run evidence is a devnet run through the app, compared with a terminal
-run.
+run — **done on 2026-09-30**: both completed, with the same refusals, the same settlement figures
+(20,000 shares ⇄ $3,500,000; 60,463 compute units) and every public balance 0 (`STATUS.md`
+2026-09-30 (12)).
 
 ## Not in scope
 

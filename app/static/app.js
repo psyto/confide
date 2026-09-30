@@ -114,6 +114,7 @@ function resetUI() {
   watched.clear();
   decimals = {};
   waitingFor = null;
+  doneSteps.clear();
   renderSteps();
 }
 
@@ -245,7 +246,13 @@ const H = {
   },
   offer(e) { card("investor", "info", "Offer sent — terms pinned on my side", [`${Number(e.shares).toLocaleString("en-US")} shares for $${Number(e.cash).toLocaleString("en-US")}`, "id " + e.id]); },
   accepted() { card("buyer", "info", "Offer accepted — terms pinned on my side", ["cash leg's proofs built and verified on chain"]); },
-  done(e) { waitingFor = null; showNext(null); doneSteps.clear(); setStatus(e.mode === "short" ? "done — the short leg was refused" : "done"); renderSteps(); },
+  done(e) {
+    // the last step the script waited on is complete too; the run's own steps are marked, nothing more
+    if (waitingFor) doneSteps.add(waitingFor);
+    waitingFor = null; showNext(null);
+    setStatus(e.mode === "short" ? "done — the short leg was refused" : "done");
+    renderSteps(doneSteps);
+  },
   process(e) {
     if (e.state === "failed" || e.state === "timed out") setStatus("the script " + e.state + " — see the terminal log; nothing on this page is inferred from that");
   },

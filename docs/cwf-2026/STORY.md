@@ -129,10 +129,15 @@ auditor slot empty). The web app drives these same steps.
    payment, or neither.
 9. **Public balances on all four accounts: 0.** Asserted by the script, not just printed.
 
-**Devnet status.** Steps 1–4, 6, 8 and 9, and the `SHORT=` refusal, have devnet evidence from the
-earlier version of the script (`STATUS.md`, 2026-09-30 (5)). Steps 5 and 7 were added afterwards
-(2026-09-30 (7)), and step 8 now settles the same half-signed transaction rather than a rebuilt one;
-**the current script, as a whole, is waiting for one devnet run.**
+**Devnet status, 2026-09-30.** The current script ran end to end on devnet — every step above, act
+2, and the `SHORT=` refusal — from the terminal and again through the web app (`STATUS.md`
+2026-09-30 (12)). The refusals are on chain and can be looked up: `Custom(24)` at
+`3kNSFF8DRXACgfPb6gY9Knrv8aiV7vMYGZthS8Yzdt8KUVq3eh1CR8pE6iXYUGJt9ueXrVYuWq6DNFExCbVPh1qA`,
+`MissingRequiredSignature` at
+`CFb4KDcnaXJA1LLA5VG5VLrQdEKD1XdH92pNpDNoa4VKD48CSULnY32dDMreD2WiVBvviwDpFVAJTC2dfgDrN4Q`; the
+settlement at `5qqJ7e5ASBcSh2yf5S5N3rotTvkG9QagfLscugdM4C95MsH8JnBfg6JGJ8stFXBQNyraZrffaJJjyMGMExgET8M2`
+(60,463 compute units, two signatures). Devnet can be reset, so these are evidence of that day, not
+permanent.
 
 In primary issuance the issuer is the sender, so it can read what it sent without an auditor key —
 which is why this flow runs today on a mint whose auditor slot is empty.
@@ -144,9 +149,8 @@ accounts; the investor then sells 5,000 of the allocated shares to that holder f
 the four-step bilateral protocol — `swap-offer`, `swap-accept`, `swap-settle`, `swap-sign` — each
 party in its own work directory, each pinning the agreed terms on its own side before any proof
 exists and checking what it will receive against that pin before signing. Stock and cash settle in
-one transaction; the four public balances are asserted to be 0. **This path has not yet been run on
-devnet** — the bilateral pinning was built and checked without a chain (`swap-pin-check.sh`,
-`STATUS.md` 2026-09-30 (3)).
+one transaction; the four public balances are asserted to be 0. **Run on devnet on 2026-09-30** — the
+first time the bilateral pinning ran on a chain (it had been checked without one, `swap-pin-check.sh`).
 
 ### Between two holders — also runs
 

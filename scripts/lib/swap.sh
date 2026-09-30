@@ -283,8 +283,23 @@ print(e['confidentialTransferFeeConfig']['withdrawWithheldAuthorityElgamalPubkey
 
   cx none >/dev/null 2>"$W/$who-pass1.err" || { cat "$W/$who-pass1.err" >&2; return 1; }
   range=$(python3 -c "import json;print(json.load(open('$ctxf'))['range'])")
-  alt=$(solana -u "$R" -k "$payer" address-lookup-table create --authority "$me" \
-        | grep -oE 'Lookup Table Address: [1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  # RETRIED, BUT ONLY FOR ONE ERROR. The CLI derives the table from a recent slot, and behind a
+  # load-balanced endpoint the node that simulates can disagree about which slots are recent:
+  # "NNN is not a recent slot". Seen on the public endpoint (STATUS 09-30 (4)) and, on 09-30, on the
+  # dedicated one too. That failure is in SIMULATION, so nothing was created and trying again cannot
+  # make a second table. Any other error stops here, as before.
+  local out try
+  for try in 1 2 3 4; do
+    if out=$(solana -u "$R" -k "$payer" address-lookup-table create --authority "$me" 2>&1); then
+      break
+    fi
+    case "$out" in
+      *"is not a recent slot"*) echo "    lookup table: the RPC's slot view disagreed (try $try of 4), retrying" >&2; sleep $((try * 3)) ;;
+      *) printf '%s\n' "$out" | sed -E 's#https?://[^ "]*#<RPC-URL>#g' >&2; return 1 ;;
+    esac
+  done
+  alt=$(printf '%s' "$out" | grep -oE 'Lookup Table Address: [1-9A-HJ-NP-Za-km-z]{32,44}' | awk '{print $NF}')
+  [ -n "$alt" ] || { echo "    could not create the lookup table" >&2; printf '%s\n' "$out" | sed -E 's#https?://[^ "]*#<RPC-URL>#g' >&2; return 1; }
   # The with-fee range proof is verified FROM an account, so the record holding it goes in the
   # table too. A missing address there is not an error -- it is an account resolved the long way.
   local rec; rec=$(python3 -c "import json;d=json.load(open('$ctxf'));print(d.get('record',''))")
