@@ -271,8 +271,8 @@ accounts behind its own approval (`autoApproveNewAccounts: false`) — and left 
 **Why it is empty is not measured.** `false` and `null` are also what a zero-initialised mint gets,
 so a shared template produces this configuration with nobody deciding anything
 ([`THE-PINCER.md`](cwf-2026/THE-PINCER.md), 2026-09-27). What is measured is the substrate:
-Token-2022's disclosure model is a single global auditor key — **one key that decrypts every
-transfer made while it is set.** Fill it and every holder's transfers are readable by one party.
+Token-2022's disclosure model is a single mint-wide auditor key — **one key that decrypts the amount
+of every confidential transfer made while it is set.** Fill it and every holder's transfers are readable by one party.
 Leave it null and no holder can demonstrate anything to anyone. There is no setting in between.
 
 So the feature is shipped and unused, and the only disclosure it offers is all-or-nothing. Whether

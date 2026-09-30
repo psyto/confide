@@ -204,7 +204,8 @@ admissibility costs your holders the gate. Both halves are measured: the refusal
 pinned source, and 1,992 of 1,992 live mints sit on the `false` side.
 
 And the auditor slot offers no third option either. Token-2022 gives one disclosure model — a
-global key that decrypts everyone's everything forever — so *every* issuer's choice is between a
+mint-wide key that can decrypt every holder's confidential transfer amounts while it is set — so
+*every* issuer's choice is between a
 key no holder should accept and a null that lets no holder prove anything. **A new issuer chooses
 from the same two.**
 
@@ -216,7 +217,7 @@ which reads as an observation about two companies' decisions. It is not:
 > **Backed and Backpack did not choose badly. There is no good choice available.** Anybody issuing
 > a tokenized stock on Solana today picks between an ungated token no venue will lend against and a
 > venue-admissible token whose every account needs their signature — and, separately, between an
-> auditor key that reads everything and one that reads nothing.
+> auditor key that decrypts every holder's transfer amounts and no key at all.
 
 That is a property of the substrate, and it is why the answer to "build a competitor" is no. **A
 new issuer would hit both walls on its first day.**

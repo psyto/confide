@@ -26,8 +26,8 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 
 ## Long form
 
-> **Solana shipped confidential balances for tokenized stocks. I counted the accounts. Nobody has
-> ever opened one.**
+> **Solana shipped confidential balances for tokenized stocks. I counted the accounts on six of
+> them. None has been approved to use one.**
 >
 > Every tokenized-equity mint from three issuers' catalogues — **all 1,992**, from three issuers
 > each other — runs Token-2022 with confidential transfers switched **on** and the auditor key
@@ -42,7 +42,8 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > than the size.)
 >
 > The reason is one field. `autoApproveNewAccounts` is **false on 1,992 of 1,992**, so a
-> confidential account cannot exist until the issuer signs for it, and no issuer has. And the only
+> confidential account is unusable until the issuer approves it, and on the mints I counted no
+> issuer has. And the only
 > disclosure model on offer is a single mint-wide auditor key that can decrypt every confidential
 > transfer made while it is set — fill it and one party reads every holder's transfers, leave it
 > null and no holder can prove anything to anyone. It is null on every mint, at every issuer; why

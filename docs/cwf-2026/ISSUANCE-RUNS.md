@@ -6,10 +6,11 @@ ask for.
 
 ## Why this exists when the swap already settles
 
-**On a real mint the swap cannot happen.** It needs two holders whose confidential accounts both
-already exist, and `autoApproveNewAccounts` is false on all 1,992 — an account cannot exist until
-the issuer signs for it, and across 469,477 live accounts **two have configured one and zero are
-approved.** The hole is not in the cryptography. It is in who is standing at the door.
+**On a real mint the swap needs the issuer first.** It needs two holders whose confidential accounts are
+both approved, and `autoApproveNewAccounts` is false on all 1,992 — a holder can configure an
+account, but cannot use it until the issuer approves it. On the six mints counted (2026-09-28),
+across 518,744 live accounts **two have configured one and zero are approved.** The hole is not in
+the cryptography. It is in who is standing at the door.
 
 **Issuance closes it, because the party who opens the door is one of the two parties.** The issuer
 allocates to an investor and also approves the investor's account. No matching — which is

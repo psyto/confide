@@ -139,7 +139,7 @@ drawn on purpose:
 - **Confidential balances hide amounts, not identities.** Accounts, the mint and the fact of a
   transfer are public — scene 5 shows exactly that.
 - **"No auditor key" is not selective disclosure.** It means no mint-wide transfer auditor is set.
-  Token-2022 offers one global key or none.
+  Token-2022 offers one mint-wide key or none.
 - **The price is agreed off chain.** $175.00 a share is cash over shares, labelled so on screen; no
   market data exists in the demo.
 - **Fast-forwarded stretches are devnet waiting**, badged with their real length, said aloud in scene

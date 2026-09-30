@@ -89,7 +89,7 @@ Phrased for the form. Each is checkable against the repository.
 **What firsthand observation led to this problem?**
 That tokenized equity is new enough that the layer around it has not been built, and that the gap is
 visible on chain: 1,992 mints ship a privacy feature with its only key left empty, and the one
-disclosure model on offer — a global key reading every transfer while it is set — has no setting
+disclosure model on offer — a mint-wide key reading every transfer while it is set — has no setting
 between everyone and no one. Why the key is empty is not measured; empty is also the default.
 
 **What makes this founder credible in this market?**

@@ -19,12 +19,12 @@ missing scene back from the script.
 Confide — private block trades for tokenized stocks, settled in one Solana transaction
 ```
 
-## Description — 4986 / 5000 characters
+## Description — 4974 / 5000 characters
 
 ```
 Confide settles a tokenized-stock trade against stablecoins in ONE Solana transaction, and neither side publishes what moved. On devnet today.
 
-A real Solana account reports a balance of zero. It holds 173,000 shares of tokenized stock — and nobody has been allowed to open one.
+A real Solana account reports a balance of zero. It holds 173,000 shares of tokenized stock — and no account we counted is approved for one.
 
 On 17 September the SEC gave tokenized stock five years of relief, and set the conditions: AMM-executed trading only, every fill's size, time and direction published within ten minutes, a Tier 1 name capped at 0.25% of daily volume. Block trades have always settled away from that tape. Nobody had built the block. Confide is not a venue, so the exemption neither covers it nor is needed.
 
@@ -52,9 +52,9 @@ THE MEASUREMENT NOBODY HAD MADE
 
 All 1,992 tokenized-equity mints from three issuers' catalogues run Token-2022 with confidential transfers ON and the auditor key EMPTY. Every mint checked, not sampled.
 
-The same 1,992 carry permanentDelegate, pausableConfig and a transfer hook — the issuer can freeze a transfer, seize a holder's tokens, run their own code. Token-2022's only disclosure model is mint-wide: one auditor key, reading every transfer while it is set, scoped to nobody. Everybody readable, or nobody. Why it is empty is unmeasured: empty is also the default.
+The same 1,992 carry permanentDelegate, pausableConfig and a transfer hook — the issuer can freeze a transfer, seize a holder's tokens, run their own code. Token-2022's only disclosure model is mint-wide: one auditor key, reading every transfer while it is set, scoped to nobody. Every holder's amounts, or none. Why it is empty is unmeasured: empty is also the default.
 
-Then the half nobody counted: has anybody USED it? 518,744 live token accounts across Apple, NVIDIA, SpaceX and AMC. TWO have configured a confidential account — one on NVDAx, one on AAPLx. ZERO are approved — none until an issuer signs.
+Then the half nobody counted: has anybody USED it? 518,744 live token accounts across six mints. TWO have configured a confidential account — one on NVDAx, one on AAPLx. ZERO are approved — none until an issuer signs.
 
 Not only equities: PYUSD and USDG land on the same configuration.
 

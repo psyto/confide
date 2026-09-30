@@ -1587,3 +1587,32 @@ Bloomberg 風にはしなかった —— 板・気配値・チャートを連�
 「*Shows:* m:ss–m:ss」を書き換える。`docs-consistency.sh` の THE DEMO SCRIPT'S TIMES がずれを落とす（わざと1秒ずらして落ちるのを確認）。
 **台本本文に手で書いていた動画の長さ（175.7 秒）は、録り直しで早速 175.2 秒にずれていた** —— 数字をやめて manifest を指す形に。
 台本は 331 語・予測 162 秒、各場面が自分の区間に収まる。
+
+## 2026-10-01 — 数字の食い違い、6銘柄の標本の拡大、監査人鍵の言い過ぎ
+
+レビュー `docs/reviews/2026-10-01-counts-and-reach.md`（依頼文は payloads に）。1巡目の私の修正を Codex が
+「まだ直し切れていない」と判定し、指摘を全部実ファイルで確認して採った。
+
+**0br. 「Three have asked」→ 2。** 公開サイトのヒーロー欄と README の表が、口座が1つ閉じられた後（09-27 頃、0bn）も
+「3（NVDAx に2）」のままだった。`usage.json` は **NVDAx 1・AAPLx 1**。サイトの「On NVDAx, two accounts have asked」も同じ。
+
+**0bs. 6銘柄の標本を全体に広げていた文。** 「no issuer has signed — no incumbent here」「Nobody has ever used one」
+「On every one of the 1,992 real mints that is impossible … none has」「On mainnet it cannot be done」
+「Nobody has ever opened one」（未投稿の投稿文の見出し —— しかも**2つ設定済みなので事実としても誤り**）。
+全部「数えた6銘柄では」に。「no incumbent / nothing to be late to」は競争の主張に読めるので「nobody is using it yet」に。
+
+**0bt. 監査人鍵は「全員の全部を永遠に」読まない。** mint 全体の鍵で、**設定中の秘匿移転の額**を全保有者について復号できる。
+残高全体は見えず、設定前の移転も読めない（brief §1）。直した面: DESIGN、SEC-EXEMPTION、REACH、THE-PINCER（2箇所）、
+SEIZURE、ONCHAIN（「global」）、README・YouTube の「Everybody readable, or nobody」、動画用の demo.html（2箇所）、DEMO.md、
+FOUNDER-MARKET-FIT。公開済みのナレーションと字幕は sha で固定して残した。
+
+**0bu. 私の事故。** YouTube の貼り付けファイルを作り直すとき、生成器が 5,000 字超過で失敗した後に**空の一時ファイルで
+上書きした**。さらに検査の「生成器の出力と一致」が、空の出力と空のファイルを比べて一致と言った。コミット前に
+バイト数で気づき git から戻した。→ `youtube-paste.sh --write`（一時ファイルに出し、成功して中身がある時だけ置き換え）。
+失敗させて元のファイルが残るのを確認。`docs-consistency.sh` は生成器の終了コードと空でないことも見るように。
+
+**検査。** THE ACCOUNT SCAN: 「N have asked / N accounts have …」（数字でも英単語でも、表の中でも）、銘柄ごとの内訳、
+「Nobody has ever used one」を照合、対象に ISSUANCE-RUNS・DESIGN・ONCHAIN・CWF フォームを追加。
+新しい THE AUDITOR'S REACH が言い過ぎの言い回しを締め出す。**わざと壊して10通り**確認。
+
+**founder の手で:** 公開サイト（`web/index.html` が変わった）の再公開、CWF フォームと YouTube 説明文の貼り直し。

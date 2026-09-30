@@ -49,7 +49,7 @@ party**.
 That is worth stating plainly rather than defaulting:
 
 > This project's entire argument is that disclosure should be scoped to a recipient and a purpose,
-> and that a global key which reads everyone's everything forever is the wrong shape. **Putting a
+> and that a mint-wide key which can decrypt every holder's transfer amounts is the wrong shape. **Putting a
 > third-party tracker on the page publishes every reader to a company none of them chose**, which
 > is a smaller version of the thing the page is about.
 

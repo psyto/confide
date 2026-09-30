@@ -352,7 +352,7 @@ async function slot(s){
    +'<div class="cards">'+cards+'</div>'
    +'<div class="lede fade" style="margin-top:30px;font-size:22px">'
    +'<b>All '+(s.mints||'1,869')+' of them.</b> The privacy is already shipped and nobody can use it &mdash; '
-   +'the only key on offer reads <span class="hl">everyone\'s everything, forever</span>.</div>'
+   +'the only key on offer is mint-wide: it decrypts <span class="hl">every holder\'s transfer amounts</span>.</div>'
    +'<div class="cap fade" style="margin:14px 0 0">'
    +((s.issuers||2)>2?'Three':'Two')+' issuers, one configuration &mdash; which is also the default.</div></div>');
   await sleep(80); await reveal(els,180); await out(rest(s,t0));
@@ -540,7 +540,7 @@ async function privacyGap(s){
     +'<h2 class="fade">'+s.mints+' tokenized-stock mints have confidential transfers. The privacy setting does not.</h2>'
     +'<div class="gap-stage"><div class="capability fade"><div class="tiny">issuer controls, on every one</div>'
     +'<div class="exts">'+s.controls.map(c=>'<div class="ext"><code>'+c.ext+'</code><span>'+c.n+'</span></div>').join("")+'</div></div>'
-    +'<div class="missing-key fade"><div class="keyhole">⌁</div><b>NO SELECTIVE AUDIT KEY</b><span>all balances, or none</span></div>'
+    +'<div class="missing-key fade"><div class="keyhole">⌁</div><b>NO SELECTIVE AUDIT KEY</b><span>every transfer amount while set, or none</span></div>'
     +'<div class="capability fade"><div class="tiny">holder choice</div><strong>Show a lender enough<br>Show an auditor enough<br>Keep the market blind</strong></div></div>'
     +'<div class="source fade">Token-2022 confidential transfers · the same empty auditor slot across '
     +s.issuers+' issuers</div></div>');

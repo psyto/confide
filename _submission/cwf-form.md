@@ -20,7 +20,7 @@ Confide
 ## Brief description · Public · ≤500
 
 ```
-Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble and lets each side check the other before signing, with nobody in the middle. All 1,992 tokenized stocks from three issuers' catalogues already ship confidential balances. Of 518,744 live accounts, two have configured one and zero are approved — no issuer has signed.
+Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble and lets each side check the other before signing, with nobody in the middle. All 1,992 tokenized stocks from three issuers' catalogues already ship confidential balances. Of 518,744 live accounts on six of them, two have configured one and zero are approved.
 ```
 
 ## Project website · Public
@@ -298,7 +298,7 @@ Honestly: I do not know yet, and the measurements I have say something narrower 
 
 What I can show. Kamino runs 19 live reserves in tokenized equity: $24.1m deposited, $85.5m of borrowing its own market owners authorised, and $0 of that reachable by a holder who will not publish what they hold — the deposit path refuses an account carrying confidential value (constraints.rs:187). Money already committed, under a rule in Kamino's own code.
 
-What it does not show. 518,744 live accounts and two configured proves the feature is unused. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
+What it does not show. 518,744 live accounts and two configured show the feature unused on the six mints counted. It does not prove anyone wants it: the issuer must sign for each account and none has, so nobody has had the chance to want it.
 
 What would settle it. Somebody outside my repository opening a confidential position on the devnet issuer whose key I published, or a desk saying what it would pay to move size unpublished. Neither has happened. Until one does this is an argument, not evidence.
 ```

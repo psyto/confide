@@ -186,9 +186,12 @@ done
 for cut in "" checkin1; do
   out=_submission/youtube${cut:+-$cut}-paste.txt
   [ -z "$cut" ] && out=_submission/youtube-paste.txt
-  ./scripts/youtube-paste.sh $cut 2>/dev/null | diff -q - "$out" >/dev/null \
+  # The generator's own exit status counts: a generator that fails prints nothing, and an empty file
+  # "matches" nothing -- which read as a match on 2026-10-01 while the pasted file was 0 bytes.
+  gen=$(./scripts/youtube-paste.sh $cut 2>/dev/null) && [ -n "$gen" ] && [ -s "$out" ] \
+    && printf '%s\n' "$gen" | diff -q - "$out" >/dev/null \
     && ok "${out#_submission/} is what its generator produces" \
-    || bad "${out#_submission/} has drifted — ./scripts/youtube-paste.sh $cut > $out"
+    || bad "${out#_submission/} is not what its generator produces (or the generator failed) — ./scripts/youtube-paste.sh $cut --write"
 done
 # And the chapters against the file they describe. The published Stocklana cut carried chapter
 # times from a different edit — a 2:07 runtime quoted for a 1:52 file — because they were copied
@@ -380,7 +383,9 @@ for _m in u["mints"]:
 files = ["STATUS.md", "README.md", "web/index.html", "_submission/full.md",
          "_submission/short-alternatives.txt", "_submission/youtube.md",
          "_submission/youtube-paste.txt", "docs/cwf-2026/POST.md", "docs/cwf-2026/STORY.md",
-         "docs/cwf-2026/COMPOSITION.md", "scripts/testbed-join.sh"]
+         "docs/cwf-2026/COMPOSITION.md", "scripts/testbed-join.sh",
+         # widened 2026-10-01: each of these carried the count or the scope, and none was read
+         "docs/cwf-2026/ISSUANCE-RUNS.md", "DESIGN.md", "docs/ONCHAIN.md", "_submission/cwf-form.md"]
 # A PASTED FILE IS A RECORD, NOT A SURFACE. `_submission/full.md` holds what went into Stocklana's
 # form, whose edit window shut 2026-09-25. Editing it to match a later scan would destroy the thing
 # THE SUBMITTED FIELDS compares against, so these two checks would disagree by construction and one
@@ -419,6 +424,36 @@ for f in files:
     for m in re.finditer(r"(\d+) (?:of them )?configured for confidential", t):
         if int(m.group(1)) != conf:
             bad.append(f"{f}: says {m.group(1)} configured, web/usage.json says {conf}")
+    # "THREE HAVE ASKED" -- the site's hero panel and README's table said three for days after a
+    # scan found two (one account was closed), because this check only knew "N configured for
+    # confidential". Word or digit, with or without a table cell between (2026-10-01).
+    WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
+             "nine": 9, "ten": 10}
+    # STATUS.md is a dated log and quotes the old wording when it records the fix; it is exempt here.
+    for m in re.finditer(r"(?i)(?:\*\*)?\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b(?:\*\*)?"
+                         r"\s*(?:\|\s*)?have (?:asked|configured|tried)\b", t if f != "STATUS.md" else ""):
+        k = m.group(1).lower()
+        v = int(k) if k.isdigit() else WORDS[k]
+        if v != conf:
+            bad.append(f"{f}: says {m.group(0).strip()!r}, web/usage.json says {conf} configured")
+    # "2 accounts have configured", and the per-mint split -- the page said "On NVDAx, two accounts
+    # have asked" while the scan had one on NVDAx and one on AAPLx, and README said "two on NVDAx".
+    if f != "STATUS.md":
+        for m in re.finditer(r"(?i)\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+accounts?\s+have\s+(?:asked|configured|tried)\b", t):
+            k = m.group(1).lower(); v = int(k) if k.isdigit() else WORDS[k]
+            if v != conf:
+                bad.append(f"{f}: says {m.group(0)!r}, web/usage.json says {conf} configured")
+        for _m in u["mints"]:
+            sym = re.escape(_m["symbol"]); want_n = _m["confidential_accounts"]
+            for pat in (r"(?i)\b(\d+|one|two|three|four|five)\s+(?:accounts?\s+)?on\s+(?:<[^>]+>)?`?%s\b" % sym,
+                        r"(?i)\bon\s+(?:<[^>]+>)?`?%s`?(?:</span>)?,\s*(\d+|one|two|three|four|five)\s+accounts?\s+have" % sym):
+                for mm in re.finditer(pat, t):
+                    k = mm.group(1).lower(); v = int(k) if k.isdigit() else WORDS[k]
+                    if v != want_n:
+                        bad.append(f"{f}: says {mm.group(0)!r}, web/usage.json has {want_n} on {_m['symbol']}")
+        # the count is of SIX mints; a sentence that makes it about all of them is the old claim back
+        for mm in re.finditer(r"(?i)nobody has ever (?:used|opened) one", t):
+            bad.append(f"{f}: {mm.group(0)!r} -- the scan counted six mints, not every one")
     # CONFIGURED IS NO LONGER THE HEADLINE. On 2026-09-22 two NVDAx accounts configured one and
     # neither was approved, so "zero" moved from the first number to the second. Both are checked.
     for m in re.finditer(r"(\d+) approved by an issuer", t):
@@ -1279,6 +1314,55 @@ echo "  THE DEMO SCRIPT'S TIMES — each scene's range against the cut it narrat
 python3 video/demo-times.py --check >/dev/null 2>&1 \
   && ok "every scene's time range in video/DEMO.md matches demo-ops.manifest.json" \
   || bad "video/DEMO.md scene times differ from the cut — python3 video/demo-times.py"
+
+echo
+echo "  THE AUDITOR'S REACH — what the mint-wide key can read, said as it is"
+python3 - <<'PYAR' && ok "no live surface says the auditor key reads everything, forever" || bad "a surface overstates the auditor key — it decrypts transfer amounts made while set"
+import hashlib, re, subprocess, sys, pathlib
+# The key can decrypt the amount of every confidential transfer made while it is set, for every
+# holder. It does not see a whole balance, and it does not read transfers made before it was set.
+# "Decrypts everyone's everything, forever" was on the demo page, DESIGN, SEC-EXEMPTION, REACH and
+# THE-PINCER until 2026-10-01 -- the founder's brief (s1) had already drawn the line.
+BAN = re.compile(r"everything,? (?:for everyone|forever|for all time)|everyone.{0,2}s everything|decrypts everything"
+                 r"|reads everyone|everybody or nobody|all balances, or none|permanently readable"
+                 # second round, 2026-10-01 (Codex): the same overstatement in other words
+                 r"|reads everything|everybody readable|by everyone, forever|every transfer, or none"
+                 r"|\bglobal (?:auditor )?key", re.I)
+# Published narration and captions keep what was recorded; pinned by content like THE MOTIVE's list.
+frozen = {
+    "video/CWF-PRESENTATION.md":             "3629f0a2190a69a7",
+    "video/captions-20260923.srt":           "b5a4a3c6ea0d626d",
+    "video/segments-presentation/LINES.md":  "8417644637e94849",
+    "video/segments-presentation/manifest.json": "76afa0a5da4f6138",
+    "video/voiceover.md":                    "687f4e4e55aa7604",
+    "video/captions.srt":                    "fbe229c6d5a88c5f",
+}
+skip = re.compile(r"^docs/reviews/|^STATUS\.md$|^scripts/docs-consistency\.sh$")
+bad = []
+for f in filter(None, subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                                     capture_output=True, text=True).stdout.split("\0")):
+    p = pathlib.Path(f)
+    if skip.match(f) or not p.exists() or p.suffix in (".png", ".jpg", ".jpeg", ".mp4", ".ico", ".pdf"):
+        continue
+    if f in frozen:
+        if hashlib.sha256(p.read_bytes()).hexdigest()[:16] != frozen[f]:
+            bad.append(f"{f} is pinned as recorded and has changed -- re-read it, then re-pin")
+        continue
+    try:
+        t = p.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        continue
+    # captions and wrapped prose split a phrase across lines, so read with line breaks folded
+    flat = re.sub(r"\s*\n\s*(?:>\s*)?", " ", t)
+    for m in BAN.finditer(flat):
+        bad.append(f"{f}: ...{flat[max(0, m.start() - 40):m.end() + 20]}...")
+for f in frozen:
+    if not pathlib.Path(f).exists():
+        bad.append(f"{f} is gone")
+for b in bad[:10]:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYAR
 
 echo
 echo "  THE PRIVATE ENDPOINT — it may exist as an environment variable and nowhere else"

@@ -161,11 +161,12 @@ b.bad{color:var(--red)}b.good{color:var(--grn)}
       <div class="panel"><div class="big" id="heroAccounts">518,744</div><div class="cap2">live token
       accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC</div></div>
       <div class="panel"><div class="big z">0</div><div class="cap2">have been approved.
-      <b>Three have asked; no issuer has signed.</b></div></div>
+      <b>Two have asked; no issuer has approved one.</b></div></div>
     </div>
-    <div class="note">Read from mainnet and counted by <span class="mono">scripts/usage-scan.sh</span>.
-    The feature is shipped on every mint and gated on every mint, and no issuer has signed for an
-    account yet &mdash; so there is no incumbent here and nothing to be late to.</div>
+    <div class="note">Read from mainnet and counted by <span class="mono">scripts/usage-scan.sh</span>,
+    on six mints, two per issuer. The feature is shipped and gated on every mint in the list; on the six
+    counted, no issuer has approved an account yet &mdash; so where we looked, nobody is using it
+    yet.</div>
   </section>
 
   <section>
@@ -259,7 +260,7 @@ b.bad{color:var(--red)}b.good{color:var(--grn)}
     not by this page — a scan of a third of a million accounts is not something to run in a
     browser tab. Size is only the cheap filter: the first pass found seven large accounts on Apple
     xStock and <b>every one was large for an unrelated extension</b>, so the check reads the
-    extension list. <b>There is no incumbent here and nothing to be late to.</b></div>
+    extension list. <b>On the mints counted, nobody is using it yet.</b></div>
   </section>
 
   <!-- THE TURN, and the page did not have it. Nine sections described a gate that is shut and then
@@ -267,8 +268,8 @@ b.bad{color:var(--red)}b.good{color:var(--grn)}
        while it was the spine of every other surface. -->
   <section>
     <h2 id="turn">Which makes the first trade an issuance.</h2>
-    <div class="lede">A confidential account cannot receive anything until its issuer signs for it,
-    and <b>none has</b>. So the party who can open the account is <b>one of the two parties to the
+    <div class="lede">A confidential account cannot receive anything until its issuer approves it,
+    and on the mints counted <b>none has been</b>. So the party who can open the account is <b>one of the two parties to the
     trade</b> &mdash; and the first trade through that gate is not a swap between holders.
     <b>It is an issuance.</b></div>
     <div class="note">Both halves are on devnet and decoded at the top of this page: the same
@@ -374,8 +375,8 @@ b.bad{color:var(--red)}b.good{color:var(--grn)}
   <section>
     <h2 id="missing">What is not built.</h2>
     <div class="lede"><b>The gate on a real mint.</b> The issuer above is a devnet testbed whose
-    approval key is mine. On <span class="mono">NVDAx</span>, two accounts have asked and none is
-    approved &mdash; and whether an issuer <i>would</i> sign is not measured here, because nobody
+    approval key is mine. On <span class="mono">NVDAx</span> and <span class="mono">AAPLx</span>, one account each has
+    asked and none is approved &mdash; and whether an issuer <i>would</i> sign is not measured here, because nobody
     has asked one.</div>
     <div class="lede" style="margin-top:14px"><b>Matching.</b> Settlement is done; finding the other
     side is not. Bringing buyers and sellers together is the exchange definition at Rule 3b-16, so

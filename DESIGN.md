@@ -59,8 +59,8 @@ this project is not about sandwiching. They do nothing about the **settled balan
 permanent public record of what you hold. Different axis entirely.
 
 **"Use Token-2022 confidential balances."** Confidential-balance primitives hide the amount from
-*everyone, forever*, and ship only a crude global-auditor model: one key that decrypts everything,
-for all time. That is not a 13F. That is all-or-nothing. The regulatory shape you need —
+*everyone, forever*, and ship only a crude mint-wide auditor model: one key that can decrypt the
+amount of every confidential transfer made while it is set, for every holder. That is not a 13F. That is all-or-nothing. The regulatory shape you need —
 *the auditor sees now, the public sees at T* — is not expressible.
 
 **"Trade through a custodian / a fresh wallet each time."** An omnibus custodian is today's

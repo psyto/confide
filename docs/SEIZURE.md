@@ -260,8 +260,8 @@ recipient and granularity* means when it stops being a phrase. Section 4 is mode
 section is mode B, because it is the one a lending market is likely to require.
 
 The obvious way to build mode B is the wrong one. Putting the lender's key in the mint's **auditor** slot would
-let them read their borrowers' collateral — and every other transfer of that mint, by everyone,
-forever. That is the exact power this project exists because nobody can correctly hold. Moving it
+let them read their borrowers' collateral transfers — and every other confidential transfer amount of that mint made while the key is set, by every holder —
+permanently, since those ciphertexts stay on chain. That is the exact power this project exists because nobody can correctly hold. Moving it
 from the issuer to the lender changes who holds it and not what it is.
 
 **The escrow's own ElGamal key is the right key.**

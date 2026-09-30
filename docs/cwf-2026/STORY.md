@@ -42,7 +42,7 @@ Not "few". Zero. The first scan found seven large accounts on Apple xStock and e
 for `pausableAccount` and `transferHookAccount` instead — size is suggestive, the extension list
 decides, and the check reads the extension list.
 
-**On those six mints the gate has never been opened.** No incumbent turned up where we looked;
+**On those six mints the gate has never been opened.** Nobody is using it where we looked;
 the scan does not reach the rest of the catalogue, so this is not a claim about the whole market.
 
 ## 2. Why it has not opened — what is known, and what is not

@@ -30,7 +30,7 @@ confidential transfers **on** and the auditor slot **empty** — every mint in t
 sampled, and [the list is a catalogue rather than a census](docs/cwf-2026/THE-POPULATION.md). The
 same 1,992 carry `permanentDelegate`, `pausableConfig` and a transfer hook. Token-2022's only
 disclosure model is **mint-wide** — one auditor key, reading every transfer made while it is set,
-scoped to nobody. Everybody readable, or nobody; **there is no setting in between.** Why the slot is
+scoped to nobody. Every holder's transfer amounts, or no one's; **there is no setting in between.** Why the slot is
 empty is not measured — an empty slot is also what a zero-initialised mint gets by default
 ([THE-PINCER.md](docs/cwf-2026/THE-PINCER.md#and-the-uniformity-is-not-evidence-of-a-decision--2026-09-27)).
 And a confidential account cannot receive anything until its issuer signs for it.
@@ -87,12 +87,13 @@ the price it implies.
 |---|---|
 | **1,992** | tokenized stocks ship confidential balances — every one of them |
 | **518,744** | live token accounts across Apple, NVIDIA, SpaceX, Anthropic and AMC |
-| **3** | have asked for a confidential balance — two on `NVDAx`, one on `AAPLx` |
+| **2** | have asked for a confidential balance — one on `NVDAx`, one on `AAPLx` |
 | **0** | have been approved. **Nobody is through the gate.** |
 
-Counted from mainnet by `./scripts/usage-scan.sh`. The feature is shipped on every mint and gated
-on every mint, and no issuer has signed for an account yet — **so there is no incumbent here and
-nothing to be late to.**
+Counted from mainnet by `./scripts/usage-scan.sh`, on six mints — two per issuer — on 2026-09-28. The
+feature is shipped and gated on every mint in the list; on the six counted, no issuer has approved an
+account yet — **so where we looked, nobody is using it yet.** The other mints
+in the list have not been counted.
 
 ## Go and do it yourself — two minutes, devnet, nobody's permission
 
@@ -203,8 +204,8 @@ Everything above is what runs. This is the market it runs into, measured rather 
 **The US market for this opened on 17 September 2026**, when the SEC exempted tokenized-stock
 venues for five years. The count below was re-run three days later.
 
-**1,992 tokenized stocks from three issuers' catalogues have confidential transfers switched on.
-Nobody has ever used one.** Every mint in the list checked rather than sampled —
+**1,992 tokenized stocks from three issuers' catalogues have confidential transfers switched on. On
+the six whose accounts were counted, no confidential account has been approved.** Every mint in the list checked rather than sampled —
 `./scripts/slot-scan.sh`, re-run 2026-09-20:
 
 ```
@@ -238,8 +239,9 @@ $ ./scripts/usage-scan.sh
   518744 token accounts across 6 mints, 2 configured for confidential transfers, 0 approved by an issuer
 ```
 
-Not "few". **Zero.** Every mint needs the issuer's signature to open a confidential account, and
-no issuer has signed. There is no incumbent here and nothing to be late to.
+Not "few". **Zero.** A holder can configure a confidential account, but only the issuer's approval
+makes it usable, and on the six mints counted no issuer has approved one. Where we looked, nobody is using it
+yet.
 
 The feature is shipped, configured, and **inert**. Token-2022 offers exactly one disclosure model —
 a single mint-wide auditor key that can decrypt the amount of **every confidential transfer made

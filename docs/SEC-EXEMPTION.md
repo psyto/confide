@@ -166,8 +166,8 @@ individual burn instruction was not captured**: the last forty signatures on the
 transfers only. So the movement is inferred from differencing, which is the weaker of the two
 observations Codex names — the instruction itself would be direct.
 
-Token-2022 still offers exactly two disclosure settings — a global auditor key that reads everyone
-forever, or null — and all 1,992 are null. **The primitive for a third exists in this repository.
+Token-2022 still offers exactly two disclosure settings — a mint-wide auditor key that can decrypt
+every holder's confidential transfer amounts while it is set, or null — and all 1,992 are null. **The primitive for a third exists in this repository.
 The registrar application does not**, and saying otherwise would be the kind of claim
 `scripts/docs-consistency.sh` exists to prevent.
 

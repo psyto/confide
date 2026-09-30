@@ -9,8 +9,9 @@
 # part of that allocation to a second approved holder through the four-step bilateral protocol.
 #
 # The swap this repository already settles needs two holders whose confidential accounts BOTH
-# already exist. On every one of the 1,992 real mints that is impossible: `autoApproveNewAccounts`
-# is false, so an account cannot exist until the issuer signs for it, and none has. The demonstration
+# already exist and be approved. On the 1,992 real mints that is the issuer's call:
+# `autoApproveNewAccounts` is false, so a confidential account is unusable until the issuer approves
+# it, and on the six mints whose accounts were counted none has been (usage-scan.sh). The demonstration
 # that settles a block trade therefore cannot happen on a real mint — the hole is not in the
 # cryptography, it is in who is standing at the door.
 #

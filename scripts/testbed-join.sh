@@ -3,9 +3,9 @@
 #
 #   ./scripts/testbed-join.sh [your-keypair.json]
 #
-# This is the thing 518,744 live token accounts have never done — `./scripts/usage-scan.sh`. On
-# mainnet it cannot be done, because a confidential account needs the issuer's signature and no
-# issuer has given one. Here the issuer has published the key that gives it, so the gate is shut
+# This is the thing 518,744 live token accounts have never done — `./scripts/usage-scan.sh`, six
+# mints counted. On those mints it has not been done: a confidential account is usable only once the
+# issuer approves it, and none of those accounts has been approved. Here the issuer has published the key that gives it, so the gate is shut
 # exactly as it is on all 1,992 real mints and **you can operate it yourself**.
 #
 # What you end up with: a token account whose public balance reads 0 and which holds a real
