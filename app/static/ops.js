@@ -48,6 +48,7 @@ function reset() {
         t2: { stages: {}, lines: [], shares: null, cash: null, sig: null } };
   for (const id of ["queue", "mints", "public", "positions", "blotter"]) document.querySelector(`#${id} tbody`).textContent = "";
   for (const id of ["ticket-1", "ticket-2"]) { const t = document.getElementById(id); t.textContent = ""; t.className = "ticket idle"; }
+  document.getElementById("placeholder").style.display = "";
   next(null);
 }
 
@@ -93,7 +94,7 @@ function blot(evt, result, cls, evidence, party) {
                   { node: tag(cls, result) }, evidence ? { node: evidence } : { text: "" }]);
   tr.classList.add("fresh");
   tb.prepend(tr);
-  while (tb.children.length > 12) tb.lastChild.remove();
+  while (tb.children.length > 8) tb.lastChild.remove();
 }
 
 // ---- tickets ----
@@ -103,6 +104,7 @@ const T1 = [["proofs", "PROOFS VERIFIED"], ["check", "PRE-SIGN CHECK"], ["gate",
 const T2 = [["pin1", "TERMS PINNED · INVESTOR"], ["pin2", "TERMS PINNED · HOLDER 2"], ["chk1", "INVESTOR CHECK"],
             ["chk2", "HOLDER 2 CHECK + BINDING"], ["settle", "BOTH SIGNATURES · SETTLED"]];
 function renderTicket(n_, t, spec, title, sellerWho, buyerWho) {
+  document.getElementById("placeholder").style.display = "none";
   const box = document.getElementById("ticket-" + n_);
   box.className = "ticket"; box.textContent = "";
   const hd = el("div", "hd"); hd.appendChild(el("span", null, title)); hd.appendChild(el("span", null, t.sig ? "SETTLED" : "OPEN")); box.appendChild(hd);
@@ -115,7 +117,7 @@ function renderTicket(n_, t, spec, title, sellerWho, buyerWho) {
   const st = el("div", "stages");
   for (const [k, label] of spec) st.appendChild(el("span", "stage " + (t.stages[k] || ""), label));
   box.appendChild(st);
-  if (t.lines.length) box.appendChild(el("div", "detail", t.lines.slice(-3).join("\n")));
+  if (t.lines.length) box.appendChild(el("div", "detail", t.lines.slice(-2).join("\n")));
   if (t.sig) { const d = el("div", "detail"); d.appendChild(el("span", null, "settlement ")); d.appendChild(link("tx", t.sig)); if (t.cu) d.appendChild(el("span", null, ` · ${n(t.cu)} CU · both legs in one transaction`)); box.appendChild(d); }
 }
 const t1 = () => renderTicket(1, S.t1, T1, S.short ? "ACT 1 · ALLOCATION · SHORT-DELIVERY CONTROL" : "ACT 1 · PRIMARY ALLOCATION", "ISSUER", "INVESTOR");

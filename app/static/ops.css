@@ -55,3 +55,32 @@ tr.fresh td { background: #13202a; }
 .stage.now { outline: 1px solid var(--accent); color: var(--ink); }
 .detail { font: 11px var(--mono); color: var(--dim); margin-top: 6px; white-space: pre-wrap; }
 .detail a, .ticket a { color: var(--accent); text-decoration: none; }
+
+/* ---- sized for a 1080p recording: larger type, and the grid fills the screen (2026-09-30) ---- */
+html, body { height: 100%; }
+body { font-size: 15px; display: flex; flex-direction: column; }
+.bar { flex: none; }
+.brand { font-size: 18px; }
+.env { font-size: 12px; }
+.status { font-size: 12px; }
+button { font-size: 13px; }
+.grid { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr); }
+.panel { overflow: hidden; }
+h2 { font-size: 14px; }
+h3 { font-size: 12px; }
+.fine { font-size: 12px; }
+.tbl { font-size: 14px; }
+.tbl th { font-size: 12px; }
+.tbl td { padding: 4px 6px; }
+.tag { font-size: 11px; }
+.next button { font-size: 15px; padding: 11px; }
+.leg .who, .leg .asset, .px { font-size: 12px; }
+.leg .amt { font-size: 28px; }
+.swap { font-size: 22px; }
+.stage { font-size: 11px; padding: 4px 8px; }
+.detail { font-size: 13px; }
+.grid { grid-template-rows: minmax(0, 1.9fr) minmax(0, 1fr); }
+.env { white-space: nowrap; }
+.status { max-width: 380px; }
+.placeholder { color: var(--dim); font: 13px var(--mono); border: 1px dashed var(--line); border-radius: 4px; padding: 18px; text-align: center; }
+.brand { white-space: nowrap; }

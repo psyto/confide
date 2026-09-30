@@ -1,0 +1,161 @@
+{
+ "note": "demo-ops.mp4 is .demo-render-ops/raw.mp4 (an unedited devnet run through the app, \"ops\" view) with the middle of each long wait played faster. Every shortened stretch carries an on-screen badge with its real duration, and is listed here. Nothing is removed or reordered.",
+ "raw_seconds": 583.8,
+ "wall_seconds": 595,
+ "video_per_wall_second": 0.9812,
+ "settings": {
+  "window_seconds": 0.4,
+  "shorten_over_seconds": 3,
+  "fast_forward_seconds": 1.1
+ },
+ "cut_seconds": 174.7,
+ "shortened": [
+  {
+   "raw_from": 6.17,
+   "raw_to": 9.71,
+   "real_wait_seconds": 4.4,
+   "speed": 3.2,
+   "while_waiting_after": "Set up the issuer and an investor"
+  },
+  {
+   "raw_from": 13.06,
+   "raw_to": 23.88,
+   "real_wait_seconds": 11.8,
+   "speed": 9.8,
+   "while_waiting_after": "Create the stock — gate shut, auditor empty"
+  },
+  {
+   "raw_from": 27.23,
+   "raw_to": 71.78,
+   "real_wait_seconds": 46.2,
+   "speed": 40.5,
+   "while_waiting_after": "Fund the treasury and the investor's cash"
+  },
+  {
+   "raw_from": 75.13,
+   "raw_to": 81.42,
+   "real_wait_seconds": 7.2,
+   "speed": 5.7,
+   "while_waiting_after": "Open a confidential account for the stock"
+  },
+  {
+   "raw_from": 84.77,
+   "raw_to": 160.71,
+   "real_wait_seconds": 78.2,
+   "speed": 69,
+   "while_waiting_after": "Build both legs' proofs"
+  },
+  {
+   "raw_from": 172.05,
+   "raw_to": 175.99,
+   "real_wait_seconds": 4.8,
+   "speed": 3.6,
+   "while_waiting_after": "Send the allocation (account not approved yet)"
+  },
+  {
+   "raw_from": 182.68,
+   "raw_to": 187.21,
+   "real_wait_seconds": 5.4,
+   "speed": 4.1,
+   "while_waiting_after": "Try to approve my own account"
+  },
+  {
+   "raw_from": 193.9,
+   "raw_to": 197.06,
+   "real_wait_seconds": 4,
+   "speed": 2.9,
+   "while_waiting_after": "Approve exactly this account"
+  },
+  {
+   "raw_from": 210.93,
+   "raw_to": 214.08,
+   "real_wait_seconds": 4,
+   "speed": 2.9,
+   "while_waiting_after": "Add my signature — settle"
+  },
+  {
+   "raw_from": 221.26,
+   "raw_to": 235.41,
+   "real_wait_seconds": 15.2,
+   "speed": 12.9,
+   "while_waiting_after": "Look from outside"
+  },
+  {
+   "raw_from": 242.59,
+   "raw_to": 271.84,
+   "real_wait_seconds": 30.6,
+   "speed": 26.6,
+   "while_waiting_after": "Act 2 — approve a second holder"
+  },
+  {
+   "raw_from": 275.19,
+   "raw_to": 277.76,
+   "real_wait_seconds": 3.4,
+   "speed": 2.3,
+   "while_waiting_after": "Offer 5,000 shares for $875,000"
+  },
+  {
+   "raw_from": 281.11,
+   "raw_to": 328.42,
+   "real_wait_seconds": 49,
+   "speed": 43,
+   "while_waiting_after": "Read the offer, pin it, build the cash leg"
+  },
+  {
+   "raw_from": 331.78,
+   "raw_to": 358.48,
+   "real_wait_seconds": 28,
+   "speed": 24.3,
+   "while_waiting_after": "Check the cash against my pin, sign once"
+  },
+  {
+   "raw_from": 364.68,
+   "raw_to": 369.21,
+   "real_wait_seconds": 5.4,
+   "speed": 4.1,
+   "while_waiting_after": "Check the shares against my pin, add the second signature"
+  },
+  {
+   "raw_from": 376.39,
+   "raw_to": 388.94,
+   "real_wait_seconds": 13.6,
+   "speed": 11.4,
+   "while_waiting_after": "Look from outside"
+  },
+  {
+   "raw_from": 405.78,
+   "raw_to": 409.53,
+   "real_wait_seconds": 4.6,
+   "speed": 3.4,
+   "while_waiting_after": "Set up the issuer and an investor"
+  },
+  {
+   "raw_from": 412.88,
+   "raw_to": 428.99,
+   "real_wait_seconds": 17.2,
+   "speed": 14.6,
+   "while_waiting_after": "Create the stock — gate shut, auditor empty"
+  },
+  {
+   "raw_from": 432.34,
+   "raw_to": 476.88,
+   "real_wait_seconds": 46.2,
+   "speed": 40.5,
+   "while_waiting_after": "Fund the treasury and the investor's cash"
+  },
+  {
+   "raw_from": 480.23,
+   "raw_to": 487.11,
+   "real_wait_seconds": 7.8,
+   "speed": 6.3,
+   "while_waiting_after": "Open a confidential account for the stock"
+  },
+  {
+   "raw_from": 490.47,
+   "raw_to": 558.36,
+   "real_wait_seconds": 70,
+   "speed": 61.7,
+   "while_waiting_after": "Build both legs' proofs"
+  }
+ ]
+}
