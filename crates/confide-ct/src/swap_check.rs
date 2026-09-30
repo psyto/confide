@@ -172,12 +172,21 @@ fn main() {
             "\n  \x1b[2mNo agreed amount was passed, so nothing was compared. If that is not the \
              amount you agreed, do not sign.\x1b[0m\n"
         ),
+        // EXIT 3, AND ONLY HERE. "The amount is not what you agreed" is a verified result; every other
+        // failure (a context that is not ours, an unreadable key, a bad argument) is "nothing was
+        // established" and exits 1. The SHORT control reports a refusal only on 3 -- before
+        // 2026-09-30 it reported one on any non-zero, including a missing proof context (Codex).
         Err(e) => {
             println!();
-            die(&e)
+            eprintln!("  \x1b[31m✗\x1b[0m {e}");
+            std::process::exit(MISMATCH)
         }
     }
 }
+
+/// The exit status for a verified amount mismatch. Distinct from 1, which means the check could not
+/// be completed.
+const MISMATCH: i32 = 3;
 
 fn b64(s: &str) -> Vec<u8> {
     base64::engine::general_purpose::STANDARD

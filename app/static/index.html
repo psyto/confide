@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="confide-csrf" content="{{CSRF}}">
+<title>Confide — demo</title>
+<link rel="stylesheet" href="/app.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="brand">Confide <span class="sub">confidential issuance and settlement for issuer-approved tokenized stock</span></div>
+  <div class="banner">devnet · local demo · every key is held by this machine · not a wallet</div>
+  <div class="controls">
+    <button id="start" type="button">Start the demo</button>
+    <button id="short" type="button" class="secondary">Run the short-delivery control</button>
+    <span id="status" class="status">idle</span>
+  </div>
+  <ol id="steps" class="steps"></ol>
+</header>
+<main>
+  <section class="pane" id="pane-issuer">
+    <h2>Issuer <span class="role">view</span></h2>
+    <p class="what">The issuer's side of the run: what its key signs and what it can read.</p>
+    <div class="act" id="act-issuer"></div>
+    <div class="log" id="log-issuer"></div>
+  </section>
+  <section class="pane" id="pane-investor">
+    <h2>Investor <span class="role">view</span></h2>
+    <p class="what">What the investor's key can decrypt, and the check it runs before signing.</p>
+    <div class="act" id="act-investor"></div>
+    <div class="log" id="log-investor"></div>
+  </section>
+  <section class="pane" id="pane-buyer">
+    <h2>Second holder <span class="role">view · act 2</span></h2>
+    <p class="what">A second holder, approved by the issuer, trading with the investor.</p>
+    <div class="act" id="act-buyer"></div>
+    <div class="log" id="log-buyer"></div>
+  </section>
+  <section class="pane observer" id="pane-observer">
+    <h2>Anyone <span class="role">public chain view</span></h2>
+    <p class="what">Accounts, transactions and public token balances are visible. Confidential transfer amounts and confidential balances are encrypted.</p>
+    <div class="act" id="act-observer"></div>
+    <div class="log" id="log-observer"></div>
+  </section>
+</main>
+<footer>
+  The panes are one presenter's simulated role perspectives on one local run, not separate wallets:
+  every key is on this machine and this browser receives every event. Every refusal and settlement shown here is a checkpoint
+  written by <code>scripts/issue-e2e.sh</code> after its own check — the page decides nothing.
+</footer>
+</body>
+</html>

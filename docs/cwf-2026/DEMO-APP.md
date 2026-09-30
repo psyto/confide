@@ -7,6 +7,16 @@ to keep it). The story it tells is [`STORY.md`](STORY.md) §4, in that order.
 
 Reviewed before implementation: [`docs/reviews/2026-09-30-story-and-app.md`](../reviews/2026-09-30-story-and-app.md).
 
+## Running it
+
+```
+RPC="$CONFIDE_RPC" python3 app/server.py        # then open http://127.0.0.1:8787/
+python3 app/test_app.py                         # no chain: server rules, checkpoint order, inert hooks
+```
+
+The endpoint comes from the environment and nowhere else. The public devnet endpoint stops this
+script on slot skew (`STATUS.md` 2026-09-30 (4)), so the server refuses to start without `RPC`.
+
 ## The rule: no second engine
 
 The app **does not implement a second proof, transaction, or policy engine.** Every check, refusal
@@ -69,9 +79,11 @@ as the terminal does it.
   processes of the same user, and that is out of scope rather than claimed.
 - **the browser controls nothing but "advance" and "start run / start SHORT run".** No environment
   variables, paths, shell fragments, RPC methods, addresses or FIFO contents come from the client.
-- per-run directory and FIFO chosen by the server: `umask 077`, directory `0700`, files `0600`, no
-  symlinks followed, removed on exit; one run at a time; the child in its own process group with a
-  timeout and a kill path.
+- per-run directory and FIFO chosen by the server: `umask 077`, directory `0700`, files `0600`; one
+  run at a time; the child in its own process group with a timeout and a kill path (TERM, wait,
+  KILL, reap). **When a run ends** — completed, failed or timed out — leftover children are stopped,
+  the events are read to the end, and the directory (keys, work files, the decrypted copy, the raw
+  log) is removed. Only the sanitised event list stays, in memory.
 - the server holds the **expected next checkpoint** and accepts exactly one advance for it —
   no queued or repeated advances.
 - the RPC endpoint never appears in events, logs, errors, HTML or anything streamed; **raw child
@@ -82,18 +94,35 @@ as the terminal does it.
 
 ## What would show the app has diverged
 
-A harness, written with the app, that runs the script with a stubbed chain (the same stubbing used
-for the 09-30 negative controls):
+**Implemented — `python3 app/test_app.py`, no chain:**
 
-- with and without `CONFIDE_EVENTS`, records the commands invoked and the transactions built, and
-  requires them to be identical;
-- asserts the exact checkpoint sequence for the normal run, the `SHORT` run, and act 2;
-- breaks each source assertion in turn (the Custom(24) match, the wrong-key match, the signature
-  count, the pre-signing comparison, the public-zero assertion) and requires that the corresponding
-  success or refusal checkpoint is **absent** or the run fails.
+- each act-1 block that emits a refusal or settlement checkpoint is lifted out of `issue-e2e.sh` and
+  run against stubbed chain calls: the Custom(24) refusal, the wrong-key refusal, the one-of-two
+  refusal, the pre-signing check, **the SHORT refusal — reported only when `swap-check` exits 3, a
+  verified mismatch; any other failure fails the run and reports nothing** —, the settlement (only
+  after "2 of 2" and a confirmation), and act 1's public-zero assertion. When a stub makes the check
+  fail, the run fails and the checkpoint is absent;
+- act 2 is checked by order, not by running: in `swap-settle.sh` and `swap-sign.sh` the `checked`
+  checkpoint sits after the pinned comparison (and, in step 4, the transaction binding) and before
+  any signature; `settled` sits after `go`; neither reports a signature count it did not assert;
+- a terminal run (no `CONFIDE_EVENTS`) writes no copy of the decrypted amount;
+- the server: foreign `Host` → 421, no CSRF token → 403, wrong content type → 415, a second run while
+  one is going → 409, advancing a step the script is not waiting on → 409, the same step twice →
+  409, **and again after a fresh connection has replayed the history**; unknown events and keys
+  dropped; a value containing the RPC endpoint dropped; the read proxy refusing ids this run did not
+  report, and an account id where a signature is expected;
+- each of those rules was removed in turn and a test failed; the hooks are inert without
+  `CONFIDE_EVENTS` / `CONFIDE_PAUSE`.
 
-Comparing terminal output alone is not enough: equal text does not prove equal transactions,
-ordering, or that a checkpoint followed the assertion it reports.
+**Not yet implemented** (Codex asked for both; they need a whole-script stub of the chain and of
+every `cargo` binary the script calls):
+
+- running the whole script with and without `CONFIDE_EVENTS` and requiring the same commands and
+  transactions;
+- asserting the exact checkpoint sequence for the normal run, the `SHORT` run and act 2.
+
+Until they exist, the whole-run evidence is a devnet run through the app, compared with a terminal
+run.
 
 ## Not in scope
 

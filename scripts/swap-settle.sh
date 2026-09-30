@@ -76,6 +76,10 @@ swap_leg settle "$KEY" "$KEYS_SEND" "$O_GIVE_MINT" "$O_GIVE_ACC" "$A_WANT_ACC" \
   # file that came back. `set -e` is on: a short leg, or altered terms, stops here unsigned.
   swap_look_pinned "$KEYS_RECV" "$S/their-ctx.json" "$OFFER_ID" "$ACC" want
 } >&2
+# For the demo app (inert without CONFIDE_EVENTS). After the check, before anything is signed. Says
+# what it was compared against: under CONFIDE_UNPINNED=1 that is the counterparty's file, not a pin.
+ev checked source=pre_sign_check who=offerer act=2 \
+   against="$([ "${CONFIDE_UNPINNED:-}" = 1 ] && echo their-file || echo pin)"
 
 BH=$(bh)
 cargo run --quiet -p confide-ct --bin swap-tx -- build "$ME" "$BH" \

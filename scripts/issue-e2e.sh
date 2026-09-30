@@ -54,6 +54,9 @@ cd "$(dirname "$0")/.."
 . "$(dirname "$0")/lib/swap.sh"
 R="${RPC:-https://api.devnet.solana.com}"
 W="${WORK:-$(mktemp -d)}"; mkdir -p "$W"
+# The demo app's hooks (docs/cwf-2026/DEMO-APP.md). Both inert without CONFIDE_EVENTS / CONFIDE_PAUSE.
+pause_open
+ev run mode="$([ -n "${SHORT:-}" ] && echo short || echo normal)"
 DEC_X="${DECIMALS:-8}"          # the equity wrapper's
 DEC_Y=6                         # PYUSD's
 TREASURY="${TREASURY:-500000}"  # what the issuer holds to allocate from
@@ -70,6 +73,7 @@ ata() { spl-token -C "$1" address --token "$2" --verbose 2>&1 \
 prov() { go "$1" "$(cargo run --quiet -p confide-ct --bin provision -- "$1" "$2" "$3" "$4" "$5" \
          "$(bh)" "$6" "$(mint_charges_fee "$3")" "$7" 2>/dev/null)"; }
 
+pause parties
 echo
 echo "  ${bold}--- two parties: the issuer, and somebody subscribing ---${off}"
 FUNDER="${FUNDER:-$HOME/.config/solana/id.json}"
@@ -80,8 +84,10 @@ for k in issuer investor; do
   printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confirmed\n' \
     "$R" "$W/$k.json" > "$W/$k.yml"
   echo "    $k   $(solana-keygen pubkey "$W/$k.json")"
+  ev party who="$k" pubkey="$(solana-keygen pubkey "$W/$k.json")"
 done
 
+pause mints
 echo
 echo "  ${bold}--- the stock, gated and auditor-EMPTY exactly as all 1,992 are ---${off}"
 mk() { # mk <letter> <decimals> <auditor|none> [flags...]
@@ -95,6 +101,7 @@ mk() { # mk <letter> <decimals> <auditor|none> [flags...]
   eval "MINT_$ml=$mint"
   printf '    mint %s   %s   %s(%s decimals, autoApproveNewAccounts false, auditor %s)%s\n' \
     "$ml" "$mint" "$dim" "$dec" "$([ "$aud" = none ] && echo EMPTY || echo set)" "$off"
+  ev mint asset="$ml" mint="$mint" decimals="$dec" auditor="$([ "$aud" = none ] && echo empty || echo set)"
 }
 mk X "$DEC_X" none
 mk Y "$DEC_Y" none --enable-permanent-delegate --enable-close --enable-freeze \
@@ -120,24 +127,49 @@ open() {
     prov apply   "$W/$who.json" "$mint" "$acct" "$units" "$W/$who-$ml-keys.json" "$dec"
   fi
   eval "${who}_${ml}=$acct"
+  # After the approval (if any) has confirmed -- `go` exits the script under set -e otherwise.
+  ev account who="$who" asset="$ml" account="$acct" approved="$appr" funded="$units"
 }
 
+pause holdings
 echo
 echo "  ${bold}--- the issuer's treasury, and the investor's cash ---${off}"
 open issuer   X "$MINT_X" "$TREASURY" "$DEC_X" yes
 open investor Y "$MINT_Y" "$CASH"     "$DEC_Y" yes
 open issuer   Y "$MINT_Y" 0           "$DEC_Y" yes
 
+pause investor_opens
 echo
 echo "  ${bold}--- the investor opens an account for the stock. This is the gate ---${off}"
 open investor X "$MINT_X" 0 "$DEC_X" no
 
+pause proofs
 echo
 echo "  ${bold}--- both legs' proofs, built before anybody knows whether it will be allowed ---${off}"
 swap_leg issuer   "$W/issuer.json"   "$W/issuer-X-keys.json"   "$MINT_X" "$issuer_X"   "$investor_X" \
   "$(swap_elgamal "$W/investor-X-keys.json")" "$SEND_X" "$DEC_X" "$W/issuer-ctx.json"
 swap_leg investor "$W/investor.json" "$W/investor-Y-keys.json" "$MINT_Y" "$investor_Y" "$issuer_Y" \
   "$(swap_elgamal "$W/issuer-Y-keys.json")" "$PAY" "$DEC_Y" "$W/investor-ctx.json"
+ev proofs legs=2
+
+pause check
+# The checker's output is copied to a file ONLY for the demo app, which shows the decrypted figure.
+# A terminal run writes nothing extra (Codex, 2026-09-30: a decrypted amount on disk is a new
+# artifact, and tee a new way to fail). The verdict is always the checker's exit status.
+# The figure the checker decrypted, for display only. Its colour codes are stripped first: the number
+# sits after an ESC[1m, and a digit-hunting pattern would otherwise read the "1" in the escape.
+decrypted() { sed $'s/\x1b\\[[0-9;]*m//g' "$W/check.out" 2>/dev/null \
+  | grep -aoE 'it will move [0-9]+' | grep -oE '[0-9]+$' | head -1; }
+look() {
+  if [ -n "${CONFIDE_EVENTS:-}" ]; then
+    local st
+    swap_look "$1" "$2" "$3" "$4" | tee "$W/check.out"; st=("${PIPESTATUS[@]}")
+    # the copy failing is a failure of the run, never a verdict: return 1, not the checker's 3
+    [ "${st[1]}" = 0 ] || { echo "  could not copy the checker's output for the app" >&2; return 1; }
+    return "${st[0]}"
+  fi
+  swap_look "$1" "$2" "$3" "$4"
+}
 
 echo
 echo "  ${bold}--- before signing, the investor CHECKS the allocation addressed to them ---${off}"
@@ -151,12 +183,19 @@ if [ -n "${SHORT:-}" ]; then
   # and nothing else, which is the whole point of the control, so it must not borrow the gate's story.
   printf '    %sNothing else differs. The proofs are valid, and the amount is the only thing wrong.%s\n' \
     "$dim" "$off"
-  if swap_look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"; then
-    echo >&2
-    echo "  A SHORT LEG PASSED THE CHECK. The investor would have signed for $ALLOC shares and" >&2
-    echo "  received $SHORT. That is the finding, not this script." >&2
-    exit 1
-  fi
+  # THREE OUTCOMES, NOT TWO. swap-check exits 3 only for a verified mismatch; anything else non-zero
+  # means the check never completed -- a proof context not on chain, a key that does not open it.
+  # Reporting those as "refused before signing" would be a refusal nobody established.
+  set +e; look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"; st=$?; set -e
+  case "$st" in
+    0) echo >&2
+       echo "  A SHORT LEG PASSED THE CHECK. The investor would have signed for $ALLOC shares and" >&2
+       echo "  received $SHORT. That is the finding, not this script." >&2
+       exit 1;;
+    3) ;;
+    *) echo "  the check did not complete (exit $st) — this is NOT a refusal of the amount" >&2
+       exit 1;;
+  esac
   echo
   printf '  %s%sREFUSED BEFORE SIGNING.%s %s\n' "$grn" "$bold" "$off"     "No transaction was built, so none was signed and none was sent."
   # Said precisely, because "nothing is on chain" would be false. swap_leg wrote proof contexts,
@@ -165,11 +204,16 @@ if [ -n "${SHORT:-}" ]; then
   printf '  %sThe proof contexts are on chain and hold nothing readable; the transfer does not exist.%s\n' \
     "$dim" "$off"
   printf '  %sThe gate refusal is the other control: run without SHORT.%s\n' "$dim" "$off"
+  ev refused source=pre_sign_check what=allocation agreed="$ALLOC" decimals="$DEC_X" \
+     decrypted_base="$(decrypted)"
+  ev done mode=short
   echo
   echo "    work dir  $W"
   exit 0
 fi
-swap_look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"
+look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"
+ev checked source=pre_sign_check who=investor agreed="$ALLOC" decimals="$DEC_X" \
+   decrypted_base="$(decrypted)"
 
 build() {
   cargo run --quiet -p confide-ct --bin swap-tx -- "$W/issuer.json" "$(bh)" \
@@ -214,6 +258,7 @@ s=next(e['state'] for e in i['extensions'] if e['extension']=='confidentialTrans
 print('true' if s['approved'] else 'false')"
 }
 
+pause send_allocation
 echo
 echo "  ${bold}--- the allocation, sent while the account is unapproved ---${off}"
 build
@@ -228,7 +273,8 @@ case "$err" in
   *'"Custom": 24'*|*'"Custom":24'*|*"Custom(24)"*)
     printf '    %sREFUSED on chain — Custom(24), ConfidentialTransferAccountNotApproved%s\n' "$red" "$off"
     printf '    %s%s%s\n' "$dim" "$REFUSED_SIG" "$off"
-    printf '    %sthe proofs are valid, the amounts are right, and the issuer has not signed.%s\n' "$dim" "$off";;
+    printf '    %sthe proofs are valid, the amounts are right, and the issuer has not signed.%s\n' "$dim" "$off"
+    ev refused source=on_chain what=allocation sig="$REFUSED_SIG" err="Custom(24)";;
   null)
     echo "    IT SETTLED. The destination was approved when it should not have been — the gate" >&2
     echo "    this repository is about did not hold, and that is the finding, not this script." >&2
@@ -239,6 +285,7 @@ case "$err" in
     echo "    refused, but not for the reason this demonstrates: $err" >&2; exit 1;;
 esac
 
+pause self_approve
 echo
 echo "  ${bold}--- the investor tries to approve their own account ---${off}"
 # THE GATE HAS A KEYHOLE, NOT JUST A DOOR. The refusal above shows an unapproved account cannot
@@ -269,14 +316,19 @@ esac
 # And the account is still shut. Read from the chain, not concluded from the error.
 [ "$(approved "$investor_X")" = false ] || { echo "    the account reads approved after a refused approval" >&2; exit 1; }
 printf '    %sthe account still reads approved: false%s\n' "$dim" "$off"
+ev refused source=on_chain what=self_approval sig="$WRONG_SIG" err="MissingRequiredSignature"
+ev approval account="$investor_X" approved=false
 
+pause issuer_approves
 echo
 echo "  ${bold}--- the issuer signs for the account. One instruction ---${off}"
 go "the issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve \
   "$W/issuer.json" "$investor_X" "$MINT_X" "$(bh)")"
 
 [ "$(approved "$investor_X")" = true ] || { echo "    the approval confirmed but the account does not read approved" >&2; exit 1; }
+ev approval account="$investor_X" approved=true sig="$GO_SIG"
 
+pause issuer_signs_alone
 echo
 echo "  ${bold}--- the issuer signs the allocation alone ---${off}"
 # ONE SIGNATURE OF TWO. The gate is open now, the proofs are valid and the amounts are right, so the
@@ -321,7 +373,8 @@ case "$verdict" in
   SIGFAIL*)
     printf '    %sREFUSED in RPC preflight — %s%s\n' "$red" "${verdict#SIGFAIL }" "$off"
     printf '    %sit never entered a block, so there is nothing on chain to cite. The next step adds the\n' "$dim"
-    printf '    investor'"'"'s signature to THIS transaction and sends it%s\n' "$off";;
+    printf '    investor'"'"'s signature to THIS transaction and sends it%s\n' "$off"
+    ev refused source=rpc_preflight what=half_signed signatures="1 of 2" message="${verdict#SIGFAIL }";;
   OTHER)
     echo "    refused, but not for the reason this demonstrates: $half" >&2; exit 1;;
   *)
@@ -330,6 +383,7 @@ case "$verdict" in
     exit 1;;
 esac
 
+pause investor_signs
 echo
 echo "  ${bold}--- the investor adds their signature to that same transaction ---${off}"
 # Not rebuilt. The only difference between what was refused a moment ago and what is sent now is one
@@ -344,14 +398,19 @@ confirm "$ALLOC_SIG" || exit 1
 CU=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$ALLOC_SIG\",{\"commitment\":\"confirmed\",\"maxSupportedTransactionVersion\":0}]}" \
   | python3 -c "import sys,json;r=json.load(sys.stdin).get('result');print(r['meta'].get('computeUnitsConsumed','?') if r else '?')")
 printf '    %-22s ok   %s%s   %s compute units%s\n' "the allocation" "$dim" "$ALLOC_SIG" "$CU" "$off"
+ev settled act=1 sig="$ALLOC_SIG" cu="$CU" shares="$ALLOC" cash="$PAY" signatures="2 of 2"
 
+pause observe
 echo
 echo "  ${bold}--- what moved ---${off}"
 prov apply "$W/investor.json" "$MINT_X" "$investor_X" "$ALLOC" "$W/investor-X-keys.json" "$DEC_X" >/dev/null
 prov apply "$W/issuer.json"   "$MINT_Y" "$issuer_Y"   "$PAY"   "$W/issuer-Y-keys.json"   "$DEC_Y" >/dev/null
-show() { local d a p o; read -r d a p o < <(ct "$2"); printf '    %-34s ' "$1"
-  cargo run --quiet -p confide-ct --bin read-balance -- "$3" "$d" "$a" "$4" 2>/dev/null \
-  | sed -n '3p' | sed 's/^ *//'; }
+show() { local d a p o line; read -r d a p o < <(ct "$2"); printf '    %-34s ' "$1"
+  line=$(cargo run --quiet -p confide-ct --bin read-balance -- "$3" "$d" "$a" "$4" 2>/dev/null \
+         | sed -n '3p' | sed 's/^ *//')
+  printf '%s\n' "$line"
+  # What the OWNER reads with their own key. The app shows it in that owner's view only.
+  ev holding label="$1" account="$2" view="$line"; }
 show "issuer, treasury (allocated from)" "$issuer_X"   "$W/issuer-X-keys.json"   "$DEC_X"
 show "investor, stock (received)"        "$investor_X" "$W/investor-X-keys.json" "$DEC_X"
 show "investor, cash (paid)"             "$investor_Y" "$W/investor-Y-keys.json" "$DEC_Y"
@@ -366,6 +425,7 @@ printf '    %spublic balances: issuer stock %s, investor stock %s, investor cash
 for v in $PUBS; do
   [ "$v" = 0 ] || { echo "    a public balance is $v, not 0 -- an amount is visible to anyone" >&2; exit 1; }
 done
+ev public act=1 accounts="$issuer_X,$investor_X,$investor_Y,$issuer_Y" balances="$(echo $PUBS | tr ' ' ',')"
 echo
 echo "  ${grn}${bold}An allocation was refused, the investor could not approve themselves, a half-signed"
 echo "  allocation was refused, the issuer signed, and the same allocation settled with both signatures."
@@ -391,6 +451,7 @@ if [ "${ACT2:-1}" = 1 ]; then
   SELL_PAY="${SELL_PAY:-875000}" # $875,000 — the same $175 a share, agreed off chain
   CASH_B="${CASH_B:-1000000}"   # what the second holder holds
 
+  pause act2_accounts
   echo
   echo "  ${bold}=== ACT 2 — the investor sells $SELL shares to a second approved holder ===${off}"
   solana-keygen new --no-bip39-passphrase --silent --force -o "$W/buyer.json" >/dev/null
@@ -399,6 +460,7 @@ if [ "${ACT2:-1}" = 1 ]; then
   printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confirmed\n' \
     "$R" "$W/buyer.json" > "$W/buyer.yml"
   echo "    buyer   $(solana-keygen pubkey "$W/buyer.json")"
+  ev party who=buyer pubkey="$(solana-keygen pubkey "$W/buyer.json")"
   # The issuer approves both of the buyer's accounts. The refusal before approval was act 1's point
   # and is not repeated.
   open buyer X "$MINT_X" 0        "$DEC_X" yes
@@ -415,19 +477,27 @@ if [ "${ACT2:-1}" = 1 ]; then
   }
   WA=$(party investor); WB=$(party buyer)
 
+  pause offer
   echo
   echo "  ${bold}--- 1 of 4: the investor offers $SELL shares for \$$SELL_PAY, and pins those terms ---${off}"
   WORK="$WA" RPC="$R" ./scripts/swap-offer.sh "$W/investor.json" \
     --give "$MINT_X" "$SELL" --want "$MINT_Y" "$SELL_PAY" > "$W/offer.json"
+  ev offer id="$(python3 -c "import json;print(json.load(open('$W/offer.json'))['id'])")" shares="$SELL" cash="$SELL_PAY" pinned_by=investor
+  pause accept
   echo
   echo "  ${bold}--- 2 of 4: the buyer reads the offer, pins it, and builds the cash leg's proofs ---${off}"
   WORK="$WB" RPC="$R" ./scripts/swap-accept.sh "$W/buyer.json" "$W/offer.json" > "$W/accept.json"
+  ev accepted pinned_by=buyer
+  pause settle
   echo
   echo "  ${bold}--- 3 of 4: the investor checks the cash against the pin, builds the stock leg, signs once ---${off}"
   WORK="$WA" RPC="$R" ./scripts/swap-settle.sh "$W/investor.json" "$W/accept.json" > "$W/settle.json"
+  pause sign
   echo
   echo "  ${bold}--- 4 of 4: the buyer checks the shares against the pin, adds the second signature ---${off}"
   WORK="$WB" RPC="$R" ./scripts/swap-sign.sh "$W/buyer.json" "$W/settle.json"
+
+  pause observe2
 
   echo
   echo "  ${bold}--- what moved in act 2 ---${off}"
@@ -443,10 +513,12 @@ if [ "${ACT2:-1}" = 1 ]; then
   for v in $PUBS2; do
     [ "$v" = 0 ] || { echo "    a public balance is $v, not 0 -- an amount is visible to anyone" >&2; exit 1; }
   done
+  ev public act=2 accounts="$investor_X,$investor_Y,$buyer_X,$buyer_Y" balances="$(echo $PUBS2 | tr ' ' ',')"
   echo
   echo "  ${grn}${bold}Two approved holders agreed terms off chain, each checked what they would receive"
   echo "  against their own pinned copy of those terms, and stock and cash settled in one transaction."
   echo "  The issuer approved the accounts and did not see the amounts.${off}"
 fi
+ev done mode=normal
 echo
 echo "    work dir  $W"

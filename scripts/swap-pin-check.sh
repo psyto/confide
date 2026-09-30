@@ -224,6 +224,25 @@ for f, (fn, argc) in sorted(WANT.items()):
         if "|| true" in l or "2>/dev/null" in l:
             bad.append("%s:%d discards the result of %s: %s" % (f, i, name, l[:70]))
 
+# ...and a WRAPPER's call sites. issue-e2e.sh reaches swap_look through look(), which copies the
+# checker's output for the demo app. The wrapper forwarding four arguments proves nothing if a caller
+# hands it two, so its call sites are read the same way (added 2026-09-30, when the wrapper was).
+WRAPPED = {"scripts/issue-e2e.sh": ("look", 4)}
+for f, (fn, argc) in sorted(WRAPPED.items()):
+    t = pathlib.Path(f).read_text(encoding="utf-8")
+    calls = [(i, l.strip()) for i, l in enumerate(t.splitlines(), 1)
+             if re.search(r"(^\s*(if\s+)?|;\s*)%s\s" % fn, l) and not re.search(r"^\s*%s\(\)" % fn, l)]
+    if not calls:
+        bad.append("%s no longer calls %s" % (f, fn))
+    for i, l in calls:
+        args = re.sub(r"^.*?\b%s\s+" % fn, "", l)
+        args = re.sub(r";.*$", "", args).strip()
+        n = len(re.findall(r'"[^"]*"|\S+', args))
+        if n < argc:
+            bad.append("%s:%d passes %d arguments to %s, so nothing is compared: %s" % (f, i, n, fn, l[:70]))
+        if "|| true" in l or "2>/dev/null" in l:
+            bad.append("%s:%d discards the result of %s: %s" % (f, i, fn, l[:70]))
+
 # and the library must not throw the refusal away
 lib = pathlib.Path("scripts/lib/swap.sh").read_text(encoding="utf-8")
 for i, l in enumerate(lib.splitlines(), 1):

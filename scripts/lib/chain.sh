@@ -53,7 +53,36 @@ import sys,json
 v=json.load(sys.stdin)['result']['value'][0]
 print('pending' if v is None else ('FAILED '+json.dumps(v['err'])[:250] if v.get('err') else (v.get('confirmationStatus') or 'pending')))"); \
   case "$st" in confirmed|finalized) return 0;; FAILED*) echo "    $st"; return 1;; esac; sleep 1; done; echo "    timeout"; return 1; }
-go() { local label="$1"; shift; local sig; sig=$(send "$1"); case "$sig" in ERR*) echo "    $label: $sig"; return 1;; esac; confirm "$sig" && printf '    %-22s ok\n' "$label"; }
+# GO_SIG keeps the last signature `go` sent, so a caller can cite it (the demo app shows it). Set
+# only after the send returned a signature; a failed send leaves it empty.
+go() { local label="$1"; shift; local sig; GO_SIG=""; sig=$(send "$1"); case "$sig" in ERR*) echo "    $label: $sig"; return 1;; esac; GO_SIG="$sig"; confirm "$sig" && printf '    %-22s ok\n' "$label"; }
+
+# ev <name> [key=value …] — one typed checkpoint for the demo app (docs/cwf-2026/DEMO-APP.md).
+# Inert unless CONFIDE_EVENTS is set, so a terminal run is unchanged. CALL IT ONLY AFTER the thing
+# it reports has been asserted: the app shows refusals and settlements from these lines and from
+# nothing else, so a checkpoint written early is a display that lies.
+ev() {
+  [ -n "${CONFIDE_EVENTS:-}" ] || return 0
+  python3 - "$@" >> "$CONFIDE_EVENTS" <<'PYEV'
+import json, sys
+d = {"ev": sys.argv[1]}
+for kv in sys.argv[2:]:
+    k, _, v = kv.partition("=")
+    d[k] = v
+print(json.dumps(d), flush=True)
+PYEV
+}
+
+# pause <next-step> — wait for the app's "advance" before the next step. Inert unless CONFIDE_PAUSE
+# names a FIFO. The line read is an advance token and nothing else: it is never executed, echoed or
+# interpolated. The FIFO is held open read-write on fd 9 (opened once, by pause_open), so the app's
+# non-blocking write finds a reader and a reader never blocks on open.
+pause_open() { [ -n "${CONFIDE_PAUSE:-}" ] || return 0; exec 9<>"$CONFIDE_PAUSE"; }
+pause() {
+  [ -n "${CONFIDE_PAUSE:-}" ] || return 0
+  ev waiting next="$1"
+  local _token; read -r _token <&9
+}
 ct() { rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$1\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \
   | python3 -c "
 import sys,json

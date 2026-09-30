@@ -40,6 +40,7 @@ founder の Alchemy エンドポイントを**環境変数としてのみ**使�
 | `cargo test -p confide-ct --bin swap-check` | 比較そのもの。合成した proof context に対して、1単位不足も過払いも落とす |
 | `python3 video/pace.py` | 動画の尺表が台本の語数と合っているか |
 | `scripts/github-about.sh [--apply]` | **GitHub の About。** repo の外にある唯一の面で、2026-09-23 まで 329,536 と *zero are confidential* を掲げていた。数字は計測から導出する |
+| `python3 app/test_app.py` | **デモアプリが何も判定していないか。** 拒否・決済のイベントがスクリプトの検査の後にしか出ないこと、サーバーが待っている手順以外を進めないこと、RPC が画面に出ないこと。チェーン不要 |
 | `scripts/spoken-check.sh <納品mp4>` | **声が今の台本を読んでいるか。** 音声は repo の外で作られて戻ってくるので、ここだけが2つを突き合わせる |
 
 ## Codex

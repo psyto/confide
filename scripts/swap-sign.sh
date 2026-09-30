@@ -82,6 +82,10 @@ if [ -n "$BHX" ]; then
 fi
 echo
 
+# For the demo app (inert without CONFIDE_EVENTS): the amount check and the transaction binding have
+# both passed by here, and nothing of ours is signed yet.
+ev checked source=pre_sign_check who=acceptor act=2 bound=yes \
+   against="$([ "${CONFIDE_UNPINNED:-}" = 1 ] && echo their-file || echo pin)"
 cargo run --quiet -p confide-ct --bin swap-tx -- sign "$S/half.b64" "$KEY" \
   > "$S/full.b64" 2>"$S/sign2.err"
 grep -aE "signatures present" "$S/sign2.err" || true
@@ -89,6 +93,8 @@ grep -aE "signatures present" "$S/sign2.err" || true
 echo
 echo "  ${bold}--- ONE transaction, two confidential transfers, two signatures ---${off}"
 go "the swap" "$(cat "$S/full.b64")"
+# For the demo app only (inert without CONFIDE_EVENTS): written after `go` confirmed, or never.
+ev settled act=2 sig="$GO_SIG"
 echo
 printf '  %sDelivery and payment happened in the same transaction. Neither could occur without the\n' "$grn"
 printf '  other, and nothing stood between you. Apply the incoming balance with your own key:%s\n' "$off"
