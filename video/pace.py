@@ -13,12 +13,14 @@ import io, re, sys
 
 WPM = 137          # the pace the earlier recording actually held
 TAIL = 0.6         # a line should finish before the picture does
-# DERIVED, not listed. This was a hand-maintained list of two, and a third check-in script would
-# have been written, paced by hand, and never checked again -- the exact shape of every drift in
-# this repository. A check-in script IS `video/CHECKIN-<n>.md`, so the glob is the definition.
+# DERIVED FROM CONTENT, not listed and not matched on a filename. This was a hand-maintained list
+# of two, then one hardcoded name plus a CHECKIN-* glob -- and on 2026-09-30 video/DEMO.md was
+# written, carried a timing table, and was checked by nothing at all, because its name matched
+# neither half. A scripted file IS a file with a timing table in it, so that is the definition.
 import glob as _g
-DOCS = ["video/CWF-PRESENTATION.md"] + sorted(
-    _g.glob("video/CHECKIN-*.md"), key=lambda s: int(re.search(r"(\d+)", s).group(1)))
+TABLE = "| | scene | seconds (+ silence) |"
+DOCS = sorted(f for f in _g.glob("video/*.md")
+              if TABLE in io.open(f, encoding="utf-8").read())
 
 def scenes(text):
     """Each scene heading is `### N — title`, optionally followed by `· +P s silence`.
