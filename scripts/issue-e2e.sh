@@ -3,6 +3,10 @@
 #
 #   RPC=<endpoint> ./scripts/issue-e2e.sh
 #   RPC=<endpoint> SHORT=2000 ./scripts/issue-e2e.sh    # the issuer short-delivers; the check refuses
+#   RPC=<endpoint> ACT2=0 ./scripts/issue-e2e.sh        # stop after the allocation (act 1)
+#
+# Two acts. Act 1: the issuer allocates to an investor through the gate. Act 2: the investor sells
+# part of that allocation to a second approved holder through the four-step bilateral protocol.
 #
 # The swap this repository already settles needs two holders whose confidential accounts BOTH
 # already exist. On every one of the 1,992 real mints that is impossible: `autoApproveNewAccounts`
@@ -367,5 +371,82 @@ echo "  ${grn}${bold}An allocation was refused, the investor could not approve t
 echo "  allocation was refused, the issuer signed, and the same allocation settled with both signatures."
 echo "  The auditor slot was empty throughout — as it is on all 1,992 — because in primary issuance"
 echo "  the issuer is the sender and needs no key to read what they sent.${off}"
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# ACT 2 — two approved holders trade between themselves (brief §2 step 6).
+#
+# The allocation above is delivery versus payment with the issuer as one party. The brief asks for
+# more: two APPROVED HOLDERS agreeing terms off chain, each inspecting what they will receive before
+# signing, and settling stock against cash atomically. So the investor now sells part of what was
+# allocated to a second holder, whose accounts the issuer approves first.
+#
+# Run through the four-step bilateral protocol, not a one-machine shortcut: swap-offer, swap-accept,
+# swap-settle, swap-sign, each party in its OWN work directory standing in for its own machine, so
+# neither side's scripts can read the other's keys, and each pins the agreed terms locally before
+# any proof exists. That path had not been run on devnet before this act was written (STATUS 09-30).
+#
+# ACT2=0 stops after act 1.
+if [ "${ACT2:-1}" = 1 ]; then
+  SELL="${SELL:-5000}"          # shares the investor sells
+  SELL_PAY="${SELL_PAY:-875000}" # $875,000 — the same $175 a share, agreed off chain
+  CASH_B="${CASH_B:-1000000}"   # what the second holder holds
+
+  echo
+  echo "  ${bold}=== ACT 2 — the investor sells $SELL shares to a second approved holder ===${off}"
+  solana-keygen new --no-bip39-passphrase --silent --force -o "$W/buyer.json" >/dev/null
+  solana -u "$R" -k "$FUNDER" transfer --allow-unfunded-recipient \
+    "$(solana-keygen pubkey "$W/buyer.json")" 0.7 >/dev/null
+  printf 'json_rpc_url: %s\nwebsocket_url: ""\nkeypair_path: %s\ncommitment: confirmed\n' \
+    "$R" "$W/buyer.json" > "$W/buyer.yml"
+  echo "    buyer   $(solana-keygen pubkey "$W/buyer.json")"
+  # The issuer approves both of the buyer's accounts. The refusal before approval was act 1's point
+  # and is not repeated.
+  open buyer X "$MINT_X" 0        "$DEC_X" yes
+  open buyer Y "$MINT_Y" "$CASH_B" "$DEC_Y" yes
+
+  # One work directory per party. The key files are named the way the bilateral scripts look for
+  # them: the mint's first eight characters.
+  party() { # party <who> -> its directory, holding only its own keys
+    local d="$W/party-$1"
+    mkdir -p "$d"; chmod 700 "$d"
+    cp "$W/$1-X-keys.json" "$d/$(echo "$MINT_X" | cut -c1-8)-keys.json"
+    cp "$W/$1-Y-keys.json" "$d/$(echo "$MINT_Y" | cut -c1-8)-keys.json"
+    printf '%s' "$d"
+  }
+  WA=$(party investor); WB=$(party buyer)
+
+  echo
+  echo "  ${bold}--- 1 of 4: the investor offers $SELL shares for \$$SELL_PAY, and pins those terms ---${off}"
+  WORK="$WA" RPC="$R" ./scripts/swap-offer.sh "$W/investor.json" \
+    --give "$MINT_X" "$SELL" --want "$MINT_Y" "$SELL_PAY" > "$W/offer.json"
+  echo
+  echo "  ${bold}--- 2 of 4: the buyer reads the offer, pins it, and builds the cash leg's proofs ---${off}"
+  WORK="$WB" RPC="$R" ./scripts/swap-accept.sh "$W/buyer.json" "$W/offer.json" > "$W/accept.json"
+  echo
+  echo "  ${bold}--- 3 of 4: the investor checks the cash against the pin, builds the stock leg, signs once ---${off}"
+  WORK="$WA" RPC="$R" ./scripts/swap-settle.sh "$W/investor.json" "$W/accept.json" > "$W/settle.json"
+  echo
+  echo "  ${bold}--- 4 of 4: the buyer checks the shares against the pin, adds the second signature ---${off}"
+  WORK="$WB" RPC="$R" ./scripts/swap-sign.sh "$W/buyer.json" "$W/settle.json"
+
+  echo
+  echo "  ${bold}--- what moved in act 2 ---${off}"
+  prov apply "$W/buyer.json"    "$MINT_X" "$buyer_X"    "$SELL" "$W/buyer-X-keys.json"    "$DEC_X" >/dev/null
+  prov apply "$W/investor.json" "$MINT_Y" "$investor_Y" "$((CASH - PAY + SELL_PAY))" "$W/investor-Y-keys.json" "$DEC_Y" >/dev/null
+  show "investor, stock (sold $SELL)"   "$investor_X" "$W/investor-X-keys.json" "$DEC_X"
+  show "investor, cash (received)"      "$investor_Y" "$W/investor-Y-keys.json" "$DEC_Y"
+  show "buyer, stock (bought)"          "$buyer_X"    "$W/buyer-X-keys.json"    "$DEC_X"
+  show "buyer, cash (paid)"             "$buyer_Y"    "$W/buyer-Y-keys.json"    "$DEC_Y"
+  PUBS2="$(pub "$investor_X") $(pub "$investor_Y") $(pub "$buyer_X") $(pub "$buyer_Y")"
+  printf '    %spublic balances: investor stock %s, investor cash %s, buyer stock %s, buyer cash %s%s\n' \
+    "$dim" $PUBS2 "$off"
+  for v in $PUBS2; do
+    [ "$v" = 0 ] || { echo "    a public balance is $v, not 0 -- an amount is visible to anyone" >&2; exit 1; }
+  done
+  echo
+  echo "  ${grn}${bold}Two approved holders agreed terms off chain, each checked what they would receive"
+  echo "  against their own pinned copy of those terms, and stock and cash settled in one transaction."
+  echo "  The issuer approved the accounts and did not see the amounts.${off}"
+fi
 echo
 echo "    work dir  $W"

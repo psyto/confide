@@ -16,7 +16,7 @@
 #   * It is NOT traction. Standing it up is not usage. Usage is somebody else opening an account
 #     on it, and that is counted separately.
 #   * What it IS: proof that **the issuer gate is an operations decision rather than a protocol
-#     problem** — `docs/cwf-2026/STORY.md` §3 argues that, and this runs it. The mints keep
+#     problem** — `docs/cwf-2026/STORY.md` (*Every remaining obstacle is a named condition*) argues that, and this runs it. The mints keep
 #     `autoApproveNewAccounts: false`, exactly as all 1,992 live mints do, and the issuer simply
 #     **operates** the gate instead of leaving it shut.
 #

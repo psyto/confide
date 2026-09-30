@@ -19,7 +19,7 @@ nothing. Nothing here makes a real xStock pledgeable, and the `$0` reachable con
 Kamino's `$85.5m` of authorised borrowing is unchanged.
 
 **What it is:** the demonstration that **the issuer gate is an operations decision rather than a
-protocol problem.** [`cwf-2026/STORY.md`](cwf-2026/STORY.md) §3 lists that as the first of the
+protocol problem.** [`cwf-2026/STORY.md`](cwf-2026/STORY.md) (*Every remaining obstacle is a named condition*) lists that as the first of the
 named conditions standing between what runs and a market. This runs it.
 
 The mints keep `autoApproveNewAccounts: false` — exactly what **all 1,992** live tokenized-equity
