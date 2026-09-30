@@ -44,7 +44,7 @@ SCHEMA = {
     "party": {"who", "pubkey"},
     "mint": {"asset", "mint", "decimals", "auditor"},
     "account": {"who", "asset", "account", "approved", "funded"},
-    "proofs": {"legs"},
+    "proofs": {"legs", "shares", "cash"},
     "checked": {"source", "who", "agreed", "decimals", "decrypted_base", "act", "against", "bound"},
     "refused": {"source", "what", "sig", "err", "agreed", "decimals", "decrypted_base", "signatures", "message"},
     "approval": {"account", "approved", "sig"},
@@ -336,11 +336,14 @@ def handler_for(app):
             if not self._host_ok():
                 return self._send(421, b"")
             path = self.path.split("?", 1)[0]
-            if path == "/":
-                with open(os.path.join(STATIC, "index.html"), encoding="utf-8") as f:
+            # Two views of the same run: "/" is the first (role panes), "/ops" the settlement-operations
+            # layout. Both render the same checkpoints and neither decides anything.
+            if path in ("/", "/ops"):
+                page = "index.html" if path == "/" else "ops.html"
+                with open(os.path.join(STATIC, page), encoding="utf-8") as f:
                     html = f.read()
                 return self._send(200, html.replace("{{CSRF}}", app.csrf).encode(), "text/html; charset=utf-8")
-            if path in ("/app.js", "/app.css"):
+            if path in ("/app.js", "/app.css", "/ops.js", "/ops.css"):
                 ctype = "text/javascript" if path.endswith(".js") else "text/css"
                 with open(os.path.join(STATIC, path[1:]), "rb") as f:
                     return self._send(200, f.read(), ctype + "; charset=utf-8")

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="confide-csrf" content="{{CSRF}}">
+<title>Confide — settlement operations</title>
+<link rel="stylesheet" href="/ops.css">
+<script src="/ops.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <div class="brand">CONFIDE <span>settlement operations</span></div>
+  <div class="env">DEVNET · LOCAL DEMO · EVERY KEY IS HELD BY THIS MACHINE · NOT A WALLET</div>
+  <div class="ctl">
+    <span id="status" class="status">IDLE</span>
+    <button id="start" type="button">Run the demo</button>
+    <button id="short" type="button" class="ghost">Short-delivery control</button>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="panel" id="issuer">
+    <h2>ISSUER <em>approval queue</em></h2>
+    <div class="next" id="next-issuer"></div>
+    <table class="tbl" id="queue">
+      <thead><tr><th>holder</th><th>asset</th><th>account</th><th>status</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <h3>MINT POLICY</h3>
+    <table class="tbl kv" id="mints"><tbody></tbody></table>
+  </section>
+
+  <section class="panel wide" id="tickets">
+    <h2>DvP SETTLEMENT <em>one transaction, both legs or neither</em></h2>
+    <div class="next" id="next-investor"></div>
+    <div class="next" id="next-buyer"></div>
+    <div id="ticket-1" class="ticket idle"></div>
+    <div id="ticket-2" class="ticket idle"></div>
+  </section>
+
+  <section class="panel" id="ledger">
+    <h2>PUBLIC LEDGER <em>what anyone can read</em></h2>
+    <div class="next" id="next-observer"></div>
+    <table class="tbl" id="public">
+      <thead><tr><th>account</th><th>public bal</th><th>confidential</th><th>approved</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="fine">Accounts, transactions and public token balances are visible. Confidential transfer
+      amounts and confidential balances are encrypted.</p>
+    <h3>POSITIONS <em>each read with its holder's own key</em></h3>
+    <table class="tbl" id="positions">
+      <thead><tr><th>holder</th><th>asset</th><th class="num">units</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="fine">No one of these parties can read the others' rows. They are shown together only
+      because one presenter runs all three keys on this machine.</p>
+  </section>
+
+  <section class="panel full" id="blotter-panel">
+    <h2>BLOTTER <em>every result below is a checkpoint scripts/issue-e2e.sh wrote after its own check</em></h2>
+    <table class="tbl" id="blotter">
+      <thead><tr><th class="num">#</th><th>act</th><th>party</th><th>event</th><th>result</th><th>evidence</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>

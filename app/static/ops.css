@@ -1,0 +1,57 @@
+:root {
+  --bg: #0b0e12; --panel: #11161c; --line: #232b35; --ink: #d8dee6; --dim: #7d8794;
+  --accent: #4fb3c8; --ok: #37b26c; --bad: #e5534b; --warn: #c9a227; --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.35 -apple-system, "Segoe UI", Roboto, sans-serif; }
+.bar { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center;
+  padding: 8px 14px; border-bottom: 1px solid var(--line); background: #0e1318; }
+.brand { font: 700 15px var(--mono); letter-spacing: .12em; }
+.brand span { font-weight: 400; color: var(--dim); letter-spacing: .04em; margin-left: 8px; }
+.env { justify-self: center; font: 600 11px var(--mono); letter-spacing: .06em; color: var(--warn);
+  border: 1px solid #5a4a14; padding: 3px 10px; border-radius: 3px; }
+.ctl { display: flex; gap: 8px; align-items: center; }
+.status { font: 600 11px var(--mono); color: var(--dim); margin-right: 6px; max-width: 520px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+button { font: 600 12px var(--mono); letter-spacing: .03em; background: var(--accent); color: #041015;
+  border: 0; border-radius: 3px; padding: 6px 12px; cursor: pointer; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+button:disabled { opacity: .45; }
+
+.grid { display: grid; grid-template-columns: 1fr 1.45fr 1fr; grid-template-rows: auto 1fr; gap: 8px; padding: 8px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; min-height: 0; }
+.panel.full { grid-column: 1 / -1; }
+h2 { margin: 0 0 6px; font: 700 12px var(--mono); letter-spacing: .1em; color: var(--accent); }
+h2 em, h3 em { font-style: normal; font-weight: 400; color: var(--dim); letter-spacing: 0; margin-left: 6px; }
+h3 { margin: 12px 0 4px; font: 700 11px var(--mono); letter-spacing: .1em; color: var(--dim); }
+.fine { color: var(--dim); font-size: 11px; margin: 4px 0 0; }
+
+.tbl { width: 100%; border-collapse: collapse; font: 12px var(--mono); }
+.tbl th { text-align: left; font-weight: 600; color: var(--dim); border-bottom: 1px solid var(--line); padding: 3px 6px; font-size: 11px; }
+.tbl td { border-bottom: 1px solid #1a212a; padding: 3px 6px; white-space: nowrap; }
+.tbl .num { text-align: right; }
+.tbl.kv td:first-child { color: var(--dim); }
+.tbl a { color: var(--accent); text-decoration: none; }
+.tag { display: inline-block; font: 700 10px var(--mono); padding: 1px 6px; border-radius: 2px; letter-spacing: .05em; }
+.tag.ok { background: #0f3321; color: var(--ok); } .tag.bad { background: #3a1513; color: var(--bad); }
+.tag.warn { background: #3a2f0c; color: var(--warn); } .tag.dim { background: #1a212a; color: var(--dim); }
+.ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); } .dim { color: var(--dim); }
+tr.fresh td { background: #13202a; }
+
+.next button { width: 100%; margin: 2px 0 8px; padding: 9px; font-size: 13px; }
+
+.ticket { border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; margin-bottom: 8px; }
+.ticket.idle { display: none; }
+.ticket .hd { display: flex; justify-content: space-between; font: 600 11px var(--mono); color: var(--dim); letter-spacing: .05em; }
+.legs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 8px 0; }
+.leg { background: #0c1116; border: 1px solid var(--line); border-radius: 3px; padding: 6px 8px; }
+.leg .who { font: 11px var(--mono); color: var(--dim); }
+.leg .amt { font: 700 20px var(--mono); }
+.leg .asset { font: 11px var(--mono); color: var(--dim); }
+.swap { font: 700 18px var(--mono); color: var(--accent); }
+.px { font: 11px var(--mono); color: var(--dim); text-align: center; }
+.stages { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.stage { font: 600 10px var(--mono); letter-spacing: .04em; padding: 3px 7px; border-radius: 2px; background: #1a212a; color: var(--dim); }
+.stage.ok { background: #0f3321; color: var(--ok); } .stage.bad { background: #3a1513; color: var(--bad); }
+.stage.now { outline: 1px solid var(--accent); color: var(--ink); }
+.detail { font: 11px var(--mono); color: var(--dim); margin-top: 6px; white-space: pre-wrap; }
+.detail a, .ticket a { color: var(--accent); text-decoration: none; }

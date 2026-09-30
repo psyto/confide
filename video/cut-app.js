@@ -15,7 +15,9 @@ import { execFileSync } from "node:child_process";
 import puppeteer from "puppeteer";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
-const R = path.join(dir, ".demo-render");
+const UI = process.env.CONFIDE_UI === "ops" ? "ops" : "app";
+const R = path.join(dir, UI === "ops" ? ".demo-render-ops" : ".demo-render");
+const NAME = UI === "ops" ? "demo-ops" : "demo-app";
 const FFMPEG = process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg";
 const FFPROBE = FFMPEG.replace(/ffmpeg$/, "ffprobe");
 // Tuned so the cut fits the CWF limit of 3:00 without touching the reading pauses -- only devnet waits
@@ -99,7 +101,7 @@ pieces.forEach((p, i) => {
   parts.push(`[v${i}]`);
 });
 fc += `${parts.join("")}concat=n=${parts.length}:v=1:a=0,fps=30,scale=in_range=full:out_range=tv,format=yuv420p[out]`;
-const out = path.join(dir, "demo-app.mp4");
+const out = path.join(dir, NAME + ".mp4");
 args.push("-filter_complex", fc, "-map", "[out]",
   "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-crf", "20", "-preset", "slow",
   "-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
@@ -107,8 +109,8 @@ args.push("-filter_complex", fc, "-map", "[out]",
 execFileSync(FFMPEG, args, { maxBuffer: 64 * 1024 * 1024 });
 const len = parseFloat(execFileSync(FFPROBE, ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out], { encoding: "utf8" }));
 
-writeFileSync(path.join(dir, "demo-app.manifest.json"), JSON.stringify({
-  note: "demo-app.mp4 is video/.demo-render/raw.mp4 (an unedited devnet run through the app) with the " +
+writeFileSync(path.join(dir, NAME + ".manifest.json"), JSON.stringify({
+  note: `${NAME}.mp4 is ${path.basename(R)}/raw.mp4 (an unedited devnet run through the app, "${UI}" view) with the ` +
         "middle of each long wait played faster. Every shortened stretch carries an on-screen badge " +
         "with its real duration, and is listed here. Nothing is removed or reordered.",
   raw_seconds: +rawLen.toFixed(1),

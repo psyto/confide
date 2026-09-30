@@ -160,6 +160,18 @@ class ServerTests(unittest.TestCase):
         self.assertIn("default-src 'none'", r.getheader("Content-Security-Policy"))
         self.assertIsNone(r.getheader("Access-Control-Allow-Origin"))
 
+    def test_2b_the_ops_view_is_served_with_the_same_rules(self):
+        for path, needle in (("/ops", self.app.csrf), ("/ops.js", "decides nothing"), ("/ops.css", "--accent")):
+            c = http.client.HTTPConnection("127.0.0.1", self.port, timeout=10)
+            c.request("GET", path, headers={"Host": f"127.0.0.1:{self.port}"})
+            r = c.getresponse()
+            body = r.read().decode()
+            self.assertEqual(r.status, 200, path)
+            self.assertIn(needle, body, path)
+            self.assertIn("default-src 'none'", r.getheader("Content-Security-Policy"))
+        self.assertEqual(self.req("GET", "/ops", host="evil.example:80")[0], 421)
+        self.assertEqual(self.req("GET", "/ops.html")[0], 404)  # only the named routes
+
     def test_3_run_advance_sanitise_proxy(self):
         if not (self.app.run and self.app.run.state == "running"):
             self.assertEqual(self.post("/run", {"mode": "normal"})[0], 200)

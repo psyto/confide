@@ -150,7 +150,8 @@ swap_leg issuer   "$W/issuer.json"   "$W/issuer-X-keys.json"   "$MINT_X" "$issue
   "$(swap_elgamal "$W/investor-X-keys.json")" "$SEND_X" "$DEC_X" "$W/issuer-ctx.json"
 swap_leg investor "$W/investor.json" "$W/investor-Y-keys.json" "$MINT_Y" "$investor_Y" "$issuer_Y" \
   "$(swap_elgamal "$W/issuer-Y-keys.json")" "$PAY" "$DEC_Y" "$W/investor-ctx.json"
-ev proofs legs=2
+# The terms agreed off chain -- what the legs were meant to carry, not what was built (SHORT differs).
+ev proofs legs=2 shares="$ALLOC" cash="$PAY"
 
 pause check
 # The checker's output is copied to a file ONLY for the demo app, which shows the decrypted figure.

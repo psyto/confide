@@ -19,9 +19,12 @@ import puppeteer from "puppeteer";
 import { PuppeteerScreenRecorder } from "puppeteer-screen-recorder";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.join(dir, ".demo-render");
+// Two views of the same run: the role panes ("app", at /) and the settlement-operations layout ("ops",
+// at /ops). Each gets its own render directory and its own cut; recording one never touches the other.
+const UI = process.env.CONFIDE_UI === "ops" ? "ops" : "app";
+const OUT = path.join(dir, UI === "ops" ? ".demo-render-ops" : ".demo-render");
 mkdirSync(OUT, { recursive: true });
-const APP = process.env.CONFIDE_APP || "http://127.0.0.1:8787/";
+const APP = process.env.CONFIDE_APP || (UI === "ops" ? "http://127.0.0.1:8787/ops" : "http://127.0.0.1:8787/");
 const FFMPEG = process.env.FFMPEG_PATH || "/opt/homebrew/bin/ffmpeg";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -49,8 +52,8 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.goto(APP, { waitUntil: "load" });
 // Refuse to record anything that is not the app, on devnet, saying so.
-const banner = await page.$eval(".banner", (e) => e.textContent).catch(() => "");
-if (!/devnet/.test(banner) || !/not a wallet/.test(banner)) {
+const banner = await page.$eval(".banner, .env", (e) => e.textContent).catch(() => "");
+if (!/devnet/i.test(banner) || !/not a wallet/i.test(banner)) {
   throw new Error(`the page at ${APP} is not the demo app with its devnet banner: ${JSON.stringify(banner)}`);
 }
 
@@ -69,16 +72,17 @@ async function run(button, mode) {
   mark({ kind: "start", mode });
   await page.click(button);
   // The status line still says the previous run's "done" until the new run reports in.
-  await page.waitForFunction(() => /^(running|waiting)/.test(document.getElementById("status").textContent),
+  await page.waitForFunction(() => /^(running|waiting)/i.test(document.getElementById("status").textContent),
                              { timeout: 60000, polling: 100 });
   let shown = null; // the label of the step whose result is now on screen
   for (;;) {
     const h = await page.waitForFunction(() => {
       const st = document.getElementById("status").textContent;
-      if (/^done/.test(st)) return { done: st };
-      if (/failed|timed out/.test(st)) return { fail: st };
+      if (/^done/i.test(st)) return { done: st.toLowerCase() };
+      if (/failed|timed out/i.test(st)) return { fail: st };
       const b = document.querySelector("button.next");
-      return b && !b.disabled ? { step: b.textContent } : false;
+      // the ops view prefixes its buttons with "NEXT ▸ "; the step is the same either way
+      return b && !b.disabled ? { step: b.textContent.replace(/^NEXT ▸ /, "") } : false;
     }, { timeout: 25 * 60 * 1000, polling: 200 });
     const v = await h.jsonValue();
     mark({ kind: "ready", mode, ...v });
@@ -99,7 +103,7 @@ try {
   await sleep(3000);
 } finally {
   await recorder.stop();
-  writeFileSync(path.join(OUT, "marks.json"), JSON.stringify({ app: APP, normal, short, end: +now().toFixed(3), marks }, null, 1));
+  writeFileSync(path.join(OUT, "marks.json"), JSON.stringify({ ui: UI, app: APP, normal, short, end: +now().toFixed(3), marks }, null, 1));
   await browser.close();
 }
 // The recording is only worth cutting if both runs ended the way the demo says they do.
