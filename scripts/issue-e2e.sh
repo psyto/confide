@@ -31,6 +31,13 @@
 # less than agreed. Until 2026-09-30 this repository answered that with a printed number and a
 # sentence telling the reader to compare it themselves, and then signed.
 #
+# TWO MORE, BOTH IN THE DEFAULT RUN, because the gate refusal alone leaves two questions open.
+#   - Can somebody else open the gate? The investor sends ApproveAccount for their own account and
+#     is refused on chain (MissingRequiredSignature, anchored), and the account still reads unapproved.
+#   - Does an open gate let one party settle alone? After approval the issuer signs the allocation
+#     by itself; the network refuses it at signature verification. That one never lands, so it has no
+#     signature to cite, and the script says so rather than implying one.
+#
 # AND THE AUDITOR SLOT STAYS EMPTY, exactly as it is on all 1,992. That is not a shortcut: in
 # primary issuance the issuer IS the sender, so they can already read what they sent and need no
 # auditor key to see it. The empty slot blocks the SECONDARY market, not this one — which is why
@@ -165,34 +172,52 @@ build() {
     >"$W/issue.b64" 2>"$W/issue.size"
 }
 
+# landed <b64>  ->  "<signature> <landed error as JSON>"
+# Sent with preflight OFF on purpose. With preflight on, the RPC node simulates, returns the error
+# and nothing lands — the refusal is then reproducible but not anchored, and "run it yourself" is
+# weaker than a signature anybody can look up. Skipping preflight costs one fee and puts the refused
+# transaction on chain with its error attached. The error is READ BACK from the landed transaction
+# rather than trusted from the send: one that fails in preflight and one that fails on chain are
+# different artifacts, and only the second can be cited.
+landed() {
+  local sig err=""
+  sig=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sendTransaction\",\"params\":[\"$1\",{\"encoding\":\"base64\",\"skipPreflight\":true}]}" \
+    | python3 -c "
+import sys, json
+r = json.load(sys.stdin)
+print('NOSEND ' + json.dumps(r['error']).replace(' ', '')[:300] if 'error' in r else r['result'])")
+  case "$sig" in NOSEND*) echo "$sig"; return 0;; esac
+  for _ in $(seq 1 40); do
+    err=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$sig\",{\"maxSupportedTransactionVersion\":0}]}" \
+      | python3 -c "
+import sys, json
+r = json.load(sys.stdin).get('result')
+print('' if not r else json.dumps(r['meta']['err']).replace(' ', ''))")
+    [ -n "$err" ] && break
+    sleep 2
+  done
+  echo "$sig ${err:-}"
+}
+# approved <account>  ->  true | false, read from the chain rather than inferred from what was sent
+approved() {
+  rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$1\",{\"encoding\":\"jsonParsed\",\"commitment\":\"confirmed\"}]}" \
+  | python3 -c "
+import sys,json
+i=json.load(sys.stdin)['result']['value']['data']['parsed']['info']
+s=next(e['state'] for e in i['extensions'] if e['extension']=='confidentialTransferAccount')
+print('true' if s['approved'] else 'false')"
+}
+
 echo
 echo "  ${bold}--- the allocation, sent while the account is unapproved ---${off}"
 build
 grep -a "one transaction" "$W/issue.size" || true
-# THE POINT OF THE WHOLE SCRIPT, and it is sent with preflight OFF on purpose. With preflight on,
-# the RPC node simulates, returns the error and nothing lands — the refusal is then reproducible but
-# not anchored, and "run it yourself" is weaker than a signature anybody can look up. Skipping
-# preflight costs one fee and puts the refused transaction on chain with its error attached.
-REFUSED_SIG=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sendTransaction\",\"params\":[\"$(cat "$W/issue.b64")\",{\"encoding\":\"base64\",\"skipPreflight\":true}]}" \
-  | python3 -c "
-import sys, json
-r = json.load(sys.stdin)
-print('ERR ' + json.dumps(r['error'])[:300] if 'error' in r else r['result'])")
-case "$REFUSED_SIG" in ERR*) echo "    could not even send it: $REFUSED_SIG" >&2; exit 1;; esac
-# Read the LANDED error back rather than trusting the send. A transaction that fails in preflight
-# and one that fails on chain are different artifacts and only the second can be cited.
-err=""
-for _ in $(seq 1 40); do
-  err=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$REFUSED_SIG\",{\"maxSupportedTransactionVersion\":0}]}" \
-    | python3 -c "
-import sys, json
-r = json.load(sys.stdin).get('result')
-print('' if not r else json.dumps(r['meta']['err']))")
-  [ -n "$err" ] && break
-  sleep 2
-done
-# json.dumps puts a space after the colon: {"InstructionError": [0, {"Custom": 24}]}. Matching
-# without it reported the right refusal as the wrong one, which is worse than not matching at all.
+# THE POINT OF THE WHOLE SCRIPT. Anchored, not simulated -- see `landed`.
+read -r REFUSED_SIG err < <(landed "$(cat "$W/issue.b64")")
+[ "$REFUSED_SIG" = NOSEND ] && { echo "    could not even send it: $err" >&2; exit 1; }
+# `landed` strips the spaces json.dumps puts after colons. Before it did, matching without the space
+# reported the right refusal as the wrong one, which is worse than not matching at all; both
+# spellings are kept so the match does not depend on that normalisation surviving.
 case "$err" in
   *'"Custom": 24'*|*'"Custom":24'*|*"Custom(24)"*)
     printf '    %sREFUSED on chain — Custom(24), ConfidentialTransferAccountNotApproved%s\n' "$red" "$off"
@@ -209,14 +234,110 @@ case "$err" in
 esac
 
 echo
+echo "  ${bold}--- the investor tries to approve their own account ---${off}"
+# THE GATE HAS A KEYHOLE, NOT JUST A DOOR. The refusal above shows an unapproved account cannot
+# receive; it does not show that only the issuer can change that. If any signer could approve, the
+# gate would be a formality the holder clears themselves. So the investor -- who owns the account,
+# pays the fee and signs -- sends the same one-instruction ApproveAccount the issuer is about to send.
+#
+# Token-2022 approves only when the signer IS the mint's confidential-transfer authority, and
+# otherwise returns MissingRequiredSignature (spl-token-2022 8.0.1,
+# extension/confidential_transfer/processor.rs, process_approve_account). The name reads oddly: the
+# transaction carries a valid signature from the key it names as authority, and that key is not the
+# mint's approval authority. The program reports that case with this error; it is the program's word,
+# not a claim that some other signature was left off.
+read -r WRONG_SIG werr < <(landed "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve \
+  "$W/investor.json" "$investor_X" "$MINT_X" "$(bh)")")
+[ "$WRONG_SIG" = NOSEND ] && { echo "    could not even send it: $werr" >&2; exit 1; }
+case "$werr" in
+  *MissingRequiredSignature*)
+    printf '    %sREFUSED on chain — MissingRequiredSignature: the signer is not the mint'"'"'s approval authority%s\n' "$red" "$off"
+    printf '    %s%s%s\n' "$dim" "$WRONG_SIG" "$off";;
+  null)
+    echo "    THE INVESTOR APPROVED THEIR OWN ACCOUNT. The gate is not the issuer's, and that is" >&2
+    echo "    the finding, not this script." >&2
+    exit 1;;
+  "") echo "    the wrong-key approval never landed — nothing to cite" >&2; exit 1;;
+  *)  echo "    refused, but not for the reason this demonstrates: $werr" >&2; exit 1;;
+esac
+# And the account is still shut. Read from the chain, not concluded from the error.
+[ "$(approved "$investor_X")" = false ] || { echo "    the account reads approved after a refused approval" >&2; exit 1; }
+printf '    %sthe account still reads approved: false%s\n' "$dim" "$off"
+
+echo
 echo "  ${bold}--- the issuer signs for the account. One instruction ---${off}"
 go "the issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-client -- approve \
   "$W/issuer.json" "$investor_X" "$MINT_X" "$(bh)")"
 
+[ "$(approved "$investor_X")" = true ] || { echo "    the approval confirmed but the account does not read approved" >&2; exit 1; }
+
 echo
-echo "  ${bold}--- the same allocation, rebuilt against a fresh blockhash, sent again ---${off}"
-build
-go "the allocation" "$(cat "$W/issue.b64")"
+echo "  ${bold}--- the issuer signs the allocation alone ---${off}"
+# ONE SIGNATURE OF TWO. The gate is open now, the proofs are valid and the amounts are right, so the
+# only thing this transaction lacks is the investor's signature on their own payment leg. It is
+# assembled from public keys (`swap-tx build`, the same path the bilateral protocol uses) and signed
+# by the issuer only.
+#
+# This refusal CANNOT be anchored the way the two above are, and saying otherwise would be false: a
+# transaction missing a required signature never enters a block, so there is no signature of it to
+# look up. It is sent with preflight ON and the RPC node's signature verification refuses it. If it
+# is ever accepted, the script waits to see whether it landed and fails loudly either way.
+ISSUER=$(solana-keygen pubkey "$W/issuer.json"); INVESTOR=$(solana-keygen pubkey "$W/investor.json")
+cargo run --quiet -p confide-ct --bin swap-tx -- build "$ISSUER" "$(bh)" \
+  "$ISSUER"   "$W/issuer-ctx.json"   "$issuer_X"   "$investor_X" "$MINT_X" \
+  "$INVESTOR" "$W/investor-ctx.json" "$investor_Y" "$issuer_Y"   "$MINT_Y" \
+  2>/dev/null | cargo run --quiet -p confide-ct --bin swap-tx -- sign - "$W/issuer.json" \
+  >"$W/half.b64" 2>"$W/half.err"
+# Asserted, not displayed. A builder or signer regression that produced 0 of 2, or 1 of 3, would
+# otherwise reach the RPC and be refused for a reason this is not about. "signed by the issuer, 1 of
+# 2" means the issuer's slot is filled and the only other one -- the investor's -- is empty.
+grep -aqE "signed by $ISSUER +1 of 2 signatures present" "$W/half.err" \
+  || { echo "    the half-signed allocation is not 'issuer only, 1 of 2':" >&2; cat "$W/half.err" >&2; exit 1; }
+printf '    %ssigned by the issuer only — 1 of 2 signatures present%s\n' "$dim" "$off"
+half=$(send "$(cat "$W/half.b64")")
+# Exactly two shapes are accepted, both of which mean "a signature failed verification", and nothing
+# looser: an earlier `*Signature*` pattern would have passed any refusal that happened to use the word.
+#   current Agave:  -32002, simulation failed, data.err == "SignatureFailure"
+#   older nodes:    -32003, "Transaction signature verification failure"
+# (Codex, 2026-09-30, against agave rpc/src/rpc.rs; which one a given endpoint returns is not
+# something this repository has observed yet.)
+verdict=$(printf '%s' "$half" | python3 -c "
+import sys, json
+t = sys.stdin.read()
+if not t.startswith('ERR '): print('ACCEPTED'); raise SystemExit
+try: e = json.loads(t[4:])
+except Exception: print('OTHER'); raise SystemExit
+d = e.get('data') if isinstance(e.get('data'), dict) else {}
+if e.get('code') == -32002 and d.get('err') == 'SignatureFailure': print('SIGFAIL ' + e.get('message', ''))
+elif e.get('code') == -32003 and e.get('message') == 'Transaction signature verification failure': print('SIGFAIL ' + e['message'])
+else: print('OTHER')")
+case "$verdict" in
+  SIGFAIL*)
+    printf '    %sREFUSED in RPC preflight — %s%s\n' "$red" "${verdict#SIGFAIL }" "$off"
+    printf '    %sit never entered a block, so there is nothing on chain to cite. The next step adds the\n' "$dim"
+    printf '    investor'"'"'s signature to THIS transaction and sends it%s\n' "$off";;
+  OTHER)
+    echo "    refused, but not for the reason this demonstrates: $half" >&2; exit 1;;
+  *)
+    echo "    A HALF-SIGNED ALLOCATION WAS ACCEPTED by the RPC: $half" >&2
+    confirm "$half" >&2 && echo "    AND IT SETTLED. That is the finding, not this script." >&2
+    exit 1;;
+esac
+
+echo
+echo "  ${bold}--- the investor adds their signature to that same transaction ---${off}"
+# Not rebuilt. The only difference between what was refused a moment ago and what is sent now is one
+# signature, so the refusal above cannot have been about anything else.
+cargo run --quiet -p confide-ct --bin swap-tx -- sign "$W/half.b64" "$W/investor.json" \
+  >"$W/full.b64" 2>"$W/full.err"
+grep -aqE "signed by $INVESTOR +2 of 2 signatures present" "$W/full.err" \
+  || { echo "    the completed allocation is not '2 of 2':" >&2; cat "$W/full.err" >&2; exit 1; }
+ALLOC_SIG=$(send "$(cat "$W/full.b64")")
+case "$ALLOC_SIG" in ERR*) echo "    the allocation: $ALLOC_SIG" >&2; exit 1;; esac
+confirm "$ALLOC_SIG" || exit 1
+CU=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$ALLOC_SIG\",{\"commitment\":\"confirmed\",\"maxSupportedTransactionVersion\":0}]}" \
+  | python3 -c "import sys,json;r=json.load(sys.stdin).get('result');print(r['meta'].get('computeUnitsConsumed','?') if r else '?')")
+printf '    %-22s ok   %s%s   %s compute units%s\n' "the allocation" "$dim" "$ALLOC_SIG" "$CU" "$off"
 
 echo
 echo "  ${bold}--- what moved ---${off}"
@@ -232,10 +353,16 @@ show "issuer, cash (received)"           "$issuer_Y"   "$W/issuer-Y-keys.json"  
 
 echo
 pub() { local d a p o; read -r d a p o < <(ct "$1"); echo "$p"; }
+PUBS="$(pub "$issuer_X") $(pub "$investor_X") $(pub "$investor_Y") $(pub "$issuer_Y")"
 printf '    %spublic balances: issuer stock %s, investor stock %s, investor cash %s, issuer cash %s%s\n' \
-  "$dim" "$(pub "$issuer_X")" "$(pub "$investor_X")" "$(pub "$investor_Y")" "$(pub "$issuer_Y")" "$off"
+  "$dim" $PUBS "$off"
+# Asserted, not displayed: this is the observer's view, and the claim is that it shows nothing.
+for v in $PUBS; do
+  [ "$v" = 0 ] || { echo "    a public balance is $v, not 0 -- an amount is visible to anyone" >&2; exit 1; }
+done
 echo
-echo "  ${grn}${bold}An allocation was refused, the issuer signed, and the same allocation settled."
+echo "  ${grn}${bold}An allocation was refused, the investor could not approve themselves, a half-signed"
+echo "  allocation was refused, the issuer signed, and the same allocation settled with both signatures."
 echo "  The auditor slot was empty throughout — as it is on all 1,992 — because in primary issuance"
 echo "  the issuer is the sender and needs no key to read what they sent.${off}"
 echo
