@@ -1256,4 +1256,15 @@ CLAUDE.md の「環境変数としてのみ」をそのまま満たす。
 loan・秘匿口座・mirrored mint・anchored disclosure・ZK 証明2本・testbed、全部生きている。
 mainnet の NVDAx も不変。赤は **公開サイトが今日の `web/index.html` ではない**こと
 （母集団の訂正と動画の訂正注記を入れたため）。`./scripts/publish-site.sh --push` が要る。
-**サイトは提出リンクの1つで、いま repo が撤回した主張をまだ掲げている。**
+**サイトは提出リンクの1つで、repo が撤回した主張をまだ掲げていた。**
+
+**0as. 公開した（founder の判断）。** `index.html` / `kamino.html` / `slots.json` / `usage.json` の4件。
+**`usage.json` は今日の変更ではない** —— サイトが 09-28 の計測より古いものを配信していたので、
+公開で口座数が committed 値に前進した。**`healthcheck.sh` はこれで exit 0、all clear。**
+
+**確認のとき自分の curl に騙されかけた。** publish 直後に
+`https://psyto.github.io/confide/` を引いたら**撤回した文がまだ 1 件あり、訂正文が 0 件**だった。
+healthcheck は同時刻に緑。**CDN の古いキャッシュを見ていたのは私の方**で、
+healthcheck は `$PAGE/index.html` の sha を `web/index.html` と比べている。
+キャッシュを外して引き直し、**live の sha がローカルと一致・訂正文あり・撤回した文 0 件**を確認した。
+**派生物（キャッシュされた応答）ではなく実物（sha）を見る、の同じ型。**
