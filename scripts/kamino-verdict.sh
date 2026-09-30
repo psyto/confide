@@ -13,20 +13,40 @@ cd "$(dirname "$0")/.."
 
 REPO="https://github.com/Kamino-Finance/klend.git"
 PIN="a08760976f51a3a58c4a0c6ea27b4a0e565bca79"   # release/v1.25.0, 2026-08-18
-SRC="${KLEND_DIR:-${TMPDIR:-/tmp}/klend-$PIN}"
+DEFAULT_SRC="${TMPDIR:-/tmp}/klend-$PIN"
+SRC="${KLEND_DIR:-$DEFAULT_SRC}"
 C="$SRC/programs/klend/src/utils/constraints.rs"
 K="$SRC/programs/klend/src/lending_market/lending_checks.rs"
 
 bold=$'\033[1m'; green=$'\033[32m'; red=$'\033[31m'; dim=$'\033[2m'; off=$'\033[0m'
 fail=0
 
-if [ ! -d "$SRC/.git" ]; then
+# Ask git whether it can read the repository, not the filesystem whether a directory is there.
+# $SRC lives under $TMPDIR, which macOS purges by age: on 2026-09-30 it held a .git/ containing
+# empty hooks/ and info/ and nothing else, so `-d "$SRC/.git"` was true and every git command after
+# it died with "not a git repository". The verdict this script exists to re-check had been
+# unrunnable for days and nothing said so, because the test read a directory entry instead of the
+# thing the directory was supposed to contain.
+if ! git -C "$SRC" rev-parse --git-dir >/dev/null 2>&1; then
+  if [ -e "$SRC" ]; then
+    # ONLY THE CACHE THIS SCRIPT OWNS. The first version of this repair deleted $SRC, and $SRC is
+    # KLEND_DIR when the caller sets it -- so `KLEND_DIR=/some/work/tree ./scripts/kamino-verdict.sh`
+    # was enough to recursively delete it. A repair for a stale cache must not be able to touch a
+    # path somebody else chose. Codex found it the same day, 2026-09-30.
+    if [ "$SRC" = "$DEFAULT_SRC" ]; then
+      echo "  $SRC is not a readable clone — removing this script's own cache"
+      rm -rf "$SRC"
+    else
+      echo "  KLEND_DIR is set to $SRC and that is not a readable git clone." >&2
+      echo "  Refusing to delete a directory you named. Point KLEND_DIR at a clone of" >&2
+      echo "  $REPO at $PIN, or unset it and this script will manage its own cache." >&2
+      exit 2
+    fi
+  fi
   echo "  cloning Kamino Lend at $PIN"
   git clone -q "$REPO" "$SRC"
-  git -C "$SRC" checkout -q "$PIN"
-else
-  git -C "$SRC" checkout -q "$PIN"
 fi
+git -C "$SRC" checkout -q "$PIN"
 echo "  klend $(git -C "$SRC" log -1 --format='%h %ad' --date=short)  $(git -C "$SRC" describe --tags 2>/dev/null || echo release/v1.25.0)"
 echo
 
