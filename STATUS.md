@@ -1215,3 +1215,45 @@ devnet に残ったもの: throwaway の mint 2つ・口座数個・context 3つ
 agent 側は `RPC="$CONFIDE_RPC"` と書くだけで済み、**URL は会話にも repo のファイルにも現れない**
 （`SEPOLIA_RPC` で profile の変数がシェルに届くことを確認済み）。
 CLAUDE.md の「環境変数としてのみ」をそのまま満たす。
+
+## 2026-09-30（5）— 専用エンドポイントで実走。比較はチェーン上で動いた
+
+**0ap. `issue-e2e.sh` が通った（exit 0）。** founder の endpoint を環境変数として受け取り、
+**repo のファイルには書いていない**（`docs-consistency.sh` の THE PRIVATE ENDPOINT が検査している）。
+公開エンドポイントを止めていた ALT の slot skew は出ない。
+
+**今日足した比較が、実際にチェーン上で動いた:**
+
+```
+  ✓ it will move 2000000000000 base units to you
+      decrypted from the verified context, by you, without anyone's cooperation
+  ✓ and 2000000000000 is what you agreed
+      compared here, not left to your eye
+```
+
+門の拒否も引用できる署名つきで残った —— `Custom(24)` /
+`5cYPobHEEpECCX9QhsPfquyW4cvhP6NmGD2Vd9jayyF7dU55ivYJDe6aLGYXCqcAE4aQXWmfQs24fZMQdYEdkVUT`。
+（**最初にここへ書いた署名は先頭2文字が余っていた** —— ログから抜くときに ANSI エスケープの
+`2m` を base58 として拾っていた。**チェーンに聞いて確かめたら見つからなかった**ので直した。
+導出した値を検算しない、の型。）承認後、同じ割当が settle。**公開残高は4口座すべて 0**、
+発行体の在庫 480,000 / 投資家の株 20,000 / 現金 3,500,000 が秘匿のまま動いた。
+証明は発行体 6 tx・3 contexts、投資家 **14 tx・5 contexts**（現金脚は手数料付きなので5本）。
+
+**0aq. `SHORT=2000` が devnet で拒否した（exit 0）。一度も走っていなかった負の対照。**
+
+```
+  ✗ you agreed 2000000000000 and this leg moves 200000000000 — short by 1800000000000.
+      DO NOT SIGN. Nothing has happened yet: no signature of yours exists ...
+  REFUSED BEFORE SIGNING. No transaction was built, so none was signed and none was sent.
+```
+
+**これで「秘匿スワップの唯一の危険」に対する答えが、人間の目ではなく終了コードになったことが
+チェーン上で確認できた。** 09-30（2）と（4）で「未確認」と書いた部分はこれで埋まった ——
+**ただし bilateral（offer/accept/settle/sign）の terms pin は依然として devnet 未実走。**
+`issue-e2e.sh` は bilateral の経路を通らない。
+
+**0ar. `healthcheck.sh` は1件赤。** **devnet はリセットされていない** —— pin した program・
+loan・秘匿口座・mirrored mint・anchored disclosure・ZK 証明2本・testbed、全部生きている。
+mainnet の NVDAx も不変。赤は **公開サイトが今日の `web/index.html` ではない**こと
+（母集団の訂正と動画の訂正注記を入れたため）。`./scripts/publish-site.sh --push` が要る。
+**サイトは提出リンクの1つで、いま repo が撤回した主張をまだ掲げている。**
