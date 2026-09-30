@@ -95,8 +95,8 @@ ciphertext, so an issuer can mint and burn without moving public supply.
 
 So the finding is no longer about one extension:
 
-> **Token-2022 ships two confidential capabilities. Every tokenized stock on Solana carries the
-> first and uses none of it; not one carries the second.**
+> **Token-2022 ships two confidential capabilities. Every tokenized stock from three issuers'
+> catalogues carries the first and uses none of it; not one carries the second.**
 
 **And the same scan shows what they do adopt**, which makes the abstention deliberate rather than
 inattentive — these are not issuers who ignored the extension list:

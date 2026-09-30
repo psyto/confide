@@ -1,7 +1,8 @@
 # The pincer — why this market cannot open itself
 
-Measured 2026-09-19 with `./scripts/slot-scan.sh`, over **every** tokenized-equity mint on Solana.
-Not a sample. The repository has had to correct that exact shortcut once already.
+Measured 2026-09-19 with `./scripts/slot-scan.sh`, over **every** tokenized-equity mint in
+`web/mints.json` — 1,992 entries, from three issuers' catalogues. Not a sample of that file, and
+[not a census of Solana](THE-POPULATION.md): that second half was claimed here until 2026-09-30.
 
 ## The two halves
 

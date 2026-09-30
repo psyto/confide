@@ -38,7 +38,8 @@ pub fn fill_auditor_slot(mint: &Address, authority: &Address, auditor: PodElGama
 ///
 /// `None` is not a degenerate case — it is what PayPal's PYUSD and Paxos's USDG actually ship on
 /// mainnet, measured 2026-09-20: `autoApproveNewAccounts: false` with an EMPTY auditor key, the
-/// same pair every tokenized-equity mint ships. A mirror of one of those has to be able to say so.
+/// same pair every tokenized-equity mint in `web/mints.json` ships. A mirror of one of those has
+/// to be able to say so.
 pub fn close_the_gate(
     mint: &Address,
     authority: &Address,

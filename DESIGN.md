@@ -15,7 +15,8 @@
 
 ## 1. The gap
 
-Every tokenized-equity mint on Solana has the `confidentialTransferMint` extension **enabled** and
+Every tokenized-equity mint from three issuers' catalogues has the `confidentialTransferMint`
+extension **enabled** and
 `auditorElgamalPubkey` **null** — `NVDAx`, `TSLAx`, `SPYx`, `AAPLx`, all of them, readable in one
 unauthenticated RPC call. The ZK ElGamal Proof Program was re-enabled at epoch 982 in June 2026, so
 the substrate works. What the scan measures is narrower and enough: **not one of the 1,992 mints

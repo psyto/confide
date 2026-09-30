@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Every tokenized-equity mint on Solana, against Kamino's own admissibility rules.
+# Every tokenized-equity mint in web/mints.json, against Kamino's own admissibility rules.
 #
 #   ./scripts/kamino-admissible.sh
 #

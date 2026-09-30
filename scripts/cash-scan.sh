@@ -5,7 +5,8 @@
 #
 # A confidential stock-for-cash trade needs cash that can move confidentially. Three of the five
 # largest cannot — they are legacy SPL with no extensions at all. The two that can arrive at the
-# SAME configuration as every tokenized-equity mint, which is what makes this a fact about the
+# SAME configuration as every tokenized-equity mint in web/mints.json, which is what makes this a
+# fact about the
 # substrate rather than about two equity issuers.
 set -euo pipefail
 cd "$(dirname "$0")/.."

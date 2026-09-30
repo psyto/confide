@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Re-pull every tokenized-equity mint on Solana into web/mints.json.
+# Re-pull every tokenized-equity mint from three issuers' catalogues into web/mints.json.
+#
+# This is a product catalogue, not a census. Everything downstream inherits that scope, and for
+# fifteen days it did not say so -- docs/cwf-2026/THE-POPULATION.md.
 #
 # Three issuers, not one, and they do not have the same product:
 #   Backed Finance (xStocks)      — Swiss-issued, own ISIN, third-party product
@@ -23,7 +26,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 - <<'PY'
-import json, urllib.request
+import hashlib, json, os, time, urllib.request
 
 def get(url):
     return json.load(urllib.request.urlopen(
@@ -68,12 +71,54 @@ for a in get("https://prestocks.com/api/prestocks"):
                "mint": m, "underlying": a.get("symbol"), "issuer": "PreStocks"}
 
 out = sorted(rows.values(), key=lambda r: (r["issuer"], r["symbol"]))
-json.dump(out, open("web/mints.json", "w"), indent=1)
+
+# CHECK BEFORE WRITING. These eight asserts used to run AFTER json.dump, so a partial fetch --
+# one issuer's API returning an empty page, which is the failure this script was written for --
+# overwrote web/mints.json first and complained second. open(...,"w") truncates at that moment.
+for s in ("NVDAx", "TSLAx", "SPYx", "AAPLx", "NVDA.US", "AAPL.US", "SPACEX", "OPENAI"):
+    assert any(r["symbol"] == s for r in out), s + " missing — the fetch is incomplete"
 
 from collections import Counter
 c = Counter(r["issuer"] for r in out)
+assert len(c) == 3, "expected three issuers, got %r — the list would silently narrow" % dict(c)
+
+blob = json.dumps(out, indent=1)
+
+# DRY=1 answers "has the catalogue moved?" without touching the measured file. It exists because on
+# 2026-09-30 the only way to ask that question was to overwrite web/mints.json, and the answer was
+# 1,992 -> 2,193: a refresh would have restated the headline count in forty surfaces while
+# slot-scan.sh had never read the 201 new mints. Asking must be cheaper than committing.
+if os.environ.get("DRY"):
+    print("%d mints (DRY -- nothing written)   (%s)"
+          % (len(out), ", ".join("%s %d" % kv for kv in c.items())))
+    have = json.load(open("web/mints.json"))
+    print("   web/mints.json on disk holds %d" % len(have))
+    if len(have) != len(out):
+        print("   the catalogue has moved by %+d. Re-running slot-scan.sh over the new list is what"
+              % (len(out) - len(have)))
+        print("   makes the new count sayable; refreshing alone only makes the old one wrong.")
+    raise SystemExit(0)
+
+# Provenance, because the list is a product catalogue and every claim downstream inherits that.
+# Until 2026-09-30 the only record of WHEN this ran was the commit date of web/mints.json, so the
+# repository was dating a measurement from git metadata and calling it a retrieval time.
+source = {
+    "generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+    "note": "web/mints.json is every Solana mint these three APIs return. It is a catalogue, not a "
+            "census of Solana -- see docs/cwf-2026/THE-POPULATION.md.",
+    "sources": [
+        {"issuer": "Backed",    "api": "https://api.xstocks.fi/api/v2/public/assets"},
+        {"issuer": "Backpack",  "api": "https://api.backpack.exchange/api/v1/assets"},
+        {"issuer": "PreStocks", "api": "https://prestocks.com/api/prestocks"},
+    ],
+    # Per-issuer counts are derivable from mints.json and are NOT copied here. The hash is not:
+    # it is what ties this record to the exact bytes that were written.
+    "mints_sha256": hashlib.sha256(blob.encode()).hexdigest(),
+}
+
+open("web/mints.json", "w").write(blob)
+json.dump(source, open("web/mints-source.json", "w"), indent=1, sort_keys=True)
 print("%d mints -> web/mints.json   (%s)" % (len(out), ", ".join("%s %d" % kv for kv in c.items())))
-for s in ("NVDAx", "TSLAx", "SPYx", "AAPLx", "NVDA.US", "AAPL.US", "SPACEX", "OPENAI"):
-    assert any(r["symbol"] == s for r in out), s + " missing — the fetch is incomplete"
+print("   provenance -> web/mints-source.json   %s" % source["generated_utc"])
 print("the symbols the page watches are all present")
 PY

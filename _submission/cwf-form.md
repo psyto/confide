@@ -20,7 +20,7 @@ Confide
 ## Brief description · Public · ≤500
 
 ```
-Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble and lets each side check the other before signing, with nobody in the middle. All 1,992 tokenized stocks here already ship confidential balances. Of 518,744 live accounts, two have configured one and zero are approved — no issuer has signed.
+Confidential delivery-versus-payment for tokenized stocks on Solana: a stock-to-stablecoin swap in one transaction, with neither side publishing what moved. Confide builds the proofs the chain will not assemble and lets each side check the other before signing, with nobody in the middle. All 1,992 tokenized stocks from three issuers' catalogues already ship confidential balances. Of 518,744 live accounts, two have configured one and zero are approved — no issuer has signed.
 ```
 
 ## Project website · Public
@@ -96,7 +96,8 @@ Real World Assets (RWA)
 
 **Kept after the pivot, asked by the founder 2026-09-21.** The turn from a loan to delivery versus
 payment changed the mechanism, not the asset class. Confide exists because tokenized equity exists:
-the finding is *1,992 tokenized-equity mints, all gated*, which is a fact about this asset on this
+the finding is *1,992 tokenized-equity mints from three issuers' catalogues, all gated*, which is a
+fact about this asset on this
 chain and not about lending or about privacy in general. The loan and the swap were always two ways
 at the same asset.
 

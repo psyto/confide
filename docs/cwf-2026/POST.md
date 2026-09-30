@@ -29,7 +29,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > **Solana shipped confidential balances for tokenized stocks. I counted the accounts. Nobody has
 > ever opened one.**
 >
-> Every tokenized-equity mint on Solana — **all 1,992**, from three issuers with nothing to do with
+> Every tokenized-equity mint from three issuers' catalogues — **all 1,992**, from issuers with nothing to do with
 > each other — runs Token-2022 with confidential transfers switched **on** and the auditor key
 > **empty**. That much has been written about. What I could not find anywhere was the other half:
 > has anyone actually used it?
@@ -110,8 +110,8 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 
 ## Short form
 
-> Every tokenized stock on Solana ships confidential balances. All 1,992, three issuers, auditor key
-> empty on every one.
+> Every tokenized stock from three issuers' catalogues ships confidential balances. All 1,992, auditor
+> key empty on every one.
 >
 > I counted the accounts. **518,744 of them across Apple, NVIDIA, SpaceX, Anthropic, AMC. Two
 > have asked for a confidential balance — one on NVDAx, one on AAPLx. 0 have been approved** — the
@@ -140,7 +140,7 @@ here is that the argument has one shape and a thread invites replying to one pos
 so they have to stand alone. They are the count and nothing else:
 
 ```
-Every tokenized stock on Solana ships confidential balances.
+Every tokenized stock from three issuers' catalogues ships confidential balances.
 
 All 1,992 of them.
 
@@ -175,8 +175,8 @@ this.
 
 **One thing to check in the compose box, which no source can answer.** The 131-character figure
 below is for a post with no media. **Attaching the video may shorten what shows before *Show
-more*.** If it does, the first line carries it alone — "Every tokenized stock on Solana ships
-confidential balances." — but look at the preview with the video attached before sending.
+more*.** If it does, the first line carries it alone — "Every tokenized stock from three issuers'
+catalogues ships confidential balances." — but look at the preview with the video attached before sending.
 
 **One link, in the last block.** `psyto.github.io/confide`. A link in the opening lines costs
 reach, and the post has to earn the click before it offers one.

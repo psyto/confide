@@ -5,13 +5,17 @@
 
 ## 1. xStocks are Token-2022, and confidential transfers are already switched on
 
-**Every tokenized-equity mint on Solana carries the extension with `auditorElgamalPubkey` null —
-all 1,992 of them, across three issuers that have nothing to do with each other:**
+**Every tokenized-equity mint from three issuers' catalogues carries the extension with
+`auditorElgamalPubkey` null — all 1,992 of them, across three issuers that have nothing to do with
+each other:**
 
-*Scope, because the number invites a bigger reading than it earns:* `scripts/refresh-mints.sh`
-builds the mint list from **each issuer's own asset API**. The scan is exhaustive over what those
-three publish and checked rather than sampled. It is not a census of every equity token on Solana,
-and a fourth issuer would not appear in it until the list learns about them.
+*Scope, and it belongs in the headline rather than under it:* `scripts/refresh-mints.sh` builds the
+mint list from **each issuer's own asset API**. The scan is exhaustive over that file and checked
+rather than sampled. It is **not a census** of every equity token on Solana, and a fourth issuer
+would not appear in it until the list learns about them. **This paragraph was here from
+2026-09-15 and the headline above it said the opposite until 09-30** —
+[`cwf-2026/THE-POPULATION.md`](cwf-2026/THE-POPULATION.md) records why that is worse than saying
+nothing.
 
 ```
 Backed     EMPTY   828      xStocks — Swiss-issued, own ISIN, a third-party product

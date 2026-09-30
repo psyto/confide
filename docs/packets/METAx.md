@@ -140,8 +140,9 @@ small.** It claims the first two lines are done and the rest is specifiable.
   puts Backed in the path of every escrow. The two requirements are one field read from two
   sides, and satisfying either one forces the other.
 
-  Measured across the whole asset class by `./scripts/slot-scan.sh`: **1,992 of 1,992
-  tokenized-equity mints on Solana set it false. Zero auto-approve.** There is no mint on the
+  Measured across every mint in `web/mints.json` by `./scripts/slot-scan.sh`: **1,992 of
+  1,992 tokenized-equity mints in that file set it false. Zero auto-approve.** There is
+  no mint in that list on the
   ungated side, so this is not solved by choosing a different ticker, and **no engineering on
   Confide's side removes it** — the floor can be proved, the collateral locked and the default
   settled without the holder, and the position still cannot exist, because the account it would

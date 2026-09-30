@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Check the auditor slot AND the approval gate on EVERY tokenized-equity mint on Solana, across
-# both issuers, not a sample. Both fields come out of the same `confidentialTransferMint` state, so
-# the second one is free.
+# Check the auditor slot AND the approval gate on every tokenized-equity mint in web/mints.json --
+# 1,992 entries from three issuers' catalogues, not a sample of that file. Both fields come out of
+# same `confidentialTransferMint` state, so the second one is free.
 #
 #   Backed Finance (xStocks)  — Swiss-issued, own ISIN
 #   Backpack Securities       — US CUSIP, a security entitlement by the issuer's own description
@@ -55,7 +55,7 @@ with cf.ThreadPoolExecutor(max_workers=4) as ex:
 by_issuer = Counter()
 for m, (_, st, _auto, _ex) in zip(mints, res):
     by_issuer[(m.get('issuer', '?'), st)] += 1
-print('  checked  %d tokenized-equity mints on Solana' % len(res))
+print('  checked  %d tokenized-equity mints in web/mints.json' % len(res))
 for (issuer, st), v in sorted(by_issuer.items()):
     print('    %-10s %-16s %d' % (issuer, st, v))
 odd = [r for r in res if r[1] != 'EMPTY']
@@ -122,7 +122,7 @@ _json.dump({
     # private RPC carries its key in the URL — writing it here would leak it, which this wrote on
     # its first run. Only whether it was the private one, which is all a reader needs to know.
     'endpoint': 'private' if 'api.mainnet-beta' not in rpc and 'publicnode' not in rpc else 'public',
-    'note': 'Every tokenized-equity mint on Solana, read one at a time. Not a sample.',
+    'note': 'Every entry in web/mints.json -- 1,992 from three issuers\' catalogues -- read one at a time. Not a sample of that file, and not a census of Solana. See docs/cwf-2026/THE-POPULATION.md.',
     'mints': len(res),
     'issuers': sorted({m.get('issuer', '?') for m in mints}),
     'by_issuer': [{'issuer': i, 'auditor': st, 'mints': v}

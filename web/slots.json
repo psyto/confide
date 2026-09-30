@@ -1,7 +1,7 @@
 {
  "generated_utc": "2026-09-21 15:54:02 UTC",
  "endpoint": "private",
- "note": "Every tokenized-equity mint on Solana, read one at a time. Not a sample.",
+ "note": "Every entry in web/mints.json -- 1,992 from three issuers' catalogues -- read one at a time. Not a sample of that file, and not a census of Solana. See docs/cwf-2026/THE-POPULATION.md.",
  "mints": 1992,
  "issuers": [
   "Backed",

@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 # The post, with its two figures read rather than typed.
 #
-#   ./scripts/x-post.sh > docs/cwf-2026/x-post.txt   # the post in use
+#   ./scripts/x-post.sh                               # the post as it would render today
 #   ./scripts/x-post.sh a                             # the superseded draft, to read and compare
+#
+# DO NOT redirect this into docs/cwf-2026/x-post.txt. That file is FROZEN at what was actually
+# posted -- _submission/pasted.json marks it `immutable` -- and this line used to tell you to
+# overwrite it, which would have destroyed the only record of what went out. The template was
+# corrected on 2026-09-30 and the posted text was not, so the two now disagree on purpose.
 #
 # A draft is rendered through here rather than kept as a second finished file, so a rejected
 # alternative cannot sit in the repository quoting a count from the week it was written -- which is

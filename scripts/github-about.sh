@@ -22,7 +22,7 @@ import json
 u = json.load(open("web/usage.json"))
 s = json.load(open("web/slots.json"))
 conf, appr = u["total_confidential_accounts"], u["total_approved_accounts"]
-asked = f"{conf} have asked" if conf != 1 else "1 has asked"
+asked = f"{conf} asked" if conf != 1 else "1 asked"
 # "0 is approved" is not English, and the day this reads "1 is approved" the sentence is wrong in a
 # way no character count would catch -- so the approved clause is written from the number.
 if appr == 0:
@@ -31,10 +31,14 @@ elif appr == 1:
     through = "one is approved"
 else:
     through = f"{appr:,} are approved"
+# "All N such mints" read as a census of Solana until 2026-09-30. The mint list is three
+# issuers' catalogues, so the About says so -- this is the one surface outside the repository,
+# and the scoped wording costs characters the old margin did not have.
 d = ("Private block trades for tokenized stocks: confidential delivery-versus-payment on Solana. "
-     "Stock for stablecoin in one atomic transaction, neither side publishing what moved. All "
-     "{m:,} such mints ship it, auditor slot empty; of {a:,} live accounts {asked} for one and "
-     "{through} — so the first trade is an issuance.").format(
+     "Stock for stablecoin in one transaction, amounts never published. "
+     "{m:,} mints from three issuers' catalogues ship it, auditor slot empty; of {a:,} "
+     "accounts scanned {asked} for one and {through} — the first trade is an "
+     "issuance.").format(
         m=s["mints"], a=u["total_accounts"], asked=asked, through=through)
 # 350 is GitHub's limit; the margin is deliberate. The first version came out at exactly 350 and
 # would have failed the day any of these numbers gained a digit.
