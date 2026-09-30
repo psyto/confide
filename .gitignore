@@ -23,3 +23,6 @@ video/.presentation-render/
 
 # Python bytecode (app/test_app.py imports app/server.py)
 __pycache__/
+
+# Raw recordings for video/record-app.js; only the cut (demo-app.mp4) is committed.
+video/.demo-render/

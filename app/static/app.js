@@ -144,7 +144,9 @@ function showNext(step) {
   b.addEventListener("click", async () => {
     b.disabled = true;
     const r = await post("/advance", { step });
-    if (!r.ok) { b.disabled = false; setStatus("the script was not waiting for that step"); }
+    if (!r.ok) { b.disabled = false; setStatus("the script was not waiting for that step"); return; }
+    // Between this press and the next checkpoint, the script is doing the step on devnet.
+    setStatus("working on devnet: " + label);
   });
   const target = document.getElementById("act-" + (who === "observer" ? "observer" : who));
   target.prepend(b);

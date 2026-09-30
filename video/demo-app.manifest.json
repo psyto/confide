@@ -1,0 +1,147 @@
+{
+ "note": "demo-app.mp4 is video/.demo-render/raw.mp4 (an unedited devnet run through the app) with the middle of each long wait played faster. Every shortened stretch carries an on-screen badge with its real duration, and is listed here. Nothing is removed or reordered.",
+ "raw_seconds": 580.3,
+ "wall_seconds": 593.4,
+ "video_per_wall_second": 0.978,
+ "settings": {
+  "window_seconds": 0.4,
+  "shorten_over_seconds": 3,
+  "fast_forward_seconds": 1.1
+ },
+ "cut_seconds": 175.8,
+ "shortened": [
+  {
+   "raw_from": 6.12,
+   "raw_to": 11.6,
+   "real_wait_seconds": 6.4,
+   "speed": 5,
+   "while_waiting_after": "Set up the issuer and an investor"
+  },
+  {
+   "raw_from": 14.94,
+   "raw_to": 24.53,
+   "real_wait_seconds": 10.6,
+   "speed": 8.7,
+   "while_waiting_after": "Create the stock — gate shut, auditor empty"
+  },
+  {
+   "raw_from": 27.87,
+   "raw_to": 73.83,
+   "real_wait_seconds": 47.8,
+   "speed": 41.8,
+   "while_waiting_after": "Fund the treasury and the investor's cash"
+  },
+  {
+   "raw_from": 77.18,
+   "raw_to": 83.44,
+   "real_wait_seconds": 7.2,
+   "speed": 5.7,
+   "while_waiting_after": "Open a confidential account for the stock"
+  },
+  {
+   "raw_from": 86.78,
+   "raw_to": 156.02,
+   "real_wait_seconds": 71.6,
+   "speed": 62.9,
+   "while_waiting_after": "Build both legs' proofs"
+  },
+  {
+   "raw_from": 167.3,
+   "raw_to": 171.03,
+   "real_wait_seconds": 4.6,
+   "speed": 3.4,
+   "while_waiting_after": "Send the allocation (account not approved yet)"
+  },
+  {
+   "raw_from": 177.7,
+   "raw_to": 182.4,
+   "real_wait_seconds": 5.6,
+   "speed": 4.3,
+   "while_waiting_after": "Try to approve my own account"
+  },
+  {
+   "raw_from": 189.07,
+   "raw_to": 192.38,
+   "real_wait_seconds": 4.2,
+   "speed": 3,
+   "while_waiting_after": "Approve exactly this account"
+  },
+  {
+   "raw_from": 213.24,
+   "raw_to": 227.13,
+   "real_wait_seconds": 15,
+   "speed": 12.6,
+   "while_waiting_after": "Look from outside"
+  },
+  {
+   "raw_from": 234.29,
+   "raw_to": 263.06,
+   "real_wait_seconds": 30.2,
+   "speed": 26.2,
+   "while_waiting_after": "Act 2 — approve a second holder"
+  },
+  {
+   "raw_from": 271.51,
+   "raw_to": 316.32,
+   "real_wait_seconds": 46.6,
+   "speed": 40.7,
+   "while_waiting_after": "Read the offer, pin it, build the cash leg"
+  },
+  {
+   "raw_from": 319.66,
+   "raw_to": 347.05,
+   "real_wait_seconds": 28.8,
+   "speed": 24.9,
+   "while_waiting_after": "Check the cash against my pin, sign once"
+  },
+  {
+   "raw_from": 353.23,
+   "raw_to": 359.29,
+   "real_wait_seconds": 7,
+   "speed": 5.5,
+   "while_waiting_after": "Check the shares against my pin, add the second signature"
+  },
+  {
+   "raw_from": 366.45,
+   "raw_to": 379.94,
+   "real_wait_seconds": 14.6,
+   "speed": 12.3,
+   "while_waiting_after": "Look from outside"
+  },
+  {
+   "raw_from": 396.61,
+   "raw_to": 400.71,
+   "real_wait_seconds": 5,
+   "speed": 3.7,
+   "while_waiting_after": "Set up the issuer and an investor"
+  },
+  {
+   "raw_from": 404.06,
+   "raw_to": 413.85,
+   "real_wait_seconds": 10.8,
+   "speed": 8.9,
+   "while_waiting_after": "Create the stock — gate shut, auditor empty"
+  },
+  {
+   "raw_from": 417.19,
+   "raw_to": 474.29,
+   "real_wait_seconds": 59.2,
+   "speed": 51.9,
+   "while_waiting_after": "Fund the treasury and the investor's cash"
+  },
+  {
+   "raw_from": 477.63,
+   "raw_to": 483.7,
+   "real_wait_seconds": 7,
+   "speed": 5.5,
+   "while_waiting_after": "Open a confidential account for the stock"
+  },
+  {
+   "raw_from": 487.05,
+   "raw_to": 552.77,
+   "real_wait_seconds": 68,
+   "speed": 59.7,
+   "while_waiting_after": "Build both legs' proofs"
+  }
+ ]
+}
