@@ -36,6 +36,8 @@ founder の Alchemy エンドポイントを**環境変数としてのみ**使�
 | `scripts/healthcheck.sh` | チェーンについての主張。**判定中に devnet はリセットされる** |
 | `scripts/wire-check.sh` | クライアントとプログラムの口座数。テストは配線を通らない |
 | `scripts/kamino-verdict.sh` | klend の pin した行がまだその内容か |
+| `scripts/swap-pin-check.sh` | **署名前の検査が「自分が合意した額」と比べているか。** チェーン不要。相手が渡してきたファイルの数字と比べていたら落ちる |
+| `cargo test -p confide-ct --bin swap-check` | 比較そのもの。合成した proof context に対して、1単位不足も過払いも落とす |
 | `python3 video/pace.py` | 動画の尺表が台本の語数と合っているか |
 | `scripts/github-about.sh [--apply]` | **GitHub の About。** repo の外にある唯一の面で、2026-09-23 まで 329,536 と *zero are confidential* を掲げていた。数字は計測から導出する |
 | `scripts/spoken-check.sh <納品mp4>` | **声が今の台本を読んでいるか。** 音声は repo の外で作られて戻ってくるので、ここだけが2つを突き合わせる |

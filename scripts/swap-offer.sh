@@ -68,12 +68,19 @@ KEYS="$W/$(echo "$WANT_MINT" | cut -c1-8)-keys.json"
                     echo "  It is written by ./scripts/testbed-join.sh and is how you read what arrives." >&2
                     exit 1; }
 
+# An id, so each party can pin what it agreed on its own machine and find it again in step 3 or 4.
+# Without one there is nothing to key a local record by, and the only statement of the agreed amount
+# is the one travelling inside the file the counterparty hands back.
+OFFER_ID=$(python3 -c "import secrets;print(secrets.token_hex(8))")
+
+# WRITTEN, PINNED, THEN PRINTED. The pin is taken from the offer file itself rather than from seven
+# arguments repeated here, so the terms you pinned and the terms you sent cannot differ.
 python3 - "$ME" "$GIVE_MINT" "$GIVE_ACC" "$GIVE_UNITS" "$WANT_MINT" "$WANT_ACC" "$WANT_UNITS" \
-            "$(swap_elgamal "$KEYS")" "$R" <<'PY'
+            "$(swap_elgamal "$KEYS")" "$R" "$OFFER_ID" > "$W/offer-$OFFER_ID.json" <<'PY'
 import json, sys, time
-me, gm, ga, gu, wm, wa, wu, elg, rpc = sys.argv[1:10]
+me, gm, ga, gu, wm, wa, wu, elg, rpc, oid = sys.argv[1:11]
 print(json.dumps({
-    "kind": "confide-swap-offer", "version": 1,
+    "kind": "confide-swap-offer", "version": 1, "id": oid,
     "generated_utc": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
     "rpc_hint": "devnet" if "devnet" in rpc else "unknown",
     "note": "No secret is in this file. The ElGamal key is public and is what lets your "
@@ -85,5 +92,10 @@ print(json.dumps({
     },
 }, indent=1))
 PY
+swap_pin_terms "$OFFER_ID" "$W/offer-$OFFER_ID.json" \
+               "$(swap_mint_decimals "$GIVE_MINT")" "$(swap_mint_decimals "$WANT_MINT")"
+cat "$W/offer-$OFFER_ID.json"
+
 echo "  offer written — hand it to your counterparty, then wait for their accept.json" >&2
+echo "  terms pinned locally at $W/terms-$OFFER_ID.json — step 3 compares BOTH legs against it" >&2
 echo "  they run: ./scripts/swap-accept.sh <their-keypair.json> offer.json > accept.json" >&2

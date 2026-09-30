@@ -7,6 +7,12 @@ zero-knowledge proofs the chain will not assemble for you, **with nobody in the 
 
 ### → [**Try it live**](https://psyto.github.io/confide/) · [**Watch, 2:32**](https://youtu.be/du0Twt_c9wQ) · no wallet, no API key, no install
 
+> **One correction to the video, 2026-09-30.** It says *"every tokenized stock on Solana"*. The
+> measurement is **1,992 mints from three issuers' catalogues** — exhaustive over that list, not a
+> census of the chain. Everything the video counts is unchanged; only the population's name was
+> wrong. The narration is left as recorded because it is the record of what was said —
+> [`docs/cwf-2026/THE-POPULATION.md`](docs/cwf-2026/THE-POPULATION.md).
+
 ---
 
 ### Why now
@@ -19,8 +25,9 @@ off it — and is **not a venue**, so the exemption neither covers it nor is nee
 
 ### Why nobody has built it
 
-**All 1,992** tokenized-equity mints on Solana already run Token-2022 with confidential transfers
-**on** and the auditor slot **empty** — every mint checked, not sampled. They did not miss it: the
+**All 1,992** tokenized-equity mints from three issuers' catalogues already run Token-2022 with
+confidential transfers **on** and the auditor slot **empty** — every mint in the list checked, not
+sampled, and [the list is a catalogue rather than a census](docs/cwf-2026/THE-POPULATION.md). They did not miss it: the
 same 1,992 carry `permanentDelegate`, `pausableConfig` and a transfer hook. Token-2022's only
 disclosure model is **mint-wide** — one auditor key, reading every transfer made while it is set,
 scoped to nobody. Everybody readable, or nobody. **So every issuer left it empty** — and a
@@ -105,10 +112,14 @@ git clone https://github.com/psyto/confide
 # they: ./scripts/swap-sign.sh   them.json settle.json
 ```
 
-**Steps 3 and 4 each decrypt the other side's amount before signing**, out of a proof context the
-chain has already verified — without the other party's cooperation, and without revealing it to
-anyone else. **Nothing moves until the fourth command**: a proof is not a transfer, and a
-transaction carrying one of two signatures cannot execute. [docs/TESTBED.md](docs/TESTBED.md)
+**Steps 3 and 4 each decrypt the other side's amount before signing and compare it to what was
+agreed**, out of a proof context the chain has already verified — without the other party's
+cooperation, and without revealing it to anyone else. The figure they compare against is pinned by
+steps 1 and 2 **on your own machine**, so the counterparty cannot supply both the leg and the
+expectation; a leg that is short, or a file that restates the terms, stops the command unsigned.
+**Nothing moves until the fourth command**: a proof is not a transfer, and a transaction carrying
+one of two signatures cannot execute. [docs/TESTBED.md](docs/TESTBED.md) ·
+[what changed on 09-30](docs/cwf-2026/THE-SWAP.md)
 
 Needs the Solana CLI, Rust and a little devnet SOL. The key can approve accounts and **cannot
 mint**, which is checked rather than claimed — [docs/TESTBED.md](docs/TESTBED.md).
@@ -142,13 +153,19 @@ transfer encrypts the amount under the recipient's key too, so each side decrypt
 straight out of the already-verified proof context.
 
 ```
-$ cargo run -p confide-ct --bin swap-check -- my-keys.json <the validity context>
+$ cargo run -p confide-ct --bin swap-check -- my-keys.json <the validity context> 8750000000000
   ✓ it is addressed to your key
   ✓ it will move 8750000000000 base units to you
       decrypted from the verified context, by you, without anyone's cooperation
-
-  If that is not the amount you agreed, do not sign. Nothing has happened yet.
+  ✓ and 8750000000000 is what you agreed
+      compared here, not left to your eye
 ```
+
+**The third argument is the agreed amount and the comparison is the exit code.** Leave it off and
+this prints a figure and compares nothing — which is what it did until 2026-09-30, and why the
+sentence that used to sit here told the reader to compare it themselves. The four scripts above pass
+it for you, from terms each side pinned on its own machine before any proof existed:
+[what changed](docs/cwf-2026/THE-SWAP.md), [how it is checked](scripts/swap-pin-check.sh).
 
 No trust, no third party, no floor proof, and nothing revealed to anybody else.
 
@@ -184,12 +201,12 @@ Everything above is what runs. This is the market it runs into, measured rather 
 **The US market for this opened on 17 September 2026**, when the SEC exempted tokenized-stock
 venues for five years. The count below was re-run three days later.
 
-**1,992 tokenized stocks on Solana have confidential transfers switched on. Nobody has ever used
-one.** Three unrelated issuers, every mint they publish checked rather than sampled —
+**1,992 tokenized stocks from three issuers' catalogues have confidential transfers switched on.
+Nobody has ever used one.** Every mint in the list checked rather than sampled —
 `./scripts/slot-scan.sh`, re-run 2026-09-20:
 
 ```
-checked  1992 tokenized-equity mints on Solana
+checked  1992 tokenized-equity mints in web/mints.json
   Backed     EMPTY   828      Swiss-issued, own ISIN (xStocks)
   Backpack   EMPTY   1156     US CUSIP, a security entitlement by the issuer's own description
   PreStocks  EMPTY   8        pre-IPO companies with no public market
@@ -353,9 +370,10 @@ watch. Source in
 ./scripts/kamino-reserves.sh  # which tokenized stocks Kamino already lends against, on what terms
 ./scripts/packet.sh --all     # an admission packet for every mint that has a Kamino reserve
 ./scripts/capacity.sh         # what is on the table in dollars, and how much a confidential holder reaches
-./scripts/slot-scan.sh        # every tokenized-equity mint on Solana — all 1,992, three issuers
+./scripts/slot-scan.sh        # every mint in web/mints.json — 1,992, not a census of Solana
 ./scripts/onchain-check.sh    # four of them in detail
 ./scripts/bind-account.sh     # bind a disclosure to a live account, re-read to confirm
+./scripts/swap-pin-check.sh   # does the pre-signing check compare what YOU agreed? no chain needed
 ./scripts/devnet-verify.sh    # the NAV-floor proof, checked by Solana's ZK program
 ./scripts/committee.sh        # the release committee as five actual processes
 ./scripts/demo.sh             # the two lanes, then the proof going to Solana
@@ -364,7 +382,7 @@ watch. Source in
 ./scripts/seizure-status.sh   # read the seizure back off devnet — no keys, no wallet
 ./scripts/seizure-proofs.sh   # the three proofs a seizure needs, checked by Solana's ZK program
 ./scripts/healthcheck.sh      # every live claim above; exits with the number that died
-cargo test               # 60 tests
+cargo test               # 70 tests
 cd programs/confide-seizure && cargo test    # 44 more, over the seizure program
 ```
 

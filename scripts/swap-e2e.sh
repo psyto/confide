@@ -165,13 +165,15 @@ echo "  ${bold}--- BEFORE SIGNING: each side decrypts what the other will actual
 printf '  %sThis is the step that makes a confidential swap safe. Nobody is trusted and nothing is\n' "$dim"
 printf '  revealed to anyone else: the amount is encrypted to the RECIPIENT as well as the sender,\n'
 printf '  so the recipient reads it straight out of the already-verified proof context.%s\n' "$off"
-look() { # look <who> <their-receiving-keys> <other's ctx.json>
+look() { # look <who> <their-receiving-keys> <other's ctx.json> <agreed-units> <decimals>
   local v; v=$(python3 -c "import json;print(json.load(open('$3'))['validity'])")
   echo "    ${bold}$1 checks the leg addressed to them${off}   ${dim}context $v${off}"
-  swap_look "$2" "$3"
+  swap_look "$2" "$3" "$4" "$5"
 }
-look alice "$W/alice-Y-keys.json" "$W/bob-ctx.json"
-look bob   "$W/bob-X-keys.json"   "$W/alice-ctx.json"
+# What each side EXPECTS to receive is the other side's send figure. Passing it is the difference
+# between checking and looking; without it both of these printed a number and the script signed.
+look alice "$W/alice-Y-keys.json" "$W/bob-ctx.json"   "$B_SEND" "$DEC_Y"
+look bob   "$W/bob-X-keys.json"   "$W/alice-ctx.json" "$A_SEND" "$DEC_X"
 
 echo "  ${bold}--- ONE transaction, two confidential transfers, two signatures ---${off}"
 cargo run --quiet -p confide-ct --bin swap-tx -- "$W/alice.json" "$(bh)" \

@@ -45,13 +45,34 @@ THE LEG YOU ARE BEING ASKED TO SIGN
   ✓ it is addressed to your key
   ✓ it will move 4000000000000 base units to you
       decrypted from the verified context, by you, without anyone's cooperation
-
-  If that is not the amount you agreed, do not sign. Nothing has happened yet.
+  ✓ and 4000000000000 is what you agreed
+      compared here, not left to your eye
 ```
 
-No floor proof, no third party, no trust. `crates/confide-ct/src/swap_check.rs`; checked to refuse
-both ways it should — a context addressed to somebody else, and a context that is not a validity
-proof at all.
+No floor proof, no third party, no trust. `crates/confide-ct/src/swap_check.rs`.
+
+> **Corrected 2026-09-30, and the correction is the interesting part.** The last line above used to
+> read *"If that is not the amount you agreed, do not sign"*, because **`swap-check` was not given
+> the agreed amount and compared nothing.** It decrypted a figure, printed it, and **exited zero
+> whatever the figure was**, so all four callers went on to sign. They did honour a non-zero exit;
+> there was no non-zero exit to honour. The safety of the flow rested on a human reading a number off a terminal — which
+> is a real answer for one careful operator at 11pm and not a property of the software.
+>
+> It takes the agreed amount now and the comparison is the exit code. `set -e` is on in every
+> caller, so a leg that moves anything other than what was agreed stops the script unsigned.
+>
+> **And where the expected figure comes from decides whether the comparison means anything.** The
+> units travel inside the offer JSON, which is handed back and forth: a counterparty who wants to
+> send less can lower the leg *and* the stated units in the same file, and a check fed from that
+> file passes while looking like verification. So each party pins what it agreed **on its own
+> machine, before any proof exists** — `swap-offer.sh` and `swap-accept.sh` write
+> `terms-<offer id>.json` — and steps 3 and 4 compare against the pin, refusing loudly if the file
+> that came back restates the terms. `./scripts/swap-pin-check.sh` runs those refusals with no chain.
+>
+> The paragraph this replaced also said the refusals were *"checked to refuse both ways it should"*.
+> **Nothing in the repository checked them.** There were no tests over `swap_check.rs` at all. There
+> are ten now, over a synthetic context, and the three that matter fail if the comparison is removed:
+> `cargo test -p confide-ct --bin swap-check`.
 
 ## The run
 

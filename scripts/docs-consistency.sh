@@ -140,11 +140,34 @@ z=$(cd programs/confide-seizure && cargo test 2>/dev/null | grep -E '^test resul
 grep -q "# $z more, over the seizure program" README.md \
   && ok "README says $z over the seizure program, and $z run" \
   || bad "$z run over the seizure program; README says something else"
-# The submission drifted to "69 tests, 19 over the seizure program" while it was live, because
-# only README was being checked. It is a separate surface and gets its own line.
-grep -q "^$((t + z)) tests, $z over the seizure program\." _submission/full.md \
-  && ok "_submission/full.md says $((t + z)) tests, $z over the seizure program, and that is what runs" \
-  || bad "$((t + z)) tests run, $z of them over the seizure program; _submission/full.md says something else"
+# _submission/full.md IS FROZEN and this check used to demand that it equal today's count.
+#
+# It was right while the form was editable -- the submission had drifted to "69 tests, 19 over the
+# seizure program" because only README was being watched. Stocklana's edit window shut on
+# 2026-09-25 16:00 ET, and from that moment the check could only be satisfied by never writing
+# another test. It went red on 2026-09-30 for ten tests that turned a printed number into a
+# comparison, and nothing could have cleared it: healthcheck.sh:239 already says a red no action
+# can clear is a red that teaches everyone to skip.
+#
+# So it asks the question that still means something. A frozen submission may UNDERSTATE, which is
+# the safe direction and the same ruling pasted.json records for the posted x-post ("the post
+# understates ... and it stays as posted"). It may never OVERSTATE. Its integrity as a document is
+# pinned by its sha256 in _submission/pasted.json, not by this line.
+read -r fm fz < <(python3 - <<'PYF'
+import re
+m = re.search(r"^(\d+) tests, (\d+) over the seizure program\.", open("_submission/full.md").read(), re.M)
+print(*(m.groups() if m else ("", "")))
+PYF
+)
+if [ -z "$fm" ]; then
+  bad "_submission/full.md no longer states a test count at all"
+elif [ "$fm" -gt $((t + z)) ] || [ "$fz" -gt "$z" ]; then
+  bad "_submission/full.md claims $fm tests / $fz over the program; only $((t + z)) / $z run — it OVERSTATES"
+elif [ "$fm" -eq $((t + z)) ] && [ "$fz" -eq "$z" ]; then
+  ok "_submission/full.md says $fm tests, $fz over the seizure program, and that is what runs"
+else
+  ok "_submission/full.md says $fm / $fz and $((t + z)) / $z run — frozen and understating, which is the safe direction"
+fi
 n=$(python3 -c "print(len(open('_submission/full.md',encoding='utf-8').read()))")
 [ "$n" -le 5000 ] && ok "_submission/full.md is $n characters, inside 5,000" \
                   || bad "_submission/full.md is $n characters, over 5,000"
@@ -469,6 +492,126 @@ for f in files:
         if n not in want:
             bad.append("%s says %s; web/mints.json holds %s" % (f, n, "{:,}".format(len(mints))))
 for b in sorted(set(bad))[:8]:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PY
+
+echo
+echo "  THE POPULATION — 1,992 is a catalogue, not a census"
+python3 - <<'PY' && ok "no live surface claims a census of Solana" || bad "the population claim is wrong somewhere — docs/cwf-2026/THE-POPULATION.md"
+import re, subprocess, sys, pathlib
+
+# web/mints.json comes from three issuers' own asset APIs, so a census claim over the whole chain
+# was never true. Codex said so on 2026-09-15 and the correction went into ONE file while the
+# sentence stayed in thirty-three others -- including the script header the others were quoting.
+# Nothing compared the headline to the caveat sitting underneath it. This does.
+# docs/cwf-2026/THE-POPULATION.md carries the wording and the reasons.
+#
+# The comment above deliberately does not spell the phrase out: the first run of this check matched
+# its own explanation of itself, which is the bug this file exists to catch, found in this file.
+#
+# Files come from git rather than a typed list -- the last typed list of surfaces carrying this
+# claim was short by twenty -- and untracked-but-not-ignored files count, so a new document cannot
+# arrive with the claim in it and be invisible until someone commits it.
+# Three shapes, because the first version of this check only knew the first one and Codex found
+# four live surfaces it walked straight past -- including the published site and the script that
+# GENERATES fourteen tracked packets. A quantifier does not have to be a word.
+pats = [
+    # "every|all ... tokenized stock ... on Solana"
+    re.compile(r"(?:every|all|the whole)[^.\n]{0,70}?tokenized[- ](?:equity|stock)s?"
+               r"[^.\n]{0,50}?on Solana", re.I),
+    # "1,992 tokenized stocks on Solana" -- a count IS a quantifier. Anchored on the number sitting
+    # next to the noun so that a date earlier in the line does not stand in for one.
+    re.compile(r"\b\d[\d,]*\s+tokenized[- ](?:equity|stock)s?[^.\n]{0,50}?on Solana", re.I),
+    # the packet generator's phrasing, which names no population at all
+    re.compile(r"whole asset class", re.I),
+]
+
+# Each of these still says it, on purpose. The reason is the entry -- a bare path would let the
+# allowlist absorb a new mistake, which is the shape of the failure it exists to prevent.
+allowed = {
+    "docs/cwf-2026/THE-POPULATION.md":        "the correction, which has to quote what it corrects",
+    "_submission/full.md":                    "Stocklana's submitted text; the edit window shut 2026-09-25",
+    "docs/cwf-2026/x-post.txt":               "posted and uneditable; the .tmpl it came from is corrected",
+    "_submission/short-alternatives.txt":      "keeps every retired and rejected draft line verbatim",
+    "video/CWF-PRESENTATION.md":              "the narration that was recorded and published",
+    "video/captions-20260923.srt":            "the caption track uploaded with that narration",
+    "video/segments-presentation/LINES.md":   "the narration that was recorded and published",
+    "video/segments-presentation/manifest.json": "the narration that was recorded and published",
+}
+skip = re.compile(r"^docs/reviews/")   # what a reviewer said, and what they were sent
+
+# Backticks count as quotation: STATUS.md documents this check's own patterns as markdown code
+# spans, which is the right way to cite a literal and is not a claim about anything. Pairs are
+# consumed left to right and non-greedily, so a real claim sitting between two unrelated spans is
+# still read.
+QUOTED = re.compile(
+    r'&ldquo;.{0,300}?&rdquo;'
+    r'|`[^`]{0,300}?`'
+    r'|["\u201c\u201d\u300c\u300d][^"\u201c\u201d\u300c\u300d]{0,300}?'
+    r'["\u201c\u201d\u300c\u300d]', re.S)
+
+
+def unquote(s, prose=True):
+    # NOT in JSON. There a double quote is syntax, not citation, so stripping quoted spans hides
+    # every string value in the file -- which silently excused video/segments-presentation/
+    # manifest.json, where the quoted string IS the published narration.
+    return QUOTED.sub(" ", s) if prose else s
+
+files = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+                       capture_output=True, text=True).stdout.split()
+found, bad = set(), []
+for f in files:
+    if skip.match(f):
+        continue
+    p = pathlib.Path(f)
+    # NOT .srt: the caption track that gets uploaded is a published surface, and the first
+    # version of this check skipped it by suffix -- which hid one.
+    if p.suffix in (".png", ".jpg", ".jpeg", ".mp4", ".ico") or not p.exists():
+        continue
+    try:
+        t = p.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        continue
+    for i, line in enumerate(t.splitlines(), 1):
+        # A QUOTED occurrence is a citation, not a claim. The correction has to be able to print the
+        # sentence it is correcting -- README's note above the video link, THE-POPULATION.md, the
+        # check-in card -- and a check that forbids naming the bad sentence forbids retracting it.
+        # Same rule THE MINT COUNT uses for figures, same 300-character bound so an unpaired quote
+        # cannot swallow a section and silence the check. Japanese corner brackets count: STATUS.md
+        # records the defect in Japanese. HTML entities count: the site quotes it as markup.
+        if any(x.search(unquote(line, p.suffix != ".json")) for x in pats):
+            found.add(f)
+            if f not in allowed:
+                bad.append("%s:%d claims a census: %s" % (f, i, line.strip()[:90]))
+
+# THE SECOND HALF, and it is the finding that made this check worth having. The first pass replaced
+# one false sentence with THREE different true ones -- "the three issuer catalogues publish", "these
+# three issuers list", "in web/mints.json" -- and Codex called that the same drift starting again.
+# docs/cwf-2026/THE-POPULATION.md fixes exactly two forms. Anything else is a third.
+drift = re.compile(r"catalogues? publish|issuers? list\b|issuers publish", re.I)
+for f in files:
+    if skip.match(f) or f in ("scripts/docs-consistency.sh", "docs/cwf-2026/THE-POPULATION.md"):
+        continue
+    p = pathlib.Path(f)
+    if p.suffix in (".png", ".jpg", ".jpeg", ".mp4", ".ico") or not p.exists():
+        continue
+    try:
+        t = p.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        continue
+    for i, line in enumerate(t.splitlines(), 1):
+        # Same rule: naming a banned phrasing in order to ban it is not using it.
+        if drift.search(unquote(line, p.suffix != ".json")):
+            bad.append("%s:%d a third phrasing: %s" % (f, i, line.strip()[:80]))
+
+# An entry that no longer carries the claim means the file was re-cut or re-pasted and the reason
+# has expired. Leaving it is how the allowlist stops describing anything.
+for f, why in sorted(allowed.items()):
+    if f not in found:
+        bad.append("%s no longer says it — drop the allowlist entry (%s)" % (f, why))
+
+for b in bad[:10]:
     print("      " + b)
 sys.exit(1 if bad else 0)
 PY

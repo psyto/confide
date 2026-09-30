@@ -2,6 +2,7 @@
 # PRIMARY ISSUANCE, CONFIDENTIALLY — and the gate as an error code rather than a diagram.
 #
 #   RPC=<endpoint> ./scripts/issue-e2e.sh
+#   RPC=<endpoint> SHORT=2000 ./scripts/issue-e2e.sh    # the issuer short-delivers; the check refuses
 #
 # The swap this repository already settles needs two holders whose confidential accounts BOTH
 # already exist. On every one of the 1,992 real mints that is impossible: `autoApproveNewAccounts`
@@ -15,8 +16,20 @@
 #
 # WHAT THIS SHOWS THAT THE SWAP CANNOT. One transaction is built, sent, and REFUSED —
 # `ConfidentialTransferAccountNotApproved`, the error Token-2022 returns when a confidential
-# transfer names a destination the issuer has not signed for. The issuer then signs. **The same
-# transaction is sent again and settles.** Nothing about it changed; the gate did.
+# transfer names a destination the issuer has not signed for. The issuer then signs, and **the same
+# allocation settles: same proof contexts, same accounts, same amounts, one approval later.**
+#
+# Not the same BYTES. It is rebuilt against a fresh blockhash, because the first one is minutes older
+# by then and a stale blockhash is a different failure that would muddle the demonstration. Saying
+# "the identical transaction" would be a claim anybody can check and find false -- Codex, 2026-09-30.
+# What is identical is everything the refusal was about.
+#
+# THE SECOND REFUSAL, and it needs no gate at all. SHORT=<units> builds the issuer's leg for fewer
+# shares than were agreed while the agreed figure stays what it was, and the investor's pre-signing
+# check refuses it. That is the one danger a confidential swap has that a public one does not: the
+# amounts are encrypted, so a party could be asked to sign a transaction whose other leg sends far
+# less than agreed. Until 2026-09-30 this repository answered that with a printed number and a
+# sentence telling the reader to compare it themselves, and then signed.
 #
 # AND THE AUDITOR SLOT STAYS EMPTY, exactly as it is on all 1,992. That is not a shortcut: in
 # primary issuance the issuer IS the sender, so they can already read what they sent and need no
@@ -34,6 +47,9 @@ TREASURY="${TREASURY:-500000}"  # what the issuer holds to allocate from
 ALLOC="${ALLOC:-20000}"         # shares allocated in this subscription
 CASH="${CASH:-5000000}"         # dollars the investor holds
 PAY="${PAY:-3500000}"           # $3.5m for 20,000 shares — $175 a share, agreed off chain
+# What the issuer actually BUILDS its leg for. Equal to the agreed figure unless SHORT says
+# otherwise, which is the whole negative control: one number diverges and nothing else changes.
+SEND_X="${SHORT:-$ALLOC}"
 bold=$'\033[1m'; dim=$'\033[2m'; grn=$'\033[32m'; red=$'\033[31m'; off=$'\033[0m'
 
 ata() { spl-token -C "$1" address --token "$2" --verbose 2>&1 \
@@ -106,13 +122,41 @@ open investor X "$MINT_X" 0 "$DEC_X" no
 echo
 echo "  ${bold}--- both legs' proofs, built before anybody knows whether it will be allowed ---${off}"
 swap_leg issuer   "$W/issuer.json"   "$W/issuer-X-keys.json"   "$MINT_X" "$issuer_X"   "$investor_X" \
-  "$(swap_elgamal "$W/investor-X-keys.json")" "$ALLOC" "$DEC_X" "$W/issuer-ctx.json"
+  "$(swap_elgamal "$W/investor-X-keys.json")" "$SEND_X" "$DEC_X" "$W/issuer-ctx.json"
 swap_leg investor "$W/investor.json" "$W/investor-Y-keys.json" "$MINT_Y" "$investor_Y" "$issuer_Y" \
   "$(swap_elgamal "$W/issuer-Y-keys.json")" "$PAY" "$DEC_Y" "$W/investor-ctx.json"
 
 echo
-echo "  ${bold}--- before signing, the investor reads the allocation addressed to them ---${off}"
-swap_look "$W/investor-X-keys.json" "$W/issuer-ctx.json"
+echo "  ${bold}--- before signing, the investor CHECKS the allocation addressed to them ---${off}"
+# "$ALLOC" is what was agreed off chain, and passing it is what makes this a check rather than a
+# display: swap-check compares and exits non-zero, and `set -e` is on.
+if [ -n "${SHORT:-}" ]; then
+  printf '    %sSHORT=%s — the issuer built this leg for %s shares while %s was agreed.%s\n' \
+    "$red" "$SHORT" "$SHORT" "$ALLOC" "$off"
+  # NOT "the gate is open": at this point in the run it is still shut -- the approval happens after
+  # the check, and in SHORT mode the script never gets there. The refusal below is about the amount
+  # and nothing else, which is the whole point of the control, so it must not borrow the gate's story.
+  printf '    %sNothing else differs. The proofs are valid, and the amount is the only thing wrong.%s\n' \
+    "$dim" "$off"
+  if swap_look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"; then
+    echo >&2
+    echo "  A SHORT LEG PASSED THE CHECK. The investor would have signed for $ALLOC shares and" >&2
+    echo "  received $SHORT. That is the finding, not this script." >&2
+    exit 1
+  fi
+  echo
+  printf '  %s%sREFUSED BEFORE SIGNING.%s %s\n' "$grn" "$bold" "$off"     "No transaction was built, so none was signed and none was sent."
+  # Said precisely, because "nothing is on chain" would be false. swap_leg wrote proof contexts,
+  # which are public, immutable and contain no amount anyone but the two parties can read. What does
+  # not exist is a transfer.
+  printf '  %sThe proof contexts are on chain and hold nothing readable; the transfer does not exist.%s\n' \
+    "$dim" "$off"
+  printf '  %sThe gate refusal is the other control: run without SHORT.%s\n' "$dim" "$off"
+  echo
+  echo "    work dir  $W"
+  exit 0
+fi
+swap_look "$W/investor-X-keys.json" "$W/issuer-ctx.json" "$ALLOC" "$DEC_X"
 
 build() {
   cargo run --quiet -p confide-ct --bin swap-tx -- "$W/issuer.json" "$(bh)" \
@@ -170,7 +214,7 @@ go "the issuer approves it" "$(cargo run --quiet -p confide-ct --bin seizure-cli
   "$W/issuer.json" "$investor_X" "$MINT_X" "$(bh)")"
 
 echo
-echo "  ${bold}--- the same allocation, sent again ---${off}"
+echo "  ${bold}--- the same allocation, rebuilt against a fresh blockhash, sent again ---${off}"
 build
 go "the allocation" "$(cat "$W/issue.b64")"
 
@@ -191,7 +235,7 @@ pub() { local d a p o; read -r d a p o < <(ct "$1"); echo "$p"; }
 printf '    %spublic balances: issuer stock %s, investor stock %s, investor cash %s, issuer cash %s%s\n' \
   "$dim" "$(pub "$issuer_X")" "$(pub "$investor_X")" "$(pub "$investor_Y")" "$(pub "$issuer_Y")" "$off"
 echo
-echo "  ${grn}${bold}An allocation was refused, the issuer signed, and the identical transaction settled."
+echo "  ${grn}${bold}An allocation was refused, the issuer signed, and the same allocation settled."
 echo "  The auditor slot was empty throughout — as it is on all 1,992 — because in primary issuance"
 echo "  the issuer is the sender and needs no key to read what they sent.${off}"
 echo

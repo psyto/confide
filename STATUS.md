@@ -942,3 +942,241 @@ GitHub の About は 09-28 に適用済み（518,744 / 2 / none approved）。
 **0n. `docs/cwf-2026/CLAUDE-CODE-BRIEF.md` が未追跡のまま。** founder が 09-27 朝に書いたもの。
 今日の結論（Codex の「1製品」判定、母集団の訂正、意図の推論の除去）で内容が変わっているので、
 **書き直してコミットするか、消すか**が未決。
+
+## 2026-09-30 — 母集団の主張を31ファイルで狭めた。Codex は15日前に同じことを言っていた
+
+レビュー全文は [`docs/reviews/2026-09-30-the-population.md`](docs/reviews/2026-09-30-the-population.md)、
+依頼文は `docs/reviews/payloads/` に同名。語法と理由は
+[`docs/cwf-2026/THE-POPULATION.md`](docs/cwf-2026/THE-POPULATION.md) の1箇所だけに置いた。
+
+**0o. 「every tokenized-equity mint on Solana」は 38 ファイル・45 箇所にあった。**
+STATUS 0k は `scripts/slot-scan.sh:3` の**1行**として記録していた。**31 直し、7 は意図して残した。**
+
+**最初に数えたときは 24 だった。** 正規表現が `every|all` で始まる形しか知らず、
+**公開サイト・README の見出し・scan 自身が print する行・14 個の packet を生成するスクリプト**を
+通り過ぎていた。**数え方が、数えようとしている盲点をそのまま持っていた。** 4つとも Codex の指摘。
+
+**0p. これは新しい誤りではない。Codex が 2026-09-15 に指摘している。**
+`docs/reviews/2026-09-15-codex-docs-quality.md:31` —
+*"`slot-scan.sh` checks every mint in `web/mints.json`; it does not discover the universe."*
+そのとき入った修正は **`docs/ONCHAIN.md` と `README.md` の注釈2つだけ**。しかもどちらも
+「これは Solana の全数調査ではない」と書いたまま、**その3行上にある反対のことを言う見出しの下に
+置かれた。** 見出しと注釈を突き合わせる検査は無かった。**偽の見出しの下の但し書きは訂正ではない。**
+主張は自分の撤回より15日長く生き延びた。
+
+**0q. 語法は2つだけ。** コード・ヘッダ・生成物は **`every mint in web/mints.json`**、
+散文は **`from three issuers' catalogues`**（動詞を置かない —— *publish* / *list* は現在形で、
+9月のスナップショットは今日のカタログの状態を主張できない）。
+**最初の修正は偽の1文を「真の3通り」に置き換えていて、Codex はそれを「同じ drift の始まり」と
+判定した。** 3通り目を落とす検査を入れた（下記）。
+***Not a sample* は限定形でだけ残す** —— *"every entry in `web/mints.json`, not a sample of that
+file."* 単独では「部分集合ではない」と読めてしまい、実際には部分集合。裸の語は消した。
+
+**0r. 日付は「retrieved」ではなく「committed 2026-09-19」。** `web/mints.json` に取得時刻が
+無かったので、git のコミット日を取得時刻のように書いていた。**`refresh-mints.sh` が
+`web/mints-source.json`（`generated_utc`・3つの API URL・書いたバイト列の sha256）を
+出すようにした**ので、次の refresh から日付は自分を名乗る。発行体ごとの件数は写さない（導出できる）。
+
+**0s. `refresh-mints.sh` は検算の前に書いていた。** 8本の assert が `json.dump` の**後ろ**に
+あったので、**片方の API が空ページを返したら web/mints.json を先に上書きして、後から文句を言う**
+—— このスクリプトがまさに防ぐために書かれた失敗で、`STATUS.md` を0バイトにしたのと同じ形。
+**検算 → 組み立て → 最後に書く**に直した。
+
+**0t. カタログは既に動いている。1,992 → 2,193（+201）。** `DRY=1 ./scripts/refresh-mints.sh` で
+確認（Backed 828→1,025、Backpack 1,156→1,160、PreStocks 8）。**refresh していない。**
+`slot-scan.sh` は新しい 201 mint を一度も読んでいないので、**refresh だけすると
+「限定された真の数字」を「広い未測定の数字」に取り替える** —— 今日直したのと同じ誤り。
+再測定は founder の private RPC が要る（公開エンドポイントはこの量で 429）。
+**DRY モードを足したのは、この問いを聞くのに測定を上書きする必要があったから。**
+
+**0u. 検査 `THE POPULATION`。** 3つの形を見る: ①`every|all|the whole … on Solana`
+②**`<数> tokenized stocks on Solana` —— 数も量化子**（行の前方の日付が量化子の代わりをしないよう、
+数は名詞の隣に固定）③`whole asset class`（packet 生成器の言い方で、母集団を名乗っていなかった）。
+加えて**3通り目の言い換え**（`catalogues publish` / `issuers list` / `issuers publish`）も落とす。
+走査対象は `git ls-files --cached --others --exclude-standard` —— **追跡と未追跡の両方**。
+`.srt` も読む。`docs/reviews/` は読まない。
+**引用は主張ではない** —— 二重引用符・`&ldquo;…&rdquo;`・鍵括弧・**markdown の code span**
+（いずれも300字上限、対を左から非貪欲に消すので、無関係な2つの span に挟まれた本物の主張は残る）。
+訂正文は訂正対象を印字できなければならず、**この節自身が検査のパターンを code span で引用している。**
+**ただし `.json` では引用を外さない** —— そこでは `"` は構文で、外すと `manifest.json` の
+**公開済みナレーションが丸ごと見えなくなる**。言い換えの検査にも同じ規則を当てた
+（禁じるために名前を挙げるのは、使うことではない）。
+allowlist は**パスではなく理由**を持ち、**項目が主張を持たなくなったらそれも落ちる**。
+
+**わざと8通り壊して確認した**: ①live な散文に書き戻す ②JSON の文字列値に書く
+③凍結ファイルから消す ④未追跡の新規ファイル ⑤3通り目の言い換え
+⑥**無関係な2つの code span に挟まれた主張**（引用扱いされず落ちる）
+⑦**引用付きは落ちてはいけない**（落ちない）⑧**code span 付きも落ちてはいけない**（落ちない）。
+
+**この検査は自分で4つの穴に落ちた。** ①自分の**説明コメント**に当たった ②`.srt` を拡張子で
+読み飛ばし、**納品済み字幕トラック**が主張を持ったまま見えていなかった ③引用外しを JSON にも
+適用して、**公開済みナレーションの manifest を見逃した** ④引用に code span を数えておらず、
+**この STATUS の説明文自身**を主張として報告した。
+**②③は「数え直す」までは出てこなかった。「見えない」と「無い」は別。**
+入れた瞬間に `docs/ONCHAIN.md:8` の言い換えを1件捕まえた。
+
+**0v. 凍結している7面は直さない。** `_submission/full.md`（Stocklana、09-25 に窓が閉じた）、
+`_submission/short-alternatives.txt`（却下稿を逐語で保持）、`docs/cwf-2026/x-post.txt`（投稿済み）、
+`video/CWF-PRESENTATION.md` 場面2・`video/captions-20260923.srt`・
+`video/segments-presentation/{LINES.md,manifest.json}`（**収録・公開済みのナレーションと字幕**）。
+
+**動画は見る審査員全員に偽の1文を言い続ける。** Codex の答えは「consistency check を赤にして
+再収録を強制するのではなく、**審査員が着地する場所から訂正に届くようにする**」。
+**README の先頭の動画リンクの直下**と **`web/index.html` の動画の直下**に訂正を置いた。
+YouTube の説明文（編集可）も直した。**動画下の訂正コメントの固定と再収録は founder の手。**
+
+**`scripts/x-post.sh:3` は凍結ファイルへの上書きを指示していた。** *`./scripts/x-post.sh >
+docs/cwf-2026/x-post.txt`* —— **走らせれば「何が投稿されたか」の唯一の記録が消える。**
+使い方の行を書き換え、テンプレート側だけ直した（次の投稿は正しく、投稿済みの記録は残る）。
+
+**0w. GitHub の About が赤になった（新規、founder の手）。** 生成器を直した
+—— *"All 1,992 such mints"* は Solana の全数調査と読めていた。今は
+*"1,992 mints from three issuers' catalogues"*、口座側も *"of 518,744 accounts scanned"*。
+**325字（上限 335、余白 10）** —— 限定語のために2箇所を縮めた。
+**`./scripts/github-about.sh --apply` が要る。これは repo の外にある唯一の面。**
+
+**founder の手は3つ。** ①`cwf-form.md` と `youtube-paste.txt` の貼り直し（**両方とも今日の
+修正が入っている**）→ `./scripts/pasted.sh <field>` ②`./scripts/github-about.sh --apply`
+③動画下の訂正コメント（再収録は CWF の2本と一緒に）。
+
+**0x. `kamino-verdict.sh` は数日間、走れない状態だった。** `$TMPDIR` の klend クローンを
+`[ ! -d "$SRC/.git" ]` で判定していたが、macOS は `$TMPDIR` を古さで掃除する ——
+09-30 時点で `.git/` には**空の `hooks/` と `info/` だけ**が残っており、
+**ディレクトリは在るのでテストは通り、続く git が全部 `not a git repository` で死んでいた**
+（exit 128）。**ディレクトリの存在ではなく、git に読めるかを聞く**ように直した
+（`git rev-parse --git-dir`、失敗したら消して clone し直す）。
+**派生物ではなく実物を見る、の同じ型。** 直した上で走らせた結果は**12項目すべて緑**、
+pin した6行は動いておらず、判定は `REQUIRES INTEGRATION` のまま。
+
+**0y. `docs/cwf-2026/CLAUDE-CODE-BRIEF.md` は未追跡のまま（0n の続き）。** 加えて
+**§5 の "Known verification baseline — 2026-09-27" が今日の時点で古い**: 3件挙げている
+うち `video/CHECKIN-2.md` の録画は在り、`github-about.sh` の `dim: unbound variable` も
+出ない。**残っているのは貼り直しだけ。** 書き直すか消すかは founder の判断で、未決のまま。
+
+`cargo test` 25、`docs-consistency.sh` の赤は上の2件だけ。`wire-check.sh` 緑、
+`kamino-verdict.sh` 緑、`python3 video/pace.py` 3本とも一致。
+
+## 2026-09-30（2）— 署名前の「検査」は検査ではなかった
+
+**founder の判断: 貼り直し等は最後にやり直すことになるので、実装計画と実装を先に。** 正しい。
+その上で、読んでみて優先順位が変わった。
+
+**0z. `issue-e2e.sh` は brief §2 の 1→7 を既に1本で通している。** 想定していた穴は無かった:
+発行体の方針＝手動承認、保有者が口座を設定、**承認前は on-chain で拒否**（`Custom(24)`、
+署名つきで引用可能）、発行体が承認、秘匿で割当、投資家が署名前に自分宛の額を復号、公開残高は 0。
+**本当の穴は検証ステップの方だった。**
+
+**0aa. `swap-check` は復号した額を「表示」していただけで、何も比較していなかった。**
+合意額を引数で取らず、`swap_look` の呼び出し元4本（`issue-e2e` / `swap-e2e` / `swap-settle` /
+`swap-sign`）は全部そのまま署名に進む。画面には数字と *"If that is not the amount you agreed,
+do not sign"* という文が並ぶだけ。**秘匿スワップの唯一の危険に対する答えが「人間が数字を読む」だった。**
+深夜の1人の慎重な運用者には実在の答えだが、ソフトウェアの性質ではない。
+
+**直した。** 第3引数で合意額を受け、**比較は終了コード**。呼び出し元は全部 `set -e` なので、
+合意と違う額を運ぶ脚はスクリプトを未署名で止める。
+
+**0ab. そして期待値の出所が、比較に意味があるかを決めていた。** 単位は offer JSON の中を
+往復する。**少なく送りたい相手は、脚と記載単位を同じファイルで一緒に下げられる** —— その
+ファイルを食わせた検査は通り、しかも検証のように見える。**Codex が 2026-09-22 に見つけたのと同じ形**
+（「ファイルに書かれた context を復号して、別の blob に署名していた」）。
+
+so: offer に **id** を付け、**両当事者が合意した時点で自分のマシンに terms を pin する**
+（`swap-offer.sh` と `swap-accept.sh` が `terms-<id>.json` を書く、証明が存在する前に）。
+step 3 / 4 は pin と比べ、**渡されたファイルが条件を書き換えていれば大声で拒否**する。
+pin が無い場合は**「この数字は相手の申告で、あなたの記録ではない」と赤で言う**（黙って落とさない）。
+
+**0ac. 検査を2つ足した。RPC が無くても落ちる方に作った。**
+
+| | |
+|---|---|
+| `cargo test -p confide-ct --bin swap-check` | **10件。** 合成した proof context に対して、1単位不足・過払い・別人宛・proof type 違い・切り詰め。`compare` を外すと**3件落ちる** |
+| `./scripts/swap-pin-check.sh` | **14件、チェーン不要。** 条件書き換え・別 mint・単位の注入・pin 未使用。5通りわざと壊して全部落ちることを確認 |
+
+**この自作検査も自分の穴に落ちた。** ①`swap_look` の到達をシェル変数で記録していたが、
+`$(...)` は子プロセスなので**親では常に空 —— 拒否テスト2件が空振りで通っていた**。ファイルに変えた。
+②`swap_mint_decimals` のスタブを 8 にしていたので、**pin 経由かチェーン経由かが区別できなかった**。
+99 にして区別可能にし、実際に壊して落ちることを確認した。
+
+**0ad. `SHORT=` を足した —— 2つ目の負の対照。** `SHORT=2000 ./scripts/issue-e2e.sh` は
+発行体の脚を合意 20,000 株に対し 2,000 株で組む。**他は何も変えない。** 投資家の検査が署名前に拒否し、
+スクリプトは「証明 context はチェーン上にあり誰にも読めない、**transfer は存在しない**」と
+正確に言って終わる。**通ってしまったら非ゼロで落ちる**（「それは発見であって、このスクリプトではない」）。
+
+**0ae. `THE-SWAP.md` は「両方向の拒否は checked」と書いていた。検査は1つも無かった。**
+`swap_check.rs` に対するテストはゼロ。**入っていない検査を入れたと報告する**の型。今は10件あり、
+その2方向はそのうちの2件。日付つきの訂正として `THE-SWAP.md` に書いた。
+
+**0af. テストを足したら `_submission/full.md` が赤になった。** 検査が**凍結した提出文に
+「今日のテスト数と一致すること」を要求していた**ため。編集窓は 09-25 に閉じており、
+**この赤は「もうテストを書かない」以外では絶対に消えない。**
+`healthcheck.sh:239` が既に *"A red that no action can clear is a red that teaches everyone to skip"*
+と書いている。**過少申告は許し（投稿済み x-post と同じ裁定）、過大申告は落とす**に変えた。
+3通り壊して確認: 過大・片側だけ過大・数字の消失。README は 60 → **70** に更新。
+
+**0ag. `kamino-verdict.sh` の修正（0x）と合わせて、赤は変わらず2件** ——
+貼り直しと `github-about.sh --apply`。どちらも founder の手で、**提出直前にやり直すもの。**
+
+**まだ無いもの（次）。** brief §3 P0 の負の対照のうち **承認権限が違う鍵**と**2つ目の署名が無い**、
+それと claim ledger。**RPC が無いのでこのセッションでは devnet 実走ができていない** ——
+`swap-check` の比較と pin の拒否は合成データとチェーン不要の検査で証明したが、
+**`SHORT=` の実走は未確認**。founder の endpoint が要る。
+
+## 2026-09-30（3）— Codex が2つの bypass を見つけた。出すな、が判定
+
+レビュー全文 [`docs/reviews/2026-09-30-the-check-that-was-a-display.md`](docs/reviews/2026-09-30-the-check-that-was-a-display.md)。
+**判定: bilateral の pinning はまだ出すな。** 全部実ファイルで確認して採った。
+
+**0ah. bypass 1 —— id を消せば「未 pin」経路に落とせた。** id は**返ってきたファイルから**読んでいた。
+相手は `id` を消し、`offerer.want.units` を下げ、その額の context を渡せばよい。
+**pin が無ければ赤い警告を出して、そのファイルの数字と比べて通していた。**
+警告は、これが取り除こうとしていた制御そのもの（「数字に気づけ」）。
+→ **未 pin は拒否**。`CONFIDE_UNPINNED=1` だけが通り道で、**名前がある**ので選択が記録に残る。
+
+**0ai. bypass 2 —— 出す側の脚を pin していなかった。これが重い。** pin は `want` だけだった。
+`swap-settle.sh` は `offerer.give.units` を**返ってきた accept.json から取って自分の脚を組む**。
+**受け取り側の検査は通ったまま、acceptor が 100 → 1,000 に書き換えれば offerer は10倍を渡す。**
+**着金を検査するのは取引の半分でしかない。** これは私の変更が作った穴ではなく、元からあって、
+pin が `want` だけだったので塞がらなかった。
+→ pin は**canonical な取引全体**（id・offerer・両脚の mint / account / units / decimals）。
+step 3 は**全フィールドを照合してから、渡す額を pin から読む**。
+
+**0aj. 転送が空白区切りで、検証が無かった。** 3本が各々 `python3` で JSON を読んで `read -r` に
+渡していた。**値に空白が1つ入ると以降のフィールドが1つずつずれる** —— mint が units の変数に入り、
+エラーは出ず、offerer はその枠に入った何かから脚を組む。
+→ `scripts/lib/swapjson.py` 1本に統合し、**印字する前に名前ごとに検証**する
+（address は base58、units は u64 内の非負整数、id は16桁hex、ElGamal は base64、
+**規則の無い leaf 名は通さず落とす**）。3つのコピーも消えた。
+
+**0ak. `$W` が offer ごとに分かれていなかった。** `accept-ctx.json` / `their-ctx.json` /
+`settle-ctx.json` / `half.b64` / `unsigned.b64` が固定名で、`$W` は cluster ごとに共有。
+**2件同時、または再開すると互いを上書きし、上書きされたものが次のステップで署名される。**
+→ `swap_session <id>` で offer ごとのディレクトリ。`swap-abandon.sh` は offer id も取る。
+（`swap_session` は最初「解決しただけで mkdir する」ものを書いてしまい、
+**探すと空のセッションができた**。`create` を明示する形に直した。）
+
+**0al. 私が今日入れた破壊的なバグ。** `kamino-verdict.sh` の修理（0x）で
+**`rm -rf "$SRC"` を書き、`$SRC` は `KLEND_DIR` が設定されていればそれ** ——
+`KLEND_DIR=/some/work/tree ./scripts/kamino-verdict.sh` でそのツリーが消える。
+**キャッシュの修理が、他人が選んだパスに触れられてはいけない。**
+自分のキャッシュ（既定パス）だけ消し、override は exit 2 で拒否。**実際に消えないことを確認した。**
+
+**0am. 偽だった言い方を3つ直した。**
+①`issue-e2e.sh` の *"the identical transaction settled"* —— **fresh blockhash で組み直すのでバイト列は別物**。
+「同じ割当（同じ context・口座・金額、承認が1つ増えただけ）」に。
+②SHORT モードが承認**前**に *"the gate is open"* と言っていた。この対照は金額だけの話なので、門の物語を借りてはいけない。
+③README:156 が**2引数の呼び出し（比較しない形）を教えていた** —— 生きた安全面。第3引数付きに。
+④「呼び出し元4本が結果を無視していた」は不正確。**非ゼロは尊重していた。非ゼロが無かった。**
+4箇所の文言を直した。
+
+**0an. Codex が正しいと認めた判断1つ。** 0af の凍結提出文の検査（過少申告は許し過大は落とす）は
+*"sound; it is not self-serving weakening"*。`full.md` の sha256 は `pasted.json` と一致しており、
+別の検査がそれを見ている。
+
+**検査は21件（`swap-pin-check.sh`、チェーン不要）＋ Rust 10件。**
+新しい保証を**全部わざと壊して落ちることを確認**した: 未 pin 通過・片脚だけ照合・口座を見ない・
+非原子的な pin 書き込み・offer file の id 不一致・検証器の迂回・フィールドずれ・refusal 無視。
+
+**残っている Codex の指摘（未着手）。** ①Rust の合成 fixture は**自分が読むオフセットを自分で書いている**
+—— SDK が組んだ proof context の fixture が要る（回帰被覆としては弱い） ②devnet 実走は
+**release / demo のゲート**にすべき ③`chmod 700` のエラー抑制。
+**RPC が無いので実走は依然できていない。**

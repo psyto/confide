@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # THE WAY OUT — reclaim the rent when a swap does not happen.
 #
-#   ./scripts/swap-abandon.sh <your-keypair.json> [accept-ctx.json]
+#   ./scripts/swap-abandon.sh <your-keypair.json> [accept-ctx.json | <offer-id>]
 #
 # Whoever accepts a two-party swap pays first. They build their own proofs and put them on chain
 # BEFORE either signature exists, because the other side has to be able to read the amount before
@@ -25,9 +25,20 @@ R="${RPC:-https://api.devnet.solana.com}"
 W="${WORK:-$(swap_workdir)}"
 bold=$'\033[1m'; dim=$'\033[2m'; off=$'\033[0m'
 
-KEY="${1:?usage: swap-abandon.sh <keypair.json> [ctx.json]}"
-CTX="${2:-$W/accept-ctx.json}"
-[ -f "$CTX" ] || { echo "  $CTX is not there — pass the ctx.json of the leg you built" >&2; exit 1; }
+KEY="${1:?usage: swap-abandon.sh <keypair.json> [ctx.json | offer-id]}"
+# An offer id resolves to that offer's session directory. Contexts stopped living at one fixed name
+# on 2026-09-30, because two offers in flight overwrote each other's -- and the file that gets
+# overwritten is the one the next step signs.
+case "${2:-}" in
+  "")                CTX="$W/accept-ctx.json" ;;
+  *[!0-9a-f]*|"")    CTX="$2" ;;
+  *)                 CTX="$(swap_session "$2")/accept-ctx.json" ;;
+esac
+if [ ! -f "$CTX" ]; then
+  echo "  $CTX is not there — pass the ctx.json of the leg you built, or its offer id." >&2
+  ls -1d "$W"/offer-*/ 2>/dev/null | sed 's/^/    found a session at /' >&2
+  exit 1
+fi
 ME=$(solana-keygen pubkey "$KEY")
 
 echo

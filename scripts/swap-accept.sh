@@ -24,17 +24,12 @@ KEY="${1:?usage: swap-accept.sh <keypair.json> offer.json}"
 OFFER="${2:?usage: swap-accept.sh <keypair.json> offer.json}"
 ME=$(solana-keygen pubkey "$KEY")
 
-read -r O_PAYER O_GIVE_MINT O_GIVE_ACC O_GIVE_UNITS O_WANT_MINT O_WANT_ACC O_WANT_UNITS O_ELG < <(
-python3 - "$OFFER" <<'PY'
-import json, sys
-d = json.load(open(sys.argv[1]))
-assert d.get("kind") == "confide-swap-offer", "not a confide swap offer"
-o = d["offerer"]
-print(o["payer"], o["give"]["mint"], o["give"]["account"], o["give"]["units"],
-      o["want"]["mint"], o["want"]["account"], o["want"]["units"],
-      o["want"]["elgamal_pubkey_b64"])
-PY
-)
+read -r O_PAYER O_GIVE_MINT O_GIVE_ACC O_GIVE_UNITS O_WANT_MINT O_WANT_ACC O_WANT_UNITS O_ELG OFFER_ID < <(
+python3 scripts/lib/swapjson.py "$OFFER" confide-swap-offer \
+  offerer.payer offerer.give.mint offerer.give.account offerer.give.units \
+  offerer.want.mint offerer.want.account offerer.want.units \
+  offerer.want.elgamal_pubkey_b64 id
+) || exit 1
 [ "$O_PAYER" != "$ME" ] || { echo "  that is your own offer" >&2; exit 2; }
 
 ata_of() { spl-token -u "$R" address --token "$1" --owner "$2" --verbose 2>/dev/null \
@@ -58,11 +53,27 @@ done
   echo "  building your leg — several transactions, a few minutes, nothing moves"
 } >&2
 
+# BEFORE the proofs, because this is the record of what was agreed and it must not be written
+# after anything that could have changed the terms.
+# The SAME canonical object the offerer pinned: the offerer's own give and want, which is what you
+# are agreeing to when you accept. Your own legs are the mirror of it, so pinning both sides twice
+# would be two spellings of one fact.
+if [ "$OFFER_ID" = "-" ]; then
+  echo "  this offer carries no id, so there is nothing to key a local record of your terms by." >&2
+  echo "  Step 4 will REFUSE unless CONFIDE_UNPINNED=1. Ask them to re-issue with a current" >&2
+  echo "  ./scripts/swap-offer.sh, which writes one." >&2
+else
+  swap_pin_terms "$OFFER_ID" "$OFFER" \
+                 "$(swap_mint_decimals "$O_GIVE_MINT")" "$(swap_mint_decimals "$O_WANT_MINT")"
+  echo "  terms pinned locally at $W/terms-$OFFER_ID.json — step 4 compares BOTH legs against it" >&2
+fi
+
+S=$(swap_session "$OFFER_ID" create)
 swap_leg accept "$KEY" "$KEYS_SEND" "$MY_GIVE_MINT" "$MY_GIVE_ACC" "$O_WANT_ACC" \
-         "$O_ELG" "$MY_GIVE_UNITS" "$DEC" "$W/accept-ctx.json" >&2
+         "$O_ELG" "$MY_GIVE_UNITS" "$DEC" "$S/accept-ctx.json" >&2
 
 python3 - "$OFFER" "$ME" "$MY_GIVE_ACC" "$MY_WANT_ACC" "$(swap_elgamal "$KEYS_RECV")" \
-            "$W/accept-ctx.json" <<'PY'
+            "$S/accept-ctx.json" <<'PY'
 import json, sys, time
 offer, me, give_acc, want_acc, elg, ctxf = sys.argv[1:7]
 d = json.load(open(offer))

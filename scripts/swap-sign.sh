@@ -21,25 +21,35 @@ KEY="${1:?usage: swap-sign.sh <keypair.json> settle.json}"
 SET="${2:?usage: swap-sign.sh <keypair.json> settle.json}"
 ME=$(solana-keygen pubkey "$KEY")
 
-read -r A_PAYER A_WANT_MINT A_WANT_ACC O_PAYER O_GIVE_ACC O_GIVE_MINT O_WANT_ACC A_GIVE_ACC A_GIVE_MINT < <(python3 - "$SET" "$W" <<'PY'
+read -r A_PAYER A_WANT_MINT A_WANT_ACC O_PAYER O_GIVE_ACC O_GIVE_MINT O_WANT_ACC A_GIVE_ACC A_GIVE_MINT A_WANT_UNITS OFFER_ID < <(
+python3 scripts/lib/swapjson.py "$SET" confide-swap-settle \
+  acceptor.payer acceptor.want.mint acceptor.want.account \
+  offerer.payer offerer.give.account offerer.give.mint \
+  offerer.want.account acceptor.give.account acceptor.give.mint \
+  acceptor.want.units id
+) || exit 1
+
+# The two files the old inline block wrote on its way past. Kept explicit: a reader should be able to
+# see that the context and the half-signed transaction come out of the file they were handed.
+S=$(swap_session "$OFFER_ID" create)
+python3 - "$SET" "$S" <<'PY'
 import json, sys
-d = json.load(open(sys.argv[1])); W = sys.argv[2]
-assert d.get("kind") == "confide-swap-settle", "not a half-signed settle"
-o, a = d["offerer"], d["acceptor"]
-json.dump(o["context"], open(W + "/their-ctx.json", "w"))
-open(W + "/half.b64", "w").write(d["transaction"]["half_signed_base64"])
-print(a["payer"], a["want"]["mint"], a["want"]["account"],
-      o["payer"], o["give"]["account"], o["give"]["mint"],
-      o["want"]["account"], a["give"]["account"], a["give"]["mint"])
+d = json.load(open(sys.argv[1])); S = sys.argv[2]
+json.dump(d["offerer"]["context"], open(S + "/their-ctx.json", "w"))
+open(S + "/half.b64", "w").write(d["transaction"]["half_signed_base64"])
 PY
-)
 [ "$A_PAYER" = "$ME" ] || { echo "  this was accepted by $A_PAYER, not by you" >&2; exit 2; }
 KEYS_RECV="$W/$(echo "$A_WANT_MINT" | cut -c1-8)-keys.json"
-[ -f "$W/accept-ctx.json" ] || { echo "  $W/accept-ctx.json is missing — this is not the machine that ran swap-accept.sh" >&2; exit 1; }
+[ -f "$S/accept-ctx.json" ] || { echo "  $S/accept-ctx.json is missing — this is not the machine that ran swap-accept.sh" >&2; exit 1; }
 
 echo
 echo "  ${bold}THE LEG YOU ARE BEING ASKED TO SIGN${off}"
-swap_look "$KEYS_RECV" "$W/their-ctx.json"
+# This is the irreversible step, so the expectation must not come from the file the offerer handed
+# back. It comes from the pin swap-accept.sh wrote on this machine before any proof existed.
+# "give" because the acceptor receives what the offerer gives. The canonical terms are the offerer's
+# two legs, pinned at accept time from the offer that was inspected; this compares every field of
+# them against the settle.json that came back before reading the expected amount out of the pin.
+swap_look_pinned "$KEYS_RECV" "$S/their-ctx.json" "$OFFER_ID" "$SET" give
 echo
 
 # THE BINDING. Without this the step above was theatre: it decrypted an amount out of a context
@@ -49,12 +59,12 @@ echo
 # So rebuild the transaction from what you trust -- YOUR leg, which you built, and the context you
 # just decrypted -- and compare the whole message. Anything else refuses.
 echo "  ${bold}IS IT THE TRANSACTION YOU JUST CHECKED?${off}"
-cargo run --quiet -p confide-ct --bin swap-tx -- verify "$W/half.b64" "$O_PAYER" \
-  "$O_PAYER" "$W/their-ctx.json"  "$O_GIVE_ACC" "$A_WANT_ACC" "$O_GIVE_MINT" \
-  "$ME"      "$W/accept-ctx.json" "$A_GIVE_ACC" "$O_WANT_ACC" "$A_GIVE_MINT" \
-  2>"$W/verify.err" || { cat "$W/verify.err"; echo
+cargo run --quiet -p confide-ct --bin swap-tx -- verify "$S/half.b64" "$O_PAYER" \
+  "$O_PAYER" "$S/their-ctx.json"  "$O_GIVE_ACC" "$A_WANT_ACC" "$O_GIVE_MINT" \
+  "$ME"      "$S/accept-ctx.json" "$A_GIVE_ACC" "$O_WANT_ACC" "$A_GIVE_MINT" \
+  2>"$S/verify.err" || { cat "$S/verify.err"; echo
       echo "  ${red}Nothing has been signed. Nothing has happened.${off}"; exit 1; }
-cat "$W/verify.err"
+cat "$S/verify.err"
 
 # And that the blockhash has not expired. A stale one is a failed send rather than a theft, but
 # finding out here beats finding out from the cluster.
@@ -63,7 +73,7 @@ cat "$W/verify.err"
 # the message by hand and got the offset wrong -- recent_blockhash sits after the account-key
 # array, not after the header -- which would have read 32 bytes of a pubkey and called it a
 # blockhash. Two parsers of one format is one too many.
-BHX=$(grep -aoE 'blockhash [1-9A-HJ-NP-Za-km-z]{32,44}' "$W/verify.err" | awk '{print $2}' | head -1)
+BHX=$(grep -aoE 'blockhash [1-9A-HJ-NP-Za-km-z]{32,44}' "$S/verify.err" | awk '{print $2}' | head -1)
 if [ -n "$BHX" ]; then
   VALID=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"isBlockhashValid\",\"params\":[\"$BHX\",{\"commitment\":\"confirmed\"}]}" \
           | python3 -c "import sys,json;print(json.load(sys.stdin).get('result',{}).get('value'))" 2>/dev/null)
@@ -72,13 +82,13 @@ if [ -n "$BHX" ]; then
 fi
 echo
 
-cargo run --quiet -p confide-ct --bin swap-tx -- sign "$W/half.b64" "$KEY" \
-  > "$W/full.b64" 2>"$W/sign2.err"
-grep -aE "signatures present" "$W/sign2.err" || true
+cargo run --quiet -p confide-ct --bin swap-tx -- sign "$S/half.b64" "$KEY" \
+  > "$S/full.b64" 2>"$S/sign2.err"
+grep -aE "signatures present" "$S/sign2.err" || true
 
 echo
 echo "  ${bold}--- ONE transaction, two confidential transfers, two signatures ---${off}"
-go "the swap" "$(cat "$W/full.b64")"
+go "the swap" "$(cat "$S/full.b64")"
 echo
 printf '  %sDelivery and payment happened in the same transaction. Neither could occur without the\n' "$grn"
 printf '  other, and nothing stood between you. Apply the incoming balance with your own key:%s\n' "$off"

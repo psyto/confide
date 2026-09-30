@@ -21,48 +21,73 @@ KEY="${1:?usage: swap-settle.sh <keypair.json> accept.json}"
 ACC="${2:?usage: swap-settle.sh <keypair.json> accept.json}"
 ME=$(solana-keygen pubkey "$KEY")
 
-read -r O_PAYER O_GIVE_MINT O_GIVE_ACC O_GIVE_UNITS O_WANT_MINT O_WANT_ACC A_PAYER A_GIVE_ACC A_WANT_ACC A_ELG < <(
-python3 - "$ACC" <<'PY'
-import json, sys
-d = json.load(open(sys.argv[1]))
-assert d.get("kind") == "confide-swap-accept", "not an accepted offer"
-o, a = d["offerer"], d["acceptor"]
-print(o["payer"], o["give"]["mint"], o["give"]["account"], o["give"]["units"],
-      o["want"]["mint"], o["want"]["account"],
-      a["payer"], a["give"]["account"], a["want"]["account"],
-      a["want"]["elgamal_pubkey_b64"])
-PY
-)
+read -r O_PAYER O_GIVE_MINT O_GIVE_ACC O_GIVE_UNITS O_WANT_MINT O_WANT_ACC A_PAYER A_GIVE_ACC A_WANT_ACC A_ELG O_WANT_UNITS OFFER_ID < <(
+python3 scripts/lib/swapjson.py "$ACC" confide-swap-accept \
+  offerer.payer offerer.give.mint offerer.give.account offerer.give.units \
+  offerer.want.mint offerer.want.account \
+  acceptor.payer acceptor.give.account acceptor.want.account \
+  acceptor.want.elgamal_pubkey_b64 offerer.want.units id
+) || exit 1
 [ "$O_PAYER" = "$ME" ] || { echo "  this offer was made by $O_PAYER, not by you" >&2; exit 2; }
+S=$(swap_session "$OFFER_ID" create)
 python3 -c "
-import json;d=json.load(open('$ACC'));json.dump(d['acceptor']['context'],open('$W/their-ctx.json','w'))"
+import json,sys;d=json.load(open(sys.argv[1]));json.dump(d['acceptor']['context'],open(sys.argv[2],'w'))" \
+  "$ACC" "$S/their-ctx.json"
 
-DEC=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$O_GIVE_MINT\",{\"encoding\":\"jsonParsed\"}]}" \
-      | python3 -c "import sys,json;print(json.load(sys.stdin)['result']['value']['data']['parsed']['info']['decimals'])")
+# THE TERMS, BEFORE ANYTHING IS BUILT FROM THEM.
+#
+# What you GIVE is not a detail of their reply. `O_GIVE_UNITS` above came out of the accept.json the
+# acceptor handed back, and the leg below is built from it: an acceptor who changes
+# offerer.give.units from 100 to 1,000 while paying exactly the agreed amount gets a correct
+# received-leg check and ten times the asset. Checking what arrives is half a trade. Codex,
+# 2026-09-30.
+#
+# So every canonical field is compared against the pin first, and what is given is then read OUT of
+# the pin rather than out of their file.
+if PIN=$(swap_read_terms "$OFFER_ID"); then
+  swap_verify_terms "$OFFER_ID" "$ACC" || { echo "  Nothing has been signed." >&2; exit 1; }
+  read -r O_GIVE_UNITS DEC < <(python3 -c "
+import json,sys
+g=json.load(open(sys.argv[1]))['offerer']['give']
+print(g['units'], g['decimals'])" "$PIN")
+  echo "  terms match the pin at $PIN — giving $O_GIVE_UNITS, read from your own record" >&2
+elif [ "${CONFIDE_UNPINNED:-}" = 1 ]; then
+  echo "  ${red}!${off} CONFIDE_UNPINNED=1 — the amount you are about to GIVE ($O_GIVE_UNITS) comes" >&2
+  echo "    from the file they handed back, not from a record this machine wrote." >&2
+  DEC=$(swap_mint_decimals "$O_GIVE_MINT")
+else
+  echo "  ${red}✗${off} NO PINNED TERMS for offer id '$OFFER_ID'." >&2
+  echo "    Both the amount you would give and the amount you would receive would come from the" >&2
+  echo "    file your counterparty handed back. Run step 1 on this machine, or set" >&2
+  echo "    CONFIDE_UNPINNED=1 to proceed unprotected. Nothing has been signed." >&2
+  exit 1
+fi
 KEYS_SEND="$W/$(echo "$O_GIVE_MINT" | cut -c1-8)-keys.json"
 KEYS_RECV="$W/$(echo "$O_WANT_MINT" | cut -c1-8)-keys.json"
 
 echo "  building your leg — several transactions, a few minutes, nothing moves" >&2
 swap_leg settle "$KEY" "$KEYS_SEND" "$O_GIVE_MINT" "$O_GIVE_ACC" "$A_WANT_ACC" \
-         "$A_ELG" "$O_GIVE_UNITS" "$DEC" "$W/settle-ctx.json" >&2
+         "$A_ELG" "$O_GIVE_UNITS" "$DEC" "$S/settle-ctx.json" >&2
 
 {
   echo
   echo "  ${bold}THE LEG YOU ARE BEING ASKED TO SIGN${off}"
-  swap_look "$KEYS_RECV" "$W/their-ctx.json"
+  # Against the terms this machine pinned when the offer was made, not against the figure inside the
+  # file that came back. `set -e` is on: a short leg, or altered terms, stops here unsigned.
+  swap_look_pinned "$KEYS_RECV" "$S/their-ctx.json" "$OFFER_ID" "$ACC" want
 } >&2
 
 BH=$(bh)
 cargo run --quiet -p confide-ct --bin swap-tx -- build "$ME" "$BH" \
-  "$ME"      "$W/settle-ctx.json" "$O_GIVE_ACC"  "$A_WANT_ACC" "$O_GIVE_MINT" \
-  "$A_PAYER" "$W/their-ctx.json"  "$A_GIVE_ACC"  "$O_WANT_ACC" "$O_WANT_MINT" \
-  > "$W/unsigned.b64" 2>"$W/build.err"
-grep -a "one transaction" "$W/build.err" >&2 || true
-cargo run --quiet -p confide-ct --bin swap-tx -- sign "$W/unsigned.b64" "$KEY" \
-  > "$W/half.b64" 2>"$W/sign.err"
-grep -aE "signatures present" "$W/sign.err" >&2 || true
+  "$ME"      "$S/settle-ctx.json" "$O_GIVE_ACC"  "$A_WANT_ACC" "$O_GIVE_MINT" \
+  "$A_PAYER" "$S/their-ctx.json"  "$A_GIVE_ACC"  "$O_WANT_ACC" "$O_WANT_MINT" \
+  > "$S/unsigned.b64" 2>"$S/build.err"
+grep -a "one transaction" "$S/build.err" >&2 || true
+cargo run --quiet -p confide-ct --bin swap-tx -- sign "$S/unsigned.b64" "$KEY" \
+  > "$S/half.b64" 2>"$S/sign.err"
+grep -aE "signatures present" "$S/sign.err" >&2 || true
 
-python3 - "$ACC" "$W/settle-ctx.json" "$W/half.b64" "$BH" <<'PY'
+python3 - "$ACC" "$S/settle-ctx.json" "$S/half.b64" "$BH" <<'PY'
 import json, sys, time
 acc, ctxf, txf, bh = sys.argv[1:5]
 d = json.load(open(acc))
