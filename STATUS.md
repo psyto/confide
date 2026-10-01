@@ -1598,7 +1598,7 @@ Bloomberg 風にはしなかった —— 板・気配値・チャートを連�
 
 **0bs. 6銘柄の標本を全体に広げていた文。** 「no issuer has signed — no incumbent here」「Nobody has ever used one」
 「On every one of the 1,992 real mints that is impossible … none has」「On mainnet it cannot be done」
-「Nobody has ever opened one」（未投稿の投稿文の見出し —— しかも**2つ設定済みなので事実としても誤り**）。
+「Nobody has ever opened one」（未投稿の投稿文の見出し —— しかも**2つ設定済みなので事実としても誤り**）→
 全部「数えた6銘柄では」に。「no incumbent / nothing to be late to」は競争の主張に読めるので「nobody is using it yet」に。
 
 **0bt. 監査人鍵は「全員の全部を永遠に」読まない。** mint 全体の鍵で、**設定中の秘匿移転の額**を全保有者について復号できる。
@@ -1616,3 +1616,29 @@ FOUNDER-MARKET-FIT。公開済みのナレーションと字幕は sha で固定
 新しい THE AUDITOR'S REACH が言い過ぎの言い回しを締め出す。**わざと壊して10通り**確認。
 
 **founder の手で:** 公開サイト（`web/index.html` が変わった）の再公開、CWF フォームと YouTube 説明文の貼り直し。
+
+## 2026-10-01（2）— claim ledger。Codex が6行の言い過ぎと8つの抜けを見つけた
+
+**0bv. 前のコミット（fa9378b）は赤のまま入っていた。** 0bs の記録が撤回した見出し（未投稿の投稿文の「誰も開いていない」）を
+引用していて、CONFIGURED IS NOT APPROVED が落ちていた。検査を広げず、記録の行に `→` を置いた（記録の免除はこの形）。
+
+**0bw. claim ledger（brief §3 P0 の4）。** [`docs/cwf-2026/CLAIMS.md`](docs/cwf-2026/CLAIMS.md) —— 公開の主張ごとに
+種類（measured / printed / run / local / source / inference / absence / hypothesis）、証拠、範囲、**言っていないこと**、
+何が再検査しているか。**数字は写さない** —— `web/usage.json#total_accounts` の形で参照し、新しい THE CLAIM LEDGER が
+解決する。パス・JSON の欄・`[[bin]]`・検査節の存在、種類ごとに必要な証拠（run は記録ファイル、measured は欄）、
+id の重複と形、数字の貼り付けを落とす。**文言が証拠に対して正しいかは検査しない** —— それはレビューの仕事。
+わざと壊して14通り落ちるのを確認。
+
+**0bx. レビュー** [`docs/reviews/2026-10-01-claim-ledger.md`](docs/reviews/2026-10-01-claim-ledger.md)（依頼文は payloads に）。
+全部実ファイルで確認して採った。M3（門は**新しい**口座に対して、承認するのは mint の approval authority）、
+D4（片側署名なのは「取引」ではなく割当）、P1（公開残高 0 は**記録したラン**の話）、M5（Kamino は**通常の預け入れ経路**、
+預け入れは試していない）。「再検査」欄で私が書いた帰属のうち5つは検査がそこまでしていなかった —— 最初の版でも
+healthcheck が発行の署名を読むと書いていた（読まない）。直し方は「何もしていないならダッシュ」。
+
+**0by. 「checked rather than claimed」は検査ではなかった。** テストベッドの承認鍵が mint できないこと。README・
+公開サイト・TESTBED・keys/README・POST（未投稿）が「検査済み」と書いていたが、**それを検査するスクリプトは無い**
+（`testbed-up.sh --check` は承認権限・門・監査人を見るが mint authority を比べない）。設定時に手で一度見ただけ。
+5面とも「手で観察、スクリプトは再検査しない」に直した。`--check` への追加は devnet が要るので未着手（RPC 無し）。
+
+**founder の手で:** 公開サイトの再公開（`web/index.html` が変わった）、CWF フォームと YouTube 説明文の貼り直し、
+`./scripts/github-about.sh --apply`。

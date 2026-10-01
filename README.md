@@ -125,7 +125,7 @@ one of two signatures cannot execute. [docs/TESTBED.md](docs/TESTBED.md) ·
 [what changed on 09-30](docs/cwf-2026/THE-SWAP.md)
 
 Needs the Solana CLI, Rust and a little devnet SOL. The key can approve accounts and **cannot
-mint**, which is checked rather than claimed — [docs/TESTBED.md](docs/TESTBED.md).
+mint** — observed when the testbed was set up, not re-checked by a script — [docs/TESTBED.md](docs/TESTBED.md).
 
 ---
 

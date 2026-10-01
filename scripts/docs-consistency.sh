@@ -1390,6 +1390,98 @@ prog=$(grep -oE "Gn3rzw8[A-Za-z0-9]+" README.md docs/SEIZURE.md scripts/healthch
                   || bad "more than one seizure program id is quoted"
 
 echo
+echo "  THE CLAIM LEDGER — every reference in docs/cwf-2026/CLAIMS.md resolves"
+# The ledger is only worth having if what it points at is there. It copies no figure: a number is
+# written as file.json#field and resolved here, so the ledger cannot go stale the way prose did.
+# A path that was renamed, a field a producer stopped writing, a check section that was retitled,
+# a figure pasted in where a reference belongs, or a "run" with no record of the run -- each is a
+# ledger that reads as evidence and points at nothing. It does NOT check that a claim's wording is
+# true of its evidence; the first review of the ledger found six rows that said more than theirs.
+python3 - <<'PYCL' && ok "every path, field, binary and check the claim ledger cites exists, and it copies no figure" \
+                  || bad "the claim ledger cites something that is not there, or copies a figure"
+import glob, json, re, sys, pathlib
+L = pathlib.Path("docs/cwf-2026/CLAIMS.md")
+if not L.exists():
+    print("      docs/cwf-2026/CLAIMS.md is gone"); sys.exit(1)
+t = L.read_text(encoding="utf-8")
+bad = []
+PATH = re.compile(r"((?:web|scripts|docs|app|video|_submission|crates)/[\w./-]*\w|\b(?:STATUS|README|DESIGN)\.md|\bCargo\.lock)(?:#([\w.]+))?")
+BINS = set()
+for c in glob.glob("crates/*/Cargo.toml"):
+    BINS |= set(re.findall(r'\[\[bin\]\]\s*\nname = "([\w-]+)"', pathlib.Path(c).read_text()))
+SECTIONS = set(re.findall(r'^echo "  ([A-Z][^"\n]*?) —', pathlib.Path("scripts/docs-consistency.sh").read_text(), re.M))
+def refs(text):
+    out = []
+    for tok in re.findall(r"`([^`]+)`", text):
+        for m in PATH.finditer(tok):
+            out.append((m.group(1), m.group(2)))
+        for b in re.findall(r"--bin ([\w-]+)", tok):
+            if b not in BINS:
+                bad.append(f"no [[bin]] target named {b}")
+    return out
+for path, field in refs(t):
+    if not pathlib.Path(path).exists():
+        bad.append(f"no such file: {path}"); continue
+    if field:
+        try:
+            v = json.loads(pathlib.Path(path).read_text())
+            for k in field.split("."):
+                v = v[k]
+            if v is None:
+                bad.append(f"{path}#{field} is null")
+        except (KeyError, TypeError, ValueError):
+            bad.append(f"{path} has no field {field}")
+# Claim rows: every row of a table whose header starts "| # |". A row whose id is malformed is a
+# finding rather than something to skip, or it would fall out of every check below.
+rows, header = [], False
+for line in t.splitlines():
+    if not line.startswith("|"):
+        header = False; continue
+    cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    if cells[0] == "#":
+        header = True; continue
+    if header and not set(line) <= set("|- "):
+        rows.append(cells)
+ids = [r[0] for r in rows]
+if not rows:
+    bad.append("no claim rows found")
+for i in sorted({i for i in ids if ids.count(i) > 1}):
+    bad.append(f"claim id {i} is used twice")
+NEEDS = {"measured", "printed", "run", "local", "source", "inference", "absence", "hypothesis"}
+for r in rows:
+    if not re.fullmatch(r"[A-Z]\d+", r[0]):
+        bad.append(f"a claim row has a malformed id: {r[0]!r}")
+    if len(r) != 7:
+        bad.append(f"{r[0]}: {len(r)} cells, not 7"); continue
+    rid, kind, claim, ev, scope, nots, rechk = r
+    if kind not in NEEDS:
+        bad.append(f"{rid}: unknown kind {kind!r}"); continue
+    er = refs(ev)
+    if kind == "measured" and not any(f for _, f in er):
+        bad.append(f"{rid}: measured, but cites no file.json#field")
+    if kind == "run" and not any(p.endswith((".json", ".md")) and not p.startswith("scripts/") for p, _ in er):
+        bad.append(f"{rid}: a run with no record of the run cited")
+    cited = re.findall(r"\b[A-Z]\d+\b", ev)
+    for c in cited:
+        if c not in ids:
+            bad.append(f"{rid}: cites row {c}, which does not exist")
+    if not er and not (kind == "inference" and cited):
+        bad.append(f"{rid}: cites no evidence path" + (" or row" if kind == "inference" else ""))
+    for sec in re.findall(r"\b(?:[A-Z][A-Z']+ ){1,5}[A-Z][A-Z']+\b", rechk):
+        if sec not in SECTIONS:
+            bad.append(f"{rid}: no check section called {sec}")
+# Figures: outside code spans, with dates, Token-2022 and section marks removed, any comma-grouped
+# number, any $-figure, and any bare number of four digits or more is a figure pasted in.
+prose = re.sub(r"`[^`]*`", "", t)
+prose = re.sub(r"\b\d{4}-\d{2}-\d{2}\b|Token-2022|§\d+", "", prose)
+for m in re.finditer(r"\b\d{1,3}(?:,\d{3})+\b|\$\d[\d,.]*|\b\d{4,}\b", prose):
+    bad.append(f"a copied figure: {m.group(0)} -- cite the file#field it comes from")
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYCL
+
+echo
 [ "$fail" -eq 0 ] && printf '  \033[32mconsistent\033[0m — every claim above was measured\n' \
                   || printf '  \033[31m%d disagreements\033[0m\n' "$fail"
 exit "$fail"

@@ -99,7 +99,7 @@ a post quoting a figure the page contradicts is worse than no post. Current read
 > It is devnet and the tokens represent nothing. You will need the Solana CLI, a Rust toolchain and
 > a little devnet SOL — the script tries the airdrop and tells you what to do when it is throttled,
 > which it usually is. **It is the thing 518,744 live accounts have never done.** Mint
-> `7MEQEiy1…`; the approval key is in `keys/` and cannot mint, which is checked rather than claimed.
+> `7MEQEiy1…`; the approval key is in `keys/` and cannot mint (observed when the testbed was set up; no script re-checks it).
 >
 > Everything above is checkable without taking my word for it:
 > https://psyto.github.io/confide/ reads the mints from mainnet in your browser and decodes the

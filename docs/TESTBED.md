@@ -37,8 +37,10 @@ separate from the authority that mints. So the two roles split cleanly:
 | mint authority | `keys/issuer-mint-authority.json` | **no** | create supply |
 | approval authority | `keys/devnet-approval-authority.json` | **yes, on purpose** | let accounts through the gate |
 
-**The published key cannot mint**, and that is checked rather than asserted — minting with it fails
-with `Error: owner does not match` (`TokenError::OwnerMismatch`).
+**The published key cannot mint.** Minting with it fails with `Error: owner does not match`
+(`TokenError::OwnerMismatch`) — observed by hand when the testbed was set up. No script re-checks it:
+`./scripts/testbed-up.sh --check` watches the approval authority, the gate and the auditor, not the
+mint authority.
 
 A faucet account's owner key is published too (`keys/devnet-faucet.json`), so a balance needs no
 introduction either.
