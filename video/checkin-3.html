@@ -1,0 +1,119 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>check-in 3</title>
+<style>
+:root{--bg:#08090d;--fg:#c9d1de;--dim:#59647a;--bold:#f4f7fb;--red:#ef6b73;--grn:#63cf83;
+ --yel:#f0c05a;--cyn:#5cc0cf;--line:#1b2030;--panel:#0b0e15}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1280px;height:720px;overflow:hidden}
+body{background:var(--bg);color:var(--fg);
+ font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased}
+.scene{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+ padding:56px 72px;gap:22px}
+.scene.on{display:flex}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+h2{font-size:15px;font-weight:600;color:var(--dim);letter-spacing:.09em;text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1.25fr;gap:22px;width:100%}
+.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px 20px;
+ opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+.card.in{opacity:1;transform:none}
+.card .p{font-size:13px;color:var(--yel)}
+.card .s{font-size:14.5px;color:var(--fg);margin-top:10px;line-height:1.5}
+.kv{font-family:ui-monospace,Menlo,monospace;font-size:21px;color:var(--bold);margin-top:12px;line-height:1.6}
+.kv b{color:var(--red);font-weight:600}
+pre{font-family:ui-monospace,Menlo,monospace;font-size:14px;line-height:1.5;color:var(--fg);
+ margin-top:12px;white-space:pre}
+pre .hl{color:var(--cyn)}
+.claim{font-size:24px;color:var(--bold);opacity:0;transition:opacity .5s ease}
+.claim.in{opacity:1}
+.claim.false #clq{color:var(--red);text-decoration:line-through;text-decoration-thickness:1px}
+.verdict{font-size:20px;color:var(--fg);opacity:0;transition:opacity .5s ease}
+.verdict.in{opacity:1}
+.verdict b{color:var(--bold)}
+#s3{align-items:flex-start;padding-left:150px;gap:26px}
+.figs{display:flex;gap:20px}
+.fig{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px 22px;min-width:220px}
+.fig .n{font-family:ui-monospace,Menlo,monospace;font-size:38px;font-weight:600;color:var(--cyn)}
+.fig.z .n{color:var(--red)}
+.fig .k{color:var(--dim);font-size:13.5px;margin-top:6px;line-height:1.45}
+.src{font-size:13.5px;color:var(--dim)}
+.li{display:flex;gap:16px;align-items:baseline;opacity:0;transform:translateX(-10px);
+ transition:opacity .45s ease,transform .45s ease;font-size:26px;color:var(--bold)}
+.li.in{opacity:1;transform:none}
+.li .g{color:var(--grn);font-family:ui-monospace,Menlo,monospace;font-size:20px}
+</style>
+
+<div class="scene" id="s2">
+  <h2>What the configuration can and cannot say</h2>
+  <div class="two">
+    <div class="card" id="c1">
+      <div class="p mono">web/slots.json · every mint measured</div>
+      <div class="kv">autoApproveNewAccounts <b>false</b><br />auditor key <b>none</b></div>
+      <div class="s" id="c1n"></div>
+    </div>
+    <div class="card" id="c2">
+      <div class="p mono">spl-token-2022-interface 3.1.1 · confidential_transfer/instruction.rs:502</div>
+<pre><span class="hl">#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]</span>
+pub struct InitializeMintData {
+    pub authority: MaybeNull&lt;Address&gt;,
+    pub auto_approve_new_accounts: Bool,
+    pub auditor_elgamal_pubkey: MaybeNull&lt;PodElGamalPubkey&gt;,
+}</pre>
+    </div>
+  </div>
+  <div class="claim" id="cl"><span id="clq">&ldquo;Every issuer picked null.&rdquo;</span> <span class="src mono">&mdash; my CWF form draft until 2026-09-29; the pasted form still carries it</span></div>
+  <div class="verdict" id="v2">A zeroed struct gives <b>false</b> and <b>none</b>. The values are no evidence of a choice.</div>
+</div>
+
+<div class="scene" id="s3">
+  <h2>Where I count</h2>
+  <div class="figs">
+    <div class="fig"><div class="n" id="nc"></div><div class="k">accounts configured<br />for a confidential balance</div></div>
+    <div class="fig z"><div class="n" id="na"></div><div class="k">approved<br />&nbsp;</div></div>
+    <div class="fig z"><div class="n">0</div><div class="k">traction</div></div>
+  </div>
+  <div class="src mono" id="src"></div>
+  <div class="li" id="l1"><span class="g">&rarr;</span><span>Next: the public testbed path, run on a fresh machine and recorded</span></div>
+</div>
+
+<script>
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Every count on these slides is passed in from web/slots.json and web/usage.json by the recorder.
+// Nothing here is typed, so a re-measure changes the picture and not this file.
+window.__data = (d) => {
+  document.getElementById("c1n").textContent =
+    `${d.gated} of ${d.mints} gated · ${d.auditor_empty} of ${d.mints} auditor empty · read ${d.slots_utc}`;
+  document.getElementById("nc").textContent = d.configured;
+  document.getElementById("na").textContent = d.approved;
+  document.getElementById("src").textContent =
+    `web/usage.json · ${d.accounts} token accounts on ${d.usage_mints} mints · ${d.usage_utc}`;
+};
+const show = (id) => {
+  for (const s of document.querySelectorAll(".scene")) s.classList.remove("on");
+  document.getElementById(id).classList.add("on");
+};
+// Scene 2: 18 s of narration plus 1 s of silence. The fields are up from the start — they are what
+// the first sentence says. The old claim lands on "I'd told that", is struck in the pause, and the
+// source and the verdict land on "It's the default" and "I took that claim out".
+window.__scene2 = async (seconds) => {
+  show("s2");
+  document.getElementById("c1").classList.add("in");
+  await sleep(4500);
+  document.getElementById("cl").classList.add("in");
+  await sleep(3500);
+  document.getElementById("cl").classList.add("false");
+  await sleep(1000);
+  document.getElementById("c2").classList.add("in");
+  await sleep(6000);
+  document.getElementById("v2").classList.add("in");
+  await sleep(Math.max(0, seconds * 1000 - 4500 - 3500 - 1000 - 6000));
+};
+// Scene 3: the counts are the evidence and are up from the start; the next item lands on "Next".
+window.__scene3 = async (seconds) => {
+  show("s3");
+  await sleep(5000);
+  document.getElementById("l1").classList.add("in");
+  await sleep(Math.max(0, seconds * 1000 - 5000));
+};
+</script>

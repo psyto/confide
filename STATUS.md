@@ -1642,3 +1642,30 @@ healthcheck が発行の署名を読むと書いていた（読まない）。�
 
 **founder の手で:** 公開サイトの再公開（`web/index.html` が変わった）、CWF フォームと YouTube 説明文の貼り直し、
 `./scripts/github-about.sh --apply`。
+
+## 2026-10-02 — check-in 3 を録った（無音）。声と投稿は founder
+
+**窓は出典つきで確定。** founder が Colosseum のページから貼った: **10-02 08:00 PDT に開き、10-05 08:00 PDT 締切**
+（10-06 00:00 JST）、1分、*"Show what you built, share what you learned, and explain what you'll work on next."*、
+**"Submitted links cannot be changed or deleted."** —— 貼る前に検査する。
+
+**0bz. `video/CHECKIN-3.md` + `video/checkin-3.mp4`（ffprobe 56.0 秒、台本 55 秒・115 語）。**
+- 場面1は**実物の映像** —— `demo-ops.mp4`（09-30 の devnet 実走）から4区間。`Custom(24)` の拒否・自己承認の拒否・
+  発行体の承認・決済と公開残高 0 が、それを言う語の上に来るように切った（フレームで確認）。速度は変えていない。
+  3つ目の切れ目は片側署名の手順を**丸ごと飛ばす**ことを台本に明記。
+- 場面2は自分の主張の訂正: 門が閉じ監査人が空なのは `InitializeMintData` のゼロ値（`instruction.rs:502` を実ファイルで確認）。
+  画面の取り消し線は**実際に公開した文**「Every issuer picked null.」（`e64abe5` で消した）。
+- 場面3は「数えた範囲で承認 0、traction 0」と次の一手。
+- `record-checkin.js` に**場面1を映像から切る**モードを足した。区間は台本のコメントにだけ書く。week 1・2 は通らない経路。
+
+**0ca. レビュー** [`docs/reviews/2026-10-02-checkin-3.md`](docs/reviews/2026-10-02-checkin-3.md)。5件採用・1件不採用・1件一部。
+「show no choice」→「no evidence of a choice」、「I took that claim out」→「I'm taking…」、「from nothing」→「fresh machine」。
+
+**0cb. 録画中に分かったこと: 貼ってある CWF フォームは「Every issuer picked null.」をまだ言っている可能性が高い。**
+フォームは 09-22 に貼られ、その文は 09-29 に repo から消えた。**THE SUBMITTED FIELDS の赤は書式の問題ではなく、
+審査員が読む面に撤回済みの主張が残っているという意味。** もう一つ、投稿済みの X の投稿（`x-post.txt`、凍結）は
+「Nobody chose this」と言っている —— 投稿は編集できない。
+
+**founder の手で（10-05 08:00 PDT まで）:** ①`./scripts/usage-scan.sh` を endpoint 付きで回す → 数字が動いたら
+`CHECKIN_DOC=CHECKIN-3.md node video/record-checkin.js` で録り直し ②声を入れる（台本は `video/CHECKIN-3.md`）
+③`scripts/spoken-check.sh <納品mp4>` ④YouTube に限定公開以上で上げて貼る。**貼った後は変えられない。**
