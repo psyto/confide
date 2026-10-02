@@ -3,6 +3,7 @@
 #
 #   ./video/split.sh checkin         # checkin-1.mp4     -> segments-checkin/
 #   ./video/split.sh presentation    # presentation.mp4  -> segments-presentation/
+#   ./video/split.sh demo            # demo-ops.mp4      -> segments-demo/
 #
 # The `main` mode went on 2026-09-24 with the 09-15 cut it split: confide.mp4, segments/ and the
 # lift-the-voice-off-the-old-composite path are all gone, because the voice is now generated per
@@ -23,7 +24,9 @@ case "${1:-presentation}" in
   checkin) SRC=video/checkin-1.mp4;    SEG=video/segments-checkin;       MAKE="node video/record-checkin.js";;
   presentation)
            SRC=video/presentation.mp4; SEG=video/segments-presentation;  MAKE="node video/record-presentation.js";;
-  *) echo "usage: split.sh [checkin|presentation]" >&2; exit 2;;
+  # the demo's boundaries are its scenes, derived from the cut's timeline by demo-times.py
+  demo)    SRC=video/demo-ops.mp4;     SEG=video/segments-demo;          MAKE="python3 video/demo-times.py";;
+  *) echo "usage: split.sh [checkin|presentation|demo]" >&2; exit 2;;
 esac
 
 [ -f "$SRC" ] || { echo "missing $SRC — run: $MAKE" >&2; exit 1; }
@@ -78,4 +81,5 @@ echo
 case "$SEG" in
   video/segments-checkin)      python3 video/lines.py checkin;;
   video/segments-presentation) python3 video/lines.py presentation;;
+  video/segments-demo)         python3 video/lines.py demo;;
 esac

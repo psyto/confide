@@ -1,0 +1,50 @@
+[
+ {
+  "file": "01-a-stock-shut-the-way-the-real-ones-are.mp4",
+  "start": 0.0,
+  "end": 21.4,
+  "seconds": 21.4
+ },
+ {
+  "file": "02-confide-builds-the-proofs-and-checks-the-amount.mp4",
+  "start": 21.4,
+  "end": 33.4,
+  "seconds": 12.0
+ },
+ {
+  "file": "03-the-gate-holds.mp4",
+  "start": 33.4,
+  "end": 48.9,
+  "seconds": 15.5
+ },
+ {
+  "file": "04-approval-then-one-transaction.mp4",
+  "start": 48.9,
+  "end": 71.2,
+  "seconds": 22.3
+ },
+ {
+  "file": "05-what-anyone-can-see.mp4",
+  "start": 71.2,
+  "end": 88.4,
+  "seconds": 17.2
+ },
+ {
+  "file": "06-two-approved-holders-trade.mp4",
+  "start": 88.4,
+  "end": 117.6,
+  "seconds": 29.2
+ },
+ {
+  "file": "07-the-short-delivery-control.mp4",
+  "start": 117.6,
+  "end": 155.9,
+  "seconds": 38.3
+ },
+ {
+  "file": "08-what-confide-did.mp4",
+  "start": 155.9,
+  "end": 170.7,
+  "seconds": 14.8
+ }
+]

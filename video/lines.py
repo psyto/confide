@@ -28,6 +28,7 @@ CUTS = {
     "checkin": (CHECKIN_DOC, CHECKIN_SEG, CHECKIN_TITLE),
     "presentation": ("video/CWF-PRESENTATION.md", "video/segments-presentation",
                      "The CWF presentation, rough cut"),
+    "demo": ("video/DEMO.md", "video/segments-demo", "The demo video"),
 }
 
 # The count used to be a word in the tuple above -- "Eight clips" -- and it sat over a table of ten

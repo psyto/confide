@@ -1312,8 +1312,27 @@ echo "  THE DEMO SCRIPT'S TIMES — each scene's range against the cut it narrat
 # video/DEMO.md names where each scene sits in demo-ops.mp4. Those ranges were typed once and went
 # stale at the first re-recording; video/demo-times.py derives them from the cut's own manifest.
 python3 video/demo-times.py --check >/dev/null 2>&1 \
-  && ok "every scene's time range in video/DEMO.md matches demo-ops.manifest.json" \
-  || bad "video/DEMO.md scene times differ from the cut — python3 video/demo-times.py"
+  && ok "every scene's time range in video/DEMO.md, and segments-demo/manifest.json, match demo-ops.manifest.json" \
+  || bad "video/DEMO.md scene times or segments-demo/manifest.json differ from the cut — python3 video/demo-times.py"
+# And the clips the voice is laid on: each must exist and be the length the manifest says. A re-cut
+# without ./video/split.sh demo leaves clips from the previous recording, which still play.
+python3 - <<'PYSD' && ok "every clip in video/segments-demo/ is the length its manifest says" \
+                  || bad "a demo clip is missing or stale — ./video/split.sh demo"
+import json, subprocess, sys, os
+seg = "video/segments-demo"
+bad = []
+for e in json.load(open(f"{seg}/manifest.json")):
+    f = f"{seg}/{e['file']}"
+    if not os.path.exists(f):
+        bad.append(f"missing {f}"); continue
+    got = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f],
+                               capture_output=True, text=True).stdout.strip() or 0)
+    if abs(got - e["seconds"]) > 0.1:
+        bad.append(f"{f} is {got:.2f}s, the manifest says {e['seconds']}s")
+for b in bad:
+    print("      " + b)
+sys.exit(1 if bad else 0)
+PYSD
 
 echo
 echo "  THE AUDITOR'S REACH — what the mint-wide key can read, said as it is"
