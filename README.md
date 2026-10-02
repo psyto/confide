@@ -95,7 +95,32 @@ feature is shipped and gated on every mint in the list; on the six counted, no i
 account yet — **so where we looked, nobody is using it yet.** The other mints
 in the list have not been counted.
 
-## Go and do it yourself — two minutes, devnet, nobody's permission
+## Go and do it yourself — devnet, nobody's permission
+
+**The whole flow, one command, then re-read from the chain by a separate keyless process:**
+
+```bash
+git clone https://github.com/psyto/confide && cd confide
+RPC=<your devnet endpoint> ./scripts/review.sh
+```
+
+It builds, then runs the issuer's gate refusing an allocation on chain, the investor failing to
+approve themselves, the issuer approving that one account, a half-signed send refused, the
+allocation settling, two approved holders trading, and the issuer under-delivering into the
+investor's pre-signing check. Then `scripts/observe-run.py`, holding no key, looks up each
+signature and account the run cites and checks the error or success, the signatures, that only
+Token-2022 ran, and that each settlement touched the accounts that read a public balance of 0. It
+cannot see amounts, and it cannot confirm the pre-signing refusal, which has no transaction; the
+receipt marks that row as the run's own word. It is in this repository and by default uses your
+`RPC` — set `OBSERVE_RPC` to read through a different one.
+
+Needs the Solana CLI, Rust, a devnet endpoint (the public one rate-limits) and a keypair with about
+2.3 devnet SOL, which it lends to the run's throwaway wallets and sweeps back at the end. Rent in
+the accounts the run creates stays on chain. What a passing run cost and how long it took, with its
+receipts: [`docs/cwf-2026/REVIEW-RUNS.md`](docs/cwf-2026/REVIEW-RUNS.md). A cold build or a struggling
+endpoint takes longer.
+
+**Or stand where one holder stands, on the standing testbed:**
 
 There is a standing issuer on devnet whose gate is shut exactly as all 1,992 are, and whose
 approval key is **published in this repository**. So you can hold something the chain reports as

@@ -38,6 +38,7 @@ else: print('retry')" 2>/dev/null)" in
     esac
     i=$((i+1)); sleep $i
   done
+  echo "    the RPC did not answer after 5 tries (an outage or a rate limit, not a refusal)" >&2
   printf '%s' "$out"; return 1
 }
 bh() { rpc '{"jsonrpc":"2.0","id":1,"method":"getLatestBlockhash","params":[{"commitment":"confirmed"}]}' \
@@ -47,15 +48,41 @@ send() { rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sendTransaction\",\"par
 import sys,json
 r=json.load(sys.stdin)
 print('ERR '+json.dumps(r['error'])[:300] if 'error' in r else r['result'])"; }
-confirm() { for _ in $(seq 1 40); do st=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSignatureStatuses\",\"params\":[[\"$1\"],{\"searchTransactionHistory\":true}]}" \
+# AN ENDPOINT THAT STOPS ANSWERING IS NOT A PENDING TRANSACTION. On 2026-10-02 the RPC went silent
+# for forty minutes mid-run; every poll here crashed on an empty body, printed a traceback, and the
+# loop went round again -- forty minutes of tracebacks, then "timeout". Now three unanswered polls in
+# a row (each already retried five times by rpc) stop it, and it says what is and is not known.
+confirm() { local miss=0
+  for _ in $(seq 1 40); do st=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSignatureStatuses\",\"params\":[[\"$1\"],{\"searchTransactionHistory\":true}]}" \
   | python3 -c "
 import sys,json
-v=json.load(sys.stdin)['result']['value'][0]
+try: v=json.load(sys.stdin)['result']['value'][0]
+except Exception: print('unreachable'); raise SystemExit
 print('pending' if v is None else ('FAILED '+json.dumps(v['err'])[:250] if v.get('err') else (v.get('confirmationStatus') or 'pending')))"); \
-  case "$st" in confirmed|finalized) return 0;; FAILED*) echo "    $st"; return 1;; esac; sleep 1; done; echo "    timeout"; return 1; }
+  case "$st" in
+    confirmed|finalized) return 0;;
+    FAILED*) echo "    $st"; return 1;;
+    unreachable) miss=$((miss+1))
+      [ "$miss" -lt 3 ] || { echo "    the RPC stopped answering. This is not a refusal: whether $1 landed is unknown."; return 1; };;
+    *) miss=0;;
+  esac; sleep 1; done; echo "    timeout"; return 1; }
 # GO_SIG keeps the last signature `go` sent, so a caller can cite it (the demo app shows it). Set
 # only after the send returned a signature; a failed send leaves it empty.
-go() { local label="$1"; shift; local sig; GO_SIG=""; sig=$(send "$1"); case "$sig" in ERR*) echo "    $label: $sig"; return 1;; esac; GO_SIG="$sig"; confirm "$sig" && printf '    %-22s ok\n' "$label"; }
+#
+# RETRIED FOR ONE ERROR ONLY: BlockhashNotFound in preflight. On 2026-10-02 a review run sent proof
+# txs 1 and 2 with a blockhash and tx 3, same blockhash, seconds later, came back BlockhashNotFound --
+# not an expired hash but a load-balanced node that had not seen it yet. A preflight refusal means
+# nothing landed, and the SAME bytes resent carry the same signature, so the chain can never apply
+# them twice. Anything else stops, as before; an expired hash simply fails four times.
+go() { local label="$1"; shift; local sig try; GO_SIG=""
+  for try in 1 2 3 4; do
+    sig=$(send "$1")
+    case "$sig" in
+      ERR*BlockhashNotFound*) [ "$try" -lt 4 ] && { echo "    $label: the node had not seen the blockhash yet (try $try of 4), resending" >&2; sleep $((try * 2)); continue; } ;;
+    esac
+    break
+  done
+  case "$sig" in ERR*) echo "    $label: $sig"; return 1;; esac; GO_SIG="$sig"; confirm "$sig" && printf '    %-22s ok\n' "$label"; }
 
 # ev <name> [key=value …] — one typed checkpoint for the demo app (docs/cwf-2026/DEMO-APP.md).
 # Inert unless CONFIDE_EVENTS is set, so a terminal run is unchanged. CALL IT ONLY AFTER the thing

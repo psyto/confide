@@ -1669,3 +1669,32 @@ healthcheck が発行の署名を読むと書いていた（読まない）。�
 **founder の手で（10-05 08:00 PDT まで）:** ①`./scripts/usage-scan.sh` を endpoint 付きで回す → 数字が動いたら
 `CHECKIN_DOC=CHECKIN-3.md node video/record-checkin.js` で録り直し ②声を入れる（台本は `video/CHECKIN-3.md`）
 ③`scripts/spoken-check.sh <納品mp4>` ④YouTube に限定公開以上で上げて貼る。**貼った後は変えられない。**
+
+## 2026-10-02（2）— フロー全体を一気通貫に。`./scripts/review.sh`、観測者が外から読み直す
+
+founder の依頼「end-to-end フローを一気通貫できるように」。
+
+**0cc. `scripts/review.sh`** —— preflight（道具・devnet であること・funder の残高・ビルドを先に、見える形で）→
+`issue-e2e.sh` 第1幕＋第2幕 → `SHORT` 対照 → **`scripts/observe-run.py`** が全署名・全口座をチェーンから読み直して
+受領書（手順ごとに explorer リンク）→ **SOL を funder に返す**。鍵とログは `~/.config/confide/review/<時刻>/`（repo の外）。
+- **それまで1回ごとに 2.1 SOL が消えていた** —— 使い捨て鍵に渡して鍵ごと捨てていた。今は1回 0.143 SOL（残りは家賃）。
+- 観測者は鍵を持たず、イベントログは「何を引くか」にだけ使う。拒否は**着地して指定のエラー**か、決済は**2署名・
+  Token-2022 だけ（CPI も）・その幕の観測口座に触れているか**、承認は**その口座への Token-2022 命令か**、公開残高 0、
+  mint は門が閉じ監査人が空。**SHORT の拒否は取引が無いので確認できない —— 受領書では `--`（実行側の申告）**。
+- `scripts/test_observe.py`（チェーン不要、10件）。観測者の規則を1つずつ緩めて**12通り**落ちるのを確認。
+
+**0cd. devnet で6回走らせた。2回止まり、両方直した。**
+- 2回目: `BlockhashNotFound` —— 同じ blockhash で tx 1・2 が着地した数秒後に tx 3 が preflight で拒否。期限切れではなく
+  **ロードバランサの後ろの node がまだ見ていない**。preflight の拒否は着地しておらず、同じバイト列は同じ署名なので
+  **二重に適用されえない** → `go()` と最後の割当送信で4回まで再送。
+- 3回目: **RPC が約40分沈黙**（08:03–08:43 JST、空の応答）。`confirm` が40周トレースバックを出し続けた →
+  3回続けて無応答なら「拒否ではない、着地したかは不明」と言って止まる。
+- 4・5・6回目は通過。**記録は6回目（コミットするコードそのもの）** —— [`docs/cwf-2026/REVIEW-RUNS.md`](docs/cwf-2026/REVIEW-RUNS.md)。
+
+**0ce. レビュー** [`docs/reviews/2026-10-02-review-sh.md`](docs/reviews/2026-10-02-review-sh.md)。全部実ファイルで確認して採った。
+**私の誤り2つ:** ①「funder の SOL が足りない」と founder に言った —— CLI の設定鍵（8TNv…、0.32 SOL）を見て、
+`issue-e2e.sh` が実際に使う `~/.config/solana/id.json`（AmSY…、32 SOL）を見ていなかった。**派生物を見て実物を見ない、の型。**
+②「endpoint はランのファイルに 0 件」と Codex に書いた —— 最上位しか grep しておらず、**spl-token の設定 14 ファイルに
+入っていた**（repo の外、700）。掃除の時に置き換えるようにし、既存14件も置換。6回目: 出力にも run ディレクトリにも 0。
+**seizure プログラムの警告 23 件**は `RUSTFLAGS=-A warnings` でこのランだけ黙らせた。プログラムのソースは触らない
+（devnet にデプロイ済みのバイナリとソースが一致していなければならない）。

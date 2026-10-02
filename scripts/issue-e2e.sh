@@ -401,7 +401,12 @@ cargo run --quiet -p confide-ct --bin swap-tx -- sign "$W/half.b64" "$W/investor
   >"$W/full.b64" 2>"$W/full.err"
 grep -aqE "signed by $INVESTOR +2 of 2 signatures present" "$W/full.err" \
   || { echo "    the completed allocation is not '2 of 2':" >&2; cat "$W/full.err" >&2; exit 1; }
-ALLOC_SIG=$(send "$(cat "$W/full.b64")")
+# The same preflight-only retry as `go` (lib/chain.sh): identical bytes, so it can never land twice.
+for try in 1 2 3 4; do
+  ALLOC_SIG=$(send "$(cat "$W/full.b64")")
+  case "$ALLOC_SIG" in ERR*BlockhashNotFound*) [ "$try" -lt 4 ] && { sleep $((try * 2)); continue; };; esac
+  break
+done
 case "$ALLOC_SIG" in ERR*) echo "    the allocation: $ALLOC_SIG" >&2; exit 1;; esac
 confirm "$ALLOC_SIG" || exit 1
 CU=$(rpc "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getTransaction\",\"params\":[\"$ALLOC_SIG\",{\"commitment\":\"confirmed\",\"maxSupportedTransactionVersion\":0}]}" \

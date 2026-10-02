@@ -42,6 +42,8 @@ founder の Alchemy エンドポイントを**環境変数としてのみ**使�
 | `scripts/github-about.sh [--apply]` | **GitHub の About。** repo の外にある唯一の面で、2026-09-23 まで 329,536 と *zero are confidential* を掲げていた。数字は計測から導出する |
 | `python3 app/test_app.py` | **デモアプリが何も判定していないか。** 拒否・決済のイベントがスクリプトの検査の後にしか出ないこと、サーバーが待っている手順以外を進めないこと、RPC が画面に出ないこと。チェーン不要 |
 | `scripts/spoken-check.sh <納品mp4>` | **声が今の台本を読んでいるか。** 音声は repo の外で作られて戻ってくるので、ここだけが2つを突き合わせる |
+| `RPC=… scripts/review.sh` | **フロー全体を一気通貫で。** preflight → 第1幕・第2幕 → SHORT 対照 → 観測者が全署名・全口座をチェーンから読み直す → SOL を funder に返す。受領書は `~/.config/confide/review/<時刻>/` |
+| `python3 scripts/test_observe.py` | **観測者そのもの。** 偽のチェーンに対して、拒否のエラー違い・Token-2022 以外のプログラム・公開残高・SHORT での決済を落とす。チェーン不要 |
 
 ## Codex
 
