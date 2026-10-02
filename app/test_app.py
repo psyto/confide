@@ -185,6 +185,15 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(self.post("/advance", {"step": "first"})[0], 409)
         seen = self.events(lambda e: e.get("ev") == "waiting" and e.get("next") == "second")
         names = [e["ev"] for e in seen]
+        # A FRESH CONNECTION REPLAYS FROM THE START, and the page draws a button for every "waiting".
+        # The step already taken must be followed by the server's "advanced", or the page redraws a
+        # live button for it -- the 2026-10-02 recordings pressed one twenty times after a reconnect.
+        w = names.index("waiting")
+        self.assertEqual(seen[w].get("next"), "first")
+        w2 = next(i for i in range(w + 1, len(seen)) if seen[i]["ev"] == "waiting")
+        self.assertIn({"ev": "advanced", "step": "first"},
+                      [{k: e.get(k) for k in ("ev", "step")} for e in seen[w + 1:w2] if e["ev"] == "advanced"],
+                      "a replay re-offers a step that was already advanced (or says so only after the next one)")
         self.assertNotIn("not_a_real_event", names)
         blob = json.dumps(seen)
         self.assertNotIn("secret-key-abc123", blob, "the RPC endpoint reached the page")

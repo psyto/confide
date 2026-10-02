@@ -171,6 +171,8 @@ const H = {
     showNext(e.next);
     setStatus("waiting for: " + (STEP[e.next] ? STEP[e.next].label : e.next));
   },
+  // the server's record that a step was taken: on a replay it follows that step's "waiting"
+  advanced(e) { showNext(null); setStatus("working on devnet: " + (STEP[e.step] ? STEP[e.step].label : e.step)); },
   party(e) { card(paneOf(e.who), "info", "Keypair", [e.pubkey]); },
   mint(e) {
     decimals[e.asset] = e.decimals;
@@ -283,5 +285,8 @@ document.getElementById("short").addEventListener("click", async () => {
   const r = await post("/run", { mode: "short" });
   if (!r.ok) setStatus("a run is already in progress");
 });
+// The same test hook ops.js has: video/test-ops-replay.mjs feeds events straight to the handlers.
+// CONFIDE_REPLAY is never set by the server, so a live page always connects.
+window.__apply = (e) => { if (H[e.ev]) H[e.ev](e); };
 renderSteps();
-connect();
+if (!window.CONFIDE_REPLAY) connect();

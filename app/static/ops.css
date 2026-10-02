@@ -98,3 +98,13 @@ h3.cf { color: var(--accent); }
 .did { font-size: 12.5px; }
 .did li { padding: 2px 0; }
 #mints td { padding: 3px 6px; }
+
+/* the same trade elsewhere — shown only after the run's own public read-back */
+.elsewhere{margin-top:6px;border-top:1px solid var(--line);padding-top:6px;font-size:14.5px}
+.elsewhere h3{color:#f0c05a}
+.elsewhere h3{margin:0 0 4px}
+.elsewhere .ew{display:grid;grid-template-columns:150px 1fr;gap:8px;padding:2px 0;border-bottom:1px solid var(--line)}
+.elsewhere .ew span:first-child{color:#8b95a7}
+.elsewhere .warnc{color:#f0c05a} .elsewhere .okc{color:#63cf83}
+.elsewhere .here{font-weight:600}
+.elsewhere .fine{margin-top:4px}

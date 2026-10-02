@@ -221,6 +221,12 @@ class Run:
             finally:
                 os.close(fd)
             self.expected = None
+            # RECORDED IN THE STREAM, so a page that reconnects -- every SSE_LIFETIME_S, or after a
+            # dropped connection -- replays "waiting X" FOLLOWED BY "advanced X" and does not redraw
+            # a button for a step already taken. Without it, the 2026-10-02 recordings reconnected at
+            # 600 s mid-step and pressed "Build both legs' proofs" twenty more times. Written by the
+            # server, about the server's own action; never a financial outcome.
+            self.evlist.append({"ev": "advanced", "step": step})
             return True
 
     def cleanup(self):

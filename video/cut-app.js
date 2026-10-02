@@ -24,7 +24,7 @@ const FFPROBE = FFMPEG.replace(/ffmpeg$/, "ffprobe");
 // are shortened. Overridable, and whatever is used is written to the manifest.
 const WINDOW = +(process.env.CUT_WINDOW || 0.4);          // seconds kept at real speed at each end of a wait
 const SHORTEN_OVER = +(process.env.CUT_SHORTEN_OVER || 3); // waits no longer than this are left alone
-const FF_SECONDS = +(process.env.CUT_FF_SECONDS || 1.1);   // what the middle of a long wait is played in
+const FF_SECONDS = +(process.env.CUT_FF_SECONDS || 1.0);   // what the middle of a long wait is played in (1.1 until 2026-10-02: the comparison scene needed 2 s)
 const raw = path.join(R, "raw.mp4");
 const { marks, end, normal, short } = JSON.parse(readFileSync(path.join(R, "marks.json"), "utf8"));
 // A recording that did not end the way the demo says it does is not cut, and gets no manifest

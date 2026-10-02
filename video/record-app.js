@@ -41,7 +41,11 @@ const READ = {
   "Check the cash against my pin, sign once": 5500,
   "Check the shares against my pin, add the second signature": 6500,
 };
-const DEFAULT_READ = 2600;
+const DEFAULT_READ = 2200;
+// The FIRST public view holds longer: it is where the panel shows the same trade elsewhere -- who
+// would read the amount on a DEX, an exchange, a dark pool -- and the narration compares them
+// (video/DEMO.md scene 5). The time comes out of DEFAULT_READ above, so the cut stays under 3:00.
+const FIRST_LOOK = 15500;
 
 const browser = await puppeteer.launch({
   headless: "new",
@@ -67,6 +71,7 @@ const now = () => (Date.now() - t0) / 1000;
 const marks = [];
 const mark = (m) => { marks.push({ t: +now().toFixed(3), ...m }); process.stderr.write(`• ${now().toFixed(1)}s ${JSON.stringify(m)}\n`); };
 
+let looked = false;
 async function run(button, mode) {
   await sleep(2500);
   mark({ kind: "start", mode });
@@ -75,6 +80,7 @@ async function run(button, mode) {
   await page.waitForFunction(() => /^(running|waiting)/i.test(document.getElementById("status").textContent),
                              { timeout: 60000, polling: 100 });
   let shown = null; // the label of the step whose result is now on screen
+  let clicked = null; // the last step pressed -- it must not be offered again straight away
   for (;;) {
     const h = await page.waitForFunction(() => {
       const st = document.getElementById("status").textContent;
@@ -87,11 +93,20 @@ async function run(button, mode) {
     const v = await h.jsonValue();
     mark({ kind: "ready", mode, ...v });
     if (v.fail) throw new Error(`the run failed on screen: ${v.fail}`);
-    await sleep((shown && READ[shown]) || DEFAULT_READ);
+    const firstLook = shown === "Look from outside" && mode === "normal" && !looked;
+    if (firstLook) looked = true;
+    await sleep(firstLook ? FIRST_LOOK : (shown && READ[shown]) || DEFAULT_READ);
     if (v.done) return v.done;
+    // A STEP OFFERED AGAIN AFTER ITS CLICK IS A BROKEN RECORDING, NOT A SLOW ONE. On 2026-10-02 the
+    // SHORT run's "Build both legs' proofs" button came back after its click and was pressed 19 more
+    // times -- every press refused by the server (409, not the step the script awaited) and re-enabled
+    // by the page -- and the cut that followed ran 3:21. Stop instead of filming it.
+    if (v.step && v.step === clicked && v.step !== "Look from outside") {
+      throw new Error(`"${v.step}" was offered again after it was pressed -- the page and the script disagree`);
+    }
     mark({ kind: "click", mode, step: v.step });
     await page.click("button.next");
-    shown = v.step;
+    shown = v.step; clicked = v.step;
   }
 }
 

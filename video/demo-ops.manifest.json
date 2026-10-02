@@ -1,14 +1,14 @@
 {
  "note": "demo-ops.mp4 is .demo-render-ops/raw.mp4 (an unedited devnet run through the app, \"ops\" view) with the middle of each long wait played faster. Every shortened stretch carries an on-screen badge with its real duration, and is listed here. Nothing is removed or reordered.",
- "raw_seconds": 605.6,
- "wall_seconds": 618,
- "video_per_wall_second": 0.9799,
+ "raw_seconds": 642.9,
+ "wall_seconds": 648.4,
+ "video_per_wall_second": 0.9915,
  "settings": {
   "window_seconds": 0.4,
   "shorten_over_seconds": 3,
-  "fast_forward_seconds": 1.1
+  "fast_forward_seconds": 1
  },
- "cut_seconds": 175.2,
+ "cut_seconds": 170.7,
  "timeline": [
   {
    "mode": "normal",
@@ -20,455 +20,455 @@
    "mode": "normal",
    "kind": "ready",
    "step": "Set up the issuer and an investor",
-   "cut_seconds": 3.2
+   "cut_seconds": 3.3
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Set up the issuer and an investor",
-   "cut_seconds": 5.7
+   "cut_seconds": 5.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Create the stock — gate shut, auditor empty",
-   "cut_seconds": 7.6
+   "cut_seconds": 7.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Create the stock — gate shut, auditor empty",
-   "cut_seconds": 10.2
+   "cut_seconds": 9.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Fund the treasury and the investor's cash",
-   "cut_seconds": 12.1
+   "cut_seconds": 11.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Fund the treasury and the investor's cash",
-   "cut_seconds": 14.6
+   "cut_seconds": 13.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Open a confidential account for the stock",
-   "cut_seconds": 16.5
+   "cut_seconds": 15.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Open a confidential account for the stock",
-   "cut_seconds": 19.1
+   "cut_seconds": 17.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Build both legs' proofs",
-   "cut_seconds": 21
+   "cut_seconds": 19.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Build both legs' proofs",
-   "cut_seconds": 23.5
+   "cut_seconds": 21.4
   },
   {
    "mode": "normal",
    "kind": "ready",
+   "step": "Check the allocation before signing",
+   "cut_seconds": 23.2
+  },
+  {
+   "mode": "normal",
+   "kind": "click",
    "step": "Check the allocation before signing",
    "cut_seconds": 25.4
   },
   {
    "mode": "normal",
-   "kind": "click",
-   "step": "Check the allocation before signing",
+   "kind": "ready",
+   "step": "Send the allocation (account not approved yet)",
    "cut_seconds": 28
   },
   {
    "mode": "normal",
-   "kind": "ready",
-   "step": "Send the allocation (account not approved yet)",
-   "cut_seconds": 30.6
-  },
-  {
-   "mode": "normal",
    "kind": "click",
    "step": "Send the allocation (account not approved yet)",
-   "cut_seconds": 36
+   "cut_seconds": 33.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Try to approve my own account",
-   "cut_seconds": 37.9
+   "cut_seconds": 35.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Try to approve my own account",
-   "cut_seconds": 43.7
+   "cut_seconds": 41.2
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Approve exactly this account",
-   "cut_seconds": 45.6
+   "cut_seconds": 43
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Approve exactly this account",
-   "cut_seconds": 51.5
+   "cut_seconds": 48.9
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Send with the issuer's signature only",
-   "cut_seconds": 53.4
+   "cut_seconds": 50.7
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Send with the issuer's signature only",
-   "cut_seconds": 57.8
+   "cut_seconds": 55.2
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Add my signature — settle",
-   "cut_seconds": 59.8
+   "cut_seconds": 57
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Add my signature — settle",
-   "cut_seconds": 65.7
+   "cut_seconds": 63
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Look from outside",
-   "cut_seconds": 67.6
+   "cut_seconds": 64.8
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Look from outside",
-   "cut_seconds": 74
+   "cut_seconds": 71.2
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Act 2 — approve a second holder",
-   "cut_seconds": 75.9
+   "cut_seconds": 73
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Act 2 — approve a second holder",
-   "cut_seconds": 82.2
+   "cut_seconds": 88.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Offer 5,000 shares for $875,000",
-   "cut_seconds": 84.1
+   "cut_seconds": 90.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Offer 5,000 shares for $875,000",
-   "cut_seconds": 86.7
+   "cut_seconds": 92.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Read the offer, pin it, build the cash leg",
-   "cut_seconds": 88.6
+   "cut_seconds": 94.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Read the offer, pin it, build the cash leg",
-   "cut_seconds": 91.1
+   "cut_seconds": 96.4
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Check the cash against my pin, sign once",
-   "cut_seconds": 93
+   "cut_seconds": 98.2
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Check the cash against my pin, sign once",
-   "cut_seconds": 95.6
+   "cut_seconds": 100.3
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Check the shares against my pin, add the second signature",
-   "cut_seconds": 97.5
+   "cut_seconds": 102.1
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Check the shares against my pin, add the second signature",
-   "cut_seconds": 102.9
+   "cut_seconds": 107.6
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "Look from outside",
-   "cut_seconds": 104.8
+   "cut_seconds": 109.4
   },
   {
    "mode": "normal",
    "kind": "click",
    "step": "Look from outside",
-   "cut_seconds": 111.1
+   "cut_seconds": 115.8
   },
   {
    "mode": "normal",
    "kind": "ready",
    "step": "done",
-   "cut_seconds": 113
+   "cut_seconds": 117.6
   },
   {
    "mode": "short",
    "kind": "start",
    "step": "",
-   "cut_seconds": 125.8
+   "cut_seconds": 130.5
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Set up the issuer and an investor",
-   "cut_seconds": 126.4
+   "cut_seconds": 131.2
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Set up the issuer and an investor",
-   "cut_seconds": 128.9
+   "cut_seconds": 133.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Create the stock — gate shut, auditor empty",
-   "cut_seconds": 130.8
+   "cut_seconds": 135.1
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Create the stock — gate shut, auditor empty",
-   "cut_seconds": 133.4
+   "cut_seconds": 137.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Fund the treasury and the investor's cash",
-   "cut_seconds": 135.3
+   "cut_seconds": 139.1
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Fund the treasury and the investor's cash",
-   "cut_seconds": 137.8
+   "cut_seconds": 141.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Open a confidential account for the stock",
-   "cut_seconds": 139.7
+   "cut_seconds": 143.1
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Open a confidential account for the stock",
-   "cut_seconds": 142.3
+   "cut_seconds": 145.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Build both legs' proofs",
-   "cut_seconds": 144.2
+   "cut_seconds": 147.1
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Build both legs' proofs",
-   "cut_seconds": 146.7
+   "cut_seconds": 149.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "Check the allocation before signing",
-   "cut_seconds": 148.6
+   "cut_seconds": 151.1
   },
   {
    "mode": "short",
    "kind": "click",
    "step": "Check the allocation before signing",
-   "cut_seconds": 151.2
+   "cut_seconds": 153.3
   },
   {
    "mode": "short",
    "kind": "ready",
    "step": "done — the short leg was refused",
-   "cut_seconds": 153.8
+   "cut_seconds": 155.9
   }
  ],
  "shortened": [
   {
-   "raw_from": 6.15,
-   "raw_to": 13.64,
-   "real_wait_seconds": 8.5,
-   "speed": 6.8,
+   "raw_from": 5.84,
+   "raw_to": 12.03,
+   "real_wait_seconds": 7.1,
+   "speed": 6.2,
    "while_waiting_after": "Set up the issuer and an investor"
   },
   {
-   "raw_from": 16.99,
-   "raw_to": 29.34,
-   "real_wait_seconds": 13.4,
-   "speed": 11.2,
+   "raw_from": 15.02,
+   "raw_to": 28.92,
+   "real_wait_seconds": 14.8,
+   "speed": 13.9,
    "while_waiting_after": "Create the stock — gate shut, auditor empty"
   },
   {
-   "raw_from": 32.69,
-   "raw_to": 81.89,
-   "real_wait_seconds": 51,
-   "speed": 44.7,
+   "raw_from": 31.9,
+   "raw_to": 93.4,
+   "real_wait_seconds": 62.8,
+   "speed": 61.5,
    "while_waiting_after": "Fund the treasury and the investor's cash"
   },
   {
-   "raw_from": 85.24,
-   "raw_to": 91.12,
-   "real_wait_seconds": 6.8,
-   "speed": 5.3,
+   "raw_from": 96.38,
+   "raw_to": 104.13,
+   "real_wait_seconds": 8.6,
+   "speed": 7.8,
    "while_waiting_after": "Open a confidential account for the stock"
   },
   {
-   "raw_from": 94.47,
-   "raw_to": 165.04,
-   "real_wait_seconds": 72.8,
-   "speed": 64.2,
+   "raw_from": 107.12,
+   "raw_to": 180.51,
+   "real_wait_seconds": 74.8,
+   "speed": 73.4,
    "while_waiting_after": "Build both legs' proofs"
   },
   {
-   "raw_from": 176.36,
-   "raw_to": 180.49,
+   "raw_from": 191.57,
+   "raw_to": 195.75,
    "real_wait_seconds": 5,
-   "speed": 3.8,
+   "speed": 4.2,
    "while_waiting_after": "Send the allocation (account not approved yet)"
   },
   {
-   "raw_from": 187.17,
-   "raw_to": 191.88,
+   "raw_from": 202.5,
+   "raw_to": 207.29,
    "real_wait_seconds": 5.6,
-   "speed": 4.3,
+   "speed": 4.8,
    "while_waiting_after": "Try to approve my own account"
   },
   {
-   "raw_from": 198.56,
-   "raw_to": 201.3,
-   "real_wait_seconds": 3.6,
-   "speed": 2.5,
+   "raw_from": 214.04,
+   "raw_to": 218.21,
+   "real_wait_seconds": 5,
+   "speed": 4.2,
    "while_waiting_after": "Approve exactly this account"
   },
   {
-   "raw_from": 214.38,
-   "raw_to": 217.52,
-   "real_wait_seconds": 4,
-   "speed": 2.9,
+   "raw_from": 231.26,
+   "raw_to": 234.88,
+   "real_wait_seconds": 4.5,
+   "speed": 3.6,
    "while_waiting_after": "Add my signature — settle"
   },
   {
-   "raw_from": 224.69,
-   "raw_to": 238.8,
-   "real_wait_seconds": 15.2,
-   "speed": 12.8,
+   "raw_from": 242.12,
+   "raw_to": 258.6,
+   "real_wait_seconds": 17.4,
+   "speed": 16.5,
    "while_waiting_after": "Look from outside"
   },
   {
-   "raw_from": 245.97,
-   "raw_to": 278.53,
-   "real_wait_seconds": 34,
-   "speed": 29.6,
+   "raw_from": 274.77,
+   "raw_to": 315.45,
+   "real_wait_seconds": 41.8,
+   "speed": 40.7,
    "while_waiting_after": "Act 2 — approve a second holder"
   },
   {
-   "raw_from": 281.88,
-   "raw_to": 284.43,
-   "real_wait_seconds": 3.4,
-   "speed": 2.3,
+   "raw_from": 318.43,
+   "raw_to": 322.2,
+   "real_wait_seconds": 4.6,
+   "speed": 3.8,
    "while_waiting_after": "Offer 5,000 shares for $875,000"
   },
   {
-   "raw_from": 287.78,
-   "raw_to": 334.61,
-   "real_wait_seconds": 48.6,
-   "speed": 42.6,
+   "raw_from": 325.18,
+   "raw_to": 375.76,
+   "real_wait_seconds": 51.8,
+   "speed": 50.6,
    "while_waiting_after": "Read the offer, pin it, build the cash leg"
   },
   {
-   "raw_from": 337.96,
-   "raw_to": 372.46,
-   "real_wait_seconds": 36,
-   "speed": 31.4,
+   "raw_from": 378.75,
+   "raw_to": 407.91,
+   "real_wait_seconds": 30.2,
+   "speed": 29.2,
    "while_waiting_after": "Check the cash against my pin, sign once"
   },
   {
-   "raw_from": 378.65,
-   "raw_to": 388.46,
-   "real_wait_seconds": 10.8,
-   "speed": 8.9,
+   "raw_from": 414.17,
+   "raw_to": 420.14,
+   "real_wait_seconds": 6.8,
+   "speed": 6,
    "while_waiting_after": "Check the shares against my pin, add the second signature"
   },
   {
-   "raw_from": 395.63,
-   "raw_to": 408.96,
-   "real_wait_seconds": 14.4,
-   "speed": 12.1,
+   "raw_from": 427.38,
+   "raw_to": 443.84,
+   "real_wait_seconds": 17.4,
+   "speed": 16.5,
    "while_waiting_after": "Look from outside"
   },
   {
-   "raw_from": 425.65,
-   "raw_to": 429.18,
-   "real_wait_seconds": 4.4,
-   "speed": 3.2,
+   "raw_from": 460.35,
+   "raw_to": 464.72,
+   "real_wait_seconds": 5.2,
+   "speed": 4.4,
    "while_waiting_after": "Set up the issuer and an investor"
   },
   {
-   "raw_from": 432.53,
-   "raw_to": 442.93,
-   "real_wait_seconds": 11.4,
-   "speed": 9.5,
+   "raw_from": 467.7,
+   "raw_to": 477.44,
+   "real_wait_seconds": 10.6,
+   "speed": 9.7,
    "while_waiting_after": "Create the stock — gate shut, auditor empty"
   },
   {
-   "raw_from": 446.28,
-   "raw_to": 491.16,
-   "real_wait_seconds": 46.6,
-   "speed": 40.8,
+   "raw_from": 480.42,
+   "raw_to": 536.76,
+   "real_wait_seconds": 57.6,
+   "speed": 56.3,
    "while_waiting_after": "Fund the treasury and the investor's cash"
   },
   {
-   "raw_from": 494.51,
-   "raw_to": 500.78,
-   "real_wait_seconds": 7.2,
-   "speed": 5.7,
+   "raw_from": 539.74,
+   "raw_to": 547.49,
+   "real_wait_seconds": 8.6,
+   "speed": 7.8,
    "while_waiting_after": "Open a confidential account for the stock"
   },
   {
-   "raw_from": 504.12,
-   "raw_to": 578.61,
-   "real_wait_seconds": 76.8,
-   "speed": 67.7,
+   "raw_from": 550.47,
+   "raw_to": 622.85,
+   "real_wait_seconds": 73.8,
+   "speed": 72.4,
    "while_waiting_after": "Build both legs' proofs"
   }
  ]

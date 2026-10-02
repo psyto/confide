@@ -1,6 +1,8 @@
 // Confide — settlement operations view. Renders checkpoints; decides nothing (docs/cwf-2026/DEMO-APP.md).
 // Same event stream and same rules as app.js: every value arrives from the server's sanitised stream
-// and is inserted as text. No price, instrument or market data exists here that the run did not produce.
+// and is inserted as text. No trade value or outcome is shown here that the run did not produce. The one
+// exception is labelled on screen: the "who would read this trade's amount elsewhere" card is sourced
+// research (docs/cwf-2026/COMPARABLES.md), and only its DEX row's figures -- this trade's -- come from the run.
 "use strict";
 
 const REPLAY = !!window.CONFIDE_REPLAY;               // the mock harness feeds saved events; never set live
@@ -50,6 +52,8 @@ function reset() {
   for (const id of ["queue", "mints", "public", "positions", "blotter"]) document.querySelector(`#${id} tbody`).textContent = "";
   for (const id of ["ticket-1", "ticket-2"]) { const t = document.getElementById(id); t.textContent = ""; t.className = "ticket idle"; }
   document.getElementById("placeholder").style.display = "";
+  document.getElementById("elsewhere").hidden = true;
+  document.getElementById("ledger-note").hidden = false;
   next(null);
 }
 
@@ -170,6 +174,8 @@ async function readPublic(a) {
 const H = {
   run(e) { S.short = e.mode === "short"; status(S.short ? "running · short-delivery control" : "running"); },
   waiting(e) { next(e.next); status("waiting for: " + (STEPS[e.next] ? STEPS[e.next][1] : e.next)); },
+  // the server's record that a step was taken: on a replay it follows that step's "waiting"
+  advanced(e) { next(null); status("working on devnet: " + (STEPS[e.step] ? STEPS[e.step][1] : e.step)); },
   party(e) { S.parties[e.who] = e.pubkey; },
   mint(e) { S.mints[e.asset] = e; renderMints(); blot(ASSET[e.asset] + " mint created", "GATE SHUT", "warn", link("address", e.mint), "ISSUER", "TOKEN-2022"); },
   account(e) {
@@ -239,6 +245,14 @@ const H = {
     const accs = e.accounts.split(","), bals = e.balances.split(",");
     accs.forEach((a, i) => { if (S.accounts[a]) S.accounts[a].pub = bals[i]; });
     renderLedger(); blot("public balances read back", "ALL ZERO", "ok", null, "ANYONE", "SOLANA RPC");
+    // The comparison appears only once the run has read its own public balances back, and the
+    // DEX row's figures are this trade's, from the run's own checkpoints -- nothing typed here.
+    const t = e.act === "2" ? S.t2 : S.t1;
+    if (t.shares && t.cash && bals.every((b) => b === "0")) {
+      document.getElementById("ew-dex").textContent = `${n(t.shares)} shares · $${n(t.cash)}`;
+      document.getElementById("elsewhere").hidden = false;
+      document.getElementById("ledger-note").hidden = true;   // its content is the block's last line
+    }
   },
   offer(e) {
     S.act = 2; S.t2.shares = e.shares; S.t2.cash = e.cash; S.t2.stages.pin1 = "ok";

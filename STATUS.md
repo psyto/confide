@@ -1698,3 +1698,30 @@ founder の依頼「end-to-end フローを一気通貫できるように」。
 入っていた**（repo の外、700）。掃除の時に置き換えるようにし、既存14件も置換。6回目: 出力にも run ディレクトリにも 0。
 **seizure プログラムの警告 23 件**は `RUSTFLAGS=-A warnings` でこのランだけ黙らせた。プログラムのソースは触らない
 （devnet にデプロイ済みのバイナリとソースが一致していなければならない）。
+
+## 2026-10-02（3）— 「誰が額を読むか」をデモの画面に、ピッチの台本を書いた。アプリのバグを1つ直した
+
+founder の依頼「類似サービスと比較してもっとわかりやすく」。**上限は出典つきで確定**（founder がフォームを貼った）:
+デモ **3分**・*"Should show the live product, not a slide deck"*、ピッチ **2分**・Public。
+
+**0cf. 比較は `docs/cwf-2026/COMPARABLES.md`（一次資料、f670c28）。** 公開 DEX＝全員／中央集権取引所＝取引所／
+Renegade＝relayer（README を手で確認）／米国 ATS＝10秒以内にテープ（FINRA 6380A を手で確認）／Confide＝当事者2人。
+**Confide が隠さないもの（口座・取引があったこと）を表の隣に書いた。**「伝統金融より秘匿的」とは言わない。
+
+**0cg. デモ: スライドではなく製品の中に出す。** `/ops` の PUBLIC LEDGER に「WHO WOULD READ THIS TRADE'S AMOUNT
+ELSEWHERE — sourced comparison, not a run result」。**ランが公開残高を読み戻して全部 0 だった後にだけ**出る。DEX 行の
+株数・金額はこのランの checkpoint から。場面5のナレーションに比較を足し、他の場面を詰めた。最初の公開表示を 15.5 秒保持、
+既定の保持 2.6→2.2 秒、早送り 1.1→1.0 秒。**`demo-ops.mp4` を devnet で録り直した: 170.7 秒**、全場面で声が 4% の余裕で収まる。
+
+**0ch. 録画中に見つけたアプリのバグ。** SSE 接続は 600 秒で切れ、ページは最初から全イベントを再生する。**再生された
+古い「waiting」が、もう押した手順のボタンを生き返らせた** —— 2回の録画で SHORT ランの「Build both legs' proofs」を
+19回以上押した（毎回 409）。両方とも 603 秒。サーバー側の再武装は 09-30 に直っていたが、**画面側は直っていなかった。**
+→ サーバーが advance 成功時に `{"ev":"advanced"}` をストリームに足し、両画面がそれでボタンを消す。
+`app/test_app.py`（順序まで）と新しい `video/test-ops-replay.mjs`（両画面、ブラウザ）—— 片方ずつ外して落ちるのを確認。
+`record-app.js` は押した手順が再び出たら録画を止める（壊れた録画を切らない）。
+
+**0ci. `video/PITCH.md`（99 秒予測）。** 誰が額を読むか → Confide は何か → 今日の事実 → なぜ自分か。
+**名前・経歴・動機は `[FOUNDER: …]`**（FOUNDER-MARKET-FIT の「主張しないこと」に従う）。各行の根拠表つき。
+
+**レビュー** [`docs/reviews/2026-10-02-comparison-and-pitch.md`](docs/reviews/2026-10-02-comparison-and-pitch.md)。13件中12件採用。
+**founder の手で:** デモの声（台本 `video/DEMO.md`）、ピッチの撮影（`video/PITCH.md`、3つの空欄）。

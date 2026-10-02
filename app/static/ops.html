@@ -49,8 +49,17 @@
       <thead><tr><th>account</th><th>public bal</th><th>confidential</th><th>approved</th></tr></thead>
       <tbody></tbody>
     </table>
-    <p class="fine">Accounts, transactions and public token balances are visible. Confidential transfer
+    <p class="fine" id="ledger-note">Accounts, transactions and public token balances are visible. Confidential transfer
       amounts and confidential balances are encrypted.</p>
+    <div id="elsewhere" class="elsewhere" hidden>
+      <h3>WHO WOULD READ THIS TRADE'S AMOUNT ELSEWHERE <em>sourced comparison — not a run result</em></h3>
+      <div class="ew"><span>public DEX swap</span><span class="warnc">everyone · <b id="ew-dex"></b></span></div>
+      <div class="ew"><span>centralized exchange</span><span>the exchange</span></div>
+      <div class="ew"><span>Renegade dark pool</span><span>its relayer</span></div>
+      <div class="ew here"><span>Confide, no auditor key</span><span class="okc">the two parties' keys · public balance 0 in this run</span></div>
+      <p class="fine">Here the amounts and balances are encrypted; still public are the accounts, the
+        mints, and that the trade happened. Sources in the repository: docs/cwf-2026/COMPARABLES.md</p>
+    </div>
     <h3>POSITIONS <em>each read with its holder's own key</em></h3>
     <table class="tbl" id="positions">
       <thead><tr><th>holder</th><th>asset</th><th class="num">units</th></tr></thead>
